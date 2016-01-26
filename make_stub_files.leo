@@ -131,6 +131,7 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 </v>
 <v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
+<v t="ekr.20160126153921.1"><vh>@edit readme.md</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
