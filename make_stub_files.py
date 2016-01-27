@@ -1226,7 +1226,7 @@ class StubTraverser (ast.NodeVisitor):
         
         # Do nothing if we are already in a function.
         # We do not generate stubs for inner defs.
-        if self.in_function or node.name.startswith('_'):
+        if self.in_function: # or node.name.startswith('_'):
             return
         # First, visit the function body.
         self.returns = []
