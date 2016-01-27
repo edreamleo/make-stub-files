@@ -11,6 +11,7 @@
 <find_panel_settings/>
 <vnodes>
 <v t="ekr.20160126153016.3"><vh>Startup</vh></v>
+<v t="ekr.20160126153921.1"><vh>@edit readme.md</vh></v>
 <v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160126153212.2"><vh>&lt;&lt; docstring &gt;&gt;</vh></v>
@@ -133,7 +134,11 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
-<v t="ekr.20160126153921.1"><vh>@edit readme.md</vh></v>
+<v t="ekr.20160127110237.1"><vh>recent changes</vh>
+<v t="ekr.20160126153212.83"></v>
+<v t="ekr.20160126153212.88"></v>
+<v t="ekr.20160126153212.78"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -141,6 +146,9 @@
 &lt;&lt; docstring &gt;&gt;
 
 import ast
+from collections import OrderedDict
+    # We had better by using Python 2.7 or above.
+    # Otherwise, the configparser will give random order for patterns.
 try:
     import ConfigParser as configparser # Python 2
 except ImportError:
@@ -1156,6 +1164,7 @@ def __init__ (self):
     # Type substitution dicts, set by config sections...
     self.args_d = {} # [Arg Types]
     self.def_pattern_d = {} # [Def Name Patterns]
+    self.def_pattern_list = [] # To preserve order.
     self.return_regex_d = {} # [Return Regex Patterns]
     self.return_pattern_d = {} # [Return Balanced Patterns]
    </t>
@@ -1177,7 +1186,6 @@ def make_stub_file(self, fn):
     self.output_fn = os.path.normpath(out_fn)
     s = open(fn).read()
     node = ast.parse(s,filename=fn,mode='exec')
-    dicts = (self.args_d, self.def_pattern_d, self.return_pattern_d)
     StubTraverser(controller=self).run(node)
 </t>
 <t tx="ekr.20160126153212.76">
@@ -1213,12 +1221,15 @@ def scan_command_line(self):
         help='trace argument substitutions')
     add('-v', '--verbose', action='store_true', default=False,
         help='trace configuration settings')
+    add('-w', '--warn', action='store_true', default=False,
+        help='warn about unannoted args')
     # Parse the options
     options, args = parser.parse_args()
     # Handle the options...
-    self.trace = self.trace or options.trace
     self.overwrite = options.overwrite
+    self.trace = self.trace or options.trace
     self.verbose = self.verbose or options.verbose
+    self.warn = options.warn
     if options.fn:
         self.config_fn = options.fn
     if options.dir:
@@ -1235,12 +1246,12 @@ def scan_command_line(self):
         args = [self.finalize(z) for z in args]
         if args:
             self.files = args</t>
-<t tx="ekr.20160126153212.78">
-def scan_options(self):
+<t tx="ekr.20160126153212.78">def scan_options(self):
     '''Set all configuration-related ivars.'''
     verbose = self.verbose
-    parser = configparser.ConfigParser()
-    parser.optionxform=str
+    parser = configparser.ConfigParser(dict_type=OrderedDict)
+        # Requires Python 2.7
+    parser.optionxform = str
     fn = self.finalize(self.config_fn)
     if os.path.exists(fn):
         if verbose:
@@ -1276,7 +1287,7 @@ def scan_options(self):
             print('output directory not found: %s\n' % output_dir)
             self.output_directory = None # inhibit run().
     if 'prefix_lines' in parser.options('Global'):
-        prefix = parser.get('Global','prefix_lines')
+        prefix = parser.get('Global', 'prefix_lines')
         self.prefix_lines = [z.strip() for z in prefix.split('\n') if z.strip()]
         if verbose:
             print('Prefix lines...\n')
@@ -1286,29 +1297,33 @@ def scan_options(self):
     self.args_d = self.scan_types(
         parser, 'Arg Types')
     self.def_pattern_d = self.scan_types(
-        parser, 'Def Name Patterns', )
+        parser, 'Def Name Patterns', aList=self.def_pattern_list)
     self.return_pattern_d = self.scan_types(
         parser, 'Return Balanced Patterns')
     self.return_regex_d = self.scan_types(
         parser, 'Return Regex Patterns')
 </t>
 <t tx="ekr.20160126153212.79">
-def scan_types(self, parser, section_name):
-    
+def scan_types(self, parser, section_name, aList=None):
     verbose = self.verbose
     d = {}
     if section_name in parser.sections():
         if verbose: print('%s...\n' % section_name)
-        for key in sorted(parser.options(section_name)):
+        # 2016/01/27: do not sort the options! Order is important.
+        for key in parser.options(section_name):
             value = parser.get(section_name, key)
-            d [key] = value
+            d[key] = value
+            # 2016/01/27: preserve order in this dict.
+            if aList is not None:
+                aList.append(key)
             if verbose: print('%s: %s' % (key, value))
         if verbose: print('')
     elif verbose:
         print('no section: %s' % section_name)
         print(parser.sections())
         print('')
-    return d</t>
+    return d
+</t>
 <t tx="ekr.20160126153212.8">
 # ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
 
@@ -1372,15 +1387,17 @@ def __init__(self, controller):
     self.level = 0
     self.output_file = None
     self.returns = []
+    self.warn_list = []
     # Copies of controller ivars...
     self.output_fn = c.output_fn
     self.overwrite = c.overwrite
     self.prefix_lines = c.prefix_lines
     self.trace = c.trace
-
+    self.warn = c.warn
     # Copies of controller dicts...
     self.args_d = c.args_d # [Arg Types]
     self.def_pattern_d = c.def_pattern_d # [Def Name Patterns]
+    self.def_pattern_list = c.def_pattern_list
     self.return_regex_d = c.return_regex_d # [Return Regex Patterns]
     self.return_pattern_d = c.return_pattern_d # [Return Balanced Patterns]
 </t>
@@ -1520,12 +1537,16 @@ def format_returns(self, node):
     # Shortcut everything if node.name matches any
     # pattern in self.def_pattern_d.
     trace = self.trace
-    d = self.def_pattern_d
+    d, aList = self.def_pattern_d, self.def_pattern_list
     if self.class_name_stack:
         name = '%s.%s' % (self.class_name_stack[-1], node.name)
+        # 2016/01/27: All ctors should return None
+        if node.name == '__init__':
+            return 'None'
     else:
         name = node.name
-    for pattern in d.keys():
+    # print('==== %s' % aList)
+    for pattern in aList: # 2016/01/27: Preserve the order of the patterns.
         match = re.search(pattern, name)
         if match and match.group(0) == name:
             t = d.get(pattern)
@@ -1557,7 +1578,13 @@ def format_returns(self, node):
 def munge_arg(self, s):
     '''Add an annotation for s if possible.'''
     a = self.args_d.get(s)
-    return '%s: %s' % (s, a) if a else s
+    if a:
+        return '%s: %s' % (s, a)
+    else:
+        if self.warn and s != 'self' and s not in self.warn_list:
+            self.warn_list.append(s)
+            print('no annotation for %s' % s)
+        return s
 </t>
 <t tx="ekr.20160126153212.92">
 def munge_ret(self, name, s):
@@ -1801,7 +1828,8 @@ str%str: str
     fn = os.path.normpath(fn)
     return fn
 </t>
-<t tx="ekr.20160126172747.1">def pdb():
+<t tx="ekr.20160126172747.1">
+def pdb():
     '''Invoke pdb in a way that can be used safely in Leo.'''
     try:
         import leo.core.leoGlobals as g
@@ -1810,5 +1838,6 @@ str%str: str
         import pdb
         pdb.set_trace()
 </t>
+<t tx="ekr.20160127110237.1"></t>
 </tnodes>
 </leo_file>

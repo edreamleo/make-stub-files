@@ -323,6 +323,9 @@ January 2016
 '''
 
 import ast
+from collections import OrderedDict
+    # We had better by using Python 2.7 or above.
+    # Otherwise, the configparser will give random order for patterns.
 try:
     import ConfigParser as configparser # Python 2
 except ImportError:
@@ -958,6 +961,7 @@ class StandAloneMakeStubFile:
         # Type substitution dicts, set by config sections...
         self.args_d = {} # [Arg Types]
         self.def_pattern_d = {} # [Def Name Patterns]
+        self.def_pattern_list = [] # To preserve order.
         self.return_regex_d = {} # [Return Regex Patterns]
         self.return_pattern_d = {} # [Return Balanced Patterns]
        
@@ -985,7 +989,6 @@ class StandAloneMakeStubFile:
         self.output_fn = os.path.normpath(out_fn)
         s = open(fn).read()
         node = ast.parse(s,filename=fn,mode='exec')
-        dicts = (self.args_d, self.def_pattern_d, self.return_pattern_d)
         StubTraverser(controller=self).run(node)
 
     def run(self):
@@ -1019,12 +1022,15 @@ class StandAloneMakeStubFile:
             help='trace argument substitutions')
         add('-v', '--verbose', action='store_true', default=False,
             help='trace configuration settings')
+        add('-w', '--warn', action='store_true', default=False,
+            help='warn about unannoted args')
         # Parse the options
         options, args = parser.parse_args()
         # Handle the options...
-        self.trace = self.trace or options.trace
         self.overwrite = options.overwrite
+        self.trace = self.trace or options.trace
         self.verbose = self.verbose or options.verbose
+        self.warn = options.warn
         if options.fn:
             self.config_fn = options.fn
         if options.dir:
@@ -1041,12 +1047,12 @@ class StandAloneMakeStubFile:
             args = [self.finalize(z) for z in args]
             if args:
                 self.files = args
-
     def scan_options(self):
         '''Set all configuration-related ivars.'''
         verbose = self.verbose
-        parser = configparser.ConfigParser()
-        parser.optionxform=str
+        parser = configparser.ConfigParser(dict_type=OrderedDict)
+            # Requires Python 2.7
+        parser.optionxform = str
         fn = self.finalize(self.config_fn)
         if os.path.exists(fn):
             if verbose:
@@ -1082,7 +1088,7 @@ class StandAloneMakeStubFile:
                 print('output directory not found: %s\n' % output_dir)
                 self.output_directory = None # inhibit run().
         if 'prefix_lines' in parser.options('Global'):
-            prefix = parser.get('Global','prefix_lines')
+            prefix = parser.get('Global', 'prefix_lines')
             self.prefix_lines = [z.strip() for z in prefix.split('\n') if z.strip()]
             if verbose:
                 print('Prefix lines...\n')
@@ -1092,21 +1098,24 @@ class StandAloneMakeStubFile:
         self.args_d = self.scan_types(
             parser, 'Arg Types')
         self.def_pattern_d = self.scan_types(
-            parser, 'Def Name Patterns', )
+            parser, 'Def Name Patterns', aList=self.def_pattern_list)
         self.return_pattern_d = self.scan_types(
             parser, 'Return Balanced Patterns')
         self.return_regex_d = self.scan_types(
             parser, 'Return Regex Patterns')
 
-    def scan_types(self, parser, section_name):
-        
+    def scan_types(self, parser, section_name, aList=None):
         verbose = self.verbose
         d = {}
         if section_name in parser.sections():
             if verbose: print('%s...\n' % section_name)
-            for key in sorted(parser.options(section_name)):
+            # 2016/01/27: do not sort the options! Order is important.
+            for key in parser.options(section_name):
                 value = parser.get(section_name, key)
-                d [key] = value
+                d[key] = value
+                # 2016/01/27: preserve order in this dict.
+                if aList is not None:
+                    aList.append(key)
                 if verbose: print('%s: %s' % (key, value))
             if verbose: print('')
         elif verbose:
@@ -1155,15 +1164,17 @@ class StubTraverser (ast.NodeVisitor):
         self.level = 0
         self.output_file = None
         self.returns = []
+        self.warn_list = []
         # Copies of controller ivars...
         self.output_fn = c.output_fn
         self.overwrite = c.overwrite
         self.prefix_lines = c.prefix_lines
         self.trace = c.trace
-
+        self.warn = c.warn
         # Copies of controller dicts...
         self.args_d = c.args_d # [Arg Types]
         self.def_pattern_d = c.def_pattern_d # [Def Name Patterns]
+        self.def_pattern_list = c.def_pattern_list
         self.return_regex_d = c.return_regex_d # [Return Regex Patterns]
         self.return_pattern_d = c.return_pattern_d # [Return Balanced Patterns]
 
@@ -1278,12 +1289,16 @@ class StubTraverser (ast.NodeVisitor):
         # Shortcut everything if node.name matches any
         # pattern in self.def_pattern_d.
         trace = self.trace
-        d = self.def_pattern_d
+        d, aList = self.def_pattern_d, self.def_pattern_list
         if self.class_name_stack:
             name = '%s.%s' % (self.class_name_stack[-1], node.name)
+            # 2016/01/27: All ctors should return None
+            if node.name == '__init__':
+                return 'None'
         else:
             name = node.name
-        for pattern in d.keys():
+        # print('==== %s' % aList)
+        for pattern in aList: # 2016/01/27: Preserve the order of the patterns.
             match = re.search(pattern, name)
             if match and match.group(0) == name:
                 t = d.get(pattern)
@@ -1314,7 +1329,13 @@ class StubTraverser (ast.NodeVisitor):
     def munge_arg(self, s):
         '''Add an annotation for s if possible.'''
         a = self.args_d.get(s)
-        return '%s: %s' % (s, a) if a else s
+        if a:
+            return '%s: %s' % (s, a)
+        else:
+            if self.warn and s != 'self' and s not in self.warn_list:
+                self.warn_list.append(s)
+                print('no annotation for %s' % s)
+            return s
 
     def munge_ret(self, name, s):
         '''replace a return value by a type if possible.'''
@@ -1480,6 +1501,7 @@ def main():
     controller.scan_options()
     controller.run()
     print('done')
+
 def pdb():
     '''Invoke pdb in a way that can be used safely in Leo.'''
     try:
