@@ -1160,7 +1160,7 @@ class StubTraverser (ast.NodeVisitor):
         self.overwrite = c.overwrite
         self.prefix_lines = c.prefix_lines
         self.trace = c.trace
-        self.verbose = c.verbose
+
         # Copies of controller dicts...
         self.args_d = c.args_d # [Arg Types]
         self.def_pattern_d = c.def_pattern_d # [Def Name Patterns]

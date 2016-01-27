@@ -11,6 +11,7 @@
 <find_panel_settings/>
 <vnodes>
 <v t="ekr.20160126153016.3"><vh>Startup</vh></v>
+<v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160126153212.2"><vh>&lt;&lt; docstring &gt;&gt;</vh></v>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
@@ -132,7 +133,6 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
-<v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
 <v t="ekr.20160126153921.1"><vh>@edit readme.md</vh></v>
 </vnodes>
 <tnodes>
@@ -1377,7 +1377,7 @@ def __init__(self, controller):
     self.overwrite = c.overwrite
     self.prefix_lines = c.prefix_lines
     self.trace = c.trace
-    self.verbose = c.verbose
+
     # Copies of controller dicts...
     self.args_d = c.args_d # [Arg Types]
     self.def_pattern_d = c.def_pattern_d # [Def Name Patterns]
