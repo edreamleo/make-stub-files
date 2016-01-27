@@ -112,14 +112,13 @@
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
 <v t="ekr.20160126153212.84"><vh>st.indent &amp; out</vh></v>
 <v t="ekr.20160126153212.85"><vh>st.run</vh></v>
-<v t="ekr.20160126153212.86"><vh>st.Visitors</vh>
-<v t="ekr.20160126153212.87"><vh>st.ClassDef</vh></v>
-<v t="ekr.20160126153212.88"><vh>st.FunctionDef &amp; helpers</vh>
+<v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
+<v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
 <v t="ekr.20160126153212.89"><vh>format_arguments</vh></v>
 <v t="ekr.20160126153212.90"><vh>format_returns</vh></v>
 <v t="ekr.20160126153212.91"><vh>munge_arg</vh></v>
 <v t="ekr.20160126153212.92"><vh>munge_ret &amp; helpers</vh>
-<v t="ekr.20160126153212.93"><vh>match_args</vh></v>
+<v t="ekr.20160126153212.93"><vh>match_types</vh></v>
 <v t="ekr.20160126153212.94"><vh>match_balanced_patterns &amp; helpers</vh>
 <v t="ekr.20160126153212.95"><vh>match_return_patterns</vh></v>
 <v t="ekr.20160126153212.96"><vh>match_return_pattern</vh></v>
@@ -128,16 +127,10 @@
 <v t="ekr.20160126153212.98"><vh>match_regex_patterns</vh></v>
 </v>
 </v>
-<v t="ekr.20160126153212.99"><vh>st.Return</vh></v>
-</v>
+<v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
 </v>
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
-</v>
-<v t="ekr.20160127110237.1"><vh>recent changes</vh>
-<v t="ekr.20160126153212.83"></v>
-<v t="ekr.20160126153212.88"></v>
-<v t="ekr.20160126153212.78"></v>
 </v>
 </vnodes>
 <tnodes>
@@ -1432,9 +1425,6 @@ def run(self, node):
         print('output directory not not found: %s' % dir_)
 
 </t>
-<t tx="ekr.20160126153212.86">
-# Visitors...
-</t>
 <t tx="ekr.20160126153212.87">
 # ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
 
@@ -1529,7 +1519,12 @@ def do_FunctionDef(self, node):
 </t>
 <t tx="ekr.20160126153212.90">
 def format_returns(self, node):
-    '''Calculate the return type.'''
+    '''
+    Calculate the return type:
+    - Return None if there are no return statements.
+    - Return the entry in def_pattern_d if there is a match.
+    - Otherwise, return a list of return values.
+    '''
     
     def split(s):
         return '\n     ' + self.indent(s) if len(s) &gt; 30 else s
@@ -1545,14 +1540,19 @@ def format_returns(self, node):
             return 'None'
     else:
         name = node.name
-    # print('==== %s' % aList)
+    # Step 1: Return None if there are no return statements.
+    if trace and self.returns:
+        print('format_returns', name, self.returns)
+    if not [z for z in self.returns if z != None]:
+        return 'None'
+    # Step 2: Return the given type if [Def Name Patterns] matches name. 
     for pattern in aList: # 2016/01/27: Preserve the order of the patterns.
         match = re.search(pattern, name)
         if match and match.group(0) == name:
             t = d.get(pattern)
             if trace: print('*name pattern %s: %s -&gt; %s' % (pattern, name, t))
             return t
-
+    # Step 3: munge each return value, and merge them.
     r = [self.format(z) for z in self.returns]
     # if r: print(r)
     r = [self.munge_ret(name, z) for z in r]
@@ -1577,11 +1577,18 @@ def format_returns(self, node):
 <t tx="ekr.20160126153212.91">
 def munge_arg(self, s):
     '''Add an annotation for s if possible.'''
-    a = self.args_d.get(s)
+    if s == 'self':
+        return s
+    d = self.args_d
+    a = d.get(s)
     if a:
         return '%s: %s' % (s, a)
+    elif '.*' in d.keys():
+        # A hack: '.*' represent defaults.
+        a = d.get('.*')
+        return '%s: %s' % (s, a)
     else:
-        if self.warn and s != 'self' and s not in self.warn_list:
+        if self.warn and s not in self.warn_list:
             self.warn_list.append(s)
             print('no annotation for %s' % s)
         return s
@@ -1591,7 +1598,7 @@ def munge_ret(self, name, s):
     '''replace a return value by a type if possible.'''
     trace = self.trace
     if trace: print('munge_ret ==== %s' % name)
-    s = self.match_args(name, s)
+    s = self.match_types(name, s)
         # Do matches in [Arg Types]
     s = self.match_balanced_patterns(name, s)
         # Repeatedly do all matches in [Return Balance Patterns]
@@ -1601,25 +1608,33 @@ def munge_ret(self, name, s):
     return s
 </t>
 <t tx="ekr.20160126153212.93">
-def match_args(self, name, s):
-    '''In s, make substitutions (word only) given in [Arg Types].'''
+def match_types(self, name, s):
+    '''
+    In s, make substitutions given in [Arg Types]
+    These can be regex substitutions, but they must match word boundaries.
+    As a special case, this code ignores the .* pattern.
+    '''
     trace = self.trace
     d = self.args_d
     count = 0 # prevent any possibility of endless loops
     found = True
     while found and count &lt; 40:
         found = False
-        for arg in d.keys():
-            match = re.search(r'\b'+arg+r'\b', s)
-            if match:
-                i = match.start(0)
-                t = d.get(arg)
-                s2 = s[:i] + t + s[i + len(arg):]
-                if trace:
-                    print('arg:  %s %s ==&gt; %s' % (arg, s, s2))
-                s = s2
-                count += 1
-                found = True
+        for pattern in d.keys():
+            if pattern == '.*':
+                # Do *not* use the default in return types.
+                pass ### return d.get(pattern)
+            else:
+                match = re.search(r'\b'+pattern+r'\b', s)
+                if match:
+                    i = match.start(0)
+                    t = d.get(pattern)
+                    s2 = s[:i] + t + s[i + len(pattern):]
+                    if trace:
+                        print('pattern:  %s %s ==&gt; %s' % (pattern, s, s2))
+                    s = s2
+                    count += 1
+                    found = True
     return s
 </t>
 <t tx="ekr.20160126153212.94">
@@ -1838,6 +1853,5 @@ def pdb():
         import pdb
         pdb.set_trace()
 </t>
-<t tx="ekr.20160127110237.1"></t>
 </tnodes>
 </leo_file>

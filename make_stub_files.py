@@ -1207,8 +1207,6 @@ class StubTraverser (ast.NodeVisitor):
             print('output directory not not found: %s' % dir_)
 
 
-    # Visitors...
-
     # ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
 
     def visit_ClassDef(self, node):
@@ -1281,7 +1279,12 @@ class StubTraverser (ast.NodeVisitor):
         return ', '.join(result)
 
     def format_returns(self, node):
-        '''Calculate the return type.'''
+        '''
+        Calculate the return type:
+        - Return None if there are no return statements.
+        - Return the entry in def_pattern_d if there is a match.
+        - Otherwise, return a list of return values.
+        '''
         
         def split(s):
             return '\n     ' + self.indent(s) if len(s) > 30 else s
@@ -1297,14 +1300,19 @@ class StubTraverser (ast.NodeVisitor):
                 return 'None'
         else:
             name = node.name
-        # print('==== %s' % aList)
+        # Step 1: Return None if there are no return statements.
+        if trace and self.returns:
+            print('format_returns', name, self.returns)
+        if not [z for z in self.returns if z != None]:
+            return 'None'
+        # Step 2: Return the given type if [Def Name Patterns] matches name. 
         for pattern in aList: # 2016/01/27: Preserve the order of the patterns.
             match = re.search(pattern, name)
             if match and match.group(0) == name:
                 t = d.get(pattern)
                 if trace: print('*name pattern %s: %s -> %s' % (pattern, name, t))
                 return t
-
+        # Step 3: munge each return value, and merge them.
         r = [self.format(z) for z in self.returns]
         # if r: print(r)
         r = [self.munge_ret(name, z) for z in r]
@@ -1328,11 +1336,18 @@ class StubTraverser (ast.NodeVisitor):
 
     def munge_arg(self, s):
         '''Add an annotation for s if possible.'''
-        a = self.args_d.get(s)
+        if s == 'self':
+            return s
+        d = self.args_d
+        a = d.get(s)
         if a:
             return '%s: %s' % (s, a)
+        elif '.*' in d.keys():
+            # A hack: '.*' represent defaults.
+            a = d.get('.*')
+            return '%s: %s' % (s, a)
         else:
-            if self.warn and s != 'self' and s not in self.warn_list:
+            if self.warn and s not in self.warn_list:
                 self.warn_list.append(s)
                 print('no annotation for %s' % s)
             return s
@@ -1341,7 +1356,7 @@ class StubTraverser (ast.NodeVisitor):
         '''replace a return value by a type if possible.'''
         trace = self.trace
         if trace: print('munge_ret ==== %s' % name)
-        s = self.match_args(name, s)
+        s = self.match_types(name, s)
             # Do matches in [Arg Types]
         s = self.match_balanced_patterns(name, s)
             # Repeatedly do all matches in [Return Balance Patterns]
@@ -1350,25 +1365,33 @@ class StubTraverser (ast.NodeVisitor):
         if trace: print('munge_reg -----: %s' % s)
         return s
 
-    def match_args(self, name, s):
-        '''In s, make substitutions (word only) given in [Arg Types].'''
+    def match_types(self, name, s):
+        '''
+        In s, make substitutions given in [Arg Types]
+        These can be regex substitutions, but they must match word boundaries.
+        As a special case, this code ignores the .* pattern.
+        '''
         trace = self.trace
         d = self.args_d
         count = 0 # prevent any possibility of endless loops
         found = True
         while found and count < 40:
             found = False
-            for arg in d.keys():
-                match = re.search(r'\b'+arg+r'\b', s)
-                if match:
-                    i = match.start(0)
-                    t = d.get(arg)
-                    s2 = s[:i] + t + s[i + len(arg):]
-                    if trace:
-                        print('arg:  %s %s ==> %s' % (arg, s, s2))
-                    s = s2
-                    count += 1
-                    found = True
+            for pattern in d.keys():
+                if pattern == '.*':
+                    # Do *not* use the default in return types.
+                    pass ### return d.get(pattern)
+                else:
+                    match = re.search(r'\b'+pattern+r'\b', s)
+                    if match:
+                        i = match.start(0)
+                        t = d.get(pattern)
+                        s2 = s[:i] + t + s[i + len(pattern):]
+                        if trace:
+                            print('pattern:  %s %s ==> %s' % (pattern, s, s2))
+                        s = s2
+                        count += 1
+                        found = True
         return s
 
     def match_balanced_patterns(self, name, s):
