@@ -95,6 +95,7 @@
 </v>
 <v t="ekr.20160126153212.73"><vh>class StandAloneMakeStubFile</vh>
 <v t="ekr.20160126153212.74"><vh>msf.ctor</vh></v>
+<v t="ekr.20160126165907.1"><vh>msf.finalize</vh></v>
 <v t="ekr.20160126153212.75"><vh>msf.make_stub_file</vh></v>
 <v t="ekr.20160126153212.76"><vh>msf.run</vh></v>
 <v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
@@ -129,6 +130,7 @@
 </v>
 </v>
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
+<v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
 <v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
 <v t="ekr.20160126153921.1"><vh>@edit readme.md</vh></v>
@@ -1142,14 +1144,13 @@ def __init__ (self):
     '''Ctor for StandAloneMakeStubFile class.'''
     self.options = {}
     # Ivars set on the command line...
-    self.config_fn = os.path.normpath(os.path.expanduser(
-        '~/stubs/make_stub_files.cfg'))
+    self.config_fn = self.finalize('~/stubs/make_stub_files.cfg')
     self.files = [] # May also be set in the config file.
     self.trace = False # Trace pattern substitutions.
     self.verbose = False # Trace config arguments.
     # Ivars set in the config file...
     self.output_fn = None
-    self.output_directory = os.path.normpath(os.path.expanduser('~/stubs'))
+    self.output_directory = self.finalize('~/stubs')
     self.overwrite = False
     self.prefix_lines = []
     # Type substitution dicts, set by config sections...
@@ -1171,7 +1172,7 @@ def make_stub_file(self, fn):
         print('not found', fn)
         return
     base_fn = os.path.basename(fn)
-    out_fn = os.path.join(self.output_directory,base_fn)
+    out_fn = os.path.join(self.output_directory, base_fn)
     out_fn = out_fn[:-3] + '.pyi'
     self.output_fn = os.path.normpath(out_fn)
     s = open(fn).read()
@@ -1181,15 +1182,23 @@ def make_stub_file(self, fn):
 </t>
 <t tx="ekr.20160126153212.76">
 def run(self):
-    '''Make stub files for all files.'''
-    if os.path.exists(self.output_directory):
-        for fn in self.files:
-            self.make_stub_file(fn)
+    '''
+    Make stub files for all files.
+    Do nothing if the output directory does not exist.
+    '''
+    dir_ = self.output_directory
+    if dir_:
+        if os.path.exists(dir_):
+            for fn in self.files:
+                self.make_stub_file(fn)
+        else:
+            print('output directory not found: %s' % dir_)
+    else:
+        print('no output directory')
 </t>
 <t tx="ekr.20160126153212.77">
 def scan_command_line(self):
     '''Set ivars from command-line arguments.'''
-    # print('scan_command_line sys.argv: %s' % sys.argv)
     # This automatically implements the --help option.
     usage = "usage: make_stub_files.py [options] file1, file2, ..."
     parser = optparse.OptionParser(usage=usage)
@@ -1206,7 +1215,6 @@ def scan_command_line(self):
         help='trace configuration settings')
     # Parse the options
     options, args = parser.parse_args()
-    # print('scan_command_line args: %s' % args)
     # Handle the options...
     self.trace = self.trace or options.trace
     self.overwrite = options.overwrite
@@ -1215,63 +1223,57 @@ def scan_command_line(self):
         self.config_fn = options.fn
     if options.dir:
         dir_ = options.dir
-        dir_ = os.path.normpath(os.path.expanduser(dir_))
+        dir_ = self.finalize(dir_)
         if os.path.exists(dir_):
             self.output_directory = dir_
         else:
-            print('--dir: does not exist: %s, using %s' % (
-                dir_, self.output_directory))
+            print('--dir: directory does not exist: %s' % dir_)
+            print('exiting')
+            sys.exit(1)
     # If any files remain, set self.files.
     if args:
-        args = [os.path.normpath(os.path.expanduser(z)) for z in args]
-        # args = [z for z in args if os.path.exists(z)]
+        args = [self.finalize(z) for z in args]
         if args:
-            self.files = args
-        # print('command-line files: %s' % args)
-</t>
+            self.files = args</t>
 <t tx="ekr.20160126153212.78">
 def scan_options(self):
     '''Set all configuration-related ivars.'''
     verbose = self.verbose
     parser = configparser.ConfigParser()
     parser.optionxform=str
-    fn = os.path.expanduser(self.config_fn)
-    fn = os.path.normpath(fn)
-    if not os.path.exists(fn):
-        print('not found: %s' % fn)
+    fn = self.finalize(self.config_fn)
+    if os.path.exists(fn):
+        if verbose:
+            print('\nconfiguration file: %s\n' % fn)
+    else:
+        print('\nconfiguration file not found: %s' % fn)
         return
-    if verbose: print('\nconfiguration file: %s\n' % fn)
     parser.read(fn)
     if self.files:
-        # if verbose: print('using command-line files')
-        files2 = []
-        for z in self.files:
-            files2.extend(glob.glob(os.path.expanduser(z)))
-        # self.files = [z for z in files2 if os.path.exists(z)]
-        self.files = files2
-        if verbose:
-            print('Files...\n')
-            for z in self.files:
-                print(z)
-            print('')
+        files_source = 'command-line'
+        files = self.files
     else:
+        files_source = 'config file'
         files = parser.get('Global', 'files')
         files = [z.strip() for z in files.split('\n') if z.strip()]
-        files2 = []
-        for z in files:
-            files2.extend(glob.glob(os.path.expanduser(z)))
-        self.files = [z for z in files2 if os.path.exists(z)]
-        # print('Files...\n%s' % '\n'.join(self.files))
+    files2 = []
+    for z in files:
+        files2.extend(glob.glob(self.finalize(z)))
+    self.files = [z for z in files2 if z and os.path.exists(z)]
+    if verbose:
+        print('Files (from %s)...\n' % files_source)
+        for z in self.files:
+            print(z)
+        print('')
     if 'output_directory' in parser.options('Global'):
         s = parser.get('Global', 'output_directory')
-        output_dir = os.path.normpath(os.path.expanduser(s))
+        output_dir = self.finalize(s)
         if os.path.exists(output_dir):
             self.output_directory = output_dir
             if verbose:
-                print('output_dir: %s\n' % self.output_directory)
+                print('output directory: %s\n' % output_dir)
         else:
-            if verbose:
-                print('output_dir not found: %s\n' % self.output_directory)
+            print('output directory not found: %s\n' % output_dir)
             self.output_directory = None # inhibit run().
     if 'prefix_lines' in parser.options('Global'):
         prefix = parser.get('Global','prefix_lines')
@@ -1401,7 +1403,7 @@ def run(self, node):
     dir_ = os.path.dirname(fn)
     if os.path.exists(fn) and not self.overwrite:
         print('file exists: %s' % fn)
-    elif os.path.exists(dir_):
+    elif not dir_ or os.path.exists(dir_):
         self.output_file = open(fn, 'w')
         for z in self.prefix_lines or []:
             self.out(z.strip())
@@ -1410,7 +1412,7 @@ def run(self, node):
         self.output_file = None
         print('wrote: %s' % fn)
     else:
-        print('not found: %s' % dir_)
+        print('output directory not not found: %s' % dir_)
 
 </t>
 <t tx="ekr.20160126153212.86">
@@ -1791,6 +1793,21 @@ str%str: str
 #   regex: replacement
 
 .*__name__: str
+</t>
+<t tx="ekr.20160126165907.1">def finalize(self, fn):
+    '''Finalize and regularize a filename.'''
+    fn = os.path.expanduser(fn)
+    fn = os.path.abspath(fn)
+    fn = os.path.normpath(fn)
+    return fn
+</t>
+<t tx="ekr.20160126172747.1">def pdb():
+    '''Invoke pdb in a way that can be used in Leo.'''
+    try:
+        import leo.core.leoGlobals as g
+        g.pdb()
+    except ImportError:
+        pass
 </t>
 </tnodes>
 </leo_file>
