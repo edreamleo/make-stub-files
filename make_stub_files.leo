@@ -1802,12 +1802,13 @@ str%str: str
     return fn
 </t>
 <t tx="ekr.20160126172747.1">def pdb():
-    '''Invoke pdb in a way that can be used in Leo.'''
+    '''Invoke pdb in a way that can be used safely in Leo.'''
     try:
         import leo.core.leoGlobals as g
         g.pdb()
     except ImportError:
-        pass
+        import pdb
+        pdb.set_trace()
 </t>
 </tnodes>
 </leo_file>

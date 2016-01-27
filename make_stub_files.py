@@ -1481,12 +1481,13 @@ def main():
     controller.run()
     print('done')
 def pdb():
-    '''Invoke pdb in a way that can be used in Leo.'''
+    '''Invoke pdb in a way that can be used safely in Leo.'''
     try:
         import leo.core.leoGlobals as g
         g.pdb()
     except ImportError:
-        pass
+        import pdb
+        pdb.set_trace()
 
 if __name__ == "__main__":
     main()
