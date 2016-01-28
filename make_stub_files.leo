@@ -12,7 +12,11 @@
 <vnodes>
 <v t="ekr.20160126153016.3"><vh>Startup</vh></v>
 <v t="ekr.20160126153921.1"><vh>@edit readme.md</vh></v>
+<v t="ekr.20160128104714.1"><vh>Config files</vh>
+<v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
+<v t="ekr.20160128104639.1"><vh>@clean msf.cfg</vh></v>
 <v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
+</v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160126153212.2"><vh>&lt;&lt; docstring &gt;&gt;</vh></v>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
@@ -1775,7 +1779,7 @@ def visit_Return(self, node):
     self.returns.append(node.value)
 </t>
 <t tx="ekr.20160126153220.1"># An example configuration file for make_stub_files.py.
-# By default, this is ~/stubs/make_stub_files.cfg.
+# By default, make_stub_files.py uses ~/stubs/make_stub_files.cfg.
 # Can be changed using the --config=path command-line option.
 
 [Global]
@@ -1784,55 +1788,71 @@ files:
     
     # Files to be used *only* if no files are given on the command line.
     # glob.glob wildcards are supported.
-
-    # c:/leo.repo/leo-editor/leo/core/leoAst.py
-    # c:/leo.repo/leo-editor/leo/core/*.py
-    # c:/leo.repo/leo-editor/plugins/*.py
     
 output_directory: ~/stubs
     
 prefix_lines:
     # Lines to be inserted at the start of each stub file.
-    from typing import TypeVar, Iterable, Tuple
+
+    from typing import TypeVar
     T = TypeVar('T', int, float, complex)
+    
+# Notes about patterns used below:
+#
+#  **Balanced patterns** contain either (*), [*], or {*}.
+#  Unlike regular expressions, balanced patterns match only balanced brackets.
+#
+#  Both regex and balanced patterns may appear in each section.
+#  However, balanced patterns will never match argument names.
+#
+#  Patterns are matched in the order they appear in each section,
+#  but the .* pattern (if present) will match last, regardless of its
+#  position in the section.
+    
+[Def Name Patterns]
 
-[Arg Types]
+# These regex patterns give the return types of functions or methods.
+#
+# Patterns for methods should match class_name.method_name.
+#
+# Patterns in this section *override* all other patterns,
+# so you should use these patterns only if:
+#
+# - No other pattern properly handles the function or method, or
+#
+# - The pattern specifies functions that should all return the same value.
+#   For example, all ast tree traversers should have the same signatures.
+#
+# It may be unwise to use .* in this section, but the choice is yours.
 
-# Patterns to be applied both argument lists *and* return values.
-# Lines have the form:
-#   verbatim-pattern: replacement
-# For argument lists, the replacement becomes the annotation.
-# For return values, the replacement *replaces* the pattern.
+[Argument Patterns]
 
-aList: Sequence
-aList2: Sequence
-c: Commander
+# The regex patterns in this section apply only when assigning types
+# to *arguments* to functions or methods. Patterns match argument names.
+# Typically, most patterns can be put [General Patterns] section instead.
+
+[General Patterns]
+
+# The patterns in this section may be either regex or balanced patterns.
+# Patterns in this section are applied both to arguments and return expressions.
+# These patterns are applied *once* to argument names and *repeatedly* to
+# return types until no further matches can be made.
+
+aList[1-3]?: Sequence
 i: int
 j: int
 k: int
 node: ast.Ast
-p: Position
-s: str
-s2: str
-v: VNode
+s[1-3]?: str
 
-[Def Name Patterns]
+[Return Patterns]
 
-# Regular expressions specifying names of functions or methods.
-# Methods names should have the form class_name.method_name.
-# These  patterns are matched *before* the patterns in the
-# [Return Balanced Patterns] and [Return Regex Patterns] sections.
+# The patterns in this section may be either regex or balanced patterns.
+# Patterns in this section are applied only to return expressions.
+# These patterns are applied *repeatedly* to return expressions
+# until no further matches can be made.
 
-AstFormatter.do_.*: str
-StubTraverser.format_returns: str
-StubTraverser.indent: str
-
-[Return Balanced Patterns]
-
-# Balanced patterns to be applied to return expressions.
-# Balanced patterns match verbatim, except that the patterns:
-#   (*), [*] and {*}
-# only match *balanced* parens, square and curly brackets.
+# Balanced patterns...
 
 repr(*): str
 str.join(*): str
@@ -1840,11 +1860,7 @@ str.replace(*): str
 str%(*): str
 str%str: str
 
-[Return Regex Patterns]
-
-# Regular expression patterns to be applied to return expressions.
-# Each line has the form:
-#   regex: replacement
+# Regex patterns...
 
 .*__name__: str
 </t>
@@ -1962,5 +1978,143 @@ def full_balanced_match(self, pattern, s, i):
         print('full_match %s -&gt; %s' % (pattern, s[i1:i]))
     return j if found else None
 </t>
+<t tx="ekr.20160128102557.1"># An example configuration file for make_stub_files.py.
+# By default, make_stub_files.py uses ~/stubs/make_stub_files.cfg.
+# Can be changed using the --config=path command-line option.
+
+[Global]
+
+files:
+    
+    # Files to be used *only* if no files are given on the command line.
+    # glob.glob wildcards are supported.
+    
+output_directory: ~/stubs
+    
+prefix_lines:
+    # Lines to be inserted at the start of each stub file.
+
+    from typing import TypeVar
+    T = TypeVar('T', int, float, complex)
+    
+# Notes about patterns used below:
+#
+#  **Balanced patterns** contain either (*), [*], or {*}.
+#  Unlike regular expressions, balanced patterns match only balanced brackets.
+#
+#  Both regex and balanced patterns may appear in each section.
+#  However, balanced patterns will never match argument names.
+#
+#  Patterns are matched in the order they appear in each section,
+#  but the .* pattern (if present) will match last, regardless of its
+#  position in the section.
+    
+[Def Name Patterns]
+
+# These regex patterns give the return types of functions or methods.
+#
+# Patterns for methods should match class_name.method_name.
+#
+# Patterns in this section *override* all other patterns,
+# so you should use these patterns only if:
+#
+# - No other pattern properly handles the function or method, or
+#
+# - The pattern specifies functions that should all return the same value.
+#   For example, all ast tree traversers should have the same signatures.
+#
+# It may be unwise to use .* in this section, but the choice is yours.
+
+[Argument Patterns]
+
+# The regex patterns in this section apply only when assigning types
+# to *arguments* to functions or methods. Patterns match argument names.
+# Typically, most patterns can be put [General Patterns] section instead.
+
+[General Patterns]
+
+# The patterns in this section may be either regex or balanced patterns.
+# Patterns in this section are applied both to arguments and return expressions.
+# These patterns are applied *once* to argument names and *repeatedly* to
+# return types until no further matches can be made.
+
+aList[1-3]?: Sequence
+i: int
+j: int
+k: int
+node: ast.Ast
+s[1-3]?: str
+
+[Return Patterns]
+
+# The patterns in this section may be either regex or balanced patterns.
+# Patterns in this section are applied only to return expressions.
+# These patterns are applied *repeatedly* to return expressions
+# until no further matches can be made.
+
+# Balanced patterns...
+
+repr(*): str
+str.join(*): str
+str.replace(*): str
+str%(*): str
+str%str: str
+
+# Regex patterns...
+
+.*__name__: str
+</t>
+<t tx="ekr.20160128104639.1">@language config
+
+# A configuration file to make stubs for make_stub_files.py itself.
+
+[Global]
+
+files: make_stub_files.py
+    
+output_directory: .
+    
+prefix_lines:
+    import ast
+    import optparse
+    Node = ast.Node
+    from typing import Dict, Optional, Sequence
+
+[Arg Types]
+
+# Regex patterns are allowed.
+aList: Sequence
+controller: StandAloneMakeStubFile
+fn: str
+i[0-3]*: int
+parser: optparse.OptionParser
+node: Node
+s[0-3]*: str
+strict: bool
+
+# .* represents a default argument type *only*.
+# Defaults in return expressions would mask problems.
+.*: str
+
+# Without the .* default, -w generate warnings for these:
+# delim, fn, name, patter, s, section_name
+
+[Def Name Patterns]
+
+AstFormatter.*: str
+StandAloneMakeStubFile.scan_types: Dict[str, str]
+StubFormatter.*: str
+StubTraverser.format_returns: str
+StubTraverser.match_return_pattern: Optional[str]
+StubTraverser.match_balanced: int
+
+[Return Balanced Patterns]
+
+str%(*): str
+str.join(*): str
+
+[Return Regex Patterns]
+</t>
+<t tx="ekr.20160128104714.1"></t>
 </tnodes>
 </leo_file>
