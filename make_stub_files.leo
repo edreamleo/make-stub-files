@@ -114,17 +114,17 @@
 <v t="ekr.20160126153212.85"><vh>st.run</vh></v>
 <v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
 <v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
-<v t="ekr.20160126153212.89"><vh>format_arguments</vh></v>
-<v t="ekr.20160126153212.90"><vh>format_returns</vh></v>
-<v t="ekr.20160126153212.91"><vh>munge_arg</vh></v>
-<v t="ekr.20160126153212.92"><vh>munge_ret &amp; helpers</vh>
-<v t="ekr.20160126153212.93"><vh>match_types</vh></v>
-<v t="ekr.20160126153212.94"><vh>match_balanced_patterns &amp; helpers</vh>
+<v t="ekr.20160126153212.89"><vh>st.format_arguments</vh></v>
+<v t="ekr.20160126153212.90"><vh>st.format_returns</vh></v>
+<v t="ekr.20160126153212.91"><vh>st.munge_arg (updated)</vh></v>
+<v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helpers</vh>
+<v t="ekr.20160126153212.93"><vh>st.match_types (updated)</vh></v>
+<v t="ekr.20160126153212.94"><vh>st.match_balanced_patterns &amp; helpers</vh>
 <v t="ekr.20160126153212.95"><vh>match_return_patterns</vh></v>
 <v t="ekr.20160126153212.96"><vh>match_return_pattern</vh></v>
 <v t="ekr.20160126153212.97"><vh>match_balanced</vh></v>
 </v>
-<v t="ekr.20160126153212.98"><vh>match_regex_patterns</vh></v>
+<v t="ekr.20160126153212.98"><vh>st.match_regex_patterns</vh></v>
 </v>
 </v>
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
@@ -132,6 +132,10 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
+<v t="ekr.20160126153212.82"></v>
+<v t="ekr.20160126153212.93"></v>
+<v t="ekr.20160126153212.91"></v>
+<v t="ekr.20160127192006.1"><vh>log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1580,13 +1584,19 @@ def munge_arg(self, s):
     if s == 'self':
         return s
     d = self.args_d
-    a = d.get(s)
-    if a:
-        return '%s: %s' % (s, a)
-    elif '.*' in d.keys():
+    for pattern in d.keys():
+        if pattern == '.*':
+            pass # use this only if all other patterns fail.
+        else:
+            # Succeed only if the entire pattern matches.
+            m = re.match(pattern,s)
+            if m and m.end(0) == len(s):
+                t = d.get(pattern)
+                return '%s: %s' % (s, t)
+    if '.*' in d.keys():
         # A hack: '.*' represent defaults.
-        a = d.get('.*')
-        return '%s: %s' % (s, a)
+        t = d.get('.*')
+        return '%s: %s' % (s, t)
     else:
         if self.warn and s not in self.warn_list:
             self.warn_list.append(s)
@@ -1610,33 +1620,27 @@ def munge_ret(self, name, s):
 <t tx="ekr.20160126153212.93">
 def match_types(self, name, s):
     '''
-    In s, make substitutions given in [Arg Types]
-    These can be regex substitutions, but they must match word boundaries.
-    As a special case, this code ignores the .* pattern.
+    In s, repeatedly make regex substitutions in return expression.
+    As a special case, do not match the .* pattern here.
     '''
     trace = self.trace
-    d = self.args_d
-    count = 0 # prevent any possibility of endless loops
-    found = True
-    while found and count &lt; 40:
-        found = False
-        for pattern in d.keys():
-            if pattern == '.*':
-                # Do *not* use the default in return types.
-                pass ### return d.get(pattern)
-            else:
-                match = re.search(r'\b'+pattern+r'\b', s)
-                if match:
-                    i = match.start(0)
-                    t = d.get(pattern)
-                    s2 = s[:i] + t + s[i + len(pattern):]
-                    if trace:
-                        print('pattern:  %s %s ==&gt; %s' % (pattern, s, s2))
-                    s = s2
-                    count += 1
-                    found = True
+    d, s1, sep = self.args_d, s, r'\b'
+    for pattern in d.keys():
+        if pattern == '.*':
+            # Do *not* use the default in return types.
+            # That would mask too many problems.
+            pass
+        else:
+            # Find all non-overlapping matches.
+            t = d.get(pattern)
+            matches = re.finditer(sep+pattern.strip(sep)+sep,s)
+            # Replace in reverse order.
+            for m in reversed(list(matches)):
+                s = s[:m.start()] + t + s[m.end():]
+    if trace and s1 != s:
+        print('%s ==&gt; %s' % (s1, s))
     return s
-</t>
+    </t>
 <t tx="ekr.20160126153212.94">
 def match_balanced_patterns(self, name, s):
     '''
@@ -1852,6 +1856,16 @@ def pdb():
     except ImportError:
         import pdb
         pdb.set_trace()
+</t>
+<t tx="ekr.20160127192006.1">Revised st.match_types and st.munge_arg as follows:
+- munge_arg now accepts regex patterns.
+- munge_arg handles .* as a default pattern.
+- rewrote and simplified match_types using re.finditer.
+- match_types does *not* accept .* pattern.
+  That would mask too many problems.
+  
+These changes simplify and clarify msf.cfg.
+As a result, the comments in msf.cfg make more sense.
 </t>
 </tnodes>
 </leo_file>

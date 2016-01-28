@@ -1339,13 +1339,19 @@ class StubTraverser (ast.NodeVisitor):
         if s == 'self':
             return s
         d = self.args_d
-        a = d.get(s)
-        if a:
-            return '%s: %s' % (s, a)
-        elif '.*' in d.keys():
+        for pattern in d.keys():
+            if pattern == '.*':
+                pass # use this only if all other patterns fail.
+            else:
+                # Succeed only if the entire pattern matches.
+                m = re.match(pattern,s)
+                if m and m.end(0) == len(s):
+                    t = d.get(pattern)
+                    return '%s: %s' % (s, t)
+        if '.*' in d.keys():
             # A hack: '.*' represent defaults.
-            a = d.get('.*')
-            return '%s: %s' % (s, a)
+            t = d.get('.*')
+            return '%s: %s' % (s, t)
         else:
             if self.warn and s not in self.warn_list:
                 self.warn_list.append(s)
@@ -1367,32 +1373,27 @@ class StubTraverser (ast.NodeVisitor):
 
     def match_types(self, name, s):
         '''
-        In s, make substitutions given in [Arg Types]
-        These can be regex substitutions, but they must match word boundaries.
-        As a special case, this code ignores the .* pattern.
+        In s, repeatedly make regex substitutions in return expression.
+        As a special case, do not match the .* pattern here.
         '''
         trace = self.trace
-        d = self.args_d
-        count = 0 # prevent any possibility of endless loops
-        found = True
-        while found and count < 40:
-            found = False
-            for pattern in d.keys():
-                if pattern == '.*':
-                    # Do *not* use the default in return types.
-                    pass ### return d.get(pattern)
-                else:
-                    match = re.search(r'\b'+pattern+r'\b', s)
-                    if match:
-                        i = match.start(0)
-                        t = d.get(pattern)
-                        s2 = s[:i] + t + s[i + len(pattern):]
-                        if trace:
-                            print('pattern:  %s %s ==> %s' % (pattern, s, s2))
-                        s = s2
-                        count += 1
-                        found = True
+        d, s1, sep = self.args_d, s, r'\b'
+        for pattern in d.keys():
+            if pattern == '.*':
+                # Do *not* use the default in return types.
+                # That would mask too many problems.
+                pass
+            else:
+                # Find all non-overlapping matches.
+                t = d.get(pattern)
+                matches = re.finditer(sep+pattern.strip(sep)+sep,s)
+                # Replace in reverse order.
+                for m in reversed(list(matches)):
+                    s = s[:m.start()] + t + s[m.end():]
+        if trace and s1 != s:
+            print('%s ==> %s' % (s1, s))
         return s
+        
 
     def match_balanced_patterns(self, name, s):
         '''
