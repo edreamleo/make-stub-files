@@ -938,6 +938,91 @@ class AstFormatter:
         return name
 
 
+class Pattern:
+    '''A class representing regex or balanced patterns.'''
+    
+    def __init__ (self, find_s, repl_s):
+        '''Ctor for the Pattern class.'''
+        sep = r'\b'
+        self.find_s = find_s
+        self.repl_s = sep+repl_s.strip(sep)+sep
+        self.regex = (
+            None if self.is_balanced(find_s)
+            else re.compile(self.repl_s))
+
+def is_balanced(self):
+    '''Return True if self.s is a balanced pattern.'''
+    s = self.find_s
+    for pattern in ('(*)', '[*]', '{*}'):
+        if s.find(pattern) > -1:
+            return True
+    return False
+
+def all_matches(self, s):
+    '''Return a list of tubles (start, end) for all matches in s.'''
+    trace = True
+    if self.is_balanced():
+        while i < len(s):
+            progress = i
+            j = self.full_balanced_match(s, i)
+            if j is None:
+                i += 1
+            else:
+                aList.append((i,j),)
+                i = j
+            assert progress < i
+        return aList
+    else:
+        return [tuple(m.start(), m.end()) for m in self.regex.finditer(s)]
+        # return [tuple(m.start(), m.end()) for m in re.finditer(self.find_s, s)]
+
+def full_balanced_match(self, pattern, s, i):
+    '''Return the index of the end of the match found at s[i:] or None.'''
+    trace = self.trace
+    i1 = i
+    pattern = self.find_s
+    j = 0 # index into pattern
+    while i < len(s) and j < len(pattern) and s[i] == pattern[j]:
+        progress = i
+        if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
+            delim = pattern[j]
+            i = self.match_balanced(delim, s, i)
+            j += 3
+        else:
+            i += 1
+            j += 1
+        assert progress < i
+    found = i <= len(s) and j == len(pattern)
+    if trace and found:
+        print('full_match %s -> %s' % (pattern, s[i1:i]))
+    return j if found else None
+
+def match_balanced(self, delim, s, i):
+    '''
+    delim == s[i] and delim is in '([{'
+    Return the index of the end of the balanced parenthesized string, or len(s)+1.
+    '''
+    trace = self.trace
+    assert s[i] == delim, s[i]
+    assert delim in '([{'
+    delim2 = ')]}'['([{'.index(delim)]
+    assert delim2 in ')]}'
+    i1, level = i, 0
+    while i < len(s):
+        ch = s[i]
+        i += 1
+        if ch == delim:
+            level += 1
+        elif ch == delim2:
+            level -= 1
+            if level == 0:
+                if trace: print('match_balanced: found: %s' % s[i1:i])
+                return i
+    # Unmatched: a syntax error.
+    print('***** unmatched %s in %s' % (delim, s))
+    return len(s) + 1
+
+
 class StandAloneMakeStubFile:
     '''
     A class to make Python stub (.pyi) files in the ~/stubs directory for
