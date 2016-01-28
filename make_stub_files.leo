@@ -144,7 +144,6 @@
 <v t="ekr.20160126153212.93"></v>
 <v t="ekr.20160126153212.91"></v>
 <v t="ekr.20160128041938.1"></v>
-<v t="ekr.20160128044442.1"><vh>sample matching code</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1869,7 +1868,14 @@ def pdb():
 <t tx="ekr.20160128041938.1">
 
 class Pattern:
-    '''A class representing regex or balanced patterns.'''
+    '''
+    A class representing regex or balanced patterns.
+    
+    Sample matching code, for either kind of pattern::
+        
+        for start, end in reversed(pattern.all_matches(s)):
+            s = s[:start] + pattern.repl_s + s[end:]
+    '''
     
     def __init__ (self, find_s, repl_s):
         '''Ctor for the Pattern class.'''
@@ -1908,11 +1914,6 @@ def is_balanced(self):
             return True
     return False
 </t>
-<t tx="ekr.20160128044442.1">
-    # Find all non-overlapping matches.
-    # Replace in reverse order.
-    for start, end in reversed(pattern.all_matches(s)):
-        s = s[:start] + pattern.repl_s + s[end:]</t>
 <t tx="ekr.20160128045845.1">
 def match_balanced(self, delim, s, i):
     '''

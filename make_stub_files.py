@@ -939,7 +939,14 @@ class AstFormatter:
 
 
 class Pattern:
-    '''A class representing regex or balanced patterns.'''
+    '''
+    A class representing regex or balanced patterns.
+    
+    Sample matching code, for either kind of pattern::
+        
+        for start, end in reversed(pattern.all_matches(s)):
+            s = s[:start] + pattern.repl_s + s[end:]
+    '''
     
     def __init__ (self, find_s, repl_s):
         '''Ctor for the Pattern class.'''
