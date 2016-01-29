@@ -144,7 +144,7 @@
 </v>
 <v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
 <v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helper</vh>
-<v t="ekr.20160126153212.93"><vh>st.match_patterns</vh></v>
+<v t="ekr.20160126153212.93"><vh>st.match_ret_patterns</vh></v>
 </v>
 </v>
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
@@ -152,7 +152,6 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
-<v t="ekr.20160126153212.83"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1068,14 +1067,12 @@ def do_Str(self, node):
 
 class StubTraverser (ast.NodeVisitor):
     '''An ast.Node traverser class that outputs a stub for each class or def.'''
-    # pylint: disable=no-member
-    # Several ivars are copied from the StandAloneMakeStubFile class.
     @others
 </t>
 <t tx="ekr.20160126153212.83">
 def __init__(self, controller):
     '''Ctor for StubTraverser class.'''
-    self.controller = controller
+    self.controller = x = controller
         # A StandAloneMakeStubFile instance.
     # Internal state ivars...
     self.class_name_stack = []
@@ -1087,11 +1084,16 @@ def __init__(self, controller):
     self.returns = []
     self.warn_list = []
     # Copies of controller ivars...
-    for ivar in (
-        'arg_patterns', 'def_patterns', 'general_patterns', 'return_patterns',
-        'output_fn', 'overwrite', 'prefix_lines', 'trace', 'warn',
-    ):
-        setattr(self, ivar, getattr(controller, ivar))
+    self.output_fn = x.output_fn
+    self.overwrite = x.overwrite
+    self.prefix_lines = x.prefix_lines
+    self.trace = x.trace
+    self.warn = x.warn
+    # Copies of controller patterns...
+    self.arg_patterns = x.arg_patterns
+    self.def_patterns = x.def_patterns
+    self.general_patterns = x.general_patterns
+    self.return_patterns = x.return_patterns
 </t>
 <t tx="ekr.20160126153212.84">
 def indent(self, s):
@@ -1294,24 +1296,19 @@ def munge_ret(self, name, s):
     '''replace a return value by a type if possible.'''
     trace = self.trace
     if trace: print('munge_ret ==== %s' % name)
-    table = (
-        self.arg_patterns,
-        self.general_patterns,
-        self.return_patterns,
-    )
     count, found = 0, True
     while found:
         found = False
         count += 1
         assert count &lt; 200
-        for patterns in table:
-            found2, s = self.match_patterns(name, patterns, s)
+        for patterns in ( self.general_patterns, self.return_patterns):
+            found2, s = self.match_return_patterns(name, patterns, s)
             found = found or found2
     if trace: print('munge_ret -----: %s' % s)
     return s
 </t>
 <t tx="ekr.20160126153212.93">
-def match_patterns(self, name, patterns, s):
+def match_return_patterns(self, name, patterns, s):
     '''
     Match all the given patterns, except the .* pattern.
     Return (found, s) if any succeed.
@@ -1639,22 +1636,34 @@ prefix_lines:
     import ast
     import optparse
     Node = ast.Node
-    from typing import Dict, Optional, Sequence
+    from typing import Any, Dict, Optional, Sequence, Tuple
 
 [Def Name Patterns]
 
 AstFormatter.*: str
+Pattern.full_balanced_match: Optional[int]
+Pattern.all_matches: Sequence
 StandAloneMakeStubFile.scan_types: Dict[str, str]
-StubFormatter.*: str
+StubFormatter.do_*: str
 StubTraverser.format_returns: str
+StubTraverser.match_patterns: Tuple[bool,str]
 StubTraverser.match_return_pattern: Optional[str]
 StubTraverser.match_balanced: int
 
 [Arg Patterns]
 
+# Default patterns are dubious anywhere.
+# If present, they should appear here, not in [General Patterns]
+
+# Without the .* default, -w generates warnings for:
+# delim, fn, name, pattern, s, section_name
+
+# .*: str
+
 [General Patterns]
 
 aList: Sequence
+
 controller: StandAloneMakeStubFile
 fn: str
 i[0-3]*: int
@@ -1662,15 +1671,13 @@ parser: optparse.OptionParser
 node: Node
 s[0-3]*: str
 strict: bool
-.*: str
-
-# Without the .* default, -w generate warnings for these:
-# delim, fn, name, patter, s, section_name
 
 [Return Patterns]
 
 str%(*): str
 str.join(*): str
+# [*]: Sequence
+tuple(*): Sequence
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
@@ -1715,12 +1722,13 @@ def match_entire_string(self, s):
 <t tx="ekr.20160128154243.1">
 def run_all_unit_tests(self):
     
-    import test
-    import unittest
+    # pylint disable=relative-import
     from test import test_msf
+    import unittest
     loader = unittest.TestLoader()
     suite = loader.loadTestsFromTestCase(test_msf.TestMakeStubFiles)
-    unittest.TextTestRunner(verbosity=0).run(suite)</t>
+    unittest.TextTestRunner(verbosity=0).run(suite)
+</t>
 <t tx="ekr.20160128154704.1"></t>
 <t tx="ekr.20160128154715.1">import unittest
 import make_stub_files as msf
