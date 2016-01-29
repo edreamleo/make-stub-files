@@ -633,87 +633,106 @@ class Pattern:
         for start, end in reversed(pattern.all_matches(s)):
             s = s[:start] + pattern.repl_s + s[end:]
     '''
-    
-    def __init__ (self, find_s, repl_s):
+
+    def __init__ (self, find_s, repl_s, trace=False):
         '''Ctor for the Pattern class.'''
         sep = r'\b'
         self.find_s = find_s
-        self.repl_s = sep+repl_s.strip(sep)+sep
+        self.repl_s = repl_s
         self.regex = (
-            None if self.is_balanced(find_s)
-            else re.compile(self.repl_s))
+            None if self.is_balanced() else
+            re.compile(sep+find_s.strip(sep)+sep))
+        self.trace = trace
 
-def is_balanced(self):
-    '''Return True if self.s is a balanced pattern.'''
-    s = self.find_s
-    for pattern in ('(*)', '[*]', '{*}'):
-        if s.find(pattern) > -1:
-            return True
-    return False
+    def __repr__(self):
+        '''Pattern.__repr__'''
+        return 'Pattern: %s ==> %s' % (self.find_s, self.repl_s)
+        
+    __str__ = __repr__
 
-def all_matches(self, s):
-    '''Return a list of tubles (start, end) for all matches in s.'''
-    trace = True
-    if self.is_balanced():
+    def is_balanced(self):
+        '''Return True if self.s is a balanced pattern.'''
+        s = self.find_s
+        for pattern in ('(*)', '[*]', '{*}'):
+            if s.find(pattern) > -1:
+                return True
+        return False
+
+    def all_matches(self, s, trace=False):
+        '''Return a list of tubles (start, end) for all matches in s.'''
+        trace = trace or self.trace
+        if self.is_balanced():
+            aList, i = [], 0
+            while i < len(s):
+                progress = i
+                j = self.full_balanced_match(s, i, trace=trace)
+                if j is None:
+                    i += 1
+                else:
+                    aList.append((i,j),)
+                    i = j
+                assert progress < i
+            return aList
+        else:
+            return [tuple((m.start(), m.end()),) for m in self.regex.finditer(s)]
+
+    def full_balanced_match(self, s, i, trace=False):
+        '''Return the index of the end of the match found at s[i:] or None.'''
+        i1 = i
+        trace = trace or self.trace
+        pattern = self.find_s
+        j = 0 # index into pattern
+        while i < len(s) and j < len(pattern) and s[i] == pattern[j]:
+            progress = i
+            if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
+                delim = pattern[j]
+                i = self.match_balanced(delim, s, i)
+                j += 3
+            else:
+                i += 1
+                j += 1
+            assert progress < i
+        found = i <= len(s) and j == len(pattern)
+        if trace and found:
+            print('full_balanced_match %s -> %s' % (pattern, s[i1:i]))
+        return i if found else None
+
+    def match_balanced(self, delim, s, i):
+        '''
+        delim == s[i] and delim is in '([{'
+        Return the index of the end of the balanced parenthesized string, or len(s)+1.
+        '''
+        trace = self.trace
+        assert s[i] == delim, s[i]
+        assert delim in '([{'
+        delim2 = ')]}'['([{'.index(delim)]
+        assert delim2 in ')]}'
+        i1, level = i, 0
         while i < len(s):
             progress = i
-            j = self.full_balanced_match(s, i)
-            if j is None:
-                i += 1
-            else:
-                aList.append((i,j),)
-                i = j
-            assert progress < i
-        return aList
-    else:
-        return [tuple(m.start(), m.end()) for m in self.regex.finditer(s)]
-        # return [tuple(m.start(), m.end()) for m in re.finditer(self.find_s, s)]
-
-def full_balanced_match(self, pattern, s, i):
-    '''Return the index of the end of the match found at s[i:] or None.'''
-    trace = self.trace
-    i1 = i
-    pattern = self.find_s
-    j = 0 # index into pattern
-    while i < len(s) and j < len(pattern) and s[i] == pattern[j]:
-        progress = i
-        if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
-            delim = pattern[j]
-            i = self.match_balanced(delim, s, i)
-            j += 3
-        else:
+            ch = s[i]
             i += 1
-            j += 1
-        assert progress < i
-    found = i <= len(s) and j == len(pattern)
-    if trace and found:
-        print('full_match %s -> %s' % (pattern, s[i1:i]))
-    return j if found else None
+            if ch == delim:
+                level += 1
+            elif ch == delim2:
+                level -= 1
+                if level == 0:
+                    if trace: print('match_balanced: found: %s' % s[i1:i])
+                    return i
+            assert progress < i
+        # Unmatched: a syntax error.
+        print('***** unmatched %s in %s' % (delim, s))
+        return len(s) + 1
 
-def match_balanced(self, delim, s, i):
-    '''
-    delim == s[i] and delim is in '([{'
-    Return the index of the end of the balanced parenthesized string, or len(s)+1.
-    '''
-    trace = self.trace
-    assert s[i] == delim, s[i]
-    assert delim in '([{'
-    delim2 = ')]}'['([{'.index(delim)]
-    assert delim2 in ')]}'
-    i1, level = i, 0
-    while i < len(s):
-        ch = s[i]
-        i += 1
-        if ch == delim:
-            level += 1
-        elif ch == delim2:
-            level -= 1
-            if level == 0:
-                if trace: print('match_balanced: found: %s' % s[i1:i])
-                return i
-    # Unmatched: a syntax error.
-    print('***** unmatched %s in %s' % (delim, s))
-    return len(s) + 1
+    def match_entire_string(self, s):
+        '''Return a list of tubles (start, end) for all matches in s.'''
+        trace = True
+        if self.is_balanced():
+            j = self.full_balanced_match(s, 0)
+            return j is not None
+        else:
+            m = self.regex.match(s)
+            return m and m.group(0) == s
 
 
 class StandAloneMakeStubFile:
@@ -728,6 +747,7 @@ class StandAloneMakeStubFile:
         self.options = {}
         # Ivars set on the command line...
         self.config_fn = self.finalize('~/stubs/make_stub_files.cfg')
+        self.enable_unit_tests = False
         self.files = [] # May also be set in the config file.
         self.trace = False # Trace pattern substitutions.
         self.verbose = False # Trace config arguments.
@@ -736,13 +756,12 @@ class StandAloneMakeStubFile:
         self.output_directory = self.finalize('~/stubs')
         self.overwrite = False
         self.prefix_lines = []
-        # Type substitution dicts, set by config sections...
-        self.args_d = {} # [Arg Types]
-        self.def_pattern_d = {} # [Def Name Patterns]
-        self.def_pattern_list = [] # To preserve order.
-        self.return_regex_d = {} # [Return Regex Patterns]
-        self.return_pattern_d = {} # [Return Balanced Patterns]
-       
+        # Pattern lists, set by config sections...
+        self.arg_patterns = [] # [Arg Patterns]
+        self.def_patterns = [] # [Def Name Patterns]
+        self.general_patterns = [] # [General Patterns]
+        self.return_patterns = [] # [Return Patterns]
+        
     def finalize(self, fn):
         '''Finalize and regularize a filename.'''
         fn = os.path.expanduser(fn)
@@ -774,6 +793,8 @@ class StandAloneMakeStubFile:
         Make stub files for all files.
         Do nothing if the output directory does not exist.
         '''
+        if self.enable_unit_tests:
+            self.run_all_unit_tests()
         dir_ = self.output_directory
         if dir_:
             if os.path.exists(dir_):
@@ -783,6 +804,15 @@ class StandAloneMakeStubFile:
                 print('output directory not found: %s' % dir_)
         else:
             print('no output directory')
+
+    def run_all_unit_tests(self):
+        
+        import test
+        import unittest
+        from test import test_msf
+        loader = unittest.TestLoader()
+        suite = loader.loadTestsFromTestCase(test_msf.TestMakeStubFiles)
+        unittest.TextTestRunner(verbosity=0).run(suite)
 
     def scan_command_line(self):
         '''Set ivars from command-line arguments.'''
@@ -798,6 +828,8 @@ class StandAloneMakeStubFile:
             help='overwrite existing stub (.pyi) files')
         add('-t', '--trace', action='store_true', default=False,
             help='trace argument substitutions')
+        add('-u', '--unit-test', action='store_true', default=False,
+            help='enable unit tests at startup')
         add('-v', '--verbose', action='store_true', default=False,
             help='trace configuration settings')
         add('-w', '--warn', action='store_true', default=False,
@@ -805,6 +837,7 @@ class StandAloneMakeStubFile:
         # Parse the options
         options, args = parser.parse_args()
         # Handle the options...
+        self.enable_unit_tests=options.unit_test
         self.overwrite = options.overwrite
         self.trace = self.trace or options.trace
         self.verbose = self.verbose or options.verbose
@@ -828,7 +861,7 @@ class StandAloneMakeStubFile:
     def scan_options(self):
         '''Set all configuration-related ivars.'''
         verbose = self.verbose
-        parser = configparser.ConfigParser(dict_type=OrderedDict)
+        self.parser = parser = configparser.ConfigParser(dict_type=OrderedDict)
             # Requires Python 2.7
         parser.optionxform = str
         fn = self.finalize(self.config_fn)
@@ -873,34 +906,28 @@ class StandAloneMakeStubFile:
                 for z in self.prefix_lines:
                     print(z)
                 print('')
-        self.args_d = self.scan_types(
-            parser, 'Arg Types')
-        self.def_pattern_d = self.scan_types(
-            parser, 'Def Name Patterns', aList=self.def_pattern_list)
-        self.return_pattern_d = self.scan_types(
-            parser, 'Return Balanced Patterns')
-        self.return_regex_d = self.scan_types(
-            parser, 'Return Regex Patterns')
+        self.arg_patterns = self.scan_patterns('Arg Patterns')
+        self.def_patterns = self.scan_patterns('Def Name Patterns')
+        self.general_patterns = self.scan_patterns('General Patterns')
+        self.return_patterns = self.scan_patterns('Return Patterns')
 
-    def scan_types(self, parser, section_name, aList=None):
-        verbose = self.verbose
-        d = {}
+    def scan_patterns(self, section_name):
+        '''Parse the config section into a list of patterns, preserving order.'''
+        parser, verbose = self.parser, self.verbose
+        aList = []
         if section_name in parser.sections():
             if verbose: print('%s...\n' % section_name)
-            # 2016/01/27: do not sort the options! Order is important.
             for key in parser.options(section_name):
                 value = parser.get(section_name, key)
-                d[key] = value
-                # 2016/01/27: preserve order in this dict.
-                if aList is not None:
-                    aList.append(key)
-                if verbose: print('%s: %s' % (key, value))
+                pattern = Pattern(key, value, self.trace)
+                aList.append(pattern)
+                if verbose: print(pattern)
             if verbose: print('')
         elif verbose:
             print('no section: %s' % section_name)
             print(parser.sections())
             print('')
-        return d
+        return aList
 
 
 class StubFormatter (AstFormatter):
@@ -930,10 +957,12 @@ class StubFormatter (AstFormatter):
 
 class StubTraverser (ast.NodeVisitor):
     '''An ast.Node traverser class that outputs a stub for each class or def.'''
+    # pylint: disable=no-member
+    # Several ivars are copied from the StandAloneMakeStubFile class.
 
     def __init__(self, controller):
         '''Ctor for StubTraverser class.'''
-        self.controller = c = controller
+        self.controller = controller
             # A StandAloneMakeStubFile instance.
         # Internal state ivars...
         self.class_name_stack = []
@@ -941,20 +970,15 @@ class StubTraverser (ast.NodeVisitor):
         self.in_function = False
         self.level = 0
         self.output_file = None
+        self.raw_format = AstFormatter().format
         self.returns = []
         self.warn_list = []
         # Copies of controller ivars...
-        self.output_fn = c.output_fn
-        self.overwrite = c.overwrite
-        self.prefix_lines = c.prefix_lines
-        self.trace = c.trace
-        self.warn = c.warn
-        # Copies of controller dicts...
-        self.args_d = c.args_d # [Arg Types]
-        self.def_pattern_d = c.def_pattern_d # [Def Name Patterns]
-        self.def_pattern_list = c.def_pattern_list
-        self.return_regex_d = c.return_regex_d # [Return Regex Patterns]
-        self.return_pattern_d = c.return_pattern_d # [Return Balanced Patterns]
+        for ivar in (
+            'arg_patterns', 'def_patterns', 'general_patterns', 'return_patterns',
+            'output_fn', 'overwrite', 'prefix_lines', 'trace', 'warn',
+        ):
+            setattr(self, ivar, getattr(controller, ivar))
 
     def indent(self, s):
         '''Return s, properly indented.'''
@@ -1038,7 +1062,7 @@ class StubTraverser (ast.NodeVisitor):
         '''
         assert isinstance(node,ast.arguments), node
         args = [self.format(z) for z in node.args]
-        defaults = [self.format(z) for z in node.defaults]
+        defaults = [self.raw_format(z) for z in node.defaults]
         # Assign default values to the last args.
         result = []
         n_plain = len(args) - len(defaults)
@@ -1060,39 +1084,32 @@ class StubTraverser (ast.NodeVisitor):
         '''
         Calculate the return type:
         - Return None if there are no return statements.
-        - Return the entry in def_pattern_d if there is a match.
+        - Patterns in [Def Name Patterns] override all other patterns.
         - Otherwise, return a list of return values.
         '''
-        
+
         def split(s):
             return '\n     ' + self.indent(s) if len(s) > 30 else s
             
         # Shortcut everything if node.name matches any
-        # pattern in self.def_pattern_d.
+        # pattern in self.def_patterns
         trace = self.trace
-        d, aList = self.def_pattern_d, self.def_pattern_list
-        if self.class_name_stack:
-            name = '%s.%s' % (self.class_name_stack[-1], node.name)
-            # 2016/01/27: All ctors should return None
-            if node.name == '__init__':
-                return 'None'
-        else:
-            name = node.name
+        name = self.get_def_name(node)
+        r = [self.format(z) for z in self.returns]
         # Step 1: Return None if there are no return statements.
         if trace and self.returns:
-            print('format_returns', name, self.returns)
+            print('format_returns: name: %s r:\n%s' % (name, r))
         if not [z for z in self.returns if z != None]:
             return 'None'
-        # Step 2: Return the given type if [Def Name Patterns] matches name. 
-        for pattern in aList: # 2016/01/27: Preserve the order of the patterns.
-            match = re.search(pattern, name)
+        # Step 2: [Def Name Patterns] override all other patterns.
+        for pattern in self.def_patterns:
+            find_s, repl_s = pattern.find_s, pattern.repl_s
+            match = re.search(find_s, name)
             if match and match.group(0) == name:
-                t = d.get(pattern)
-                if trace: print('*name pattern %s: %s -> %s' % (pattern, name, t))
-                return t
+                if trace:
+                    print('*name pattern %s: %s -> %s' % (find_s, name, repl_s))
+                return repl_s
         # Step 3: munge each return value, and merge them.
-        r = [self.format(z) for z in self.returns]
-        # if r: print(r)
         r = [self.munge_ret(name, z) for z in r]
             # Make type substitutions.
         r = sorted(set(r))
@@ -1111,25 +1128,33 @@ class StubTraverser (ast.NodeVisitor):
                 return ', '.join(['\n    ' + self.indent(z) for z in r])
             else:
                 return split(', '.join(r))
+    def get_def_name(self, node):
+        '''Return the representaion of a function or method name.'''
+        if self.class_name_stack:
+            name = '%s.%s' % (self.class_name_stack[-1], node.name)
+            # All ctors should return None
+            if node.name == '__init__':
+                name = 'None'
+        else:
+            name = node.name
+        return name
 
     def munge_arg(self, s):
         '''Add an annotation for s if possible.'''
         if s == 'self':
             return s
-        d = self.args_d
-        for pattern in d.keys():
-            if pattern == '.*':
-                pass # use this only if all other patterns fail.
-            else:
-                # Succeed only if the entire pattern matches.
-                m = re.match(pattern,s)
-                if m and m.end(0) == len(s):
-                    t = d.get(pattern)
-                    return '%s: %s' % (s, t)
-        if '.*' in d.keys():
-            # A hack: '.*' represent defaults.
-            t = d.get('.*')
-            return '%s: %s' % (s, t)
+        default_pattern = None
+        for patterns in (self.arg_patterns, self.general_patterns):
+            for pattern in patterns:
+                if pattern.find_s == '.*':
+                    default_pattern = pattern
+                        # Match the default pattern last.
+                else:
+                    # Succeed only if the entire pattern matches.
+                    if pattern.match_entire_string(s):
+                        return '%s: %s' % (s, pattern.repl_s)
+        if default_pattern:
+            return '%s: %s' % (s, default_pattern.repl_s)
         else:
             if self.warn and s not in self.warn_list:
                 self.warn_list.append(s)
@@ -1140,154 +1165,52 @@ class StubTraverser (ast.NodeVisitor):
         '''replace a return value by a type if possible.'''
         trace = self.trace
         if trace: print('munge_ret ==== %s' % name)
-        s = self.match_types(name, s)
-            # Do matches in [Arg Types]
-        s = self.match_balanced_patterns(name, s)
-            # Repeatedly do all matches in [Return Balance Patterns]
-        s = self.match_regex_patterns(name, s)
-            # Repeatedly do all matches in [Return Regex Patterns]
-        if trace: print('munge_reg -----: %s' % s)
+        table = (
+            self.arg_patterns,
+            self.general_patterns,
+            self.return_patterns,
+        )
+        count, found = 0, True
+        while found:
+            found = False
+            count += 1
+            assert count < 200
+            for patterns in table:
+                found2, s = self.match_patterns(name, patterns, s)
+                found = found or found2
+        if trace: print('munge_ret -----: %s' % s)
         return s
 
-    def match_types(self, name, s):
+    def match_patterns(self, name, patterns, s):
         '''
-        In s, repeatedly make regex substitutions in return expression.
-        As a special case, do not match the .* pattern here.
+        Match all the given patterns, except the .* pattern.
+        Return (found, s) if any succeed.
         '''
-        trace = self.trace
-        d, s1, sep = self.args_d, s, r'\b'
-        for pattern in d.keys():
-            if pattern == '.*':
-                # Do *not* use the default in return types.
-                # That would mask too many problems.
+        trace = self.trace # or name.endswith('munge_arg')
+        s1 = s
+        default_pattern = None
+        if trace: print('match_patterns ===== %s: %s' % (name, s1))
+        for pattern in patterns:
+            if pattern.find_s == '.*':
+                # The user should use [Def Name Patterns] instead.
                 pass
             else:
                 # Find all non-overlapping matches.
-                t = d.get(pattern)
-                matches = re.finditer(sep+pattern.strip(sep)+sep,s)
+                matches = pattern.all_matches(s, trace=trace)
                 # Replace in reverse order.
-                for m in reversed(list(matches)):
-                    s = s[:m.start()] + t + s[m.end():]
-        if trace and s1 != s:
-            print('%s ==> %s' % (s1, s))
-        return s
+                s2 = s
+                for start, end in reversed(matches):
+                    s = s[:start] + pattern.repl_s + s[end:]
+                    if trace and s2 != s:
+                        print('match_patterns %s' % matches)
+                        sep = '\n' if len(s2) > 20 or len(s) > 20 else ' '
+                        print('match_patterns match: %s%s%s -->%s%s' % (
+                            pattern.repl_s, sep, s2, sep, s))
+        found = s1 != s
+        if trace and found:
+            print('match_patterns returns %s\n' % s)
+        return found, s
         
-
-    def match_balanced_patterns(self, name, s):
-        '''
-        In s, do *all* subsitutions given in [Return Balanced Patterns].
-        
-        All characters match verbatim, except that the patterns:
-            (*), [*] and {*}
-        match only *balanced* parens, square and curly brackets.
-        
-        Note: No special cases are needed for strings or comments.
-        Comments do not appear, and strings have been converted to "str".
-        '''
-        trace = self.trace
-        if trace: print('----- %s' % s)
-        count, found = 0, True
-        while found and count < 40:
-            count += 1
-            found, i, s1 = False, 0, s
-            while i < len(s) and not found:
-                s = self.match_return_patterns(name, s, i)
-                found = s1 != s
-                i += 1
-        if trace: print('*after balanced patterns: %s' % s)
-        return s
-
-    def match_return_patterns(self, name, s, i):
-        '''
-        Make all possible pattern matches at s[i:]. Return the new s.
-        '''
-        trace = self.trace
-        d = self.return_pattern_d
-        s1 = s
-        for pattern in d.keys():
-            found_s = self.match_return_pattern(pattern, s, i)
-            if found_s:
-                replace_s = d.get(pattern)
-                s = s[:i] + replace_s + s[i+len(found_s):]
-                if trace:
-                    print('match_return_patterns found: %s replace: %s' % (
-                        found_s, replace_s))
-                    print('match_return_patterns old: %s' % s1)
-                    print('match_return_patterns new: %s' % s)
-                break # must rescan the entire string.
-        return s
-
-    def match_return_pattern(self, pattern, s, i):
-        '''Return the actual string matching the pattern at s[i:] or None.'''
-        trace = self.trace
-        i1 = i
-        j = 0 # index into pattern
-        while i < len(s) and j < len(pattern) and s[i] == pattern[j]:
-            if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
-                delim = pattern[j]
-                i = self.match_balanced(delim, s, i)
-                j += 3
-            else:
-                i += 1
-                j += 1
-        if trace and i <= len(s) and j == len(pattern):
-            print('match_return_pattern: match %s -> %s' % (pattern, s[i1:i]))
-        return s[i1:i] if i <= len(s) and j == len(pattern) else None
-
-    def match_balanced(self, delim, s, i):
-        '''
-        Scan over the python expression at s[i:] that starts with '(', '[' or '{'.
-        Return the index into s of the end of the expression, or len(s)+1 on errors.
-        '''
-        trace = self.trace
-        assert s[i] == delim, s[i]
-        assert delim in '([{'
-        delim2 = ')]}'['([{'.index(delim)]
-        assert delim2 in ')]}'
-        i1, level = i, 0
-        while i < len(s):
-            ch = s[i]
-            i += 1
-            if ch == delim:
-                level += 1
-            elif ch == delim2:
-                level -= 1
-                if level == 0:
-                    if trace: print('match_balanced: found: %s' % s[i1:i])
-                    return i
-        # Unmatched
-        print('***** unmatched %s in %s' % (delim, s))
-        return len(s) + 1
-
-    def match_regex_patterns(self, name, s):
-        '''
-        In s, repeatedly match regex patterns in [Return Regex Patterns].
-        '''
-        trace = self.trace
-        d, prev_s = self.return_regex_d, set()
-        while True:
-            found = False
-            for pattern in d.keys():
-                match = re.search(pattern, s)
-                if match:
-                    t = d.get(pattern)
-                    s2 = s.replace(match.group(0), t)
-                    if trace:
-                        print('match: %s=%s->%s: %s ==> %s' % (
-                            pattern, match.group(0), t, s, s2))
-                    if s2 in prev_s:
-                        # A strange loop. return s2.
-                        if trace: print('seen: %s' % (s2))
-                        s = s2
-                        found = False
-                        break
-                    else:
-                        found = True
-                        prev_s.add(s2)
-                        s = s2
-            if not found:
-                break
-        return s
 
     def visit_Return(self, node):
 
