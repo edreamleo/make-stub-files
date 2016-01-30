@@ -1849,12 +1849,10 @@ def is_known_type(self, s):
         if pattern.match_entire_string(s):
             # Look inside the square brackets.
             brackets = s[len(s2):]
-            assert brackets
-            assert brackets[0] == '['
-            assert brackets[-1] == ']'
-            brackets = brackets[1:-1]
-            if brackets:
-                aList = brackets.split(',')
+            assert brackets and brackets[0] == '[' and brackets[-1] == ']'
+            s3 = brackets[1:-1]
+            if s3:
+                aList = s3.split(',')
                 return all([self.is_known_type(z) for z in aList])
             else:
                 return True
