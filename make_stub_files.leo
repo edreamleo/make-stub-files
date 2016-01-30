@@ -1852,8 +1852,7 @@ def is_known_type(self, s):
             assert brackets and brackets[0] == '[' and brackets[-1] == ']'
             s3 = brackets[1:-1]
             if s3:
-                aList = s3.split(',')
-                return all([self.is_known_type(z) for z in aList])
+                return all([self.is_known_type(z) for z in s3.split(',')])
             else:
                 return True
     return False
