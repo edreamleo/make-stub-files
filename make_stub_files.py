@@ -1053,7 +1053,7 @@ class StubTraverser (ast.NodeVisitor):
         self.level -= 1
         self.in_function = False
         # Format *after* traversing
-        self.out('def %s(%s) -> %s: ...' % (
+        self.out('def %s(%s) -> %s' % (
             node.name,
             self.format_arguments(node.args),
             self.format_returns(node)))
@@ -1123,7 +1123,7 @@ class StubTraverser (ast.NodeVisitor):
         if trace and self.returns:
             print('format_returns: name: %s r:\n%s' % (name, r))
         if not [z for z in self.returns if z != None]:
-            return 'None'
+            return 'None: ...'
         # Step 2: [Def Name Patterns] override all other patterns.
         for pattern in self.def_patterns:
             find_s, repl_s = pattern.find_s, pattern.repl_s
@@ -1131,23 +1131,24 @@ class StubTraverser (ast.NodeVisitor):
             if match and match.group(0) == name:
                 if trace:
                     print('*name pattern %s: %s -> %s' % (find_s, name, repl_s))
-                return repl_s
+                return repl_s + ': ...'
         # Step 3: munge each return value, and merge them.
         r = [self.munge_ret(name, z) for z in r]
             # Make type substitutions.
         r = sorted(set(r))
             # Remove duplicates
         if len(r) == 0:
-            return 'None'
-        elif len(r) == 1:
-            return '%s' % self.format_return_expressions(r)
+            return 'None: ...'
+        if len(r) == 1:
+            kind = None
         elif 'None' in r:
             r.remove('None')
-            return 'Optional[%s]' % self.format_return_expressions(r)
+            kind = 'Optional'
         else:
-            return 'Union[%s]' % self.format_return_expressions(r)
+            kind = 'Union'
+        return self.format_return_expressions(r, kind)
 
-    def format_return_expressions(self, aList):
+    def format_return_expressions(self, aList, kind):
         '''
         aList is a list of return expressions.
         All patterns have been applied.
@@ -1156,20 +1157,27 @@ class StubTraverser (ast.NodeVisitor):
         - Otherwise, add Any # e to the result.
         Return the properly indented result.
         '''
-        has_comments, lws, result = False, '\n    ', []
+        comments, results, unknowns = [], [], False
+        lws =  '\n' + ' '*4
         for i, e in enumerate(aList):
             comma = ',' if i < len(aList) - 1 else ''
-            if self.is_known_type(e):
-                result.append(e + comma)
-            else:
-                result.append('Any' + comma + '# ' + e)
-                has_comments = True
-        split = len(result) > 1 or has_comments
-        if split:
-            s = ''.join([lws + self.indent(z) for z in result])
-            return s + lws
+            comments.append('# ' + e)
+            results.append(e + comma)
+            if not self.is_known_type(e):
+                unknowns = True
+        if unknowns:
+            comments = ''.join([lws + self.indent(z) for z in comments])
+            return 'Any: ...' + comments
+        if kind == 'Union' and len(results) == 1:
+            kind = None
+        if len(results) == 1:
+            s = results[0]
         else:
-            return ''.join(result)
+            s = ''.join([lws + self.indent(z) for z in results])
+        if kind:
+            s = '%s[%s]' % (kind, s)
+        return s + ': ...'
+        
 
     def is_known_type(self, s):
         '''
