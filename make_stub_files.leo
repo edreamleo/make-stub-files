@@ -24,7 +24,7 @@
 <v t="ekr.20160128154715.1"><vh>@clean test/test_msf.py</vh>
 <v t="ekr.20160128190252.1"><vh>setUp</vh></v>
 <v t="ekr.20160128190112.1"><vh>test_pattern_class</vh></v>
-<v t="ekr.20160128190224.1"><vh>test2</vh></v>
+<v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
@@ -138,13 +138,16 @@
 <v t="ekr.20160126153212.85"><vh>st.run</vh></v>
 <v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
 <v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
-<v t="ekr.20160126153212.89"><vh>st.format_arguments</vh></v>
-<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helper</vh>
-<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
-</v>
+<v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
 <v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
+</v>
+<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
+<v t="ekr.20160130034812.1"><vh>st.is_known_type</vh></v>
+<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
 <v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helper</vh>
 <v t="ekr.20160126153212.93"><vh>st.match_ret_patterns</vh></v>
+</v>
 </v>
 </v>
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
@@ -152,6 +155,9 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
+<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160130032546.1"></v>
+<v t="ekr.20160130034812.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -857,6 +863,8 @@ def __init__ (self):
     self.output_directory = self.finalize('~/stubs')
     self.overwrite = False
     self.prefix_lines = []
+    self.trace = False
+    self.warn = False
     # Pattern lists, set by config sections...
     self.arg_patterns = [] # [Arg Patterns]
     self.def_patterns = [] # [Def Name Patterns]
@@ -1226,10 +1234,6 @@ def format_returns(self, node):
     - Patterns in [Def Name Patterns] override all other patterns.
     - Otherwise, return a list of return values.
     '''
-
-    def split(s):
-        return '\n     ' + self.indent(s) if len(s) &gt; 30 else s
-        
     # Shortcut everything if node.name matches any
     # pattern in self.def_patterns
     trace = self.trace
@@ -1255,18 +1259,13 @@ def format_returns(self, node):
         # Remove duplicates
     if len(r) == 0:
         return 'None'
-    if len(r) == 1:
-        return r[0] # Never split a single value.
+    elif len(r) == 1:
+        return '%s' % self.format_return_expressions(r)
     elif 'None' in r:
         r.remove('None')
-        return split('Optional[%s]' % ', '.join(r))
+        return 'Optional[%s]' % self.format_return_expressions(r)
     else:
-        # return 'Any'
-        s = ', '.join(r)
-        if len(s) &gt; 30:
-            return ', '.join(['\n    ' + self.indent(z) for z in r])
-        else:
-            return split(', '.join(r))
+        return 'Union[%s]' % self.format_return_expressions(r)
 </t>
 <t tx="ekr.20160126153212.91">
 def munge_arg(self, s):
@@ -1297,10 +1296,8 @@ def munge_ret(self, name, s):
     trace = self.trace
     if trace: print('munge_ret ==== %s' % name)
     count, found = 0, True
-    while found:
-        found = False
-        count += 1
-        assert count &lt; 200
+    while found and count &lt; 100:
+        count, found = count + 1, False
         for patterns in ( self.general_patterns, self.return_patterns):
             found2, s = self.match_return_patterns(name, patterns, s)
             found = found or found2
@@ -1633,37 +1630,41 @@ files: make_stub_files.py
 output_directory: .
     
 prefix_lines:
-    import ast
-    import optparse
-    Node = ast.Node
     from typing import Any, Dict, Optional, Sequence, Tuple
+    # At present, I don't understand how to tell mypy about ast.Node
+    # import ast
+    # Node = ast.Node
+    Node = Any
 
 [Def Name Patterns]
 
 AstFormatter.*: str
-Pattern.full_balanced_match: Optional[int]
 Pattern.all_matches: Sequence
+Pattern.full_balanced_match: Optional[int]
+Pattern.match_balanced: int
+Pattern.match_entire_string: bool
 StandAloneMakeStubFile.scan_types: Dict[str, str]
-StubFormatter.do_*: str
+StubFormatter.do_.*: str
 StubTraverser.format_returns: str
-StubTraverser.match_patterns: Tuple[bool,str]
+StubTraverser.match_return_patterns: Tuple[bool,str]
 StubTraverser.match_return_pattern: Optional[str]
 StubTraverser.match_balanced: int
 
 [Arg Patterns]
 
-# Default patterns are dubious anywhere.
-# If present, they should appear here, not in [General Patterns]
+# Default patterns should *only* appear here.
+# Use [Def Name Patterns] to set default return types.
 
 # Without the .* default, -w generates warnings for:
-# delim, fn, name, pattern, s, section_name
+# delim, find_f, fn, name, pattern, repl_s, section_name
 
-# .*: str
+patterns: Sequence
+trace: bool
+.*: str
 
 [General Patterns]
 
 aList: Sequence
-
 controller: StandAloneMakeStubFile
 fn: str
 i[0-3]*: int
@@ -1674,9 +1675,12 @@ strict: bool
 
 [Return Patterns]
 
+found: str
+len(*): int
+name: str
+number: int
 str%(*): str
 str.join(*): str
-# [*]: Sequence
 tuple(*): Sequence
 </t>
 <t tx="ekr.20160128104714.1"></t>
@@ -1700,7 +1704,7 @@ def __repr__(self):
 __str__ = __repr__</t>
 <t tx="ekr.20160128114726.1">
 def match_entire_string(self, s):
-    '''Return a list of tubles (start, end) for all matches in s.'''
+    '''Return True if s matches self.find_s'''
     trace = True
     if self.is_balanced():
         j = self.full_balanced_match(s, 0)
@@ -1722,7 +1726,7 @@ def match_entire_string(self, s):
 <t tx="ekr.20160128154243.1">
 def run_all_unit_tests(self):
     
-    # pylint disable=relative-import
+    # pylint: disable=relative-import
     from test import test_msf
     import unittest
     loader = unittest.TestLoader()
@@ -1750,13 +1754,103 @@ if __name__ == '__main__':
     for s, find, repl, result in table:
         pattern = msf.Pattern(find, repl)
         assert pattern.match_entire_string(s), (s, find, repl)</t>
-<t tx="ekr.20160128190224.1">def test2(self):
-    pass
+<t tx="ekr.20160128190224.1">
+def test_is_known_type(self):
+    '''Test that is_known_type handles brackets reasonably.'''
+    good = (
+        'Any', 'Sequence',
+        'Sequence[]',
+        'Sequence[List]',
+        'Sequence[List[Any]]',
+    )
+    bad = (
+        'Huh', 'Sequence(List)',
+        'List+a',
+        'List+List',
+    )
+    c = msf.StandAloneMakeStubFile()
+    for s in good:
+        assert msf.StubTraverser(c).is_known_type(s), s
+    for s in bad:
+        assert not msf.StubTraverser(c).is_known_type(s), s
 </t>
-<t tx="ekr.20160128190252.1">def setUp(self):
-    '''Called before each test.'''
+<t tx="ekr.20160128190252.1"># def setUp(self):
+    # '''Called before each test.'''
 </t>
 <t tx="ekr.20160128225533.1">*.pyc
 test/*.pyc</t>
+<t tx="ekr.20160130032546.1">
+def format_return_expressions(self, aList):
+    '''
+    aList is a list of return expressions.
+    All patterns have been applied.
+    For each expression e:
+    - If e is a single known type, add e to the result.
+    - Otherwise, add Any # e to the result.
+    Return the properly indented result.
+    '''
+    has_comments, lws, result = False, '\n    ', []
+    for i, e in enumerate(aList):
+        comma = ',' if i &lt; len(aList) - 1 else ''
+        if self.is_known_type(e):
+            result.append(e + comma)
+        else:
+            result.append('Any' + comma + '# ' + e)
+            has_comments = True
+    split = len(result) &gt; 1 or has_comments
+    if split:
+        s = ''.join([lws + self.indent(z) for z in result])
+        return s + lws
+    else:
+        return ''.join(result)
+</t>
+<t tx="ekr.20160130034812.1">
+def is_known_type(self, s):
+    '''
+    Return True if s is nothing but a single known type.
+    Recursively test inner types in square brackets.
+    '''
+    if s in (
+        'bool', 'bytes', 'complex', 'dict', 'float', 'int',
+        'list', 'long', 'str', 'tuple', 'unicode',
+    ):
+        return True
+    table = (
+        'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
+        'BinaryIO', 'ByteString',
+        'Callable', 'CallableMeta', 'Container',
+        'Dict', 'Final', 'Generic', 'GenericMeta', 'Hashable',
+        'IO', 'ItemsView', 'Iterable', 'Iterator',
+        'KT', 'KeysView', 'List',
+        'Mapping', 'MappingView', 'Match',
+        'MutableMapping', 'MutableSequence', 'MutableSet',
+        'NamedTuple', 'Optional', 'OptionalMeta',
+        # 'POSIX', 'PY2', 'PY3',
+        'Pattern', 'Reversible',
+        'Sequence', 'Set', 'Sized',
+        'SupportsAbs', 'SupportsFloat', 'SupportsInt', 'SupportsRound',
+        'T', 'TextIO', 'Tuple', 'TupleMeta',
+        'TypeVar', 'TypingMeta',
+        'Undefined', 'Union', 'UnionMeta',
+        'VT', 'ValuesView', 'VarBinding',
+    )
+    for s2 in table:
+        if s2 == s:
+            return True
+        pattern = Pattern(s2+'[*]', s)
+        if pattern.match_entire_string(s):
+            # Look inside the square brackets.
+            brackets = s[len(s2):]
+            assert brackets
+            assert brackets[0] == '['
+            assert brackets[-1] == ']'
+            brackets = brackets[1:-1]
+            if brackets:
+                aList = brackets.split(',')
+                return all([self.is_known_type(z) for z in aList])
+            else:
+                return True
+    return False
+</t>
 </tnodes>
 </leo_file>
