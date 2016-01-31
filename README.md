@@ -224,7 +224,7 @@ expressions to **known types**. A known type is a either a name of a type
 class, such as int, str, long, etc. or a **type hint**, as per
 [Pep 484](https://www.python.org/dev/peps/pep-0484/).
 
-*Important notes about repeated patterns*:
+**Important notes about repeated patterns**
 
 1. The script adds \b to the start and end of regex find-strings, but
    *only* for find-strings composed solely of alphanumeric characters and
@@ -233,12 +233,12 @@ class, such as int, str, long, etc. or a **type hint**, as per
    
 2. Take care when creating **lengthening patterns** such as:
 
-    s[0-3]?: str # Wrong.
+        s[0-3]?: str # Wrong.
     
 This pattern will cause an ever increasing search string! Instead, the
 pattern should be:
 
-    \bs[0-3]?\b: str # Correct.
+        \bs[0-3]?\b: str # Correct.
 
 3. This script ends repeated pattern matching after 200 iterations. This is
    large enough so all reasonable pattern matching is possible. Unbounded
