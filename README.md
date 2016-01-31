@@ -9,10 +9,10 @@ This script is in the public domain.
 ### Overview
 
 This script makes a stub (.pyi) file in the **output directory** for each
-**source file** listed on the command line (wildcard file names are supported).
-
-This script never creates directories automatically, nor does it overwrite
-stub files unless the --overwrite command-line option is in effect.
+**source file** listed on the command line (wildcard file names are
+supported). This script never creates directories automatically, nor does
+it overwrite stub files unless the --overwrite command-line option is in
+effect.
 
 The script does no type inference. Instead, the user supplies **patterns**
 in a configuration file. The script matches these patterns to:
@@ -56,27 +56,25 @@ themselves, can be people who use Python 2.x code bases.
 
 ### Command-line arguments
 
-Usage: make_stub_files.py [options] file1, file2, ...
-
-Options:
-  -h, --help          show this help message and exit
-  -c FN, --config=FN  full path to alternate configuration file
-  -d DIR, --dir=DIR   full path to the output directory
-  -o, --overwrite     overwrite existing stub (.pyi) files
-  -t, --trace         trace argument substitutions
-  -u, --unit-test     enable unit tests at startup
-  -v, --verbose       trace configuration settings
-  -w, --warn          warn about unannotated args
+    Usage: make_stub_files.py [options] file1, file2, ...
+    
+    Options:
+      -h, --help          show this help message and exit
+      -c FN, --config=FN  full path to alternate configuration file
+      -d DIR, --dir=DIR   full path to the output directory
+      -o, --overwrite     overwrite existing stub (.pyi) files
+      -t, --trace         trace argument substitutions
+      -u, --unit-test     enable unit tests at startup
+      -v, --verbose       trace configuration settings
+      -w, --warn          warn about unannotated args
       
 *Note*: glob.blob wildcards can be used in file1, file2, ...
 
 ### The configuration file
 
 By default, the configuration file is ~/stubs/make_stub_files.cfg. ~/stubs
-is mypy's default directory for stubs.
-
-You can change the name and location of the configuration file using
-the --config command-line option.
+is mypy's default directory for stubs. You can change the name and location
+of the configuration file using the --config command-line option.
 
 The configuration file uses the .ini format. It has several
 configuration sections, all optional.
@@ -122,7 +120,7 @@ Colons are not allowed in the find-string.  This is a limitation of .ini files.
 
 There are two kinds of patterns: regex patterns and balanced patterns.
 
-**Balanced patterns** contain either (*), [*], or {*} in the find-string.
+**Balanced patterns** contain either `(*)`, `[*]`, or `{*}` in the find-string.
 Unlike regular expressions, balanced patterns match only balanced brackets.
 
 For example:
@@ -134,8 +132,8 @@ At present, the following *does not work*:
     [Arg Patterns]
     aList[List[*]]: List[List[*]]
     
-That is, the script does not replace * in replacement-strings with whatever
-matched * in the find-string. This is on the to-do list.
+That is, the script does not replace `*` in replacement-strings with whatever
+matched `*` in the find-string. This is on the to-do list.
 
 A pattern is a **regex pattern** if and only if it is *not* a balanced
 pattern. The find-string is a python regular expression. At present, the
@@ -221,7 +219,7 @@ For each function or method, the script matches the patterns in this
 section against all return expressions in each function or method. The
 script matches all patterns repeatedly until no further matches are
 possible. *Important*: the script matches patterns against each return
-expression *separately*
+expression *separately*.
 
 The intent of the patterns in this section should be to **reduce** return
 expressions to **known types**. A known type is a either a name of a type

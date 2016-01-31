@@ -171,7 +171,7 @@
 This script makes a stub (.pyi) file in the output directory for each
 source file listed on the command line (wildcard file names are supported).
 
-For full details, see readme.md.
+For full details, see README.md.
 
 This file is in the public domain.
 '''
@@ -875,7 +875,8 @@ def __init__ (self):
     self.def_patterns = [] # [Def Name Patterns]
     self.general_patterns = [] # [General Patterns]
     self.return_patterns = [] # [Return Patterns]
-    </t>
+    
+</t>
 <t tx="ekr.20160126153212.75">
 def make_stub_file(self, fn):
     '''
@@ -958,7 +959,8 @@ def scan_command_line(self):
     if args:
         args = [self.finalize(z) for z in args]
         if args:
-            self.files = args</t>
+            self.files = args
+</t>
 <t tx="ekr.20160126153212.78">def scan_options(self):
     '''Set all configuration-related ivars.'''
     verbose = self.verbose
@@ -1340,7 +1342,8 @@ def match_return_patterns(self, name, patterns, s):
     if trace and found:
         print('match_patterns returns %s\n' % s)
     return found, s
-    </t>
+    
+</t>
 <t tx="ekr.20160126153212.99">
 def visit_Return(self, node):
 
@@ -1479,7 +1482,8 @@ def all_matches(self, s, trace=False):
             assert progress &lt; i
         return aList
     else:
-        return [tuple((m.start(), m.end()),) for m in self.regex.finditer(s)]</t>
+        return [tuple((m.start(), m.end()),) for m in self.regex.finditer(s)]
+</t>
 <t tx="ekr.20160128042857.1">
 def is_balanced(self):
     '''Return True if self.s is a balanced pattern.'''
@@ -1708,7 +1712,8 @@ def __repr__(self):
     '''Pattern.__repr__'''
     return 'Pattern: %s ==&gt; %s' % (self.find_s, self.repl_s)
     
-__str__ = __repr__</t>
+__str__ = __repr__
+</t>
 <t tx="ekr.20160128114726.1">
 def match_entire_string(self, s):
     '''Return True if s matches self.find_s'''
@@ -1729,7 +1734,8 @@ def match_entire_string(self, s):
             name = 'None'
     else:
         name = node.name
-    return name</t>
+    return name
+</t>
 <t tx="ekr.20160128154243.1">
 def run_all_unit_tests(self):
     
@@ -1816,7 +1822,8 @@ def format_return_expressions(self, aList, kind):
     if kind:
         s = '%s[%s]' % (kind, s)
     return s + ': ...'
-    </t>
+    
+</t>
 <t tx="ekr.20160130034812.1">
 def is_known_type(self, s):
     '''
