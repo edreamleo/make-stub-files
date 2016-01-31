@@ -50,8 +50,8 @@ as part of mypy now (it has a few options) but yours has the advantage of
 providing a way to tune the generated signatures... This allows for a nice
 iterative way of developing stubs."
 
-This script should encourage more people to use mypy. This tool, and stub files
-themselves, can be people who use Python 2.x code bases.
+This script should encourage more people to use mypy. Stub files can be
+used by people who use Python 2.x code bases.
 
 ### Command-line arguments
 
