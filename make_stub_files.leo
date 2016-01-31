@@ -19,6 +19,8 @@
 </v>
 <v t="ekr.20160128105006.1"><vh>Doc files</vh>
 <v t="ekr.20160126153921.1"><vh>@edit readme.md</vh></v>
+<v t="ekr.20160131042431.1"><vh>old from readme.md</vh></v>
+<v t="ekr.20160131034212.1"><vh>edit examples.md</vh></v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Test files</vh>
 <v t="ekr.20160128154715.1"><vh>@clean test/test_msf.py</vh>
@@ -158,6 +160,9 @@
 <v t="ekr.20160130034812.1"></v>
 <v t="ekr.20160126153212.90"></v>
 <v t="ekr.20160130032546.1"></v>
+<v t="ekr.20160131031559.1"><vh>regex test</vh></v>
+<v t="ekr.20160131054951.1"><vh>** what about existing annotations????</vh></v>
+<v t="ekr.20160126153921.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -929,7 +934,7 @@ def scan_command_line(self):
     add('-v', '--verbose', action='store_true', default=False,
         help='trace configuration settings')
     add('-w', '--warn', action='store_true', default=False,
-        help='warn about unannoted args')
+        help='warn about unannotated args')
     # Parse the options
     options, args = parser.parse_args()
     # Handle the options...
@@ -1857,5 +1862,52 @@ def is_known_type(self, s):
                 return True
     return False
 </t>
+<t tx="ekr.20160131031559.1">a
+
+[a]
+
+[str]</t>
+<t tx="ekr.20160131034212.1"></t>
+<t tx="ekr.20160131042431.1">@language rest
+@wrap
+
+### Handling function returns
+    
+The script handles function returns pragmatically. The tree walker simply
+writes a list of return expressions for each def. For example, here is the
+*default* output at the start of leoAst.pyi, before any patterns are applied:
+
+    class AstDumper:
+        def dump(self, node: ast.Ast, level=number) -&gt; 
+            repr(node), 
+            str%(name,sep,sep1.join(aList)), 
+            str%(name,str.join(aList)), 
+            str%str.join(str%(sep,self.dump(z,level+number)) for z in node): ...
+        def get_fields(self, node: ast.Ast) -&gt; result: ...
+        def extra_attributes(self, node: ast.Ast) -&gt; Sequence: ...
+        
+The stub for the dump function is not syntactically correct because there
+are four returns listed. As discussed below, the configuration file can
+specify several kinds of patterns to be applied to return values.
+
+**These patterns often suffice to collapse all return values** In fact,
+just a few patterns (given below) will convert::
+
+    def dump(self, node: ast.Ast, level=number) -&gt; 
+        repr(node), 
+        str%(name,sep,sep1.join(aList)), 
+        str%(name,str.join(aList)), 
+        str%str.join(str%(sep,self.dump(z,level+number)) for z in node): ...
+        
+to:
+
+    def dump(self, node: ast.Ast, level=number) -&gt; str: ... 
+
+If multiple return values still remain after applying all patterns, you
+must edit stubs to specify a proper return type. And even if only a single
+value remains, its "proper" value may not obvious from naming conventions.
+In that case, you will have to update the stub using the actual source code
+as a guide.</t>
+<t tx="ekr.20160131054951.1"></t>
 </tnodes>
 </leo_file>

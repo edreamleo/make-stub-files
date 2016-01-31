@@ -1,30 +1,49 @@
+
 This is the readme file for the make-stub-files script explaining what it
 does, how it works and why it is important.
 
-The github repository is at: https://github.com/edreamleo/make-stub-files
+The github repository for this script is at: https://github.com/edreamleo/make-stub-files
 
-This program is in the public domain.
+This script is in the public domain.
 
 ### Overview
 
 This script makes a stub (.pyi) file in the **output directory** for each
-source file listed on the command line (wildcard file names are supported).
-
-A **configuration file** (default: ~/stubs/make_stub_files.cfg) specifies
-annotation pairs and various **patterns** to be applied to return values.
-The configuration file can also supply a list of **prefix lines** to be
-inserted verbatim at the start of each stub file.
-
-Command-line arguments can override the locations of the configuration file
-and output directory. The configuration file can supply default source
-files to be used if none are supplied on the command line.
+**source file** listed on the command line (wildcard file names are supported).
 
 This script never creates directories automatically, nor does it overwrite
 stub files unless the --overwrite command-line option is in effect.
 
+The script does no type inference. Instead, the user supplies **patterns**
+in a configuration file. The script matches these patterns to:
+
+1. The names of arguments in functions and methods and
+
+2. The text of **return expressions**. Return expressions are the actual
+   text of whatever follows the "return" keyword. The script removes all
+   comments in return expressions and converts all strings to "str". This
+   **preprocessing** greatly simplifies pattern matching.
+
+As a first example, given the method:
+
+    def foo(self, i, s):
+        if i:
+            return "abc" # a comment
+        else:
+            return s
+        
+and the patterns:
+
+    i[1-3]: int
+    s: str
+    
+the script produces the stub:
+
+    def foo(i: int, s: str) --> str: ...
+
 The make_stub_files script eliminates much of the drudgery of creating
 [python stub (.pyi) files]( https://www.python.org/dev/peps/pep-0484/#stub-files)
-from python source files. From GvR::
+from python source files. GvR says::
 
     "We actually do have a stub generator as part of mypy now (most of the
     code is in https://github.com/JukkaL/mypy/blob/master/mypy/stubgen.py;
@@ -32,109 +51,37 @@ from python source files. From GvR::
     tune the generated signatures based on argument conventions. This
     allows for a nice iterative way of developing stubs."
 
-The script does no type inference. Instead, it creates function annotations
-using user-supplied **type conventions**, pairs of strings of the form
-"name: type-annotation".  As described below, the script simplifies return
-values using several different kinds of user-supplied **patterns**.
-
-This script should encourage more people to use mypy. Stub files can be
-used by people using Python 2.x code bases. As discussed below, stub files
-can be thought of as design documents or as executable and checkable design
-tools.
+This script should encourage more people to use mypy. This tool, and stub files
+themselves, can be people who use Python 2.x code bases.
 
 ### Command-line arguments
 
-    Usage: make_stub_files.py [options] file1, file2, ...
-    
-    Options:
-      -h, --help          show this help message and exit
-      -c FN, --config=FN  full path to alternate configuration file
-      -d DIR, --dir=DIR   full path to the output directory
-      -o, --overwrite     overwrite existing stub (.pyi) files
-      -t, --trace         trace argument substitutions
-      -v, --verbose       trace configuration settings
+Usage: make_stub_files.py [options] file1, file2, ...
+
+Options:
+  -h, --help          show this help message and exit
+  -c FN, --config=FN  full path to alternate configuration file
+  -d DIR, --dir=DIR   full path to the output directory
+  -o, --overwrite     overwrite existing stub (.pyi) files
+  -t, --trace         trace argument substitutions
+  -u, --unit-test     enable unit tests at startup
+  -v, --verbose       trace configuration settings
+  -w, --warn          warn about unannotated args
       
 *Note*: glob.blob wildcards can be used in file1, file2, ...
 
-### What the script does
-
-This script makes a stub (.pyi) file in the **output directory** for each
-source file listed on the command line (wildcard file names are supported).
-For each source file, the script does the following:
-
-1. The script writes the prefix lines verbatim. This makes it easy to add
-   common code to the start of stub files. For example::
-
-    from typing import TypeVar, Iterable, Tuple
-    T = TypeVar('T', int, float, complex)
-    
-2. The script walks the parse (ast) tree for the source file, generating
-   stub lines for each function, class or method. The script generates no
-   stub lines for defs nested within other defs. Return values are handled
-   in a clever way as described below.
-
-For example, given the naming conventions:
-
-    aList: Sequence
-    i: int
-    c: Commander
-    s: str
-    
-and a function::
-
-    def scan(s, i, x):
-        whatever
-        
-the script will generate::
-
-    def scan(s: str, i:int, x): --> (see next section):
-    
-### Handling function returns
-    
-The script handles function returns pragmatically. The tree walker simply
-writes a list of return expressions for each def. For example, here is the
-*default* output at the start of leoAst.pyi, before any patterns are applied:
-
-    class AstDumper:
-        def dump(self, node: ast.Ast, level=number) -> 
-            repr(node), 
-            str%(name,sep,sep1.join(aList)), 
-            str%(name,str.join(aList)), 
-            str%str.join(str%(sep,self.dump(z,level+number)) for z in node): ...
-        def get_fields(self, node: ast.Ast) -> result: ...
-        def extra_attributes(self, node: ast.Ast) -> Sequence: ...
-        
-The stub for the dump function is not syntactically correct because there
-are four returns listed. As discussed below, the configuration file can
-specify several kinds of patterns to be applied to return values.
-
-**These patterns often suffice to collapse all return values** In fact,
-just a few patterns (given below) will convert::
-
-    def dump(self, node: ast.Ast, level=number) -> 
-        repr(node), 
-        str%(name,sep,sep1.join(aList)), 
-        str%(name,str.join(aList)), 
-        str%str.join(str%(sep,self.dump(z,level+number)) for z in node): ...
-        
-to:
-
-    def dump(self, node: ast.Ast, level=number) -> str: ... 
-
-If multiple return values still remain after applying all patterns, you
-must edit stubs to specify a proper return type. And even if only a single
-value remains, its "proper" value may not obvious from naming conventions.
-In that case, you will have to update the stub using the actual source code
-as a guide.
-
 ### The configuration file
 
-As mentioned above, the configuration file, make_stub_files.cfg, is located
-in the ~/stubs directory. This is mypy's default directory for stubs.
-The configuration file uses the .ini format. It has the following sections,
-all optional.
+By default, the configuration file is ~/stubs/make_stub_files.cfg. ~/stubs
+is mypy's default directory for stubs.
 
-#### The [Global] section
+You can change the name and location of the configuration file using
+the --config command-line option.
+
+The configuration file uses the .ini format. It has several
+configuration sections, all optional.
+
+#### [Global]
 
 This configuration section specifies the files list, prefix lines and
 output directory. For example:
@@ -155,120 +102,204 @@ output directory. For example:
         from typing import TypeVar, Iterable, Tuple
         T = TypeVar('T', int, float, complex)
         
-#### The [Arg Types] section
+#### Patterns used in [xxx Patterns] sections.
 
-This configuration section specifies naming conventions. These conventions
-are applied to *both* argument lists *and* return values.
-  
-- For argument lists, the replacement becomes the annotation.
-- For return values, the replacement *replaces* the pattern.
+The configuration sections to be discussed next, namely:
+
+    [Def Name Patterns]
+    [Arg Patterns]
+    [General Patterns]
+    [Return Patterns]
+    
+all specify patterns that associate annotations with argument lists or
+return values.
+
+All patterns have the form:
+
+    find-string: replacement-string
+    
+Colons are not allowed in the find-string.  This is a limitation of .ini files.
+
+There are two kinds of patterns: regex patterns and balanced patterns.
+
+**Balanced patterns** contain either (*), [*], or {*} in the find-string.
+Unlike regular expressions, balanced patterns match only balanced brackets.
 
 For example:
 
-    [Arg Types]
-
-    # Lines have the form:
-    #   verbatim-pattern: replacement
+    str(*): str
     
-    aList: Sequence
-    aList2: Sequence
-    c: Commander
-    i: int
-    j: int
-    k: int
-    node: ast.Ast
-    p: Position
-    s: str
-    s2: str
-    v: VNode
-    
-#### The [Def Name Patterns] section
+At present, the following *does not work*:
 
-This configuration specifies the *final* return value to be associated with
-functions or methods. The pattern is a regex matching the names of defs.
-Methods names should have the form class_name.method_name. No further
-pattern matching is done if any of these patterns match. For example:
+    aList[List[*]]: List[List[*]]
+    
+That is, the script does not replace * in replacement-strings with whatever
+matched * in the find-string. This is on the to-do list.
+
+A pattern is a **regex pattern** if and only if it is *not* a balanced
+pattern. The find-string is a python regular expression. At present, the
+replacement-string is a *plain* string. That is, \1, \2, etc. are not
+allowed.
+
+*Note*: Regex and balanced patterns may appear in any section. However,
+balanced patterns will never match argument names.
+
+The script matches patterns in the order they appear in each section. As a
+special case, the script matches the .* pattern (a regex pattern) last,
+regardless of its position in each section.
+        
+#### [Def Name Patterns]
+
+The script matches the find-strings in this section against names of
+functions and methods. For methods, the script matches find-strings against
+names of the form:
+
+    class_name.method_name
+
+When a find-string matches, the replacement-string becomes the return type
+in the stub, without any further pattern matching. That is, this section
+*overrides* the [General Patterns] and [Return Patterns] sections.
+
+Example 1:
 
     [Def Name Patterns]
-
-    # These  patterns are matched *before* the patterns in the
-    # [Return Balanced Patterns] and [Return Regex Patterns] sections.
+    myFunction: List[str]
     
-    AstFormatter.do_.*: str
-    StubTraverser.format_returns: str
-    StubTraverser.indent: str
+Any function named myFunction returns List[str].
+
+Example 2:
+
+    [Def Name Patterns]
+    MyClass\.myMethod: str
     
-#### The [Return Balanced Patterns] section
+The myMethod method of the MyClass class returns str.
 
-This configuration section gives **balanced patterns** to be applied to
-return values. Balanced patterns match verbatim, except that the three
-patterns: ``(*), [*], and {*}`` match only *balanced* parens, square and curly brackets.
+Here, the find-string is a regex (because it's not a balanced expression).
+Using \. in the find-string as shown is best. In most cases, however, using
+MyClass.myMethod as the find-string would also match as expected.
 
-Return values are rescanned until no more balanced patterns apply. Balanced
-patterns are *much* simpler to use than regex's. Indeed, the following
-balanced patterns suffice to collapse most string expressions to str:
+Example 3:
 
-    [Return Balanced Patterns]
-
-    repr(*): str
-    str.join(*): str
-    str.replace(*): str
-    str%(*): str
-    str%str: str
+    [Def Name Patterns]
+    MyClass\.do_.*: str
     
-#### The [Return Regex Patterns] section
+All methods of the MyClass class whose names start with "do_" return str.
+        
+#### [Arg Patterns]
+
+The script matches the patterns in this section against argument names. When
+a find-string matches, the script adds the replacement-string as an annotation.
+
+Example 1:
+
+    [Arg Patterns]
+    aList: Sequence
     
-This configuration section gives regex patterns to be applied to return
-values. These patterns are applied last, after all other patterns have been
-applied.
-  
-Again, these regex patterns are applied repeatedly until no further
-replacements are possible. For example:
+Converts arguments named aList to aList: Sequence.
 
-    [Return Regex Patterns]
+Example 2:
 
-    .*__name__: str
+Given the function:
+
+    def whatever(aList, aList1, aList5):
+        pass
+        
+the pattern:
+
+    [Arg Patterns]
+    aList[1-2]: Sequence
     
-#### Important note about pattern matching
+creates the stub:
 
-The patterns in the [Return Balanced Patterns] and [Return Regex Patterns]
-sections are applied to each individual return value separately. Comments
-never appear in return values, and all strings in return values appear as
-str. As a result, there is no context to worry about and very short
-patterns suffice.
+    def whatever(aList: Sequence, aList1: Sequence, aList5) --> None: ...
+        pass
+
+#### [Return Patterns]
+
+For each function or method, the script matches the patterns in this
+section against all return expressions in each function or method. The
+script matches all patterns repeatedly until no further matches are
+possible. *Important*: the script matches patterns against each return
+expression *separately*
+
+The intent of the patterns in this section should be to **reduce** return
+expressions to **known types**. A known type is a either a name of a type
+class, such as int, str, long, etc. or a **type hint**, as per
+[Pep 484](https://www.python.org/dev/peps/pep-0484/).
+
+The script *always* produces a syntactically correct stub, even if the
+patterns in this section (and in the [General Patterns] section) do not, in
+fact, reduce to a known type. For unknown types, the script does the
+following:
+
+1. Uses Any as the type of the function or method.
+
+2. Follows the stub with a list of comments giving all the return
+   expressions in the function or method.
+   
+For example, suppose that the patterns are not sufficient to resolve the
+return type of:
+
+    def foo(a):
+        if a:
+            return a+frungify(a)
+        else:
+            return defrungify(a)
+         
+The script will create this stub:
+
+    def foo(a) --> Any: ...
+        # a+frungify(a)
+        # defrungify(a)
+        
+The comments preserve maximal information about return types, which should
+help the user to supply a more specific return type. The user can do this
+in two ways:
+
+1. By altering the stub file by hand or
+2. By adding new patterns to [Def Name Patterns] or [Return Patterns].
+
+*Important*: The script applies the patterns in this section *separately*
+to each return expression in each function or method. Comments never appear
+in return expressions, and all strings in return values appear as str. As a
+result, there is no context to worry about and very short patterns suffice.
+    
+#### [General Patterns]
+
+The patterns in this section apply to *both* argument lists *and* return values.
+
+In essence, the patterns in this section work as if they appeared at the end of both
+[Arg Patterns] and [Return Patterns].
 
 ### Why this script is important
 
-The script eliminates most of the drudgery from creating stub files.
-Creating a syntactically correct stub file from the output of the script is
-straightforward: **Just a few patterns will collapse most return values to a single value.**
+The script eliminates most of the drudgery from creating stub files. The
+script produces syntactically and semantically correct stub files without
+any patterns at all. Patterns make it easy to make stubs more specific.
 
-Stub files are real data. mypy will check the syntax for us. More
-importantly, mypy will do its type inference on the stub files. That means
-that mypy will discover both errors in the stubs and actual type errors in
-the program under test. There is now an easy way to use mypy!
+Once we create stub files, mypy will check them by doing real type
+inference. This will find errors both in the stub files and in the program
+under test. There is now an easy way to use mypy!
 
-Stubs express design intentions and intuitions as well as types. We
-programmers think we *do* know most of the types of arguments passed into
-and out of functions and methods. Up until now, there has been no practical
-way of expressing and *testing* these assumptions. Using mypy, we can be as
-specific as we like about types. For example, we can simply say that d is a
-dict, or we can say that d is a dict whose keys are strings and whose
-values are executables with a union of possible signatures. In short, stubs
-are the easy way to play with type inference.
+Stubs express design intentions and intuitions as well as types. Until now,
+there has been no practical way of expressing and *testing* these
+assumptions. Now there is.
 
-Most importantly, from my point of view, stub files clarify issues that I
-have been struggling with for many years. To what extent *do* we understand
-types? mypy will tell us. How dynamic (RPython-like) *are* our programs?
-mypy will tell us. Could we use type annotation to convert our programs to
-C. Heh, not likely, but the data in the stubs will tell where things get
-sticky.
+Using mypy, we can be as specific as we like about types. We can simply
+annotate that d is a dict, or we can say that d is a dict whose keys are
+strings and whose values are executables with a union of possible
+signatures. Stubs are the easy way to play with type inference.
+
+Stub files clarify long-standing questions about types. To what extent *do*
+we understand types? How dynamic (RPython-like) *are* our programs? mypy
+will tell us where are stub files are dubious. Could we use type annotation
+to convert our programs to C? Not likely, but now there is a way to know
+where things get sticky.
 
 Finally, stubs can simplify the general type inference problem. Without
 type hints or annotations, the type of everything depends on the type of
 everything else. Stubs could allow robust, maybe even complete, type
-inference to be done locally. We might expect stubs to make mypy work
-faster.
+inference to be done locally. Stubs help mypy to work faster.
 
 ### Summary
 
@@ -284,7 +315,7 @@ mypy.
 
 One could imagine a similar insert_annotations script that would inject
 function annotations into source files using stub files as data. The
-"reverse" script should be more straightfoward than this script.
+"reverse" script should be more straightforward than this script.
 
 Edward K. Ream
 January 2016

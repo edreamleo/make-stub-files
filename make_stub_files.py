@@ -835,7 +835,7 @@ class StandAloneMakeStubFile:
         add('-v', '--verbose', action='store_true', default=False,
             help='trace configuration settings')
         add('-w', '--warn', action='store_true', default=False,
-            help='warn about unannoted args')
+            help='warn about unannotated args')
         # Parse the options
         options, args = parser.parse_args()
         # Handle the options...
