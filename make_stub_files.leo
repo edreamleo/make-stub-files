@@ -162,13 +162,11 @@
 <v t="ekr.20160130032546.1"></v>
 <v t="ekr.20160131054951.1"><vh>** what about existing annotations????</vh></v>
 <v t="ekr.20160131063928.1"><vh>** Fix bugs</vh></v>
-<v t="ekr.20160131031559.1"><vh>regex test</vh></v>
-<v t="ekr.20160126153921.1"></v>
-<v t="ekr.20160128041938.1"></v>
 <v t="ekr.20160128154715.1"></v>
 <v t="ekr.20160128114726.1"></v>
 <v t="ekr.20160128113859.1"></v>
 <v t="ekr.20160128190112.1"></v>
+<v t="ekr.20160126153921.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1683,10 +1681,10 @@ trace: bool
 aList: Sequence
 controller: StandAloneMakeStubFile
 fn: str
-i\b[0-3]?: int
+\bi[0-3]?\b: int
 parser: optparse.OptionParser
 node: Node
-s\b[0-3]?: str
+\bs[0-3]?\b: str
 strict: bool
 
 [Return Patterns]
@@ -1711,14 +1709,12 @@ def __init__ (self, find_s, repl_s, trace=False):
     if self.is_balanced():
         self.regex = None
     else:
-        # Careful: len(sep) is 2, so s.strip(sep) doesn't work as expected.
-        # Careful: add sep only when the first or last character is an alpha.
+        # Careful: add sep only when the entire find_s is an identifier.
         sep = r'\b'
         s = find_s
-        if s and s[0].isalpha() and not s.startswith(sep):
-            s = sep + s
-        if s and s[-1].isalpha() and not s.endswith(sep):
-            s = s + sep
+        s2 = s.replace('_','')
+        if s2 and s2[0].isalpha():
+            s = sep + s + sep
         self.regex = re.compile(s)
     self.trace = trace
 </t>
@@ -1738,6 +1734,7 @@ def match_entire_string(self, s):
         return j is not None
     else:
         m = self.regex.match(s)
+        # print(s, self, m)
         return m and m.group(0) == s
 </t>
 <t tx="ekr.20160128122410.1">def get_def_name(self, node):
@@ -1778,12 +1775,13 @@ if __name__ == '__main__':
         ('abc', 'abc', 'ABC', 'ABC'),
         ('str(str)', 'str(*)', 'str', 'str'),
         ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
+        ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
     )
     for s, find, repl, expected in table:
         pattern = msf.Pattern(find, repl)
         result = pattern.match_entire_string(s)
         assert result, (result, s, find, repl, expected)
-        </t>
+</t>
 <t tx="ekr.20160128190224.1">
 def test_is_known_type(self):
     '''Test that is_known_type handles brackets reasonably.'''
@@ -1886,35 +1884,6 @@ def is_known_type(self, s):
                 return True
     return False
 </t>
-<t tx="ekr.20160131031559.1">g.cls()
-import re
-sep = r'\b'
-table = (
-    'str',
-    r'\[str\]',
-    r'\b\[str\]\b',
-)
-print(len(sep))
-n = len(sep)
-for z in table:
-    print(z, z.strip(sep), z.startswith(sep))
-    if z.startswith(sep):
-        z = z[n:]
-    if z.endswith(sep):
-        z = z[:-n]
-    print(z)
-    re.compile(z)
-    
-
-
-# find \b\[str\]\b
-
-# a
-
-# [a]
-
-# [str]
-</t>
 <t tx="ekr.20160131034212.1"></t>
 <t tx="ekr.20160131042431.1">@language rest
 @wrap
@@ -1960,13 +1929,9 @@ as a guide.</t>
 <t tx="ekr.20160131063928.1">@language rest
 @wrap
 
-\[str\]: List[str]
+Unit test
 
-"constants.error: unexpected end of regular expression"
-
-Two new unit tests are needed:
-
-    [various] in is_known_type
-    regex \[various\] in the Pattern class.</t>
+    [xxx] in is_known_type
+</t>
 </tnodes>
 </leo_file>

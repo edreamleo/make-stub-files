@@ -642,14 +642,12 @@ class Pattern:
         if self.is_balanced():
             self.regex = None
         else:
-            # Careful: len(sep) is 2, so s.strip(sep) doesn't work as expected.
-            # Careful: add sep only when the first or last character is an alpha.
+            # Careful: add sep only when the entire find_s is an identifier.
             sep = r'\b'
             s = find_s
-            if s and s[0].isalpha() and not s.startswith(sep):
-                s = sep + s
-            if s and s[-1].isalpha() and not s.endswith(sep):
-                s = s + sep
+            s2 = s.replace('_','')
+            if s2 and s2[0].isalpha():
+                s = sep + s + sep
             self.regex = re.compile(s)
         self.trace = trace
 
@@ -741,6 +739,7 @@ class Pattern:
             return j is not None
         else:
             m = self.regex.match(s)
+            # print(s, self, m)
             return m and m.group(0) == s
 
 

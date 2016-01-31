@@ -217,13 +217,33 @@ creates the stub:
 For each function or method, the script matches the patterns in this
 section against all return expressions in each function or method. The
 script matches all patterns repeatedly until no further matches are
-possible. *Important*: the script matches patterns against each return
-expression *separately*.
+possible.
 
 The intent of the patterns in this section should be to **reduce** return
 expressions to **known types**. A known type is a either a name of a type
 class, such as int, str, long, etc. or a **type hint**, as per
 [Pep 484](https://www.python.org/dev/peps/pep-0484/).
+
+*Important notes about repeated patterns*:
+
+1. The script adds \b to the start and end of regex find-strings, but
+   *only* for find-strings composed solely of alphanumeric characters and
+   underscores. This is an important convenience, but conceivably it could
+   cause problems in some cases.
+   
+2. Take care when creating **lengthening patterns** such as:
+
+    s[0-3]?: str # Wrong.
+    
+This pattern will cause an ever increasing search string! Instead, the
+pattern should be:
+
+    \bs[0-3]?\b: str # Correct.
+
+3. This script ends repeated pattern matching after 200 iterations. This is
+   large enough so all reasonable pattern matching is possible. Unbounded
+   matches produce "interesting" results that are easily visible in the
+   output.
 
 The script *always* produces a syntactically correct stub, even if the
 patterns in this section (and in the [General Patterns] section) do not, in
