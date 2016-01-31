@@ -636,12 +636,21 @@ class Pattern:
 
     def __init__ (self, find_s, repl_s, trace=False):
         '''Ctor for the Pattern class.'''
-        sep = r'\b'
+       
         self.find_s = find_s
         self.repl_s = repl_s
-        self.regex = (
-            None if self.is_balanced() else
-            re.compile(sep+find_s.strip(sep)+sep))
+        if self.is_balanced():
+            self.regex = None
+        else:
+            # Careful: len(sep) is 2, so s.strip(sep) doesn't work as expected.
+            # Careful: add sep only when the first or last character is an alpha.
+            sep = r'\b'
+            s = find_s
+            if s and s[0].isalpha() and not s.startswith(sep):
+                s = sep + s
+            if s and s[-1].isalpha() and not s.endswith(sep):
+                s = s + sep
+            self.regex = re.compile(s)
         self.trace = trace
 
     def __repr__(self):

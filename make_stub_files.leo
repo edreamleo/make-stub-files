@@ -22,7 +22,7 @@
 <v t="ekr.20160131042431.1"><vh>old from readme.md</vh></v>
 <v t="ekr.20160131034212.1"><vh>edit examples.md</vh></v>
 </v>
-<v t="ekr.20160128154704.1"><vh>Test files</vh>
+<v t="ekr.20160128154704.1"><vh>Testing</vh>
 <v t="ekr.20160128154715.1"><vh>@clean test/test_msf.py</vh>
 <v t="ekr.20160128190252.1"><vh>setUp</vh></v>
 <v t="ekr.20160128190112.1"><vh>test_pattern_class</vh></v>
@@ -160,9 +160,15 @@
 <v t="ekr.20160130034812.1"></v>
 <v t="ekr.20160126153212.90"></v>
 <v t="ekr.20160130032546.1"></v>
-<v t="ekr.20160131031559.1"><vh>regex test</vh></v>
 <v t="ekr.20160131054951.1"><vh>** what about existing annotations????</vh></v>
+<v t="ekr.20160131063928.1"><vh>** Fix bugs</vh></v>
+<v t="ekr.20160131031559.1"><vh>regex test</vh></v>
 <v t="ekr.20160126153921.1"></v>
+<v t="ekr.20160128041938.1"></v>
+<v t="ekr.20160128154715.1"></v>
+<v t="ekr.20160128114726.1"></v>
+<v t="ekr.20160128113859.1"></v>
+<v t="ekr.20160128190112.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1677,10 +1683,10 @@ trace: bool
 aList: Sequence
 controller: StandAloneMakeStubFile
 fn: str
-i[0-3]*: int
+i\b[0-3]?: int
 parser: optparse.OptionParser
 node: Node
-s[0-3]*: str
+s\b[0-3]?: str
 strict: bool
 
 [Return Patterns]
@@ -1699,12 +1705,21 @@ tuple(*): Sequence
 <t tx="ekr.20160128113859.1">
 def __init__ (self, find_s, repl_s, trace=False):
     '''Ctor for the Pattern class.'''
-    sep = r'\b'
+   
     self.find_s = find_s
     self.repl_s = repl_s
-    self.regex = (
-        None if self.is_balanced() else
-        re.compile(sep+find_s.strip(sep)+sep))
+    if self.is_balanced():
+        self.regex = None
+    else:
+        # Careful: len(sep) is 2, so s.strip(sep) doesn't work as expected.
+        # Careful: add sep only when the first or last character is an alpha.
+        sep = r'\b'
+        s = find_s
+        if s and s[0].isalpha() and not s.startswith(sep):
+            s = sep + s
+        if s and s[-1].isalpha() and not s.endswith(sep):
+            s = s + sep
+        self.regex = re.compile(s)
     self.trace = trace
 </t>
 <t tx="ekr.20160128113914.1">
@@ -1762,11 +1777,13 @@ if __name__ == '__main__':
         ('s', 's', 'str', 'str'),
         ('abc', 'abc', 'ABC', 'ABC'),
         ('str(str)', 'str(*)', 'str', 'str'),
+        ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
     )
-    
-    for s, find, repl, result in table:
+    for s, find, repl, expected in table:
         pattern = msf.Pattern(find, repl)
-        assert pattern.match_entire_string(s), (s, find, repl)</t>
+        result = pattern.match_entire_string(s)
+        assert result, (result, s, find, repl, expected)
+        </t>
 <t tx="ekr.20160128190224.1">
 def test_is_known_type(self):
     '''Test that is_known_type handles brackets reasonably.'''
@@ -1869,11 +1886,35 @@ def is_known_type(self, s):
                 return True
     return False
 </t>
-<t tx="ekr.20160131031559.1">a
+<t tx="ekr.20160131031559.1">g.cls()
+import re
+sep = r'\b'
+table = (
+    'str',
+    r'\[str\]',
+    r'\b\[str\]\b',
+)
+print(len(sep))
+n = len(sep)
+for z in table:
+    print(z, z.strip(sep), z.startswith(sep))
+    if z.startswith(sep):
+        z = z[n:]
+    if z.endswith(sep):
+        z = z[:-n]
+    print(z)
+    re.compile(z)
+    
 
-[a]
 
-[str]</t>
+# find \b\[str\]\b
+
+# a
+
+# [a]
+
+# [str]
+</t>
 <t tx="ekr.20160131034212.1"></t>
 <t tx="ekr.20160131042431.1">@language rest
 @wrap
@@ -1916,5 +1957,16 @@ value remains, its "proper" value may not obvious from naming conventions.
 In that case, you will have to update the stub using the actual source code
 as a guide.</t>
 <t tx="ekr.20160131054951.1"></t>
+<t tx="ekr.20160131063928.1">@language rest
+@wrap
+
+\[str\]: List[str]
+
+"constants.error: unexpected end of regular expression"
+
+Two new unit tests are needed:
+
+    [various] in is_known_type
+    regex \[various\] in the Pattern class.</t>
 </tnodes>
 </leo_file>

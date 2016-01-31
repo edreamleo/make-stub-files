@@ -11,11 +11,13 @@ class TestMakeStubFiles(unittest.TestCase):
             ('s', 's', 'str', 'str'),
             ('abc', 'abc', 'ABC', 'ABC'),
             ('str(str)', 'str(*)', 'str', 'str'),
+            ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
         )
-        
-        for s, find, repl, result in table:
+        for s, find, repl, expected in table:
             pattern = msf.Pattern(find, repl)
-            assert pattern.match_entire_string(s), (s, find, repl)
+            result = pattern.match_entire_string(s)
+            assert result, (result, s, find, repl, expected)
+            
 
     def test_is_known_type(self):
         '''Test that is_known_type handles brackets reasonably.'''
