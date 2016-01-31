@@ -101,7 +101,7 @@ output directory. For example:
         # Lines to be inserted at the start of each stub file.
         from typing import TypeVar, Iterable, Tuple
         T = TypeVar('T', int, float, complex)
-        
+
 #### Patterns used in [xxx Patterns] sections.
 
 The configuration sections to be discussed next, namely:
@@ -131,6 +131,7 @@ For example:
     
 At present, the following *does not work*:
 
+    [Arg Patterns]
     aList[List[*]]: List[List[*]]
     
 That is, the script does not replace * in replacement-strings with whatever
