@@ -240,10 +240,10 @@ pattern should be:
 
         \bs[0-3]?\b: str # Correct.
 
-3. This script ends repeated pattern matching after 200 iterations. This is
-   large enough so all reasonable pattern matching is possible. Unbounded
-   matches produce "interesting" results that are easily visible in the
-   output.
+This script ends repeated pattern matching after 200 iterations. This is
+large enough so all reasonable pattern matching is possible. Unbounded
+matches produce "interesting" results that are easily visible in the
+output.
 
 The script *always* produces a syntactically correct stub, even if the
 patterns in this section (and in the [General Patterns] section) do not, in
