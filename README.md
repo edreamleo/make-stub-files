@@ -155,7 +155,7 @@ output directory. For example:
         from typing import TypeVar, Iterable, Tuple
         T = TypeVar('T', int, float, complex)
         
-#### The [Arg Types] section
+#### The [Arg Patterns] section
 
 This configuration section specifies naming conventions. These conventions
 are applied to *both* argument lists *and* return values.
@@ -165,7 +165,7 @@ are applied to *both* argument lists *and* return values.
 
 For example:
 
-    [Arg Types]
+    [Arg Patterns]
 
     # Lines have the form:
     #   verbatim-pattern: replacement

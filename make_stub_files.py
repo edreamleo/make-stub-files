@@ -3,7 +3,7 @@
 This script makes a stub (.pyi) file in the output directory for each
 source file listed on the command line (wildcard file names are supported).
 
-For full details, see readme.md.
+For full details, see README.md.
 
 This file is in the public domain.
 '''
