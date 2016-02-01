@@ -168,7 +168,6 @@
 </v>
 <v t="ekr.20160126153921.1"></v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
-<v t="ekr.20160130032546.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1918,17 +1917,25 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-** announce the recent changes.
+** How does the user keep stub files up to date? A result of task orientation.
+
+1. Update all *stub* files by hand. This seems the simplest.
+   Alas, the matching config files become irrelevant: they are no longer design docs.
+   
+2. Update the *config* files by hand. Two drawbacks:
+    - More work in the short run.
+    - Tweaks to the config file are not likely to be design-oriented.
+    
+So it appears that config files will *not* be very useful as design docs.
+
+- Add -a option, telling whether to add Any for all "unknown" annotations.
+  Absent this option, don't add annotations for unknown returns??
 
 - Task oriented docs
 
-- What about existing annotations?
+- Preserve existing annotations?
   The script would have to be run with Python 3.
-  
-Log:
-
-- Removed duplicates from returns list.
-- Added unit test for [*]: List[*]</t>
+</t>
 <t tx="ekr.20160131175042.1">class TestClass:
     '''A class containing constructs that have caused difficulties.'''
     @others</t>

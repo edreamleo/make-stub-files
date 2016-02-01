@@ -266,9 +266,6 @@ The script will create this stub:
     def foo(a) --> Any: ...
         # return a+frungify(a)
         # return defrungify(a)
-        # reduced...
-        # return a+frungify(a)
-        # return defrungify(a)
         
 The comments preserve maximal information about return types, which should
 help the user to supply a more specific return type. The user can do this
