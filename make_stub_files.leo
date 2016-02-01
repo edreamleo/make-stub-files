@@ -18,7 +18,7 @@
 <v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
 </v>
 <v t="ekr.20160128105006.1"><vh>Doc files</vh>
-<v t="ekr.20160126153921.1"><vh>@edit readme.md</vh></v>
+<v t="ekr.20160126153921.1"><vh>@edit README.md</vh></v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Testing</vh>
 <v t="ekr.20160128154715.1"><vh>@clean test/test_msf.py</vh>
@@ -1917,23 +1917,12 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-** How does the user keep stub files up to date? A result of task orientation.
-
-1. Update all *stub* files by hand. This seems the simplest.
-   Alas, the matching config files become irrelevant: they are no longer design docs.
-   
-2. Update the *config* files by hand. Two drawbacks:
-    - More work in the short run.
-    - Tweaks to the config file are not likely to be design-oriented.
-    
-So it appears that config files will *not* be very useful as design docs.
-
-- Add -a option, telling whether to add Any for all "unknown" annotations.
-  Absent this option, don't add annotations for unknown returns??
+** --update.
 
 - Task oriented docs
 
 - Preserve existing annotations?
+  It doesn't seem urgent.
   The script would have to be run with Python 3.
 </t>
 <t tx="ekr.20160131175042.1">class TestClass:
