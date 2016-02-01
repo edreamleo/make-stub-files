@@ -56,7 +56,7 @@ used by people who use Python 2.x code bases.
 
 ### Command-line arguments
 
-    Usage: make_stub_files.py [options] file1, file2, ...
+    Usage: make_stub_files.py [options] file1 file2 ...
     
     Options:
       -h, --help          show this help message and exit
@@ -68,7 +68,7 @@ used by people who use Python 2.x code bases.
       -v, --verbose       trace configuration settings
       -w, --warn          warn about unannotated args
       
-*Note*: glob.blob wildcards can be used in file1, file2, ...
+*Note*: glob.glob wildcards can be used in file1, file2, ...
 
 ### The configuration file
 
