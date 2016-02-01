@@ -27,7 +27,6 @@
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
-<v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160131180118.1"><vh>_DebugClass</vh>
@@ -167,11 +166,9 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
-<v t="ekr.20160131195020.1"><vh>Recent</vh>
-<v t="ekr.20160126153212.93"></v>
-</v>
-<v t="ekr.20160131194839.1"><vh>** announce the recent changes &amp; update the docs</vh></v>
 <v t="ekr.20160126153921.1"></v>
+<v t="ekr.20160131174909.1"><vh>** To do</vh></v>
+<v t="ekr.20160130032546.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1752,11 +1749,10 @@ def __repr__(self):
 __str__ = __repr__
 </t>
 <t tx="ekr.20160128114726.1">
-def match_entire_string(self, s):
+def match_entire_string(self, s, trace=False):
     '''Return True if s matches self.find_s'''
-    trace = True
     if self.is_balanced():
-        j = self.full_balanced_match(s, 0)
+        j = self.full_balanced_match(s, 0, trace=trace)
         return j is not None
     else:
         m = self.regex.match(s)
@@ -1795,17 +1791,22 @@ if __name__ == '__main__':
     unittest.main()</t>
 <t tx="ekr.20160128190112.1">def test_pattern_class(self):
     
+    trace = False
     table = (
         ('s', 's', 'str', 'str'),
         ('abc', 'abc', 'ABC', 'ABC'),
         ('str(str)', 'str(*)', 'str', 'str'),
         ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
         ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
+        ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
     )
     for s, find, repl, expected in table:
         pattern = msf.Pattern(find, repl)
-        result = pattern.match_entire_string(s)
+        result = pattern.match_entire_string(s, trace=trace)
         assert result, (result, s, find, repl, expected)
+        aList = pattern.all_matches(s, trace=trace)
+        assert len(aList) == 1, aList
+
 </t>
 <t tx="ekr.20160128190224.1">
 def test_is_known_type(self):
@@ -1852,7 +1853,8 @@ def format_return_expressions(self, aList1, aList, kind):
             unknowns = True
     if unknowns:
         comments1 = ['# return ' + e for e in list(set(aList1))]
-        sep = ['# reduced...']
+        comments1 = [z for z in comments1 if z not in comments]
+        sep = ['# reduced...'] if comments1 else []
         comments = ''.join([lws + self.indent(z) for z in comments1 + sep + comments])
         return 'Any: ...' + comments
     if kind == 'Union' and len(results) == 1:
@@ -1916,8 +1918,17 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
+** announce the recent changes.
+
+- Task oriented docs
+
 - What about existing annotations?
-  The script would have to be run with Python 3.</t>
+  The script would have to be run with Python 3.
+  
+Log:
+
+- Removed duplicates from returns list.
+- Added unit test for [*]: List[*]</t>
 <t tx="ekr.20160131175042.1">class TestClass:
     '''A class containing constructs that have caused difficulties.'''
     @others</t>
@@ -1947,8 +1958,6 @@ def is_known_type(self, s):
 <t tx="ekr.20160131192735.1">def return_array(self):
     # return self.is_known_type(s[1:-1])
     return f(s[1:-1])</t>
-<t tx="ekr.20160131194839.1"></t>
-<t tx="ekr.20160131195020.1"></t>
 <t tx="ekr.20160131204607.1">
 def replace(self, m, s, trace=False):
     '''Use m (returned by all_matches) to replace the pattern in s.'''

@@ -746,11 +746,10 @@ class Pattern:
         print('***** unmatched %s in %s' % (delim, s))
         return len(s) + 1
 
-    def match_entire_string(self, s):
+    def match_entire_string(self, s, trace=False):
         '''Return True if s matches self.find_s'''
-        trace = True
         if self.is_balanced():
-            j = self.full_balanced_match(s, 0)
+            j = self.full_balanced_match(s, 0, trace=trace)
             return j is not None
         else:
             m = self.regex.match(s)
@@ -1216,7 +1215,8 @@ class StubTraverser (ast.NodeVisitor):
                 unknowns = True
         if unknowns:
             comments1 = ['# return ' + e for e in list(set(aList1))]
-            sep = ['# reduced...']
+            comments1 = [z for z in comments1 if z not in comments]
+            sep = ['# reduced...'] if comments1 else []
             comments = ''.join([lws + self.indent(z) for z in comments1 + sep + comments])
             return 'Any: ...' + comments
         if kind == 'Union' and len(results) == 1:
