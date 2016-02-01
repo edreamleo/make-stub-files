@@ -29,7 +29,27 @@
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
+<v t="ekr.20160131174909.1"><vh>** To do</vh></v>
+<v t="ekr.20160131175024.1"><vh>Recent</vh>
+<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
+<v t="ekr.20160130034812.1"><vh>st.is_known_type</vh></v>
+<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
+<v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helper</vh>
+<v t="ekr.20160126153212.93"><vh>st.match_ret_patterns</vh></v>
+</v>
+</v>
+<v t="ekr.20160130032546.1"></v>
+<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
+<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
+<v t="ekr.20160128190112.1"></v>
+</v>
+<v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
+<v t="ekr.20160131180118.1"><vh>_DebugClass</vh>
+<v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
+<v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
+</v>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
 <v t="ekr.20160126153212.4"><vh> f.Entries</vh>
 <v t="ekr.20160126153212.5"><vh>f.format</vh></v>
@@ -111,14 +131,14 @@
 </v>
 </v>
 <v t="ekr.20160128041938.1"><vh>class Pattern</vh>
-<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
+<v t="ekr.20160128113859.1"></v>
 <v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
 <v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
 <v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
 <v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
 <v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
 </v>
-<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
+<v t="ekr.20160128114726.1"></v>
 </v>
 <v t="ekr.20160126153212.73"><vh>class StandAloneMakeStubFile</vh>
 <v t="ekr.20160126153212.74"><vh>msf.ctor</vh></v>
@@ -143,30 +163,26 @@
 <v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
 <v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
 </v>
-<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
-<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
-<v t="ekr.20160130034812.1"><vh>st.is_known_type</vh></v>
-<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
-<v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helper</vh>
-<v t="ekr.20160126153212.93"><vh>st.match_ret_patterns</vh></v>
-</v>
-</v>
+<v t="ekr.20160126153212.90"></v>
 </v>
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
+</v>
+<v t="ekr.20160131175042.1"><vh>class TestClass</vh>
+<v t="ekr.20160131175118.1"><vh>return_list</vh></v>
+<v t="ekr.20160131192406.1"><vh>return_all</vh></v>
+<v t="ekr.20160131192735.1"><vh>return_array</vh></v>
 </v>
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
+<v t="ekr.20160131175042.1"></v>
 <v t="ekr.20160130034812.1"></v>
+<v t="ekr.20160126153212.92"></v>
+<v t="ekr.20160128042705.1"></v>
+<v t="ekr.20160128051025.1"></v>
+<v t="ekr.20160126153212.93"></v>
 <v t="ekr.20160126153212.90"></v>
 <v t="ekr.20160130032546.1"></v>
-<v t="ekr.20160131054951.1"><vh>** what about existing annotations????</vh></v>
-<v t="ekr.20160131063928.1"><vh>** Fix bugs</vh></v>
-<v t="ekr.20160128154715.1"></v>
-<v t="ekr.20160128114726.1"></v>
-<v t="ekr.20160128113859.1"></v>
-<v t="ekr.20160128190112.1"></v>
-<v t="ekr.20160126153921.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -194,7 +210,7 @@ import os
 import re
 import sys
 @others
-
+g = _DebugClass()
 if __name__ == "__main__":
     main()
 </t>
@@ -878,8 +894,9 @@ def __init__ (self):
     self.arg_patterns = [] # [Arg Patterns]
     self.def_patterns = [] # [Def Name Patterns]
     self.general_patterns = [] # [General Patterns]
+    self.post_return_patterns = [] # [Post Return Patterns]
+    self.pre_return_patterns = [] # [Pre Return Patterns]
     self.return_patterns = [] # [Return Patterns]
-    
 </t>
 <t tx="ekr.20160126153212.75">
 def make_stub_file(self, fn):
@@ -1016,6 +1033,8 @@ def scan_command_line(self):
     self.arg_patterns = self.scan_patterns('Arg Patterns')
     self.def_patterns = self.scan_patterns('Def Name Patterns')
     self.general_patterns = self.scan_patterns('General Patterns')
+    self.post_return_patterns = self.scan_patterns('Post Return Patterns')
+    self.pre_return_patterns = self.scan_patterns('Pre Return Patterns')
     self.return_patterns = self.scan_patterns('Return Patterns')
 </t>
 <t tx="ekr.20160126153212.79">
@@ -1027,6 +1046,9 @@ def scan_patterns(self, section_name):
         if verbose: print('%s...\n' % section_name)
         for key in parser.options(section_name):
             value = parser.get(section_name, key)
+            # A kludge: strip leading \\ from patterns.
+            if key.startswith(r'\\'):
+                key = key[2:]
             pattern = Pattern(key, value, self.trace)
             aList.append(pattern)
             if verbose: print(pattern)
@@ -1112,7 +1134,10 @@ def __init__(self, controller):
     self.arg_patterns = x.arg_patterns
     self.def_patterns = x.def_patterns
     self.general_patterns = x.general_patterns
+    self.post_return_patterns = x.post_return_patterns
+    self.pre_return_patterns = x.pre_return_patterns
     self.return_patterns = x.return_patterns
+
 </t>
 <t tx="ekr.20160126153212.84">
 def indent(self, s):
@@ -1249,10 +1274,10 @@ def format_returns(self, node):
     # pattern in self.def_patterns
     trace = self.trace
     name = self.get_def_name(node)
-    r = [self.format(z) for z in self.returns]
+    r1 = [self.format(z) for z in self.returns]
     # Step 1: Return None if there are no return statements.
     if trace and self.returns:
-        print('format_returns: name: %s r:\n%s' % (name, r))
+        g.trace('name: %s r:\n%s' % (name, r1))
     if not [z for z in self.returns if z != None]:
         return 'None: ...'
     # Step 2: [Def Name Patterns] override all other patterns.
@@ -1261,10 +1286,10 @@ def format_returns(self, node):
         match = re.search(find_s, name)
         if match and match.group(0) == name:
             if trace:
-                print('*name pattern %s: %s -&gt; %s' % (find_s, name, repl_s))
+                g.trace('*name pattern %s: %s -&gt; %s' % (find_s, name, repl_s))
             return repl_s + ': ...'
     # Step 3: munge each return value, and merge them.
-    r = [self.munge_ret(name, z) for z in r]
+    r = [self.munge_ret(name, z) for z in r1]
         # Make type substitutions.
     r = sorted(set(r))
         # Remove duplicates
@@ -1277,7 +1302,7 @@ def format_returns(self, node):
         kind = 'Optional'
     else:
         kind = 'Union'
-    return self.format_return_expressions(r, kind)
+    return self.format_return_expressions(r1, r, kind)
 </t>
 <t tx="ekr.20160126153212.91">
 def munge_arg(self, s):
@@ -1306,14 +1331,19 @@ def munge_arg(self, s):
 def munge_ret(self, name, s):
     '''replace a return value by a type if possible.'''
     trace = self.trace
-    if trace: print('munge_ret ==== %s' % name)
+    if trace: g.trace('====', name)
+    # First: do pre-patterns.
+    for patterns in (self.pre_return_patterns, self.general_patterns):
+        junk, s = self.match_return_patterns(name, patterns, s)
+    # Second: repeatedly match return patterns.
     count, found = 0, True
-    while found and count &lt; 100:
-        count, found = count + 1, False
-        for patterns in ( self.general_patterns, self.return_patterns):
-            found2, s = self.match_return_patterns(name, patterns, s)
-            found = found or found2
-    if trace: print('munge_ret -----: %s' % s)
+    while found and count &lt; 50:
+        count += 1
+        found, s = self.match_return_patterns(name, self.return_patterns, s)
+    # Third: do post-patterns.
+    for patterns in (self.post_return_patterns, self.general_patterns):
+        junk, s = self.match_return_patterns(name, patterns, s)
+    if trace: g.trace('-----',s)
     return s
 </t>
 <t tx="ekr.20160126153212.93">
@@ -1325,7 +1355,7 @@ def match_return_patterns(self, name, patterns, s):
     trace = self.trace # or name.endswith('munge_arg')
     s1 = s
     default_pattern = None
-    if trace: print('match_patterns ===== %s: %s' % (name, s1))
+    if trace: g.trace('===== %s: %s' % (name, s1))
     for pattern in patterns:
         if pattern.find_s == '.*':
             # The user should use [Def Name Patterns] instead.
@@ -1335,16 +1365,20 @@ def match_return_patterns(self, name, patterns, s):
             matches = pattern.all_matches(s, trace=trace)
             # Replace in reverse order.
             s2 = s
-            for start, end in reversed(matches):
-                s = s[:start] + pattern.repl_s + s[end:]
+            for is_balanced, start, end in reversed(matches):
+                s_find = s[start+1:end-1]
+                s_repl = pattern.repl_s
+                if is_balanced:
+                    s_repl = s_repl.replace('*', s_find)
+                s = s[:start] + s_repl + s[end:]
                 if trace and s2 != s:
-                    print('match_patterns %s' % matches)
+                    g.trace(matches)
                     sep = '\n' if len(s2) &gt; 20 or len(s) &gt; 20 else ' '
-                    print('match_patterns match: %s%s%s --&gt;%s%s' % (
-                        pattern.repl_s, sep, s2, sep, s))
+                    g.trace('match: %s%s%s --&gt;%s%s' % (
+                        s_repl, sep, s2, sep, s))
     found = s1 != s
     if trace and found:
-        print('match_patterns returns %s\n' % s)
+        g.trace('returns %s\n' % s)
     return found, s
     
 </t>
@@ -1471,7 +1505,7 @@ class Pattern:
 </t>
 <t tx="ekr.20160128042705.1">
 def all_matches(self, s, trace=False):
-    '''Return a list of tubles (start, end) for all matches in s.'''
+    '''Return a list of tubles (is_balanced, start, end) for all matches in s.'''
     trace = trace or self.trace
     if self.is_balanced():
         aList, i = [], 0
@@ -1481,12 +1515,12 @@ def all_matches(self, s, trace=False):
             if j is None:
                 i += 1
             else:
-                aList.append((i,j),)
+                aList.append((True, i,j),)
                 i = j
             assert progress &lt; i
         return aList
     else:
-        return [tuple((m.start(), m.end()),) for m in self.regex.finditer(s)]
+        return [tuple((False, m.start(), m.end()),) for m in self.regex.finditer(s)]
 </t>
 <t tx="ekr.20160128042857.1">
 def is_balanced(self):
@@ -1518,7 +1552,7 @@ def match_balanced(self, delim, s, i):
         elif ch == delim2:
             level -= 1
             if level == 0:
-                if trace: print('match_balanced: found: %s' % s[i1:i])
+                if trace: g.trace('found: %s' % s[i1:i])
                 return i
         assert progress &lt; i
     # Unmatched: a syntax error.
@@ -1544,7 +1578,7 @@ def full_balanced_match(self, s, i, trace=False):
         assert progress &lt; i
     found = i &lt;= len(s) and j == len(pattern)
     if trace and found:
-        print('full_balanced_match %s -&gt; %s' % (pattern, s[i1:i]))
+        g.trace('%s -&gt; %s' % (pattern, s[i1:i]))
     return i if found else None
 </t>
 <t tx="ekr.20160128102557.1"># An example configuration file for make_stub_files.py.
@@ -1674,29 +1708,42 @@ StubTraverser.match_balanced: int
 
 patterns: Sequence
 trace: bool
-.*: str
+controller: StandAloneMakeStubFile
+parser: optparse.OptionParser
+### .*: str
 
 [General Patterns]
 
+a: str
 aList: Sequence
-controller: StandAloneMakeStubFile
+
 fn: str
 \bi[0-3]?\b: int
-parser: optparse.OptionParser
+
 node: Node
 \bs[0-3]?\b: str
 strict: bool
 
+[Pre Return Patterns]
+
+found: str
+name: str
+number: int
+
 [Return Patterns]
 
 all(*): bool
-found: str
 len(*): int
-name: str
-number: int
 str%(*): str
 str.join(*): str
+\bstr\b\+\bstr\b: str
+\bstr\b\+\bcomments\b: str
 tuple(*): Sequence
+
+[Post Return Patterns]
+
+str[*]: str
+\\[*]: List[*]
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
@@ -1734,7 +1781,7 @@ def match_entire_string(self, s):
         return j is not None
     else:
         m = self.regex.match(s)
-        # print(s, self, m)
+        # g.trace(s, self, m)
         return m and m.group(0) == s
 </t>
 <t tx="ekr.20160128122410.1">def get_def_name(self, node):
@@ -1808,7 +1855,7 @@ def test_is_known_type(self):
 <t tx="ekr.20160128225533.1">*.pyc
 test/*.pyc</t>
 <t tx="ekr.20160130032546.1">
-def format_return_expressions(self, aList, kind):
+def format_return_expressions(self, aList1, aList, kind):
     '''
     aList is a list of return expressions.
     All patterns have been applied.
@@ -1821,12 +1868,14 @@ def format_return_expressions(self, aList, kind):
     lws =  '\n' + ' '*4
     for i, e in enumerate(aList):
         comma = ',' if i &lt; len(aList) - 1 else ''
-        comments.append('# ' + e)
+        comments.append('# return ' + e)
         results.append(e + comma)
         if not self.is_known_type(e):
             unknowns = True
     if unknowns:
-        comments = ''.join([lws + self.indent(z) for z in comments])
+        comments1 = ['# return ' + e for e in list(set(aList1))]
+        sep = ['# reduced...']
+        comments = ''.join([lws + self.indent(z) for z in comments1 + sep + comments])
         return 'Any: ...' + comments
     if kind == 'Union' and len(results) == 1:
         kind = None
@@ -1850,6 +1899,10 @@ def is_known_type(self, s):
         'list', 'long', 'str', 'tuple', 'unicode',
     ):
         return True
+    if s.startswith('[') and s.endswith(']'):
+        # g.trace('=====',s)
+        # g.trace(self.post_return_patterns)
+        return self.is_known_type(s[1:-1])
     table = (
         'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
         'BinaryIO', 'ByteString',
@@ -1925,13 +1978,42 @@ must edit stubs to specify a proper return type. And even if only a single
 value remains, its "proper" value may not obvious from naming conventions.
 In that case, you will have to update the stub using the actual source code
 as a guide.</t>
-<t tx="ekr.20160131054951.1"></t>
-<t tx="ekr.20160131063928.1">@language rest
+<t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-Unit test
 
-    [xxx] in is_known_type
+
+- What about existing annotations?
+  The script would have to be run with Python 3.</t>
+<t tx="ekr.20160131175024.1"></t>
+<t tx="ekr.20160131175042.1">class TestClass:
+    '''A class containing constructs that have caused difficulties.'''
+    @others</t>
+<t tx="ekr.20160131175118.1">def return_list(a):
+    return [a]</t>
+<t tx="ekr.20160131180118.1">class _DebugClass:
+    '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
+    @others</t>
+<t tx="ekr.20160131180244.1">def pdb(self):
+    try:
+        import leo.core.leoGlobals as leo_g
+        leo_g.pdb()
+    except ImportError:
+        import pdb
+        pdb.set_trace()
 </t>
+<t tx="ekr.20160131180306.1">def trace(self, *args, **keys):
+    try:
+        import leo.core.leoGlobals as leo_g
+        leo_g.trace(caller_level=2, *args, **keys)
+    except ImportError:
+        print(args, keys)
+</t>
+<t tx="ekr.20160131192406.1">def return_all(self):
+    return all([self.is_known_type(z) for z in s3.split(',')])
+    # return all(['abc'])</t>
+<t tx="ekr.20160131192735.1">def return_array(self):
+    # return self.is_known_type(s[1:-1])
+    return f(s[1:-1])</t>
 </tnodes>
 </leo_file>

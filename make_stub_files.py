@@ -21,6 +21,21 @@ import optparse
 import os
 import re
 import sys
+class _DebugClass:
+    '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
+    def pdb(self):
+        try:
+            import leo.core.leoGlobals as leo_g
+            leo_g.pdb()
+        except ImportError:
+            import pdb
+            pdb.set_trace()
+    def trace(self, *args, **keys):
+        try:
+            import leo.core.leoGlobals as leo_g
+            leo_g.trace(caller_level=2, *args, **keys)
+        except ImportError:
+            print(args, keys)
 
 
 class AstFormatter:
@@ -666,7 +681,7 @@ class Pattern:
         return False
 
     def all_matches(self, s, trace=False):
-        '''Return a list of tubles (start, end) for all matches in s.'''
+        '''Return a list of tubles (is_balanced, start, end) for all matches in s.'''
         trace = trace or self.trace
         if self.is_balanced():
             aList, i = [], 0
@@ -676,12 +691,12 @@ class Pattern:
                 if j is None:
                     i += 1
                 else:
-                    aList.append((i,j),)
+                    aList.append((True, i,j),)
                     i = j
                 assert progress < i
             return aList
         else:
-            return [tuple((m.start(), m.end()),) for m in self.regex.finditer(s)]
+            return [tuple((False, m.start(), m.end()),) for m in self.regex.finditer(s)]
 
     def full_balanced_match(self, s, i, trace=False):
         '''Return the index of the end of the match found at s[i:] or None.'''
@@ -701,7 +716,7 @@ class Pattern:
             assert progress < i
         found = i <= len(s) and j == len(pattern)
         if trace and found:
-            print('full_balanced_match %s -> %s' % (pattern, s[i1:i]))
+            g.trace('%s -> %s' % (pattern, s[i1:i]))
         return i if found else None
 
     def match_balanced(self, delim, s, i):
@@ -724,7 +739,7 @@ class Pattern:
             elif ch == delim2:
                 level -= 1
                 if level == 0:
-                    if trace: print('match_balanced: found: %s' % s[i1:i])
+                    if trace: g.trace('found: %s' % s[i1:i])
                     return i
             assert progress < i
         # Unmatched: a syntax error.
@@ -739,7 +754,7 @@ class Pattern:
             return j is not None
         else:
             m = self.regex.match(s)
-            # print(s, self, m)
+            # g.trace(s, self, m)
             return m and m.group(0) == s
 
 
@@ -770,8 +785,9 @@ class StandAloneMakeStubFile:
         self.arg_patterns = [] # [Arg Patterns]
         self.def_patterns = [] # [Def Name Patterns]
         self.general_patterns = [] # [General Patterns]
+        self.post_return_patterns = [] # [Post Return Patterns]
+        self.pre_return_patterns = [] # [Pre Return Patterns]
         self.return_patterns = [] # [Return Patterns]
-        
     def finalize(self, fn):
         '''Finalize and regularize a filename.'''
         fn = os.path.expanduser(fn)
@@ -919,6 +935,8 @@ class StandAloneMakeStubFile:
         self.arg_patterns = self.scan_patterns('Arg Patterns')
         self.def_patterns = self.scan_patterns('Def Name Patterns')
         self.general_patterns = self.scan_patterns('General Patterns')
+        self.post_return_patterns = self.scan_patterns('Post Return Patterns')
+        self.pre_return_patterns = self.scan_patterns('Pre Return Patterns')
         self.return_patterns = self.scan_patterns('Return Patterns')
 
     def scan_patterns(self, section_name):
@@ -929,6 +947,9 @@ class StandAloneMakeStubFile:
             if verbose: print('%s...\n' % section_name)
             for key in parser.options(section_name):
                 value = parser.get(section_name, key)
+                # A kludge: strip leading \\ from patterns.
+                if key.startswith(r'\\'):
+                    key = key[2:]
                 pattern = Pattern(key, value, self.trace)
                 aList.append(pattern)
                 if verbose: print(pattern)
@@ -991,7 +1012,10 @@ class StubTraverser (ast.NodeVisitor):
         self.arg_patterns = x.arg_patterns
         self.def_patterns = x.def_patterns
         self.general_patterns = x.general_patterns
+        self.post_return_patterns = x.post_return_patterns
+        self.pre_return_patterns = x.pre_return_patterns
         self.return_patterns = x.return_patterns
+
 
     def indent(self, s):
         '''Return s, properly indented.'''
@@ -1126,10 +1150,10 @@ class StubTraverser (ast.NodeVisitor):
         # pattern in self.def_patterns
         trace = self.trace
         name = self.get_def_name(node)
-        r = [self.format(z) for z in self.returns]
+        r1 = [self.format(z) for z in self.returns]
         # Step 1: Return None if there are no return statements.
         if trace and self.returns:
-            print('format_returns: name: %s r:\n%s' % (name, r))
+            g.trace('name: %s r:\n%s' % (name, r1))
         if not [z for z in self.returns if z != None]:
             return 'None: ...'
         # Step 2: [Def Name Patterns] override all other patterns.
@@ -1138,10 +1162,10 @@ class StubTraverser (ast.NodeVisitor):
             match = re.search(find_s, name)
             if match and match.group(0) == name:
                 if trace:
-                    print('*name pattern %s: %s -> %s' % (find_s, name, repl_s))
+                    g.trace('*name pattern %s: %s -> %s' % (find_s, name, repl_s))
                 return repl_s + ': ...'
         # Step 3: munge each return value, and merge them.
-        r = [self.munge_ret(name, z) for z in r]
+        r = [self.munge_ret(name, z) for z in r1]
             # Make type substitutions.
         r = sorted(set(r))
             # Remove duplicates
@@ -1154,9 +1178,9 @@ class StubTraverser (ast.NodeVisitor):
             kind = 'Optional'
         else:
             kind = 'Union'
-        return self.format_return_expressions(r, kind)
+        return self.format_return_expressions(r1, r, kind)
 
-    def format_return_expressions(self, aList, kind):
+    def format_return_expressions(self, aList1, aList, kind):
         '''
         aList is a list of return expressions.
         All patterns have been applied.
@@ -1169,12 +1193,14 @@ class StubTraverser (ast.NodeVisitor):
         lws =  '\n' + ' '*4
         for i, e in enumerate(aList):
             comma = ',' if i < len(aList) - 1 else ''
-            comments.append('# ' + e)
+            comments.append('# return ' + e)
             results.append(e + comma)
             if not self.is_known_type(e):
                 unknowns = True
         if unknowns:
-            comments = ''.join([lws + self.indent(z) for z in comments])
+            comments1 = ['# return ' + e for e in list(set(aList1))]
+            sep = ['# reduced...']
+            comments = ''.join([lws + self.indent(z) for z in comments1 + sep + comments])
             return 'Any: ...' + comments
         if kind == 'Union' and len(results) == 1:
             kind = None
@@ -1197,6 +1223,10 @@ class StubTraverser (ast.NodeVisitor):
             'list', 'long', 'str', 'tuple', 'unicode',
         ):
             return True
+        if s.startswith('[') and s.endswith(']'):
+            # g.trace('=====',s)
+            # g.trace(self.post_return_patterns)
+            return self.is_known_type(s[1:-1])
         table = (
             'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
             'BinaryIO', 'ByteString',
@@ -1244,14 +1274,19 @@ class StubTraverser (ast.NodeVisitor):
     def munge_ret(self, name, s):
         '''replace a return value by a type if possible.'''
         trace = self.trace
-        if trace: print('munge_ret ==== %s' % name)
+        if trace: g.trace('====', name)
+        # First: do pre-patterns.
+        for patterns in (self.pre_return_patterns, self.general_patterns):
+            junk, s = self.match_return_patterns(name, patterns, s)
+        # Second: repeatedly match return patterns.
         count, found = 0, True
-        while found and count < 100:
-            count, found = count + 1, False
-            for patterns in ( self.general_patterns, self.return_patterns):
-                found2, s = self.match_return_patterns(name, patterns, s)
-                found = found or found2
-        if trace: print('munge_ret -----: %s' % s)
+        while found and count < 50:
+            count += 1
+            found, s = self.match_return_patterns(name, self.return_patterns, s)
+        # Third: do post-patterns.
+        for patterns in (self.post_return_patterns, self.general_patterns):
+            junk, s = self.match_return_patterns(name, patterns, s)
+        if trace: g.trace('-----',s)
         return s
 
     def match_return_patterns(self, name, patterns, s):
@@ -1262,7 +1297,7 @@ class StubTraverser (ast.NodeVisitor):
         trace = self.trace # or name.endswith('munge_arg')
         s1 = s
         default_pattern = None
-        if trace: print('match_patterns ===== %s: %s' % (name, s1))
+        if trace: g.trace('===== %s: %s' % (name, s1))
         for pattern in patterns:
             if pattern.find_s == '.*':
                 # The user should use [Def Name Patterns] instead.
@@ -1272,22 +1307,36 @@ class StubTraverser (ast.NodeVisitor):
                 matches = pattern.all_matches(s, trace=trace)
                 # Replace in reverse order.
                 s2 = s
-                for start, end in reversed(matches):
-                    s = s[:start] + pattern.repl_s + s[end:]
+                for is_balanced, start, end in reversed(matches):
+                    s_find = s[start+1:end-1]
+                    s_repl = pattern.repl_s
+                    if is_balanced:
+                        s_repl = s_repl.replace('*', s_find)
+                    s = s[:start] + s_repl + s[end:]
                     if trace and s2 != s:
-                        print('match_patterns %s' % matches)
+                        g.trace(matches)
                         sep = '\n' if len(s2) > 20 or len(s) > 20 else ' '
-                        print('match_patterns match: %s%s%s -->%s%s' % (
-                            pattern.repl_s, sep, s2, sep, s))
+                        g.trace('match: %s%s%s -->%s%s' % (
+                            s_repl, sep, s2, sep, s))
         found = s1 != s
         if trace and found:
-            print('match_patterns returns %s\n' % s)
+            g.trace('returns %s\n' % s)
         return found, s
         
 
     def visit_Return(self, node):
 
         self.returns.append(node.value)
+class TestClass:
+    '''A class containing constructs that have caused difficulties.'''
+    def return_list(a):
+        return [a]
+    def return_all(self):
+        return all([self.is_known_type(z) for z in s3.split(',')])
+        # return all(['abc'])
+    def return_array(self):
+        # return self.is_known_type(s[1:-1])
+        return f(s[1:-1])
 
 def main():
     '''
@@ -1308,6 +1357,6 @@ def pdb():
     except ImportError:
         import pdb
         pdb.set_trace()
-
+g = _DebugClass()
 if __name__ == "__main__":
     main()
