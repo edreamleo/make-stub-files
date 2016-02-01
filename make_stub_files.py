@@ -21,21 +21,6 @@ import optparse
 import os
 import re
 import sys
-class _DebugClass:
-    '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
-    def pdb(self):
-        try:
-            import leo.core.leoGlobals as leo_g
-            leo_g.pdb()
-        except ImportError:
-            import pdb
-            pdb.set_trace()
-    def trace(self, *args, **keys):
-        try:
-            import leo.core.leoGlobals as leo_g
-            leo_g.trace(caller_level=2, *args, **keys)
-        except ImportError:
-            print(args, keys)
 
 
 class AstFormatter:
@@ -637,6 +622,21 @@ class AstFormatter:
         name = d.get(self.kind(node),'<%s>' % node.__class__.__name__)
         if strict: assert name,self.kind(node)
         return name
+class LeoGlobals:
+    '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
+    def pdb(self):
+        try:
+            import leo.core.leoGlobals as leo_g
+            leo_g.pdb()
+        except ImportError:
+            import pdb
+            pdb.set_trace()
+    def trace(self, *args, **keys):
+        try:
+            import leo.core.leoGlobals as leo_g
+            leo_g.trace(caller_level=2, *args, **keys)
+        except ImportError:
+            print(args, keys)
 
 
 class Pattern:
@@ -1342,6 +1342,18 @@ class TestClass:
     def return_array(self):
         # return self.is_known_type(s[1:-1])
         return f(s[1:-1])
+    def parse_group(group):
+        if len(group) >= 3 and group[-2] == 'as':
+            del group[-2:]
+        ndots = 0
+        i = 0
+        while len(group) > i and group[i].startswith('.'):
+            ndots += len(group[i])
+            i += 1
+        assert ''.join(group[:i]) == '.'*ndots, group
+        del group[:i]
+        assert all(g == '.' for g in group[1::2]), group
+        return ndots, os.sep.join(group[::2])
 
 def main():
     '''
@@ -1362,6 +1374,6 @@ def pdb():
     except ImportError:
         import pdb
         pdb.set_trace()
-g = _DebugClass() # For ekr.
+g = LeoGlobals() # For ekr.
 if __name__ == "__main__":
     main()

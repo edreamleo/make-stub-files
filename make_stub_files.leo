@@ -29,10 +29,6 @@
 </v>
 <v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
-<v t="ekr.20160131180118.1"><vh>_DebugClass</vh>
-<v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
-<v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
-</v>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
 <v t="ekr.20160126153212.4"><vh> f.Entries</vh>
 <v t="ekr.20160126153212.5"><vh>f.format</vh></v>
@@ -113,6 +109,10 @@
 <v t="ekr.20160126153212.72"><vh>f.op_name</vh></v>
 </v>
 </v>
+<v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
+<v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
+<v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
+</v>
 <v t="ekr.20160128041938.1"><vh>class Pattern</vh>
 <v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
 <v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
@@ -162,12 +162,18 @@
 <v t="ekr.20160131175118.1"><vh>return_list</vh></v>
 <v t="ekr.20160131192406.1"><vh>return_all</vh></v>
 <v t="ekr.20160131192735.1"><vh>return_array</vh></v>
+<v t="ekr.20160201125349.1"><vh>parse_group (Guido)</vh></v>
 </v>
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
 <v t="ekr.20160126153921.1"></v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
+<v t="ekr.20160130034812.1"></v>
+<v t="ekr.20160201131557.1"><vh>fix balanced replacement</vh></v>
+<v t="ekr.20160128190224.1"></v>
+<v t="ekr.20160128190112.1"></v>
+<v t="ekr.20160128051025.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -195,7 +201,7 @@ import os
 import re
 import sys
 @others
-g = _DebugClass() # For ekr.
+g = LeoGlobals() # For ekr.
 if __name__ == "__main__":
     main()
 </t>
@@ -1699,6 +1705,11 @@ node: Node
 \bs[0-3]?\b: str
 strict: bool
 
+# Guido
+group: str
+ndots: int
+os.sep.join(*): str
+
 [Pre Return Patterns]
 
 found: str
@@ -1719,6 +1730,9 @@ tuple(*): Sequence
 
 str[*]: str
 \\[*]: List[*]
+# For Guido.
+(*):Tuple[*]
+
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
@@ -1798,6 +1812,7 @@ if __name__ == '__main__':
         ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
         ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
         ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
+        ('(int,str)', '(*)', 'Tuple[*]', 'Tuple[int,str]'), # Guido bug 2.
     )
     for s, find, repl, expected in table:
         pattern = msf.Pattern(find, repl)
@@ -1815,6 +1830,7 @@ def test_is_known_type(self):
         'Sequence[]',
         'Sequence[List]',
         'Sequence[List[Any]]',
+        'Tuple[int,str]',
     )
     bad = (
         'Huh', 'Sequence(List)',
@@ -1930,7 +1946,7 @@ def is_known_type(self, s):
     @others</t>
 <t tx="ekr.20160131175118.1">def return_list(a):
     return [a]</t>
-<t tx="ekr.20160131180118.1">class _DebugClass:
+<t tx="ekr.20160131180118.1">class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
     @others</t>
 <t tx="ekr.20160131180244.1">def pdb(self):
@@ -1973,5 +1989,30 @@ def replace(self, m, s, trace=False):
             s_repl, sep, s2, sep, s))
     return s
 </t>
+<t tx="ekr.20160201125349.1">def parse_group(group):
+    if len(group) &gt;= 3 and group[-2] == 'as':
+        del group[-2:]
+    ndots = 0
+    i = 0
+    while len(group) &gt; i and group[i].startswith('.'):
+        ndots += len(group[i])
+        i += 1
+    assert ''.join(group[:i]) == '.'*ndots, group
+    del group[:i]
+    assert all(g == '.' for g in group[1::2]), group
+    return ndots, os.sep.join(group[::2])
+</t>
+<t tx="ekr.20160201131557.1">@language rest
+@wrap
+
+How to turn (int,str) into Tuple[int, str]?
+
+This pattern doesn't do it:
+
+(int,str): Tuple[int, str]
+
+Now the last line says
+
+    # return (Tuple[int, str])</t>
 </tnodes>
 </leo_file>

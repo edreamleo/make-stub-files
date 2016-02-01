@@ -15,6 +15,7 @@ class TestMakeStubFiles(unittest.TestCase):
             ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
             ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
             ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
+            ('(int,str)', '(*)', 'Tuple[*]', 'Tuple[int,str]'), # Guido bug 2.
         )
         for s, find, repl, expected in table:
             pattern = msf.Pattern(find, repl)
@@ -31,6 +32,7 @@ class TestMakeStubFiles(unittest.TestCase):
             'Sequence[]',
             'Sequence[List]',
             'Sequence[List[Any]]',
+            'Tuple[int,str]',
         )
         bad = (
             'Huh', 'Sequence(List)',
