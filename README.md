@@ -2,7 +2,8 @@
 This is the readme file for the make-stub-files script explaining what it
 does, how it works and why it is important.
 
-The github repository for this script is at: https://github.com/edreamleo/make-stub-files
+The github repository for this script is at:
+https://github.com/edreamleo/make-stub-files
 
 This script is in the public domain.
 
@@ -101,50 +102,49 @@ output directory. For example:
 
 #### Patterns used in [xxx Patterns] sections.
 
-The configuration sections to be discussed next, namely:
-
-    [Def Name Patterns]
-    [Arg Patterns]
-    [General Patterns]
-    [Return Patterns]
-    
-all specify patterns that associate annotations with argument lists or
-return values.
-
-All patterns have the form:
+The remaining configuration sections specify patterns that associate
+annotations with argument lists or return values. All patterns have the form:
 
     find-string: replacement-string
     
 Colons are not allowed in the find-string.  This is a limitation of .ini files.
 
 There are two kinds of patterns: regex patterns and balanced patterns.
-
-**Balanced patterns** contain either `(*)`, `[*]`, or `{*}` in the find-string.
-Unlike regular expressions, balanced patterns match only balanced brackets.
+**Balanced patterns** contain either `(*)`, `[*]`, or `{*}` in the
+find-string. Unlike regular expressions, balanced patterns match only
+balanced brackets.
 
 For example:
 
     str(*): str
     
-At present, the following *does not work*:
+Balanced patterns such as:
 
-    [Arg Patterns]
-    aList[List[*]]: List[List[*]]
-    
-That is, the script does not replace `*` in replacement-strings with whatever
-matched `*` in the find-string. This is on the to-do list.
+    [*]: List[*]
+
+work as expected. The script replaces the `*` in replacement-strings with
+whatever matched `*` in the find-string.
 
 A pattern is a **regex pattern** if and only if it is *not* a balanced
 pattern. The find-string is a python regular expression. At present, the
 replacement-string is a *plain* string. That is, \1, \2, etc. are not
-allowed.
+expanded in the replacement-string. It could be done, but at present it
+does not seem necessary.
 
-*Note*: Regex and balanced patterns may appear in any section. However,
+**Note**: Regex and balanced patterns may appear in any section. However,
 balanced patterns will never match argument names.
 
 The script matches patterns in the order they appear in each section. As a
 special case, the script matches the .* pattern (a regex pattern) last,
 regardless of its position in each section.
+
+**Note**: The script adds \b to the start and end of regex find-strings,
+but *only* for find-strings composed solely of alphanumeric characters and
+underscores. This is an important convenience, but conceivably it could
+cause problems in some cases.
+
+**Note**: Preceed patterns starting with `[` by `\\` (two back slashes) so that
+the configParser does not think that the `[` starts a section name.
         
 #### [Def Name Patterns]
 
@@ -212,36 +212,33 @@ creates the stub:
     def whatever(aList: Sequence, aList1: Sequence, aList5) --> None: ...
         pass
 
-#### [Return Patterns]
+#### [Pre Return Patterns], [Return Patterns] and [Post Return Patterns]
 
-For each function or method, the script matches the patterns in this
-section against all return expressions in each function or method. The
-script matches all patterns repeatedly until no further matches are
+For each function or method, the script matches the patterns in these three
+sections against all return expressions in each function or method as follows:
+
+1. Matches each pattern in [Pre Return Patterns] once.
+
+2. Matches all patterns in [Return Patterns] repeatedly until no further matches are
 possible.
+
+3. Matches each pattern in [Post Return Patterns] once.
 
 The intent of the patterns in this section should be to **reduce** return
 expressions to **known types**. A known type is a either a name of a type
 class, such as int, str, long, etc. or a **type hint**, as per
 [Pep 484](https://www.python.org/dev/peps/pep-0484/).
 
-**Important notes about repeated patterns**
-
-1. The script adds \b to the start and end of regex find-strings, but
-   *only* for find-strings composed solely of alphanumeric characters and
-   underscores. This is an important convenience, but conceivably it could
-   cause problems in some cases.
-   
-2. Take care when creating **lengthening patterns** such as:
+**Warning**: Avoid **lengthening patterns** such as:
 
         s[0-3]?: str # Wrong.
     
-This pattern will cause an ever increasing search string! Instead, the
-pattern should be:
+inside the [Return Patterns] section. This pattern will cause an ever
+increasing search string! Use this pattern instead:
 
         \bs[0-3]?\b: str # Correct.
 
-This script ends repeated pattern matching after 200 iterations. This is
-large enough so all reasonable pattern matching is possible. Unbounded
+This script ends repeated pattern matching after 50 iterations. Unbounded
 matches produce "interesting" results that are easily visible in the
 output.
 
@@ -267,27 +264,29 @@ return type of:
 The script will create this stub:
 
     def foo(a) --> Any: ...
-        # a+frungify(a)
-        # defrungify(a)
+        # return a+frungify(a)
+        # return defrungify(a)
+        # reduced...
+        # return a+frungify(a)
+        # return defrungify(a)
         
 The comments preserve maximal information about return types, which should
 help the user to supply a more specific return type. The user can do this
-in two ways:
+in two ways by altering the stub files by hand or by adding new patterns to
+the config file.
 
-1. By altering the stub file by hand or
-2. By adding new patterns to [Def Name Patterns] or [Return Patterns].
-
-*Important*: The script applies the patterns in this section *separately*
-to each return expression in each function or method. Comments never appear
-in return expressions, and all strings in return values appear as str. As a
-result, there is no context to worry about and very short patterns suffice.
+*Important*: The script applies the patterns *separately* to each return
+expression. Comments never appear in return expressions, and all strings in
+return values appear as str. As a result, there is no context to worry
+about context in which patterns are matched. Very short patterns suffice.
     
 #### [General Patterns]
 
 The patterns in this section apply to *both* argument lists *and* return values.
 
-In essence, the patterns in this section work as if they appeared at the end of both
-[Arg Patterns] and [Return Patterns].
+The patterns in this section work as if they appeared at the end of all
+non-repeating patterns: namely [Arg Patterns], [Pre Return Patterns] and
+[Post Return Patterns].
 
 ### Why this script is important
 
