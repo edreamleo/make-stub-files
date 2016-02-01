@@ -19,8 +19,6 @@
 </v>
 <v t="ekr.20160128105006.1"><vh>Doc files</vh>
 <v t="ekr.20160126153921.1"><vh>@edit readme.md</vh></v>
-<v t="ekr.20160131042431.1"><vh>old from readme.md</vh></v>
-<v t="ekr.20160131034212.1"><vh>edit examples.md</vh></v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Testing</vh>
 <v t="ekr.20160128154715.1"><vh>@clean test/test_msf.py</vh>
@@ -30,20 +28,6 @@
 </v>
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
-<v t="ekr.20160131175024.1"><vh>Recent</vh>
-<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
-<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
-<v t="ekr.20160130034812.1"><vh>st.is_known_type</vh></v>
-<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
-<v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helper</vh>
-<v t="ekr.20160126153212.93"><vh>st.match_ret_patterns</vh></v>
-</v>
-</v>
-<v t="ekr.20160130032546.1"></v>
-<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
-<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
-<v t="ekr.20160128190112.1"></v>
-</v>
 <v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160131180118.1"><vh>_DebugClass</vh>
@@ -131,14 +115,15 @@
 </v>
 </v>
 <v t="ekr.20160128041938.1"><vh>class Pattern</vh>
-<v t="ekr.20160128113859.1"></v>
+<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
 <v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
 <v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
-<v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
+<v t="ekr.20160128042705.1" a="M"><vh>pattern.all_matches &amp; helpers</vh>
 <v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
 <v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
 </v>
-<v t="ekr.20160128114726.1"></v>
+<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
+<v t="ekr.20160131204607.1"><vh>pattern.replace</vh></v>
 </v>
 <v t="ekr.20160126153212.73"><vh>class StandAloneMakeStubFile</vh>
 <v t="ekr.20160126153212.74"><vh>msf.ctor</vh></v>
@@ -163,7 +148,14 @@
 <v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
 <v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
 </v>
-<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
+<v t="ekr.20160130034812.1"><vh>st.is_known_type</vh></v>
+<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
+<v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helper</vh>
+<v t="ekr.20160126153212.93"><vh>st.match_ret_patterns</vh></v>
+</v>
+</v>
 </v>
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
 </v>
@@ -175,14 +167,17 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
-<v t="ekr.20160131175042.1"></v>
+<v t="ekr.20160131195020.1"><vh>Recent</vh>
 <v t="ekr.20160130034812.1"></v>
 <v t="ekr.20160126153212.92"></v>
-<v t="ekr.20160128042705.1"></v>
-<v t="ekr.20160128051025.1"></v>
 <v t="ekr.20160126153212.93"></v>
 <v t="ekr.20160126153212.90"></v>
 <v t="ekr.20160130032546.1"></v>
+</v>
+<v t="ekr.20160131194839.1"><vh>** announce the recent changes &amp; update the docs</vh></v>
+<v t="ekr.20160126153921.1"></v>
+<v t="ekr.20160126153212.93"></v>
+<v t="ekr.20160128041938.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -210,7 +205,7 @@ import os
 import re
 import sys
 @others
-g = _DebugClass()
+g = _DebugClass() # For ekr.
 if __name__ == "__main__":
     main()
 </t>
@@ -1362,20 +1357,10 @@ def match_return_patterns(self, name, patterns, s):
             pass
         else:
             # Find all non-overlapping matches.
+            # Replace the matches in reverse order.
             matches = pattern.all_matches(s, trace=trace)
-            # Replace in reverse order.
-            s2 = s
-            for is_balanced, start, end in reversed(matches):
-                s_find = s[start+1:end-1]
-                s_repl = pattern.repl_s
-                if is_balanced:
-                    s_repl = s_repl.replace('*', s_find)
-                s = s[:start] + s_repl + s[end:]
-                if trace and s2 != s:
-                    g.trace(matches)
-                    sep = '\n' if len(s2) &gt; 20 or len(s) &gt; 20 else ' '
-                    g.trace('match: %s%s%s --&gt;%s%s' % (
-                        s_repl, sep, s2, sep, s))
+            for m in reversed(matches):
+                s = pattern.replace(m, s, trace=trace)
     found = s1 != s
     if trace and found:
         g.trace('returns %s\n' % s)
@@ -1496,10 +1481,10 @@ class Pattern:
     '''
     A class representing regex or balanced patterns.
     
-    Sample matching code, for either kind of pattern::
+    Sample matching code, for either kind of pattern:
         
-        for start, end in reversed(pattern.all_matches(s)):
-            s = s[:start] + pattern.repl_s + s[end:]
+        for m in reversed(pattern.all_matches(s)):
+            s = pattern.replace(m, s)
     '''
     @others
 </t>
@@ -1515,12 +1500,12 @@ def all_matches(self, s, trace=False):
             if j is None:
                 i += 1
             else:
-                aList.append((True, i,j),)
+                aList.append((i,j),)
                 i = j
             assert progress &lt; i
         return aList
     else:
-        return [tuple((False, m.start(), m.end()),) for m in self.regex.finditer(s)]
+        return list(self.regex.finditer(s))
 </t>
 <t tx="ekr.20160128042857.1">
 def is_balanced(self):
@@ -1781,7 +1766,6 @@ def match_entire_string(self, s):
         return j is not None
     else:
         m = self.regex.match(s)
-        # g.trace(s, self, m)
         return m and m.group(0) == s
 </t>
 <t tx="ekr.20160128122410.1">def get_def_name(self, node):
@@ -1900,8 +1884,6 @@ def is_known_type(self, s):
     ):
         return True
     if s.startswith('[') and s.endswith(']'):
-        # g.trace('=====',s)
-        # g.trace(self.post_return_patterns)
         return self.is_known_type(s[1:-1])
     table = (
         'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
@@ -1937,55 +1919,11 @@ def is_known_type(self, s):
                 return True
     return False
 </t>
-<t tx="ekr.20160131034212.1"></t>
-<t tx="ekr.20160131042431.1">@language rest
-@wrap
-
-### Handling function returns
-    
-The script handles function returns pragmatically. The tree walker simply
-writes a list of return expressions for each def. For example, here is the
-*default* output at the start of leoAst.pyi, before any patterns are applied:
-
-    class AstDumper:
-        def dump(self, node: ast.Ast, level=number) -&gt; 
-            repr(node), 
-            str%(name,sep,sep1.join(aList)), 
-            str%(name,str.join(aList)), 
-            str%str.join(str%(sep,self.dump(z,level+number)) for z in node): ...
-        def get_fields(self, node: ast.Ast) -&gt; result: ...
-        def extra_attributes(self, node: ast.Ast) -&gt; Sequence: ...
-        
-The stub for the dump function is not syntactically correct because there
-are four returns listed. As discussed below, the configuration file can
-specify several kinds of patterns to be applied to return values.
-
-**These patterns often suffice to collapse all return values** In fact,
-just a few patterns (given below) will convert::
-
-    def dump(self, node: ast.Ast, level=number) -&gt; 
-        repr(node), 
-        str%(name,sep,sep1.join(aList)), 
-        str%(name,str.join(aList)), 
-        str%str.join(str%(sep,self.dump(z,level+number)) for z in node): ...
-        
-to:
-
-    def dump(self, node: ast.Ast, level=number) -&gt; str: ... 
-
-If multiple return values still remain after applying all patterns, you
-must edit stubs to specify a proper return type. And even if only a single
-value remains, its "proper" value may not obvious from naming conventions.
-In that case, you will have to update the stub using the actual source code
-as a guide.</t>
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-
-
 - What about existing annotations?
   The script would have to be run with Python 3.</t>
-<t tx="ekr.20160131175024.1"></t>
 <t tx="ekr.20160131175042.1">class TestClass:
     '''A class containing constructs that have caused difficulties.'''
     @others</t>
@@ -2015,5 +1953,26 @@ as a guide.</t>
 <t tx="ekr.20160131192735.1">def return_array(self):
     # return self.is_known_type(s[1:-1])
     return f(s[1:-1])</t>
+<t tx="ekr.20160131194839.1"></t>
+<t tx="ekr.20160131195020.1"></t>
+<t tx="ekr.20160131204607.1">
+def replace(self, m, s, trace=False):
+    '''Use m (returned by all_matches) to replace the pattern in s.'''
+    if self.is_balanced():
+        start, end = m
+    else:
+        start, end = m.start(), m.end()
+    s2 = s
+    s_find = s[start+1:end-1]
+    s_repl = self.repl_s
+    if self.is_balanced():
+        s_repl = s_repl.replace('*', s_find)
+    s = s[:start] + s_repl + s[end:]
+    if trace and s2 != s:
+        sep = '\n' if len(s2) &gt; 20 or len(s) &gt; 20 else ' '
+        g.trace('match: %s%s%s --&gt;%s%s' % (
+            s_repl, sep, s2, sep, s))
+    return s
+</t>
 </tnodes>
 </leo_file>

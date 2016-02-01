@@ -643,10 +643,10 @@ class Pattern:
     '''
     A class representing regex or balanced patterns.
     
-    Sample matching code, for either kind of pattern::
+    Sample matching code, for either kind of pattern:
         
-        for start, end in reversed(pattern.all_matches(s)):
-            s = s[:start] + pattern.repl_s + s[end:]
+        for m in reversed(pattern.all_matches(s)):
+            s = pattern.replace(m, s)
     '''
 
     def __init__ (self, find_s, repl_s, trace=False):
@@ -691,12 +691,12 @@ class Pattern:
                 if j is None:
                     i += 1
                 else:
-                    aList.append((True, i,j),)
+                    aList.append((i,j),)
                     i = j
                 assert progress < i
             return aList
         else:
-            return [tuple((False, m.start(), m.end()),) for m in self.regex.finditer(s)]
+            return list(self.regex.finditer(s))
 
     def full_balanced_match(self, s, i, trace=False):
         '''Return the index of the end of the match found at s[i:] or None.'''
@@ -754,8 +754,25 @@ class Pattern:
             return j is not None
         else:
             m = self.regex.match(s)
-            # g.trace(s, self, m)
             return m and m.group(0) == s
+
+    def replace(self, m, s, trace=False):
+        '''Use m (returned by all_matches) to replace the pattern in s.'''
+        if self.is_balanced():
+            start, end = m
+        else:
+            start, end = m.start(), m.end()
+        s2 = s
+        s_find = s[start+1:end-1]
+        s_repl = self.repl_s
+        if self.is_balanced():
+            s_repl = s_repl.replace('*', s_find)
+        s = s[:start] + s_repl + s[end:]
+        if trace and s2 != s:
+            sep = '\n' if len(s2) > 20 or len(s) > 20 else ' '
+            g.trace('match: %s%s%s -->%s%s' % (
+                s_repl, sep, s2, sep, s))
+        return s
 
 
 class StandAloneMakeStubFile:
@@ -1224,8 +1241,6 @@ class StubTraverser (ast.NodeVisitor):
         ):
             return True
         if s.startswith('[') and s.endswith(']'):
-            # g.trace('=====',s)
-            # g.trace(self.post_return_patterns)
             return self.is_known_type(s[1:-1])
         table = (
             'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
@@ -1304,20 +1319,10 @@ class StubTraverser (ast.NodeVisitor):
                 pass
             else:
                 # Find all non-overlapping matches.
+                # Replace the matches in reverse order.
                 matches = pattern.all_matches(s, trace=trace)
-                # Replace in reverse order.
-                s2 = s
-                for is_balanced, start, end in reversed(matches):
-                    s_find = s[start+1:end-1]
-                    s_repl = pattern.repl_s
-                    if is_balanced:
-                        s_repl = s_repl.replace('*', s_find)
-                    s = s[:start] + s_repl + s[end:]
-                    if trace and s2 != s:
-                        g.trace(matches)
-                        sep = '\n' if len(s2) > 20 or len(s) > 20 else ' '
-                        g.trace('match: %s%s%s -->%s%s' % (
-                            s_repl, sep, s2, sep, s))
+                for m in reversed(matches):
+                    s = pattern.replace(m, s, trace=trace)
         found = s1 != s
         if trace and found:
             g.trace('returns %s\n' % s)
@@ -1357,6 +1362,6 @@ def pdb():
     except ImportError:
         import pdb
         pdb.set_trace()
-g = _DebugClass()
+g = _DebugClass() # For ekr.
 if __name__ == "__main__":
     main()
