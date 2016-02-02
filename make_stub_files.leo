@@ -179,9 +179,9 @@
 <v t="ekr.20160126153212.99"></v>
 </v>
 <v t="ekr.20160201201820.1"><vh>Most recent</vh>
-<v t="ekr.20160201194801.1"></v>
 <v t="ekr.20160126153212.90"></v>
 <v t="ekr.20160126153212.92"></v>
+<v t="ekr.20160201194801.1"></v>
 </v>
 </vnodes>
 <tnodes>
@@ -1726,6 +1726,10 @@ found: str
 name: str
 number: int
 
+# These would be dangerous. Reversing the order would be wrong.
+### \\[*]: List[*]
+### (*):Tuple[*]
+
 [Return Patterns]
 
 all(*): bool
@@ -1739,10 +1743,6 @@ tuple(*): Sequence
 [Post Return Patterns]
 
 str[*]: str
-### \\[*]: List[*]
-# For Guido.
-### (*):Tuple[*]
-
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
@@ -2042,13 +2042,20 @@ def do_Return(self, node):
     s = AstFormatter.do_Return(self, node)
     assert s.startswith('return'), repr(s)
     s = s[len('return'):].strip()
-    if trace: g.trace('(StubFormatter)', s)
+    # if trace: g.trace('(StubFormatter)', s)
     if s.startswith('(') and s.endswith(')'):
         # Defensive code: ensure the parens are balanced.
-        i = Pattern('return (*)', 'not-used').match_balanced(s[0], s, 0)
+        i = Pattern('(*)', 'not-used').match_balanced(s[0], s, 0)
         if i == len(s):
             s1 = s
             s = 'Tuple[%s]' % s[1:-1]
+            if trace: g.trace(s1, '==&gt;', s)
+    elif s.startswith('[') and s.endswith(']'):
+        # Defensive code: ensure the brackets are balanced.
+        i = Pattern('[*]', 'not-used').match_balanced(s[0], s, 0)
+        if i == len(s):
+            s1 = s
+            s = 'List[%s]' % s[1:-1]
             if trace: g.trace(s1, '==&gt;', s)
     return s
 </t>
