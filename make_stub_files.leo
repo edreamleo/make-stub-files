@@ -137,6 +137,7 @@
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160126153212.81"><vh>sf.Constants &amp; Name</vh></v>
+<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
@@ -167,13 +168,21 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
-<v t="ekr.20160126153921.1"></v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
+<v t="ekr.20160201151312.1"><vh>Recent</vh>
 <v t="ekr.20160130034812.1"></v>
 <v t="ekr.20160201131557.1"><vh>fix balanced replacement</vh></v>
 <v t="ekr.20160128190224.1"></v>
 <v t="ekr.20160128190112.1"></v>
-<v t="ekr.20160128051025.1"></v>
+<v t="ekr.20160128045845.1"></v>
+<v t="ekr.20160126153212.63"></v>
+<v t="ekr.20160126153212.99"></v>
+</v>
+<v t="ekr.20160201201820.1"><vh>Most recent</vh>
+<v t="ekr.20160201194801.1"></v>
+<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160126153212.92"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1077,7 +1086,7 @@ class StubFormatter (AstFormatter):
     @others
 </t>
 <t tx="ekr.20160126153212.81">
-# Return generic markers allow better pattern matches.
+# Return generic markers to allow better pattern matches.
 
 def do_BoolOp(self, node): # Python 2.x only.
     return 'bool'
@@ -1266,10 +1275,11 @@ def format_returns(self, node):
     trace = self.trace
     name = self.get_def_name(node)
     r1 = [self.format(z) for z in self.returns]
+        # Allow StubFormatter.do_Return to do the hack.
     # Step 1: Return None if there are no return statements.
     if trace and self.returns:
         g.trace('name: %s r:\n%s' % (name, r1))
-    if not [z for z in self.returns if z != None]:
+    if not [z for z in self.returns if z.value != None]:
         return 'None: ...'
     # Step 2: [Def Name Patterns] override all other patterns.
     for pattern in self.def_patterns:
@@ -1323,15 +1333,15 @@ def munge_ret(self, name, s):
     '''replace a return value by a type if possible.'''
     trace = self.trace
     if trace: g.trace('====', name)
-    # First: do pre-patterns.
+    # Match pre-patterns.
     for patterns in (self.pre_return_patterns, self.general_patterns):
         junk, s = self.match_return_patterns(name, patterns, s)
-    # Second: repeatedly match return patterns.
+    # Repeatedly match return patterns.
     count, found = 0, True
     while found and count &lt; 50:
         count += 1
         found, s = self.match_return_patterns(name, self.return_patterns, s)
-    # Third: do post-patterns.
+    # Match post-patterns.
     for patterns in (self.post_return_patterns, self.general_patterns):
         junk, s = self.match_return_patterns(name, patterns, s)
     if trace: g.trace('-----',s)
@@ -1366,7 +1376,8 @@ def match_return_patterns(self, name, patterns, s):
 <t tx="ekr.20160126153212.99">
 def visit_Return(self, node):
 
-    self.returns.append(node.value)
+    self.returns.append(node)
+        # New: return the entire node, not node.value.
 </t>
 <t tx="ekr.20160126153220.1"># An example configuration file for make_stub_files.py.
 # By default, make_stub_files.py uses ~/stubs/make_stub_files.cfg.
@@ -1513,12 +1524,11 @@ def is_balanced(self):
     return False
 </t>
 <t tx="ekr.20160128045845.1">
-def match_balanced(self, delim, s, i):
+def match_balanced(self, delim, s, i, trace=False):
     '''
     delim == s[i] and delim is in '([{'
     Return the index of the end of the balanced parenthesized string, or len(s)+1.
     '''
-    trace = self.trace
     assert s[i] == delim, s[i]
     assert delim in '([{'
     delim2 = ')]}'['([{'.index(delim)]
@@ -1551,7 +1561,7 @@ def full_balanced_match(self, s, i, trace=False):
         progress = i
         if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
             delim = pattern[j]
-            i = self.match_balanced(delim, s, i)
+            i = self.match_balanced(delim, s, i, trace=trace)
             j += 3
         else:
             i += 1
@@ -1729,9 +1739,9 @@ tuple(*): Sequence
 [Post Return Patterns]
 
 str[*]: str
-\\[*]: List[*]
+### \\[*]: List[*]
 # For Guido.
-(*):Tuple[*]
+### (*):Tuple[*]
 
 </t>
 <t tx="ekr.20160128104714.1"></t>
@@ -1865,6 +1875,7 @@ def format_return_expressions(self, aList1, aList, kind):
         comments.append('# return ' + e)
         results.append(e + comma)
         if not self.is_known_type(e):
+            # g.trace('****', repr(e))
             unknowns = True
     if unknowns:
         comments1 = ['# return ' + e for e in list(set(aList1))]
@@ -1933,6 +1944,8 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
+** --infer.
+
 ** --update.
 
 - Task oriented docs
@@ -1943,8 +1956,12 @@ def is_known_type(self, s):
 </t>
 <t tx="ekr.20160131175042.1">class TestClass:
     '''A class containing constructs that have caused difficulties.'''
+    # pylint: disable=no-member
+    # pylint: disable=undefined-variable
+    # pylint: disable=no-self-argument
+    # pylint: disable=no-method-argument
     @others</t>
-<t tx="ekr.20160131175118.1">def return_list(a):
+<t tx="ekr.20160131175118.1">def return_list(self, a):
     return [a]</t>
 <t tx="ekr.20160131180118.1">class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
@@ -1967,7 +1984,7 @@ def is_known_type(self, s):
 <t tx="ekr.20160131192406.1">def return_all(self):
     return all([self.is_known_type(z) for z in s3.split(',')])
     # return all(['abc'])</t>
-<t tx="ekr.20160131192735.1">def return_array(self):
+<t tx="ekr.20160131192735.1">def return_array():
     # return self.is_known_type(s[1:-1])
     return f(s[1:-1])</t>
 <t tx="ekr.20160131204607.1">
@@ -2014,5 +2031,27 @@ This pattern doesn't do it:
 Now the last line says
 
     # return (Tuple[int, str])</t>
+<t tx="ekr.20160201151312.1"></t>
+<t tx="ekr.20160201194801.1">
+def do_Return(self, node):
+    '''
+    StubFormatter.do_Return.
+    Result does not start with 'return' nor end with a newline.
+    '''
+    trace = False
+    s = AstFormatter.do_Return(self, node)
+    assert s.startswith('return'), repr(s)
+    s = s[len('return'):].strip()
+    if trace: g.trace('(StubFormatter)', s)
+    if s.startswith('(') and s.endswith(')'):
+        # Defensive code: ensure the parens are balanced.
+        i = Pattern('return (*)', 'not-used').match_balanced(s[0], s, 0)
+        if i == len(s):
+            s1 = s
+            s = 'Tuple[%s]' % s[1:-1]
+            if trace: g.trace(s1, '==&gt;', s)
+    return s
+</t>
+<t tx="ekr.20160201201820.1"></t>
 </tnodes>
 </leo_file>

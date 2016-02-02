@@ -708,7 +708,7 @@ class Pattern:
             progress = i
             if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
                 delim = pattern[j]
-                i = self.match_balanced(delim, s, i)
+                i = self.match_balanced(delim, s, i, trace=trace)
                 j += 3
             else:
                 i += 1
@@ -719,12 +719,11 @@ class Pattern:
             g.trace('%s -> %s' % (pattern, s[i1:i]))
         return i if found else None
 
-    def match_balanced(self, delim, s, i):
+    def match_balanced(self, delim, s, i, trace=False):
         '''
         delim == s[i] and delim is in '([{'
         Return the index of the end of the balanced parenthesized string, or len(s)+1.
         '''
-        trace = self.trace
         assert s[i] == delim, s[i]
         assert delim in '([{'
         delim2 = ')]}'['([{'.index(delim)]
@@ -983,7 +982,7 @@ class StubFormatter (AstFormatter):
     names of constants instead of actual values.
     '''
 
-    # Return generic markers allow better pattern matches.
+    # Return generic markers to allow better pattern matches.
 
     def do_BoolOp(self, node): # Python 2.x only.
         return 'bool'
@@ -1000,6 +999,25 @@ class StubFormatter (AstFormatter):
     def do_Str(self, node):
         '''This represents a string constant.'''
         return 'str' # return repr(node.s)
+
+    def do_Return(self, node):
+        '''
+        StubFormatter.do_Return.
+        Result does not start with 'return' nor end with a newline.
+        '''
+        trace = False
+        s = AstFormatter.do_Return(self, node)
+        assert s.startswith('return'), repr(s)
+        s = s[len('return'):].strip()
+        if trace: g.trace('(StubFormatter)', s)
+        if s.startswith('(') and s.endswith(')'):
+            # Defensive code: ensure the parens are balanced.
+            i = Pattern('return (*)', 'not-used').match_balanced(s[0], s, 0)
+            if i == len(s):
+                s1 = s
+                s = 'Tuple[%s]' % s[1:-1]
+                if trace: g.trace(s1, '==>', s)
+        return s
 
 
 class StubTraverser (ast.NodeVisitor):
@@ -1167,10 +1185,11 @@ class StubTraverser (ast.NodeVisitor):
         trace = self.trace
         name = self.get_def_name(node)
         r1 = [self.format(z) for z in self.returns]
+            # Allow StubFormatter.do_Return to do the hack.
         # Step 1: Return None if there are no return statements.
         if trace and self.returns:
             g.trace('name: %s r:\n%s' % (name, r1))
-        if not [z for z in self.returns if z != None]:
+        if not [z for z in self.returns if z.value != None]:
             return 'None: ...'
         # Step 2: [Def Name Patterns] override all other patterns.
         for pattern in self.def_patterns:
@@ -1212,6 +1231,7 @@ class StubTraverser (ast.NodeVisitor):
             comments.append('# return ' + e)
             results.append(e + comma)
             if not self.is_known_type(e):
+                # g.trace('****', repr(e))
                 unknowns = True
         if unknowns:
             comments1 = ['# return ' + e for e in list(set(aList1))]
@@ -1290,15 +1310,15 @@ class StubTraverser (ast.NodeVisitor):
         '''replace a return value by a type if possible.'''
         trace = self.trace
         if trace: g.trace('====', name)
-        # First: do pre-patterns.
+        # Match pre-patterns.
         for patterns in (self.pre_return_patterns, self.general_patterns):
             junk, s = self.match_return_patterns(name, patterns, s)
-        # Second: repeatedly match return patterns.
+        # Repeatedly match return patterns.
         count, found = 0, True
         while found and count < 50:
             count += 1
             found, s = self.match_return_patterns(name, self.return_patterns, s)
-        # Third: do post-patterns.
+        # Match post-patterns.
         for patterns in (self.post_return_patterns, self.general_patterns):
             junk, s = self.match_return_patterns(name, patterns, s)
         if trace: g.trace('-----',s)
@@ -1331,15 +1351,20 @@ class StubTraverser (ast.NodeVisitor):
 
     def visit_Return(self, node):
 
-        self.returns.append(node.value)
+        self.returns.append(node)
+            # New: return the entire node, not node.value.
 class TestClass:
     '''A class containing constructs that have caused difficulties.'''
-    def return_list(a):
+    # pylint: disable=no-member
+    # pylint: disable=undefined-variable
+    # pylint: disable=no-self-argument
+    # pylint: disable=no-method-argument
+    def return_list(self, a):
         return [a]
     def return_all(self):
         return all([self.is_known_type(z) for z in s3.split(',')])
         # return all(['abc'])
-    def return_array(self):
+    def return_array():
         # return self.is_known_type(s[1:-1])
         return f(s[1:-1])
     def parse_group(group):
