@@ -1738,7 +1738,7 @@ str%(*): str
 str.join(*): str
 \bstr\b\+\bstr\b: str
 \bstr\b\+\bcomments\b: str
-tuple(*): Tuple(*)
+tuple(*): Tuple[*]
 
 [Post Return Patterns]
 
