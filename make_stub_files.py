@@ -749,15 +749,26 @@ class Pattern:
         # Unmatched: a syntax error.
         print('***** unmatched %s in %s' % (delim, s))
         return len(s) + 1
-    def match(self, s):
+    def match(self, s, trace=False):
         '''
         Perform the match on the entire string if possible.
         Return (found, new s)
         '''
-        if self.match_entire_string(s):
-            return True, self.replace(s)
+        if self.is_balanced():
+            j = self.full_balanced_match(s, 0, trace=trace)
+            if j is None:
+                return False, s
+            else:
+                m = 0, len(s)
+                s = self.replace(m, s)
+                return True, s
         else:
-            return False, s
+            m = self.regex.match(s)
+            if m and m.group(0) == s:
+                s = self.replace(m, s)
+                return True, s
+            else:
+                return False, s
 
     def match_entire_string(self, s, trace=False):
         '''Return True if s matches self.find_s'''
@@ -922,7 +933,7 @@ class StandAloneMakeStubFile:
     def scan_options(self):
         '''Set all configuration-related ivars.'''
         verbose = self.verbose
-        self.parser = parser = configparser.ConfigParser(dict_type=OrderedDict)
+        self.parser = parser = configparser.RawConfigParser(dict_type=OrderedDict)
             # Requires Python 2.7
         parser.optionxform = str
         fn = self.finalize(self.config_fn)
@@ -979,10 +990,62 @@ class StandAloneMakeStubFile:
             self.return_patterns = self.scan_patterns('Return Patterns')
 
     def create_keys_d(self):
-        return {} ### To do.
+        '''
+        Return self.keys_d.
+        Keys are ast.Node.__class__.__name__.
+        Values are a list of the corresponding pattern keys.
+        '''
+        # For now, just add the keys we actually use.
+        return {
+            'BinOp': ['+', '%',],
+            'Call': ['call',],
+            'Name': ['name',],
+            'Return': ['return',],
+        }
 
     def scan_pattern_lists(self, section_name):
-        return {} ### To do.
+        '''Return self.patterns_d.'''
+        trace = False
+        parser, verbose = self.parser, self.verbose
+        d = {}
+        if section_name in parser.sections():
+            if verbose: print('%s...\n' % section_name)
+            for key in parser.options(section_name):
+                s1 = parser.get(section_name, key)
+                aList = s1.split('\n')
+                aList = [z.strip() for z in aList if z.strip()]
+                # if trace: g.trace(key+'...')
+                for s in aList:
+                    data = s.split(':',1)
+                    try:
+                        key2, value2 = data
+                        key2, value2 = key2.strip(), value2.strip()
+                        if not key2.startswith('#'):
+                            aList2 = d.get(key, [])
+                            pattern = Pattern(key2, value2)
+                            aList2.append(pattern)
+                            d[key] = aList2
+                        # g.trace('  ', key, pattern)
+                    except ValueError:
+                        print('bad pattern: %s' % (s1.strip()))
+                if verbose: print(pattern)
+            if verbose: print('')
+        elif verbose:
+            print('no section: %s' % section_name)
+            print(parser.sections())
+            print('')
+        # Add all the general patterns.
+        if 0:
+            for key in d:
+                aList = d.get(key)
+                aList.extend(self.general_patterns)
+                d[key] = aList
+        if trace:
+            g.trace('returns...')
+            sep = '\n  '
+            for key in sorted(d):
+                print(key + ':' + sep + sep.join([repr(z) for z in d.get(key)]))
+        return d
 
     def scan_patterns(self, section_name):
         '''Parse the config section into a list of patterns, preserving order.'''
@@ -1035,11 +1098,25 @@ class StubFormatter (AstFormatter):
 
         def visit(self, node):
             '''Return the formatted version of an Ast node, or list of Ast nodes.'''
+            trace = False
+            name = node.__class__.__name__
             s = AstFormatter.visit(self, node)
-            key = self.keys_d.get(node.__class__.__name__)
-            if key:
-                patterns = self.patterns_d.get(key, [])
-                s = self.match(patterns, s)
+            aList = self.keys_d.get(name, [])
+            for key in aList:
+                count, found = 0, True
+                patterns = self.patterns_d.get(key)
+                while found and count < 50:
+                    count += 1
+                    found = False
+                    for pattern in patterns:
+                        s1 = s
+                        found2, s = pattern.match(s)
+                        found = found or found2
+                        if found2:
+                            if trace: g.trace('---- %s: %s->%s' % (name, s1, s))
+                            s1 = s
+                            if name != 'Return':
+                                return s
             return s
 
     # Return generic markers to allow better pattern matches.
@@ -1070,6 +1147,7 @@ class StubFormatter (AstFormatter):
         assert s.startswith('return'), repr(s)
         s = s[len('return'):].strip()
         if new_code:
+            if trace: g.trace(s)
             return s
         else:
             # if trace: g.trace('(StubFormatter)', s)
@@ -1416,7 +1494,7 @@ class StubTraverser (ast.NodeVisitor):
         Match all the given patterns, except the .* pattern.
         Return (found, s) if any succeed.
         '''
-        trace = self.trace # or name.endswith('munge_arg')
+        trace = False or self.trace # or name.endswith('munge_arg')
         s1 = s
         default_pattern = None
         if trace: g.trace('===== %s: %s' % (name, s1))

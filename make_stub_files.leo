@@ -133,17 +133,17 @@
 <v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
 <v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
-<v t="ekr.20160202083330.1"><vh>msf.create_keys_d (NEW)</vh></v>
-<v t="ekr.20160202083421.1"><vh>msf.scan_pattern_lists</vh></v>
+<v t="ekr.20160202083330.1" a="M"><vh>msf.create_keys_d (To do: finish)</vh></v>
+<v t="ekr.20160202083421.1"><vh>msf.scan_pattern_lists (New)</vh></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match (Test)</vh></v>
-<v t="ekr.20160202061118.1"><vh>sf.visit (Test)</vh></v>
+<v t="ekr.20160202061118.1"><vh>sf.visit (New)</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants &amp; Name</vh></v>
-<v t="ekr.20160201194801.1"><vh>sf.Return (To be deleted)</vh></v>
+<v t="ekr.20160201194801.1"><vh>sf.Return (Revised)</vh></v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
@@ -175,17 +175,22 @@
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
-<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
+<v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160202084936.1"><vh>Found: (flattened) (word, body) new_code</vh>
-<v t="ekr.20160202080826.1"></v>
 <v t="ekr.20160126153212.74"></v>
-<v t="ekr.20160202061118.1"></v>
-<v t="ekr.20160126153212.83"></v>
-<v t="ekr.20160126153212.92"></v>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160202061329.1"></v>
 <v t="ekr.20160201194801.1"></v>
+<v t="ekr.20160202061118.1"></v>
+<v t="ekr.20160126153212.83"></v>
+<v t="ekr.20160126153212.92"></v>
 </v>
+<v t="ekr.20160126153212.78"></v>
+<v t="ekr.20160126153212.88"></v>
+<v t="ekr.20160126153212.93"></v>
+</v>
+<v t="ekr.20160202083330.1" a="M"></v>
+<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -995,7 +1000,7 @@ def scan_command_line(self):
 <t tx="ekr.20160126153212.78">def scan_options(self):
     '''Set all configuration-related ivars.'''
     verbose = self.verbose
-    self.parser = parser = configparser.ConfigParser(dict_type=OrderedDict)
+    self.parser = parser = configparser.RawConfigParser(dict_type=OrderedDict)
         # Requires Python 2.7
     parser.optionxform = str
     fn = self.finalize(self.config_fn)
@@ -1384,7 +1389,7 @@ def match_return_patterns(self, name, patterns, s):
     Match all the given patterns, except the .* pattern.
     Return (found, s) if any succeed.
     '''
-    trace = self.trace # or name.endswith('munge_arg')
+    trace = False or self.trace # or name.endswith('munge_arg')
     s1 = s
     default_pattern = None
     if trace: g.trace('===== %s: %s' % (name, s1))
@@ -1740,14 +1745,15 @@ parser: optparse.OptionParser
 [General Patterns]
 
 a: str
-aList: Sequence
-
+aList: List
 fn: str
-\bi[0-3]?\b: int
-
 node: Node
-\bs[0-3]?\b: str
+# str%(*): str
+# str%str: str
+# str+str: str
 strict: bool
+\bi[0-3]?\b: int
+\bs[0-3]?\b: str
 
 # Guido
 group: str
@@ -1766,13 +1772,34 @@ number: int
 
 [Return Patterns]
 
-all(*): bool
-len(*): int
-str%(*): str
-str.join(*): str
-\bstr\b\+\bstr\b: str
-\bstr\b\+\bcomments\b: str
-tuple(*): Tuple[*]
+name:
+    s: str
+    name: str
+call:
+    all(*): bool
+    len(*): int
+    tuple(*): Tuple[*]
+    str.join(*): str
+return:
+    (*): Tuple[*]
+    [*]: List[*]
+    {*}: dict
+    str.join(*): str
++:
+    str\+str: str
+    str\+comments: str
+%:
+    str%str: str
+    str%(*): str
+
+### Old patterns.
+# all(*): bool
+# len(*): int
+# str%(*): str
+# str.join(*): str
+# \bstr\b\+\bstr\b: str
+# \bstr\b\+\bcomments\b: str
+# tuple(*): Tuple[*]
 
 [Post Return Patterns]
 
@@ -2068,6 +2095,7 @@ def do_Return(self, node):
     assert s.startswith('return'), repr(s)
     s = s[len('return'):].strip()
     if new_code:
+        if trace: g.trace(s)
         return s
     else:
         # if trace: g.trace('(StubFormatter)', s)
@@ -2092,11 +2120,25 @@ if new_code:
 
     def visit(self, node):
         '''Return the formatted version of an Ast node, or list of Ast nodes.'''
+        trace = False
+        name = node.__class__.__name__
         s = AstFormatter.visit(self, node)
-        key = self.keys_d.get(node.__class__.__name__)
-        if key:
-            patterns = self.patterns_d.get(key, [])
-            s = self.match(patterns, s)
+        aList = self.keys_d.get(name, [])
+        for key in aList:
+            count, found = 0, True
+            patterns = self.patterns_d.get(key)
+            while found and count &lt; 50:
+                count += 1
+                found = False
+                for pattern in patterns:
+                    s1 = s
+                    found2, s = pattern.match(s)
+                    found = found or found2
+                    if found2:
+                        if trace: g.trace('---- %s: %s-&gt;%s' % (name, s1, s))
+                        s1 = s
+                        if name != 'Return':
+                            return s
         return s
 </t>
 <t tx="ekr.20160202061329.1">
@@ -2120,26 +2162,101 @@ def match(self, patterns, s):
             break
     return s
 </t>
-<t tx="ekr.20160202070025.1">def match(self, s):
+<t tx="ekr.20160202070025.1">def match(self, s, trace=False):
     '''
     Perform the match on the entire string if possible.
     Return (found, new s)
     '''
-    if self.match_entire_string(s):
-        return True, self.replace(s)
+    if self.is_balanced():
+        j = self.full_balanced_match(s, 0, trace=trace)
+        if j is None:
+            return False, s
+        else:
+            m = 0, len(s)
+            s = self.replace(m, s)
+            return True, s
     else:
-        return False, s
+        m = self.regex.match(s)
+        if m and m.group(0) == s:
+            s = self.replace(m, s)
+            return True, s
+        else:
+            return False, s
 </t>
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
-The code works ( without any pattern matches) with new_code = True.
-To do: init keys_d and patterns_d.</t>
+Hurray! The code now works with -c msf.cfg -o
+
+At present, msf.create_keys_d() only makes entries for
+BinOp, Call, Name, and Return nodes.
+These corresond to 'name', 'call', '+', '%', and 'return' keys.
+
+scan_pattern_lists does *not* at present, copy [General Patterns] to the end of
+of these pattern classes. The code to do so has been disabled.
+
+The patterns in msf.cfg do a remarkably good job. It may be possible
+to eliminate some of them.  We shall see.
+</t>
 <t tx="ekr.20160202083330.1">
 def create_keys_d(self):
-    return {} ### To do.</t>
+    '''
+    Return self.keys_d.
+    Keys are ast.Node.__class__.__name__.
+    Values are a list of the corresponding pattern keys.
+    '''
+    # For now, just add the keys we actually use.
+    return {
+        'BinOp': ['+', '%',],
+        'Call': ['call',],
+        'Name': ['name',],
+        'Return': ['return',],
+    }</t>
 <t tx="ekr.20160202083421.1">
 def scan_pattern_lists(self, section_name):
-    return {} ### To do.</t>
+    '''Return self.patterns_d.'''
+    trace = False
+    parser, verbose = self.parser, self.verbose
+    d = {}
+    if section_name in parser.sections():
+        if verbose: print('%s...\n' % section_name)
+        for key in parser.options(section_name):
+            s1 = parser.get(section_name, key)
+            aList = s1.split('\n')
+            aList = [z.strip() for z in aList if z.strip()]
+            # if trace: g.trace(key+'...')
+            for s in aList:
+                data = s.split(':',1)
+                try:
+                    key2, value2 = data
+                    key2, value2 = key2.strip(), value2.strip()
+                    if not key2.startswith('#'):
+                        aList2 = d.get(key, [])
+                        pattern = Pattern(key2, value2)
+                        aList2.append(pattern)
+                        d[key] = aList2
+                    # g.trace('  ', key, pattern)
+                except ValueError:
+                    print('bad pattern: %s' % (s1.strip()))
+            if verbose: print(pattern)
+        if verbose: print('')
+    elif verbose:
+        print('no section: %s' % section_name)
+        print(parser.sections())
+        print('')
+    # Add all the general patterns.
+    if 0:
+        for key in d:
+            aList = d.get(key)
+            aList.extend(self.general_patterns)
+            d[key] = aList
+    if trace:
+        g.trace('returns...')
+        sep = '\n  '
+        for key in sorted(d):
+            print(key + ':' + sep + sep.join([repr(z) for z in d.get(key)]))
+    return d
+</t>
 <t tx="ekr.20160202084936.1"></t>
+<t tx="ekr.20160202120035.1"></t>
 </tnodes>
 </leo_file>
