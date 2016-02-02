@@ -132,7 +132,9 @@
 <v t="ekr.20160126153212.76"><vh>msf.run</vh></v>
 <v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
 <v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
-<v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helper</vh>
+<v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
+<v t="ekr.20160202083330.1"><vh>msf.create_keys_d (NEW)</vh></v>
+<v t="ekr.20160202083421.1"><vh>msf.scan_pattern_lists</vh></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
@@ -173,24 +175,17 @@
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
-<v t="ekr.20160201151312.1"><vh>Recent</vh>
-<v t="ekr.20160130034812.1"></v>
-<v t="ekr.20160201131557.1"><vh>fix balanced replacement</vh></v>
-<v t="ekr.20160128190224.1"></v>
-<v t="ekr.20160128190112.1"></v>
-<v t="ekr.20160128045845.1"></v>
-<v t="ekr.20160126153212.63"></v>
-<v t="ekr.20160126153212.99"></v>
-</v>
-<v t="ekr.20160201201820.1"><vh>Most recent</vh>
-<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
+<v t="ekr.20160202084936.1"><vh>Found: (flattened) (word, body) new_code</vh>
+<v t="ekr.20160202080826.1"></v>
+<v t="ekr.20160126153212.74"></v>
+<v t="ekr.20160202061118.1"></v>
+<v t="ekr.20160126153212.83"></v>
 <v t="ekr.20160126153212.92"></v>
+<v t="ekr.20160126153212.78"></v>
+<v t="ekr.20160202061329.1"></v>
 <v t="ekr.20160201194801.1"></v>
 </v>
-<v t="ekr.20160126153212.80"></v>
-<v t="ekr.20160128041938.1"></v>
-<v t="ekr.20160202070025.1"></v>
-<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -204,7 +199,7 @@ For full details, see README.md.
 This file is in the public domain.
 '''
 
-new_code = False # True: use new pattern-matching scheme.
+new_code = True # True: use new pattern-matching scheme.
 
 import ast
 from collections import OrderedDict
@@ -904,10 +899,15 @@ def __init__ (self):
     self.arg_patterns = [] # [Arg Patterns]
     self.def_patterns = [] # [Def Name Patterns]
     self.general_patterns = [] # [General Patterns]
-    self.post_return_patterns = [] # [Post Return Patterns]
-    self.pre_return_patterns = [] # [Pre Return Patterns]
-    self.return_patterns = [] # [Return Patterns]
-</t>
+    if new_code:
+        # Dicts set by scan_options.
+        self.keys_d = {}
+        self.patterns_d = {}
+    else:
+        self.post_return_patterns = [] # [Post Return Patterns]
+        self.pre_return_patterns = [] # [Pre Return Patterns]
+        self.return_patterns = [] # [Return Patterns]
+    </t>
 <t tx="ekr.20160126153212.75">
 def make_stub_file(self, fn):
     '''
@@ -1043,9 +1043,13 @@ def scan_command_line(self):
     self.arg_patterns = self.scan_patterns('Arg Patterns')
     self.def_patterns = self.scan_patterns('Def Name Patterns')
     self.general_patterns = self.scan_patterns('General Patterns')
-    self.post_return_patterns = self.scan_patterns('Post Return Patterns')
-    self.pre_return_patterns = self.scan_patterns('Pre Return Patterns')
-    self.return_patterns = self.scan_patterns('Return Patterns')
+    if new_code:
+        self.keys_d = self.create_keys_d()
+        self.patterns_d = self.scan_pattern_lists('Return Patterns')
+    else:
+        self.post_return_patterns = self.scan_patterns('Post Return Patterns')
+        self.pre_return_patterns = self.scan_patterns('Pre Return Patterns')
+        self.return_patterns = self.scan_patterns('Return Patterns')
 </t>
 <t tx="ekr.20160126153212.79">
 def scan_patterns(self, section_name):
@@ -1127,7 +1131,10 @@ def __init__(self, controller):
         # A StandAloneMakeStubFile instance.
     # Internal state ivars...
     self.class_name_stack = []
-    self.format = StubFormatter().format
+    if new_code:
+        self.format = StubFormatter(x.keys_d, x.patterns_d).format
+    else:
+        self.format = StubFormatter().format
     self.in_function = False
     self.level = 0
     self.output_file = None
@@ -1141,13 +1148,22 @@ def __init__(self, controller):
     self.trace = x.trace
     self.warn = x.warn
     # Copies of controller patterns...
-    self.arg_patterns = x.arg_patterns
-    self.def_patterns = x.def_patterns
-    self.general_patterns = x.general_patterns
-    self.post_return_patterns = x.post_return_patterns
-    self.pre_return_patterns = x.pre_return_patterns
-    self.return_patterns = x.return_patterns
-
+    if new_code:
+        self.arg_patterns = x.arg_patterns
+        self.def_patterns = x.def_patterns
+        self.general_patterns = x.general_patterns
+        # self.post_return_patterns = x.post_return_patterns
+        # self.pre_return_patterns = x.pre_return_patterns
+        # self.return_patterns = x.return_patterns
+        self.keys_d = x.keys_d
+        self.patterns_d = x.patterns_d
+    else:
+        self.arg_patterns = x.arg_patterns
+        self.def_patterns = x.def_patterns
+        self.general_patterns = x.general_patterns
+        self.post_return_patterns = x.post_return_patterns
+        self.pre_return_patterns = x.pre_return_patterns
+        self.return_patterns = x.return_patterns
 </t>
 <t tx="ekr.20160126153212.84">
 def indent(self, s):
@@ -1343,19 +1359,24 @@ def munge_ret(self, name, s):
     '''replace a return value by a type if possible.'''
     trace = self.trace
     if trace: g.trace('====', name)
-    # Match pre-patterns.
-    for patterns in (self.pre_return_patterns, self.general_patterns):
-        junk, s = self.match_return_patterns(name, patterns, s)
-    # Repeatedly match return patterns.
-    count, found = 0, True
-    while found and count &lt; 50:
-        count += 1
-        found, s = self.match_return_patterns(name, self.return_patterns, s)
-    # Match post-patterns.
-    for patterns in (self.post_return_patterns, self.general_patterns):
-        junk, s = self.match_return_patterns(name, patterns, s)
-    if trace: g.trace('-----',s)
-    return s
+    if new_code:
+        # For now: match general patterns only.
+        junk, s = self.match_return_patterns(name, self.general_patterns, s)
+        return s
+    else:
+        # Match pre-patterns.
+        for patterns in (self.pre_return_patterns, self.general_patterns):
+            junk, s = self.match_return_patterns(name, patterns, s)
+        # Repeatedly match return patterns.
+        count, found = 0, True
+        while found and count &lt; 50:
+            count += 1
+            found, s = self.match_return_patterns(name, self.return_patterns, s)
+        # Match post-patterns.
+        for patterns in (self.post_return_patterns, self.general_patterns):
+            junk, s = self.match_return_patterns(name, patterns, s)
+        if trace: g.trace('-----',s)
+        return s
 </t>
 <t tx="ekr.20160126153212.93">
 def match_return_patterns(self, name, patterns, s):
@@ -2036,31 +2057,19 @@ def replace(self, m, s, trace=False):
     assert all(g == '.' for g in group[1::2]), group
     return ndots, os.sep.join(group[::2])
 </t>
-<t tx="ekr.20160201131557.1">@language rest
-@wrap
-
-How to turn (int,str) into Tuple[int, str]?
-
-This pattern doesn't do it:
-
-(int,str): Tuple[int, str]
-
-Now the last line says
-
-    # return (Tuple[int, str])</t>
-<t tx="ekr.20160201151312.1"></t>
 <t tx="ekr.20160201194801.1">
-if not new_code:
-    
-    def do_Return(self, node):
-        '''
-        StubFormatter.do_Return.
-        Result does not start with 'return' nor end with a newline.
-        '''
-        trace = False
-        s = AstFormatter.do_Return(self, node)
-        assert s.startswith('return'), repr(s)
-        s = s[len('return'):].strip()
+def do_Return(self, node):
+    '''
+    StubFormatter.do_Return.
+    Result does not start with 'return' nor end with a newline.
+    '''
+    trace = False
+    s = AstFormatter.do_Return(self, node)
+    assert s.startswith('return'), repr(s)
+    s = s[len('return'):].strip()
+    if new_code:
+        return s
+    else:
         # if trace: g.trace('(StubFormatter)', s)
         if s.startswith('(') and s.endswith(')'):
             # Defensive code: ensure the parens are balanced.
@@ -2078,16 +2087,15 @@ if not new_code:
                 if trace: g.trace(s1, '==&gt;', s)
         return s
 </t>
-<t tx="ekr.20160201201820.1"></t>
 <t tx="ekr.20160202061118.1">
 if new_code:
 
     def visit(self, node):
         '''Return the formatted version of an Ast node, or list of Ast nodes.'''
         s = AstFormatter.visit(self, node)
-        key = self.keys_dict.get(node.__class__.__name__)
+        key = self.keys_d.get(node.__class__.__name__)
         if key:
-            patterns = self.patterns_dict.get(key, [])
+            patterns = self.patterns_d.get(key, [])
             s = self.match(patterns, s)
         return s
 </t>
@@ -2124,11 +2132,14 @@ def match(self, patterns, s):
 </t>
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
-Added new_code switch, presently False, enabling/disabling new code.
-Benefits:
-- Marks new code.
-- Allows both old and new code to run. Good for comparisons.
-- Provides safety, if this is not a great idea.
-</t>
+The code works ( without any pattern matches) with new_code = True.
+To do: init keys_d and patterns_d.</t>
+<t tx="ekr.20160202083330.1">
+def create_keys_d(self):
+    return {} ### To do.</t>
+<t tx="ekr.20160202083421.1">
+def scan_pattern_lists(self, section_name):
+    return {} ### To do.</t>
+<t tx="ekr.20160202084936.1"></t>
 </tnodes>
 </leo_file>

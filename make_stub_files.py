@@ -8,7 +8,7 @@ For full details, see README.md.
 This file is in the public domain.
 '''
 
-new_code = False # True: use new pattern-matching scheme.
+new_code = True # True: use new pattern-matching scheme.
 
 import ast
 from collections import OrderedDict
@@ -814,9 +814,15 @@ class StandAloneMakeStubFile:
         self.arg_patterns = [] # [Arg Patterns]
         self.def_patterns = [] # [Def Name Patterns]
         self.general_patterns = [] # [General Patterns]
-        self.post_return_patterns = [] # [Post Return Patterns]
-        self.pre_return_patterns = [] # [Pre Return Patterns]
-        self.return_patterns = [] # [Return Patterns]
+        if new_code:
+            # Dicts set by scan_options.
+            self.keys_d = {}
+            self.patterns_d = {}
+        else:
+            self.post_return_patterns = [] # [Post Return Patterns]
+            self.pre_return_patterns = [] # [Pre Return Patterns]
+            self.return_patterns = [] # [Return Patterns]
+        
     def finalize(self, fn):
         '''Finalize and regularize a filename.'''
         fn = os.path.expanduser(fn)
@@ -964,9 +970,19 @@ class StandAloneMakeStubFile:
         self.arg_patterns = self.scan_patterns('Arg Patterns')
         self.def_patterns = self.scan_patterns('Def Name Patterns')
         self.general_patterns = self.scan_patterns('General Patterns')
-        self.post_return_patterns = self.scan_patterns('Post Return Patterns')
-        self.pre_return_patterns = self.scan_patterns('Pre Return Patterns')
-        self.return_patterns = self.scan_patterns('Return Patterns')
+        if new_code:
+            self.keys_d = self.create_keys_d()
+            self.patterns_d = self.scan_pattern_lists('Return Patterns')
+        else:
+            self.post_return_patterns = self.scan_patterns('Post Return Patterns')
+            self.pre_return_patterns = self.scan_patterns('Pre Return Patterns')
+            self.return_patterns = self.scan_patterns('Return Patterns')
+
+    def create_keys_d(self):
+        return {} ### To do.
+
+    def scan_pattern_lists(self, section_name):
+        return {} ### To do.
 
     def scan_patterns(self, section_name):
         '''Parse the config section into a list of patterns, preserving order.'''
@@ -1020,9 +1036,9 @@ class StubFormatter (AstFormatter):
         def visit(self, node):
             '''Return the formatted version of an Ast node, or list of Ast nodes.'''
             s = AstFormatter.visit(self, node)
-            key = self.keys_dict.get(node.__class__.__name__)
+            key = self.keys_d.get(node.__class__.__name__)
             if key:
-                patterns = self.patterns_dict.get(key, [])
+                patterns = self.patterns_d.get(key, [])
                 s = self.match(patterns, s)
             return s
 
@@ -1044,17 +1060,18 @@ class StubFormatter (AstFormatter):
         '''This represents a string constant.'''
         return 'str' # return repr(node.s)
 
-    if not new_code:
-        
-        def do_Return(self, node):
-            '''
-            StubFormatter.do_Return.
-            Result does not start with 'return' nor end with a newline.
-            '''
-            trace = False
-            s = AstFormatter.do_Return(self, node)
-            assert s.startswith('return'), repr(s)
-            s = s[len('return'):].strip()
+    def do_Return(self, node):
+        '''
+        StubFormatter.do_Return.
+        Result does not start with 'return' nor end with a newline.
+        '''
+        trace = False
+        s = AstFormatter.do_Return(self, node)
+        assert s.startswith('return'), repr(s)
+        s = s[len('return'):].strip()
+        if new_code:
+            return s
+        else:
             # if trace: g.trace('(StubFormatter)', s)
             if s.startswith('(') and s.endswith(')'):
                 # Defensive code: ensure the parens are balanced.
@@ -1082,7 +1099,10 @@ class StubTraverser (ast.NodeVisitor):
             # A StandAloneMakeStubFile instance.
         # Internal state ivars...
         self.class_name_stack = []
-        self.format = StubFormatter().format
+        if new_code:
+            self.format = StubFormatter(x.keys_d, x.patterns_d).format
+        else:
+            self.format = StubFormatter().format
         self.in_function = False
         self.level = 0
         self.output_file = None
@@ -1096,13 +1116,22 @@ class StubTraverser (ast.NodeVisitor):
         self.trace = x.trace
         self.warn = x.warn
         # Copies of controller patterns...
-        self.arg_patterns = x.arg_patterns
-        self.def_patterns = x.def_patterns
-        self.general_patterns = x.general_patterns
-        self.post_return_patterns = x.post_return_patterns
-        self.pre_return_patterns = x.pre_return_patterns
-        self.return_patterns = x.return_patterns
-
+        if new_code:
+            self.arg_patterns = x.arg_patterns
+            self.def_patterns = x.def_patterns
+            self.general_patterns = x.general_patterns
+            # self.post_return_patterns = x.post_return_patterns
+            # self.pre_return_patterns = x.pre_return_patterns
+            # self.return_patterns = x.return_patterns
+            self.keys_d = x.keys_d
+            self.patterns_d = x.patterns_d
+        else:
+            self.arg_patterns = x.arg_patterns
+            self.def_patterns = x.def_patterns
+            self.general_patterns = x.general_patterns
+            self.post_return_patterns = x.post_return_patterns
+            self.pre_return_patterns = x.pre_return_patterns
+            self.return_patterns = x.return_patterns
 
     def indent(self, s):
         '''Return s, properly indented.'''
@@ -1363,19 +1392,24 @@ class StubTraverser (ast.NodeVisitor):
         '''replace a return value by a type if possible.'''
         trace = self.trace
         if trace: g.trace('====', name)
-        # Match pre-patterns.
-        for patterns in (self.pre_return_patterns, self.general_patterns):
-            junk, s = self.match_return_patterns(name, patterns, s)
-        # Repeatedly match return patterns.
-        count, found = 0, True
-        while found and count < 50:
-            count += 1
-            found, s = self.match_return_patterns(name, self.return_patterns, s)
-        # Match post-patterns.
-        for patterns in (self.post_return_patterns, self.general_patterns):
-            junk, s = self.match_return_patterns(name, patterns, s)
-        if trace: g.trace('-----',s)
-        return s
+        if new_code:
+            # For now: match general patterns only.
+            junk, s = self.match_return_patterns(name, self.general_patterns, s)
+            return s
+        else:
+            # Match pre-patterns.
+            for patterns in (self.pre_return_patterns, self.general_patterns):
+                junk, s = self.match_return_patterns(name, patterns, s)
+            # Repeatedly match return patterns.
+            count, found = 0, True
+            while found and count < 50:
+                count += 1
+                found, s = self.match_return_patterns(name, self.return_patterns, s)
+            # Match post-patterns.
+            for patterns in (self.post_return_patterns, self.general_patterns):
+                junk, s = self.match_return_patterns(name, patterns, s)
+            if trace: g.trace('-----',s)
+            return s
 
     def match_return_patterns(self, name, patterns, s):
         '''
