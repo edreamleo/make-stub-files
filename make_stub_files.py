@@ -8,6 +8,8 @@ For full details, see README.md.
 This file is in the public domain.
 '''
 
+new_code = False # True: use new pattern-matching scheme.
+
 import ast
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
@@ -649,7 +651,7 @@ class Pattern:
             s = pattern.replace(m, s)
     '''
 
-    def __init__ (self, find_s, repl_s, trace=False):
+    def __init__ (self, find_s, repl_s='', trace=False):
         '''Ctor for the Pattern class.'''
        
         self.find_s = find_s
@@ -681,7 +683,10 @@ class Pattern:
         return False
 
     def all_matches(self, s, trace=False):
-        '''Return a list of tubles (is_balanced, start, end) for all matches in s.'''
+        '''
+        Return a list of match objects for all matches in s.
+        These are regex match objects or (start, end) for balanced searches.
+        '''
         trace = trace or self.trace
         if self.is_balanced():
             aList, i = [], 0
@@ -744,6 +749,15 @@ class Pattern:
         # Unmatched: a syntax error.
         print('***** unmatched %s in %s' % (delim, s))
         return len(s) + 1
+    def match(self, s):
+        '''
+        Perform the match on the entire string if possible.
+        Return (found, new s)
+        '''
+        if self.match_entire_string(s):
+            return True, self.replace(s)
+        else:
+            return False, s
 
     def match_entire_string(self, s, trace=False):
         '''Return True if s matches self.find_s'''
@@ -982,6 +996,36 @@ class StubFormatter (AstFormatter):
     names of constants instead of actual values.
     '''
 
+    if new_code:
+
+        def __init__(self, keys_d, patterns_d, ):
+            '''Ctor for StubFormatter class.'''
+            self.keys_d = keys_d
+                # Keys are node.__class__.__name__.
+                # Values are pattern keys.
+            self.patterns_d = patterns_d
+                # Keys are pattern keys.
+                # Values are lists of Patterns.
+
+    def match(self, patterns, s):
+        '''Return s with at most one pattern matched.'''
+        for pattern in patterns:
+            found, s = pattern.match(s)
+            if found:
+                break
+        return s
+
+    if new_code:
+
+        def visit(self, node):
+            '''Return the formatted version of an Ast node, or list of Ast nodes.'''
+            s = AstFormatter.visit(self, node)
+            key = self.keys_dict.get(node.__class__.__name__)
+            if key:
+                patterns = self.patterns_dict.get(key, [])
+                s = self.match(patterns, s)
+            return s
+
     # Return generic markers to allow better pattern matches.
 
     def do_BoolOp(self, node): # Python 2.x only.
@@ -1000,31 +1044,33 @@ class StubFormatter (AstFormatter):
         '''This represents a string constant.'''
         return 'str' # return repr(node.s)
 
-    def do_Return(self, node):
-        '''
-        StubFormatter.do_Return.
-        Result does not start with 'return' nor end with a newline.
-        '''
-        trace = False
-        s = AstFormatter.do_Return(self, node)
-        assert s.startswith('return'), repr(s)
-        s = s[len('return'):].strip()
-        # if trace: g.trace('(StubFormatter)', s)
-        if s.startswith('(') and s.endswith(')'):
-            # Defensive code: ensure the parens are balanced.
-            i = Pattern('(*)', 'not-used').match_balanced(s[0], s, 0)
-            if i == len(s):
-                s1 = s
-                s = 'Tuple[%s]' % s[1:-1]
-                if trace: g.trace(s1, '==>', s)
-        elif s.startswith('[') and s.endswith(']'):
-            # Defensive code: ensure the brackets are balanced.
-            i = Pattern('[*]', 'not-used').match_balanced(s[0], s, 0)
-            if i == len(s):
-                s1 = s
-                s = 'List[%s]' % s[1:-1]
-                if trace: g.trace(s1, '==>', s)
-        return s
+    if not new_code:
+        
+        def do_Return(self, node):
+            '''
+            StubFormatter.do_Return.
+            Result does not start with 'return' nor end with a newline.
+            '''
+            trace = False
+            s = AstFormatter.do_Return(self, node)
+            assert s.startswith('return'), repr(s)
+            s = s[len('return'):].strip()
+            # if trace: g.trace('(StubFormatter)', s)
+            if s.startswith('(') and s.endswith(')'):
+                # Defensive code: ensure the parens are balanced.
+                i = Pattern('(*)', 'not-used').match_balanced(s[0], s, 0)
+                if i == len(s):
+                    s1 = s
+                    s = 'Tuple[%s]' % s[1:-1]
+                    if trace: g.trace(s1, '==>', s)
+            elif s.startswith('[') and s.endswith(']'):
+                # Defensive code: ensure the brackets are balanced.
+                i = Pattern('[*]', 'not-used').match_balanced(s[0], s, 0)
+                if i == len(s):
+                    s1 = s
+                    s = 'List[%s]' % s[1:-1]
+                    if trace: g.trace(s1, '==>', s)
+            return s
 
 
 class StubTraverser (ast.NodeVisitor):

@@ -121,6 +121,7 @@
 <v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
 <v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
 </v>
+<v t="ekr.20160202070025.1"><vh>pattern.match (new)</vh></v>
 <v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
 <v t="ekr.20160131204607.1"><vh>pattern.replace</vh></v>
 </v>
@@ -136,8 +137,11 @@
 </v>
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
+<v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
+<v t="ekr.20160202064553.1"><vh>sf.match (Test)</vh></v>
+<v t="ekr.20160202061118.1"><vh>sf.visit (Test)</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants &amp; Name</vh></v>
-<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
+<v t="ekr.20160201194801.1"><vh>sf.Return (To be deleted)</vh></v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
@@ -183,6 +187,10 @@
 <v t="ekr.20160126153212.92"></v>
 <v t="ekr.20160201194801.1"></v>
 </v>
+<v t="ekr.20160126153212.80"></v>
+<v t="ekr.20160128041938.1"></v>
+<v t="ekr.20160202070025.1"></v>
+<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -195,6 +203,8 @@ For full details, see README.md.
 
 This file is in the public domain.
 '''
+
+new_code = False # True: use new pattern-matching scheme.
 
 import ast
 from collections import OrderedDict
@@ -1497,7 +1507,10 @@ class Pattern:
 </t>
 <t tx="ekr.20160128042705.1">
 def all_matches(self, s, trace=False):
-    '''Return a list of tubles (is_balanced, start, end) for all matches in s.'''
+    '''
+    Return a list of match objects for all matches in s.
+    These are regex match objects or (start, end) for balanced searches.
+    '''
     trace = trace or self.trace
     if self.is_balanced():
         aList, i = [], 0
@@ -1747,7 +1760,7 @@ str[*]: str
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
 <t tx="ekr.20160128113859.1">
-def __init__ (self, find_s, repl_s, trace=False):
+def __init__ (self, find_s, repl_s='', trace=False):
     '''Ctor for the Pattern class.'''
    
     self.find_s = find_s
@@ -1944,9 +1957,13 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-** --infer.
+** Run without config file.
+    - Parse pattern lists internally.
+    
+- Recognize recursive calls.
+    - Just remove them!
 
-** --update.
+--update.
 
 - Task oriented docs
 
@@ -2033,32 +2050,85 @@ Now the last line says
     # return (Tuple[int, str])</t>
 <t tx="ekr.20160201151312.1"></t>
 <t tx="ekr.20160201194801.1">
-def do_Return(self, node):
-    '''
-    StubFormatter.do_Return.
-    Result does not start with 'return' nor end with a newline.
-    '''
-    trace = False
-    s = AstFormatter.do_Return(self, node)
-    assert s.startswith('return'), repr(s)
-    s = s[len('return'):].strip()
-    # if trace: g.trace('(StubFormatter)', s)
-    if s.startswith('(') and s.endswith(')'):
-        # Defensive code: ensure the parens are balanced.
-        i = Pattern('(*)', 'not-used').match_balanced(s[0], s, 0)
-        if i == len(s):
-            s1 = s
-            s = 'Tuple[%s]' % s[1:-1]
-            if trace: g.trace(s1, '==&gt;', s)
-    elif s.startswith('[') and s.endswith(']'):
-        # Defensive code: ensure the brackets are balanced.
-        i = Pattern('[*]', 'not-used').match_balanced(s[0], s, 0)
-        if i == len(s):
-            s1 = s
-            s = 'List[%s]' % s[1:-1]
-            if trace: g.trace(s1, '==&gt;', s)
-    return s
+if not new_code:
+    
+    def do_Return(self, node):
+        '''
+        StubFormatter.do_Return.
+        Result does not start with 'return' nor end with a newline.
+        '''
+        trace = False
+        s = AstFormatter.do_Return(self, node)
+        assert s.startswith('return'), repr(s)
+        s = s[len('return'):].strip()
+        # if trace: g.trace('(StubFormatter)', s)
+        if s.startswith('(') and s.endswith(')'):
+            # Defensive code: ensure the parens are balanced.
+            i = Pattern('(*)', 'not-used').match_balanced(s[0], s, 0)
+            if i == len(s):
+                s1 = s
+                s = 'Tuple[%s]' % s[1:-1]
+                if trace: g.trace(s1, '==&gt;', s)
+        elif s.startswith('[') and s.endswith(']'):
+            # Defensive code: ensure the brackets are balanced.
+            i = Pattern('[*]', 'not-used').match_balanced(s[0], s, 0)
+            if i == len(s):
+                s1 = s
+                s = 'List[%s]' % s[1:-1]
+                if trace: g.trace(s1, '==&gt;', s)
+        return s
 </t>
 <t tx="ekr.20160201201820.1"></t>
+<t tx="ekr.20160202061118.1">
+if new_code:
+
+    def visit(self, node):
+        '''Return the formatted version of an Ast node, or list of Ast nodes.'''
+        s = AstFormatter.visit(self, node)
+        key = self.keys_dict.get(node.__class__.__name__)
+        if key:
+            patterns = self.patterns_dict.get(key, [])
+            s = self.match(patterns, s)
+        return s
+</t>
+<t tx="ekr.20160202061329.1">
+if new_code:
+
+    def __init__(self, keys_d, patterns_d, ):
+        '''Ctor for StubFormatter class.'''
+        self.keys_d = keys_d
+            # Keys are node.__class__.__name__.
+            # Values are pattern keys.
+        self.patterns_d = patterns_d
+            # Keys are pattern keys.
+            # Values are lists of Patterns.
+</t>
+<t tx="ekr.20160202064553.1">
+def match(self, patterns, s):
+    '''Return s with at most one pattern matched.'''
+    for pattern in patterns:
+        found, s = pattern.match(s)
+        if found:
+            break
+    return s
+</t>
+<t tx="ekr.20160202070025.1">def match(self, s):
+    '''
+    Perform the match on the entire string if possible.
+    Return (found, new s)
+    '''
+    if self.match_entire_string(s):
+        return True, self.replace(s)
+    else:
+        return False, s
+</t>
+<t tx="ekr.20160202080826.1">@language rest
+@wrap
+Added new_code switch, presently False, enabling/disabling new code.
+Benefits:
+- Marks new code.
+- Allows both old and new code to run. Good for comparisons.
+- Provides safety, if this is not a great idea.
+</t>
 </tnodes>
 </leo_file>
