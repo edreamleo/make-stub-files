@@ -10,10 +10,12 @@
 <preferences/>
 <find_panel_settings/>
 <vnodes>
-<v t="ekr.20160126153016.3"><vh>Unused files</vh>
+<v t="ekr.20160126153016.3"><vh>Unused</vh>
 <v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helper</vh>
 <v t="ekr.20160126153212.93"><vh>st.match_ret_patterns</vh></v>
 </v>
+<v t="ekr.20160203134203.1"><vh>pattern.__gt/lt/ge/le__</vh></v>
+<v t="ekr.20160203154154.1"><vh>from Stub.__gt__</vh></v>
 </v>
 <v t="ekr.20160128104714.1"><vh>Config files</vh>
 <v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
@@ -123,8 +125,9 @@
 <v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
 <v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
 </v>
-<v t="ekr.20160128041938.1"><vh>class Pattern</vh>
+<v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
 <v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
+<v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
 <v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
 <v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
 <v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
@@ -150,8 +153,12 @@
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
-<v t="ekr.20160203073604.1"><vh>class Stub</vh>
+<v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
 <v t="ekr.20160203073713.1"><vh>stub.ctor &amp; __repr__</vh></v>
+<v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
+<v t="ekr.20160203134611.1"><vh>stub.__gt/lt/ge/le__</vh></v>
+<v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
+<v t="ekr.20160203134704.1"><vh>stub.full_name</vh></v>
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
@@ -190,11 +197,11 @@
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.74"></v>
+<v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
-</v>
 <v t="ekr.20160201194801.1"></v>
-<v t="ekr.20160128104639.1"></v>
+</v>
 <v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
@@ -1464,7 +1471,7 @@ def pdb():
 </t>
 <t tx="ekr.20160128041938.1">
 
-class Pattern:
+class Pattern(object):
     '''
     A class representing regex or balanced patterns.
     
@@ -1721,6 +1728,9 @@ s2: str
 strict: bool
 trace: bool
 # Type computations...
+int+int: int
+int(*): int
+hash(*): int
 repr(*): str
 str%(*): str
 # str%Tuple[*]: str
@@ -1827,6 +1837,19 @@ if __name__ == '__main__':
         assert result, (result, s, find, repl, expected)
         aList = pattern.all_matches(s, trace=trace)
         assert len(aList) == 1, aList
+    p1 = msf.Pattern('abc','xyz')
+    p2 = msf.Pattern('abc','xyz')
+    p3 = msf.Pattern('abc','pdq')
+    assert p1 == p2
+    assert p1 != p3
+    assert p2 != p3
+    aSet = set()
+    aSet.add(p1)
+    assert p1 in aSet
+    assert p2 in aSet
+    assert p3 not in aSet
+    assert list(aSet) == [p1] == [p2]
+    aSet.add(p3)
 
 </t>
 <t tx="ekr.20160128190224.1">
@@ -1942,9 +1965,6 @@ def is_known_type(self, s):
 @wrap
 
 - Remove do_Return. Adjust its callers.
-
-- Make Stub and Pattern classes sortable, hashable, comparable.
-    - Add unit tests.
 
 ** Run without config file.
     - Parse pattern lists internally.
@@ -2101,13 +2121,11 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-Protect lines starting with '[' that aren't a real section.
-- Added msf.section_names.
-- msf.get_config_string reads the config file *before*
-  passing it to configParser.
-- msf.init_parser replaces [ by \\.
-- msf.scan_patterns undoes this escape.
-</t>
+Made Stub and Pattern classes sortable, hashable, comparable.
+- Added Pattern.__eq__, __ne__, __hash__
+- Added all rich comparisons for Stub.
+  They will be used only to sort siblings.
+- Added corresponding unit tests.</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2144,7 +2162,7 @@ def cls(self):
 </t>
 <t tx="ekr.20160203073604.1">
 
-class Stub:
+class Stub(object):
     '''
     A class representing a stub: it's name, text, parent and children.
     This class is a prerequisite for -- update.
@@ -2165,10 +2183,7 @@ def __repr__(self):
 __str__ = __repr__</t>
 <t tx="ekr.20160203074843.1">
 def init_parser(self, s):
-    '''
-    Add double back-slashes to all patterns starting with '['.
-    Remove all trailing ; and # comments.
-    '''
+    '''Add double back-slashes to all patterns starting with '['.'''
     trace = False
     aList = []
     for s in s.split('\n'):
@@ -2182,8 +2197,7 @@ def init_parser(self, s):
     s = '\n'.join(aList)+'\n'
     if trace: g.trace(s)
     file_object = StringIO.StringIO(s)
-    self.parser.readfp(file_object)
-        # Read *from* object.</t>
+    self.parser.readfp(file_object)</t>
 <t tx="ekr.20160203075612.1">import ast
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
@@ -2285,5 +2299,91 @@ def get_config_string(self):
         print('\nconfiguration file not found: %s' % fn)
         return None
     </t>
+<t tx="ekr.20160203130235.1">
+def __eq__(self, obj):
+    """Stub.__eq__. Return ordering among siblings."""
+    if isinstance(obj, Stub):
+        return self.name == obj.name()
+    else:
+        return NotImplemented
+
+def __ne__(self, obj):
+    """Stub.__ne__"""
+    return not self.__eq__(obj)
+</t>
+<t tx="ekr.20160203130717.1">
+def __eq__(self, obj):
+    """Return True if two Patterns are equivalent."""
+    if isinstance(obj, Pattern):
+        return self.find_s == obj.find_s and self.repl_s == obj.repl_s
+    else:
+        return NotImplemented
+
+def __ne__(self, obj):
+    """Return True if two Patterns are not equivalent."""
+    return not self.__eq__(obj)
+
+def __hash__(self):
+    '''Pattern.__hash__'''
+    return len(self.find_s) + len(self.repl_s)</t>
+<t tx="ekr.20160203134203.1"># Ordering among Patterns is not important.
+
+# def __gt__(self, obj):
+    # '''Return True if self appears after other in outline order.'''
+    # if isinstance(obj, Pattern):
+        # return self.find_s &gt; self.obj_s:
+    # else:
+        # return NotImplemented
+
+# def __lt__(self, other):
+    # return not self.__eq__(other) and not self.__gt__(other)
+    
+# def __ge__(self, other):
+    # return self.__eq__(other) or self.__gt__(other)
+
+# def __le__(self, other):
+    # return self.__eq__(other) or self.__lt__(other)
+</t>
+<t tx="ekr.20160203134611.1">
+def __gt__(self, obj):
+    '''Stub.__eq__. Return ordering among siblings..'''
+    if isinstance(obj, Stub):
+        return self.name &gt; obj.name
+    else:
+        return NotImplemented
+
+def __lt__(self, other):
+    return not self.__eq__(other) and not self.__gt__(other)
+    
+def __ge__(self, other):
+    return self.__eq__(other) or self.__gt__(other)
+
+def __le__(self, other):
+    return self.__eq__(other) or self.__lt__(other)
+</t>
+<t tx="ekr.20160203134704.1">
+def full_name(self):
+    '''Return full path to top parent.'''
+    if parent:
+        return '%s.%s' % (parent.full_name(), self.name)
+    else:
+        return self.name
+</t>
+<t tx="ekr.20160203140342.1">
+def __hash__(self):
+    '''Stub.__hash__'''
+    if self.parent:
+        return parent.hash() + len(self.children)
+    else:
+        return len(self.children)
+</t>
+<t tx="ekr.20160203154154.1">    name1 = self.parent.full_name() if self.parent else None
+    name2 = obj.parent.full_name() if obj.parent else None
+    if name1 == name2:
+        return self.name &gt; obj.name
+    elif name1 and name2:
+        return name1 &gt; name2
+    else:
+        return bool(name1)</t>
 </tnodes>
 </leo_file>

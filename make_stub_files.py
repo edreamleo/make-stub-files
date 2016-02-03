@@ -718,7 +718,7 @@ class LeoGlobals:
             print(args, keys)
 
 
-class Pattern:
+class Pattern(object):
     '''
     A class representing regex or balanced patterns.
     
@@ -745,6 +745,21 @@ class Pattern:
                     result.append('\\'+ch)
             self.regex = re.compile(''.join(result))
         self.trace = trace
+
+    def __eq__(self, obj):
+        """Return True if two Patterns are equivalent."""
+        if isinstance(obj, Pattern):
+            return self.find_s == obj.find_s and self.repl_s == obj.repl_s
+        else:
+            return NotImplemented
+
+    def __ne__(self, obj):
+        """Return True if two Patterns are not equivalent."""
+        return not self.__eq__(obj)
+
+    def __hash__(self):
+        '''Pattern.__hash__'''
+        return len(self.find_s) + len(self.repl_s)
 
     def __repr__(self):
         '''Pattern.__repr__'''
@@ -1076,10 +1091,7 @@ class StandAloneMakeStubFile:
         
 
     def init_parser(self, s):
-        '''
-        Add double back-slashes to all patterns starting with '['.
-        Remove all trailing ; and # comments.
-        '''
+        '''Add double back-slashes to all patterns starting with '['.'''
         trace = False
         aList = []
         for s in s.split('\n'):
@@ -1094,7 +1106,6 @@ class StandAloneMakeStubFile:
         if trace: g.trace(s)
         file_object = StringIO.StringIO(s)
         self.parser.readfp(file_object)
-            # Read *from* object.
 
     def is_section_name(self, s):
         
@@ -1139,7 +1150,7 @@ class StandAloneMakeStubFile:
         return aList
 
 
-class Stub:
+class Stub(object):
     '''
     A class representing a stub: it's name, text, parent and children.
     This class is a prerequisite for -- update.
@@ -1157,6 +1168,47 @@ class Stub:
         return 'Stub: %s' % self.name
         
     __str__ = __repr__
+
+    def __eq__(self, obj):
+        """Stub.__eq__. Return ordering among siblings."""
+        if isinstance(obj, Stub):
+            return self.name == obj.name()
+        else:
+            return NotImplemented
+
+    def __ne__(self, obj):
+        """Stub.__ne__"""
+        return not self.__eq__(obj)
+
+    def __gt__(self, obj):
+        '''Stub.__eq__. Return ordering among siblings..'''
+        if isinstance(obj, Stub):
+            return self.name > obj.name
+        else:
+            return NotImplemented
+
+    def __lt__(self, other):
+        return not self.__eq__(other) and not self.__gt__(other)
+        
+    def __ge__(self, other):
+        return self.__eq__(other) or self.__gt__(other)
+
+    def __le__(self, other):
+        return self.__eq__(other) or self.__lt__(other)
+
+    def __hash__(self):
+        '''Stub.__hash__'''
+        if self.parent:
+            return parent.hash() + len(self.children)
+        else:
+            return len(self.children)
+
+    def full_name(self):
+        '''Return full path to top parent.'''
+        if parent:
+            return '%s.%s' % (parent.full_name(), self.name)
+        else:
+            return self.name
 
 
 class StubFormatter (AstFormatter):

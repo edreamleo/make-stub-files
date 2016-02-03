@@ -27,6 +27,19 @@ class TestMakeStubFiles(unittest.TestCase):
             assert result, (result, s, find, repl, expected)
             aList = pattern.all_matches(s, trace=trace)
             assert len(aList) == 1, aList
+        p1 = msf.Pattern('abc','xyz')
+        p2 = msf.Pattern('abc','xyz')
+        p3 = msf.Pattern('abc','pdq')
+        assert p1 == p2
+        assert p1 != p3
+        assert p2 != p3
+        aSet = set()
+        aSet.add(p1)
+        assert p1 in aSet
+        assert p2 in aSet
+        assert p3 not in aSet
+        assert list(aSet) == [p1] == [p2]
+        aSet.add(p3)
 
 
     def test_is_known_type(self):
