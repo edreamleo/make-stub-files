@@ -35,7 +35,7 @@ As a first example, given the method:
         
 and the patterns:
 
-    i[1-3]: int
+    i: int
     s: str
     
 the script produces the stub:
