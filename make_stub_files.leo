@@ -11,10 +11,6 @@
 <find_panel_settings/>
 <vnodes>
 <v t="ekr.20160126153016.3"><vh>Startup</vh></v>
-<v t="ekr.20160202182500.1"><vh>No longer used</vh>
-<v t="ekr.20160202083330.1"><vh>msf.create_keys_d (Not used)</vh></v>
-<v t="ekr.20160202083421.1"><vh>msf.scan_pattern_lists (Not used)</vh></v>
-</v>
 <v t="ekr.20160128104714.1"><vh>Config files</vh>
 <v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
 <v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
@@ -184,9 +180,7 @@
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
-<v t="ekr.20160202061118.1"></v>
-<v t="ekr.20160126153212.93"></v>
-<v t="ekr.20160126153212.88"></v>
+<v t="ekr.20160128113859.1"></v>
 </v>
 <v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
@@ -1724,37 +1718,34 @@ prefix_lines:
 
 [Def Name Patterns]
 
-AstFormatter.*: str
-Pattern.all_matches: Sequence
-Pattern.full_balanced_match: Optional[int]
-Pattern.match_balanced: int
-Pattern.match_entire_string: bool
-StandAloneMakeStubFile.scan_types: Dict[str, str]
+# The returns are inherent in the design.
+AstFormatter.do_*: str
 StubFormatter.do_.*: str
-StubTraverser.format_returns: str
-StubTraverser.match_return_patterns: Tuple[bool,str]
-StubTraverser.match_return_pattern: Optional[str]
-StubTraverser.match_balanced: int
+
+# Pattern.all_matches: Sequence
+# Pattern.full_balanced_match: Optional[int]
+# Pattern.match_balanced: int
+# Pattern.match_entire_string: bool
+# StandAloneMakeStubFile.scan_types: Dict[str, str]
+
+# StubTraverser.format_returns: str
+# StubTraverser.match_return_patterns: Tuple[bool,str]
+# StubTraverser.match_return_pattern: Optional[str]
+# StubTraverser.match_balanced: int
 
 [General Patterns]
 
-a: str
-aList: List
-controller: StandAloneMakeStubFile
-find_s: str
-# fn: str
-node: Node
-parser: optparse.OptionParser
-patterns: List
-general_patterns: List[Pattern]
-repl_s: str
-strict: bool
-trace: bool
+# Declarations of names..
 
 a: str
 aList: List
-found: str
+aList: List
+all(*): bool
+controller: StandAloneMakeStubFile
+find_s: str
 fn: str
+found: str
+general_patterns: List[Pattern]
 group: str
 i1: int
 i2: int
@@ -1762,35 +1753,37 @@ i: int
 j1: int
 j2: int
 j: int
+len(*): int
 n1: int
 n2: int
 n: int
 name: str
 ndots: int
+node: Node
+number: int
+os.sep.join(*): str
+parser: optparse.OptionParser
+patterns: List
+repl_s: str
 s: str
 s1: str
 s2: str
-# Was Call
-all(*): bool
-len(*): int
-tuple(*): Tuple[*]
-str.join(*): str
-# Was Name...
-number: int
-# Was: return
-(*): Tuple[*]
-\\[*]: List[*]
-{*}: dict
-os.sep.join(*): str
-str.join(*): str
-str[*]: str
-# Was +:
-str\+str: str
-str\+comments: str
-# Was %:
-str%str: str
+strict: bool
+trace: bool
+# Type computations...
+repr(*): str
 str%(*): str
 str%Tuple[*]: str
+str%str: str
+str+comments: str
+str+str: str
+str.join(*): str
+str.join(*): str
+str[*]: str
+tuple(*): Tuple[*]
+{*}: dict
+(*): Tuple[*]
+\\[*]: List[*]
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
@@ -1803,13 +1796,20 @@ def __init__ (self, find_s, repl_s='', trace=False):
     if self.is_balanced():
         self.regex = None
     else:
-        # Careful: add sep only when the entire find_s is an identifier.
-        sep = r'\b'
-        s = find_s
-        s2 = s.replace('_','')
-        if s2 and s2[0].isalpha():
-            s = sep + s + sep
-        self.regex = re.compile(s)
+        # Escape all dangerous characters.
+        result = []
+        for ch in find_s:
+            if ch == '_' or ch.isalnum():
+                result.append(ch)
+            else:
+                result.append('\\'+ch)
+        self.regex = re.compile(''.join(result))
+        # # # Careful: add sep only when the entire find_s is an identifier.
+        # # # sep = r'\b'
+        # # # s = find_s
+        # # # s2 = s.replace('_','')
+        # # # if s2 and s2[0].isalpha():
+            # # # s = sep + s + sep
     self.trace = trace
 </t>
 <t tx="ekr.20160128113914.1">
@@ -1994,12 +1994,17 @@ def is_known_type(self, s):
 
 * Update the docs.
 
-- Optionally generate  Any for all unknown argument types.
+- Protect lines starting with '[' that aren't a real section.
+
+** Use [Def Name Patterns] to make inferences!
+
+- Replace regex matches with plain matches.
+  Escape all characters that aren't alnum or _
+
+- Optionally generate Any for all unknown argument types.
 
 ** Run without config file.
     - Parse pattern lists internally.
-    
-- Replace regex matches with plain matches.
     
 - Recognize recursive calls.
     - Just remove them!
@@ -2194,100 +2199,8 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-Everything has become clear, and simple:
-
-- msf.cfg works using only [Def Name Patterns] and [General Patterns]!
-    - Gone is the endless confusion about where to put patterns.
-    - The user no longer needs to know when patterns are applied.
-      (In fact, st.visit applies all patterns to all ast nodes!)
-    - All patterns are now at the "top" level of the above sections.
-
-- st.visit matches *all* [General Patterns] for all nodes.
-    - This appears to solve all problems and all confusions.
-    - The local context naturally limits searches.
-    - Experiments show that repeated matching *never* happens in st.visit.
-      However, it wouldn't make any difference if it did.
-    - There is now no need ever to impose a loop count on any loop.
-    - There is no further need for the keys_dict or pattern_dict.
-    - create_keys_dict and scan_patterns_lists have been retired.
-      
-- Added AstArgFormatter class.
-    - It generalizes arg values without doing other replacements.
-    - This little behind-the-scenes class is essential to
-      simpifying user patterns!
-
-- scan_patterns warns about duplicate keys.
-  
-To do:
-
-- Remove all code disabled when new_code is False.
-- Update the docs.
-- All other items in the To-do list in make_stub_files.leo.
-- A key that starts with [ creates endless confusion.
-  Such keys must be preceded by two back slashes, but
-  it would be good to warn the user.  It may not be possible...
-</t>
-<t tx="ekr.20160202083330.1">
-def create_keys_d(self):
-    '''
-    Return self.keys_d.
-    Keys are ast.Node.__class__.__name__.
-    Values are a list of the corresponding pattern keys.
-    '''
-    # For now, just add the keys we actually use.
-    ##### Just use the ast keys ??????
-    return {
-        'BinOp': ['+', '%',],
-        'Call': ['call',],
-        'Name': ['name',],
-        'Return': ['return',],
-    }</t>
-<t tx="ekr.20160202083421.1">
-def scan_pattern_lists(self, section_name):
-    '''Return self.patterns_d.'''
-    trace = False
-    parser, verbose = self.parser, self.verbose
-    d = {}
-    if section_name in parser.sections():
-        if verbose: print('%s...\n' % section_name)
-        for key in parser.options(section_name):
-            s1 = parser.get(section_name, key)
-            aList = s1.split('\n')
-            aList = [z.strip() for z in aList if z.strip()]
-            # if trace: g.trace(key+'...')
-            for s in aList:
-                data = s.split(':',1)
-                try:
-                    key2, value2 = data
-                    key2, value2 = key2.strip(), value2.strip()
-                    if not key2.startswith('#'):
-                        aList2 = d.get(key, [])
-                        pattern = Pattern(key2, value2)
-                        aList2.append(pattern)
-                        d[key] = aList2
-                    # g.trace('  ', key, pattern)
-                except ValueError:
-                    print('bad pattern: %s' % (s1.strip()))
-            if verbose: print(pattern)
-        if verbose: print('')
-    elif verbose:
-        print('no section: %s' % section_name)
-        print(parser.sections())
-        print('')
-    # Add all the general patterns.
-    if 0:
-        for key in d:
-            aList = d.get(key)
-            aList.extend(self.general_patterns)
-            aList = list(set(aList))
-            d[key] = aList
-    if trace:
-        g.trace('returns...')
-        sep = '\n  '
-        for key in sorted(d):
-            print(key + ':' + sep + sep.join([repr(z) for z in d.get(key)]))
-    return d
-</t>
+The pattern ctor now protects all non-identifier characters.
+This allows the Pattern class to use regex.compile to speed searches.</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2322,6 +2235,5 @@ def cls(self):
     if sys.platform.lower().startswith('win'):
         os.system('cls')
 </t>
-<t tx="ekr.20160202182500.1"></t>
 </tnodes>
 </leo_file>

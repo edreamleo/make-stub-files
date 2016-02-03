@@ -691,13 +691,20 @@ class Pattern:
         if self.is_balanced():
             self.regex = None
         else:
-            # Careful: add sep only when the entire find_s is an identifier.
-            sep = r'\b'
-            s = find_s
-            s2 = s.replace('_','')
-            if s2 and s2[0].isalpha():
-                s = sep + s + sep
-            self.regex = re.compile(s)
+            # Escape all dangerous characters.
+            result = []
+            for ch in find_s:
+                if ch == '_' or ch.isalnum():
+                    result.append(ch)
+                else:
+                    result.append('\\'+ch)
+            self.regex = re.compile(''.join(result))
+            # # # Careful: add sep only when the entire find_s is an identifier.
+            # # # sep = r'\b'
+            # # # s = find_s
+            # # # s2 = s.replace('_','')
+            # # # if s2 and s2[0].isalpha():
+                # # # s = sep + s + sep
         self.trace = trace
 
     def __repr__(self):
