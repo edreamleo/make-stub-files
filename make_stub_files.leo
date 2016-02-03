@@ -193,16 +193,16 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
-<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.74"></v>
+<v t="ekr.20160126153212.76"></v>
 <v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
-<v t="ekr.20160201194801.1"></v>
 </v>
+<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -886,14 +886,16 @@ def __init__ (self):
     '''Ctor for StandAloneMakeStubFile class.'''
     self.options = {}
     # Ivars set on the command line...
-    self.config_fn = self.finalize('~/stubs/make_stub_files.cfg')
+    self.config_fn = None
+        # self.finalize('~/stubs/make_stub_files.cfg')
     self.enable_unit_tests = False
     self.files = [] # May also be set in the config file.
     self.trace = False # Trace pattern substitutions.
     self.verbose = False # Trace config arguments.
     # Ivars set in the config file...
     self.output_fn = None
-    self.output_directory = self.finalize('~/stubs')
+    self.output_directory = self.finalize('.')
+        # self.finalize('~/stubs')
     self.overwrite = False
     self.prefix_lines = []
     self.trace = False
@@ -932,15 +934,18 @@ def run(self):
     '''
     if self.enable_unit_tests:
         self.run_all_unit_tests()
-    dir_ = self.output_directory
-    if dir_:
-        if os.path.exists(dir_):
-            for fn in self.files:
-                self.make_stub_file(fn)
+    if self.files:
+        dir_ = self.output_directory
+        if dir_:
+            if os.path.exists(dir_):
+                for fn in self.files:
+                    self.make_stub_file(fn)
+            else:
+                print('output directory not found: %s' % dir_)
         else:
-            print('output directory not found: %s' % dir_)
-    else:
-        print('no output directory')
+            print('no output directory')
+    elif not self.enable_unit_tests:
+         print('no input files')
 </t>
 <t tx="ekr.20160126153212.77">
 def scan_command_line(self):
@@ -950,7 +955,7 @@ def scan_command_line(self):
     parser = optparse.OptionParser(usage=usage)
     add = parser.add_option
     add('-c', '--config', dest='fn',
-        help='full path to alternate configuration file')
+        help='full path to configuration file')
     add('-d', '--dir', dest='dir',
         help='full path to the output directory')
     add('-o', '--overwrite', action='store_true', default=False,
@@ -991,16 +996,20 @@ def scan_command_line(self):
 <t tx="ekr.20160126153212.78">def scan_options(self):
     '''Set all configuration-related ivars.'''
     verbose = False or self.verbose
+    if not self.config_fn:
+        return
     self.parser = parser = self.create_parser()
     s = self.get_config_string()
     self.init_parser(s)
     if self.files:
         files_source = 'command-line'
         files = self.files
-    else:
+    elif parser.has_section('Global'):
         files_source = 'config file'
         files = parser.get('Global', 'files')
         files = [z.strip() for z in files.split('\n') if z.strip()]
+    else:
+        return
     files2 = []
     for z in files:
         files2.extend(glob.glob(self.finalize(z)))
@@ -1037,7 +1046,7 @@ def scan_patterns(self, section_name):
     trace = False or self.verbose
     parser = self.parser
     aList = []
-    if section_name in parser.sections():
+    if parser.has_section(section_name):
         seen = set()
         for key in parser.options(section_name):
             value = parser.get(section_name, key)
@@ -1964,9 +1973,6 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-** Run without config file.
-    - Parse pattern lists internally.
-    
 - What to do about num, number, float, complex, etc.?
     
 --update.
@@ -2117,11 +2123,11 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-Made Stub and Pattern classes sortable, hashable, comparable.
-- Added Pattern.__eq__, __ne__, __hash__
-- Added all rich comparisons for Stub.
-  They will be used only to sort siblings.
-- Added corresponding unit tests.</t>
+python make_stub_files.py file-name now works.
+The script now handles missing config file gracefully.
+There is no longer a default config file, and none is needed:
+- The script now runs with reasonble defaults when there is no config file.
+- The output directory defaults to '.'</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2181,6 +2187,7 @@ __str__ = __repr__</t>
 def init_parser(self, s):
     '''Add double back-slashes to all patterns starting with '['.'''
     trace = False
+    if not s: return
     aList = []
     for s in s.split('\n'):
         if self.is_section_name(s):
@@ -2273,13 +2280,12 @@ def _callerName(self, n=1, files=False):
 </t>
 <t tx="ekr.20160203105356.1">
 def create_parser(self):
-    
-    # Create the parser
+    '''Create a RawConfigParser and return it.'''
     parser = configparser.RawConfigParser(dict_type=OrderedDict)
         # Requires Python 2.7
     parser.optionxform = str
     return parser
-   </t>
+</t>
 <t tx="ekr.20160203105721.1">
 def get_config_string(self):
     
@@ -2293,7 +2299,7 @@ def get_config_string(self):
         return s
     else:
         print('\nconfiguration file not found: %s' % fn)
-        return None
+        return ''
     </t>
 <t tx="ekr.20160203130235.1">
 def __eq__(self, obj):

@@ -910,14 +910,16 @@ class StandAloneMakeStubFile:
         '''Ctor for StandAloneMakeStubFile class.'''
         self.options = {}
         # Ivars set on the command line...
-        self.config_fn = self.finalize('~/stubs/make_stub_files.cfg')
+        self.config_fn = None
+            # self.finalize('~/stubs/make_stub_files.cfg')
         self.enable_unit_tests = False
         self.files = [] # May also be set in the config file.
         self.trace = False # Trace pattern substitutions.
         self.verbose = False # Trace config arguments.
         # Ivars set in the config file...
         self.output_fn = None
-        self.output_directory = self.finalize('~/stubs')
+        self.output_directory = self.finalize('.')
+            # self.finalize('~/stubs')
         self.overwrite = False
         self.prefix_lines = []
         self.trace = False
@@ -960,15 +962,18 @@ class StandAloneMakeStubFile:
         '''
         if self.enable_unit_tests:
             self.run_all_unit_tests()
-        dir_ = self.output_directory
-        if dir_:
-            if os.path.exists(dir_):
-                for fn in self.files:
-                    self.make_stub_file(fn)
+        if self.files:
+            dir_ = self.output_directory
+            if dir_:
+                if os.path.exists(dir_):
+                    for fn in self.files:
+                        self.make_stub_file(fn)
+                else:
+                    print('output directory not found: %s' % dir_)
             else:
-                print('output directory not found: %s' % dir_)
-        else:
-            print('no output directory')
+                print('no output directory')
+        elif not self.enable_unit_tests:
+             print('no input files')
 
     def run_all_unit_tests(self):
         
@@ -986,7 +991,7 @@ class StandAloneMakeStubFile:
         parser = optparse.OptionParser(usage=usage)
         add = parser.add_option
         add('-c', '--config', dest='fn',
-            help='full path to alternate configuration file')
+            help='full path to configuration file')
         add('-d', '--dir', dest='dir',
             help='full path to the output directory')
         add('-o', '--overwrite', action='store_true', default=False,
@@ -1026,16 +1031,20 @@ class StandAloneMakeStubFile:
     def scan_options(self):
         '''Set all configuration-related ivars.'''
         verbose = False or self.verbose
+        if not self.config_fn:
+            return
         self.parser = parser = self.create_parser()
         s = self.get_config_string()
         self.init_parser(s)
         if self.files:
             files_source = 'command-line'
             files = self.files
-        else:
+        elif parser.has_section('Global'):
             files_source = 'config file'
             files = parser.get('Global', 'files')
             files = [z.strip() for z in files.split('\n') if z.strip()]
+        else:
+            return
         files2 = []
         for z in files:
             files2.extend(glob.glob(self.finalize(z)))
@@ -1067,13 +1076,11 @@ class StandAloneMakeStubFile:
         self.general_patterns = self.scan_patterns('General Patterns')
 
     def create_parser(self):
-        
-        # Create the parser
+        '''Create a RawConfigParser and return it.'''
         parser = configparser.RawConfigParser(dict_type=OrderedDict)
             # Requires Python 2.7
         parser.optionxform = str
         return parser
-       
 
     def get_config_string(self):
         
@@ -1087,12 +1094,13 @@ class StandAloneMakeStubFile:
             return s
         else:
             print('\nconfiguration file not found: %s' % fn)
-            return None
+            return ''
         
 
     def init_parser(self, s):
         '''Add double back-slashes to all patterns starting with '['.'''
         trace = False
+        if not s: return
         aList = []
         for s in s.split('\n'):
             if self.is_section_name(s):
@@ -1125,7 +1133,7 @@ class StandAloneMakeStubFile:
         trace = False or self.verbose
         parser = self.parser
         aList = []
-        if section_name in parser.sections():
+        if parser.has_section(section_name):
             seen = set()
             for key in parser.options(section_name):
                 value = parser.get(section_name, key)
