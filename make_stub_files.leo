@@ -165,7 +165,7 @@
 <v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
 <v t="ekr.20160202061118.1"><vh>sf.visit</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants &amp; Name</vh></v>
-<v t="ekr.20160201194801.1"><vh>sf.Return (Revised) TO BE REMOVED</vh></v>
+<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
@@ -193,6 +193,7 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
+<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160203073604.1"></v>
@@ -202,7 +203,6 @@
 <v t="ekr.20160126153212.79"></v>
 <v t="ekr.20160201194801.1"></v>
 </v>
-<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1964,8 +1964,6 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- Remove do_Return. Adjust its callers.
-
 ** Run without config file.
     - Parse pattern lists internally.
     
@@ -2064,12 +2062,10 @@ def replace(self, m, s, trace=False):
 </t>
 <t tx="ekr.20160201194801.1">
 def do_Return(self, node):
-    '''
-    StubFormatter.do_Return.
-    Result does not start with 'return' nor end with a newline.
-    '''
+    '''StubFormatter.do_Return. Return only the return expression itself.'''
     s = AstFormatter.do_Return(self, node)
     assert s.startswith('return'), repr(s)
+    # Stripping the 'return' here is useful.
     return s[len('return'):].strip()
 </t>
 <t tx="ekr.20160202061118.1">

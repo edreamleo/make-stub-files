@@ -1259,12 +1259,10 @@ class StubFormatter (AstFormatter):
         return 'str' # return repr(node.s)
 
     def do_Return(self, node):
-        '''
-        StubFormatter.do_Return.
-        Result does not start with 'return' nor end with a newline.
-        '''
+        '''StubFormatter.do_Return. Return only the return expression itself.'''
         s = AstFormatter.do_Return(self, node)
         assert s.startswith('return'), repr(s)
+        # Stripping the 'return' here is useful.
         return s[len('return'):].strip()
 
 
