@@ -7,7 +7,6 @@ For full details, see README.md.
 
 This file is in the public domain.
 '''
-
 import ast
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
@@ -20,6 +19,10 @@ import glob
 import optparse
 import os
 import re
+try:
+    import io.StringIO as StringIO # Python 3
+except ImportError:
+    import StringIO
 import sys
 
 
@@ -650,6 +653,50 @@ class AstArgFormatter (AstFormatter):
 class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
 
+    def _callerName(self, n=1, files=False):
+        # print('_callerName: %s %s' % (n,files))
+        try: # get the function name from the call stack.
+            f1 = sys._getframe(n) # The stack frame, n levels up.
+            code1 = f1.f_code # The code object
+            name = code1.co_name
+            if name == '__init__':
+                name = '__init__(%s,line %s)' % (
+                    shortFileName(code1.co_filename), code1.co_firstlineno)
+            if files:
+                return '%s:%s' % (shortFilename(code1.co_filename), name)
+            else:
+                return name # The code name
+        except ValueError:
+            # print('g._callerName: ValueError',n)
+            return '' # The stack is not deep enough.
+        except Exception:
+            es_exception()
+            return '' # "<no caller name>"
+
+    def callers(self, n=4, count=0, excludeCaller=True, files=False):
+        '''Return a list containing the callers of the function that called g.callerList.
+
+        If the excludeCaller keyword is True (the default), g.callers is not on the list.
+
+        If the files keyword argument is True, filenames are included in the list.
+        '''
+        # sys._getframe throws ValueError in both cpython and jython if there are less than i entries.
+        # The jython stack often has less than 8 entries,
+        # so we must be careful to call g._callerName with smaller values of i first.
+        result = []
+        i = 3 if excludeCaller else 2
+        while 1:
+            s = _callerName(i, files=files)
+            # print(i,s)
+            if s:
+                result.append(s)
+            if not s or len(result) >= n: break
+            i += 1
+        result.reverse()
+        if count > 0: result = result[: count]
+        sep = '\n' if files else ','
+        return sep.join(result)
+
     def cls(self):
         '''Clear the screen.'''
         if sys.platform.lower().startswith('win'):
@@ -687,7 +734,6 @@ class Pattern:
         self.find_s = find_s
         self.repl_s = repl_s
         if self.is_balanced():
-            # if find_s.endswith('*'): g.trace(find_s)
             self.regex = None
         else:
             # Escape all dangerous characters.
@@ -862,6 +908,8 @@ class StandAloneMakeStubFile:
         self.trace = False
         self.warn = False
         # Pattern lists, set by config sections...
+        self.section_names = (
+            'Global', 'Def Name Patterns', 'General Patterns')
         self.def_patterns = [] # [Def Name Patterns]
         self.general_patterns = [] # [General Patterns]
     def finalize(self, fn):
@@ -962,18 +1010,10 @@ class StandAloneMakeStubFile:
                 self.files = args
     def scan_options(self):
         '''Set all configuration-related ivars.'''
-        verbose = self.verbose
-        self.parser = parser = configparser.RawConfigParser(dict_type=OrderedDict)
-            # Requires Python 2.7
-        parser.optionxform = str
-        fn = self.finalize(self.config_fn)
-        if os.path.exists(fn):
-            if verbose:
-                print('\nconfiguration file: %s\n' % fn)
-        else:
-            print('\nconfiguration file not found: %s' % fn)
-            return
-        parser.read(fn)
+        verbose = False or self.verbose
+        self.parser = parser = self.create_parser()
+        s = self.get_config_string()
+        self.init_parser(s)
         if self.files:
             files_source = 'command-line'
             files = self.files
@@ -1011,6 +1051,64 @@ class StandAloneMakeStubFile:
         self.def_patterns = self.scan_patterns('Def Name Patterns')
         self.general_patterns = self.scan_patterns('General Patterns')
 
+    def create_parser(self):
+        
+        # Create the parser
+        parser = configparser.RawConfigParser(dict_type=OrderedDict)
+            # Requires Python 2.7
+        parser.optionxform = str
+        return parser
+       
+
+    def get_config_string(self):
+        
+        fn = self.finalize(self.config_fn)
+        if os.path.exists(fn):
+            if self.verbose:
+                print('\nconfiguration file: %s\n' % fn)
+            f = open(fn, 'r')
+            s = f.read()
+            f.close()
+            return s
+        else:
+            print('\nconfiguration file not found: %s' % fn)
+            return None
+        
+
+    def init_parser(self, s):
+        '''
+        Add double back-slashes to all patterns starting with '['.
+        Remove all trailing ; and # comments.
+        '''
+        trace = False
+        aList = []
+        for s in s.split('\n'):
+            if self.is_section_name(s):
+                aList.append(s)
+            elif s.strip().startswith('['):
+                aList.append(r'\\'+s[1:])
+                if trace: g.trace('*** escaping:',s)
+            else:
+                aList.append(s)
+        s = '\n'.join(aList)+'\n'
+        if trace: g.trace(s)
+        file_object = StringIO.StringIO(s)
+        self.parser.readfp(file_object)
+            # Read *from* object.
+
+    def is_section_name(self, s):
+        
+        def munge(s):
+            return s.strip().lower().replace(' ','')
+        
+        s = s.strip()
+        if s.startswith('[') and s.endswith(']'):
+            s = munge(s[1:-1])
+            for s2 in self.section_names:
+                if s == munge(s2):
+                    return True
+        return False
+
     def scan_patterns(self, section_name):
         '''Parse the config section into a list of patterns, preserving order.'''
         trace = False or self.verbose
@@ -1022,14 +1120,15 @@ class StandAloneMakeStubFile:
                 value = parser.get(section_name, key)
                 # A kludge: strip leading \\ from patterns.
                 if key.startswith(r'\\'):
-                    key = key[2:]
+                    key = '[' + key[2:]
+                    if trace: g.trace('removing escapes', key)
                 if key in seen:
                     g.trace('duplicate key', key)
                 else:
                     seen.add(key)
                     aList.append(Pattern(key, value, self.trace))
             if trace:
-                print('%s...\n' % section_name)
+                g.trace('%s...\n' % section_name)
                 for z in aList:
                     print(z)
                 print('')

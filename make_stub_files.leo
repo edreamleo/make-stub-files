@@ -31,8 +31,8 @@
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
-<v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
+<v t="ekr.20160203075612.1"><vh>&lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
 <v t="ekr.20160126153212.4"><vh> f.Entries</vh>
 <v t="ekr.20160126153212.5"><vh>f.format</vh></v>
@@ -117,6 +117,8 @@
 <v t="ekr.20160202165143.1"><vh>sf.Constants &amp; Name</vh></v>
 </v>
 <v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
+<v t="ekr.20160203095618.2"><vh>g._callerName</vh></v>
+<v t="ekr.20160203095618.1"><vh>g.callers</vh></v>
 <v t="ekr.20160202170529.1"><vh>g.cls</vh></v>
 <v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
 <v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
@@ -141,6 +143,10 @@
 <v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
 <v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
+<v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
+<v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
+<v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
+<v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
@@ -152,7 +158,7 @@
 <v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
 <v t="ekr.20160202061118.1"><vh>sf.visit</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants &amp; Name</vh></v>
-<v t="ekr.20160201194801.1"><vh>sf.Return (Revised)</vh></v>
+<v t="ekr.20160201194801.1"><vh>sf.Return (Revised) TO BE REMOVED</vh></v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
@@ -182,10 +188,13 @@
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
+<v t="ekr.20160203073604.1"></v>
+<v t="ekr.20160126153212.74"></v>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
-<v t="ekr.20160203073604.1"></v>
 </v>
+<v t="ekr.20160201194801.1"></v>
+<v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
@@ -199,20 +208,7 @@ For full details, see README.md.
 
 This file is in the public domain.
 '''
-
-import ast
-from collections import OrderedDict
-    # Requires Python 2.7 or above. Without OrderedDict
-    # the configparser will give random order for patterns.
-try:
-    import ConfigParser as configparser # Python 2
-except ImportError:
-    import configparser # Python 3
-import glob
-import optparse
-import os
-import re
-import sys
+&lt;&lt; imports &gt;&gt;
 @others
 g = LeoGlobals() # For ekr.
 if __name__ == "__main__":
@@ -896,6 +892,8 @@ def __init__ (self):
     self.trace = False
     self.warn = False
     # Pattern lists, set by config sections...
+    self.section_names = (
+        'Global', 'Def Name Patterns', 'General Patterns')
     self.def_patterns = [] # [Def Name Patterns]
     self.general_patterns = [] # [General Patterns]
 </t>
@@ -985,18 +983,10 @@ def scan_command_line(self):
 </t>
 <t tx="ekr.20160126153212.78">def scan_options(self):
     '''Set all configuration-related ivars.'''
-    verbose = self.verbose
-    self.parser = parser = configparser.RawConfigParser(dict_type=OrderedDict)
-        # Requires Python 2.7
-    parser.optionxform = str
-    fn = self.finalize(self.config_fn)
-    if os.path.exists(fn):
-        if verbose:
-            print('\nconfiguration file: %s\n' % fn)
-    else:
-        print('\nconfiguration file not found: %s' % fn)
-        return
-    parser.read(fn)
+    verbose = False or self.verbose
+    self.parser = parser = self.create_parser()
+    s = self.get_config_string()
+    self.init_parser(s)
     if self.files:
         files_source = 'command-line'
         files = self.files
@@ -1046,14 +1036,15 @@ def scan_patterns(self, section_name):
             value = parser.get(section_name, key)
             # A kludge: strip leading \\ from patterns.
             if key.startswith(r'\\'):
-                key = key[2:]
+                key = '[' + key[2:]
+                if trace: g.trace('removing escapes', key)
             if key in seen:
                 g.trace('duplicate key', key)
             else:
                 seen.add(key)
                 aList.append(Pattern(key, value, self.trace))
         if trace:
-            print('%s...\n' % section_name)
+            g.trace('%s...\n' % section_name)
             for z in aList:
                 print(z)
             print('')
@@ -1699,7 +1690,6 @@ StubTraverser.do_*: str
 
 a: str
 aList: List
-aList: List
 all(*): bool
 controller: StandAloneMakeStubFile
 find_s: str
@@ -1733,8 +1723,9 @@ trace: bool
 # Type computations...
 repr(*): str
 str%(*): str
-str%Tuple[*]: str
-str%str: str
+# str%Tuple[*]: str
+# str%str: str
+str%*: str
 str+comments: str
 str+str: str
 str.join(*): str
@@ -1743,7 +1734,7 @@ str[*]: str
 tuple(*): Tuple[*]
 {*}: dict
 (*): Tuple[*]
-\\[*]: List[*]
+[*]: List[*]
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
@@ -1754,7 +1745,6 @@ def __init__ (self, find_s, repl_s='', trace=False):
     self.find_s = find_s
     self.repl_s = repl_s
     if self.is_balanced():
-        # if find_s.endswith('*'): g.trace(find_s)
         self.regex = None
     else:
         # Escape all dangerous characters.
@@ -1951,10 +1941,15 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- Protect lines starting with '[' that aren't a real section.
+- Remove do_Return. Adjust its callers.
+
+- Make Stub and Pattern classes sortable, hashable, comparable.
+    - Add unit tests.
 
 ** Run without config file.
     - Parse pattern lists internally.
+    
+- What to do about num, number, float, complex, etc.?
     
 --update.
     - Finish Stub class.
@@ -2106,9 +2101,13 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-Added first draft of Stub class.
-The code will eventually create Stubs instead of calling self.out.
-This will make it easy to alphabetize stubs, and to find new or deleted stubs.</t>
+Protect lines starting with '[' that aren't a real section.
+- Added msf.section_names.
+- msf.get_config_string reads the config file *before*
+  passing it to configParser.
+- msf.init_parser replaces [ by \\.
+- msf.scan_patterns undoes this escape.
+</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2164,5 +2163,127 @@ def __repr__(self):
     return 'Stub: %s' % self.name
     
 __str__ = __repr__</t>
+<t tx="ekr.20160203074843.1">
+def init_parser(self, s):
+    '''
+    Add double back-slashes to all patterns starting with '['.
+    Remove all trailing ; and # comments.
+    '''
+    trace = False
+    aList = []
+    for s in s.split('\n'):
+        if self.is_section_name(s):
+            aList.append(s)
+        elif s.strip().startswith('['):
+            aList.append(r'\\'+s[1:])
+            if trace: g.trace('*** escaping:',s)
+        else:
+            aList.append(s)
+    s = '\n'.join(aList)+'\n'
+    if trace: g.trace(s)
+    file_object = StringIO.StringIO(s)
+    self.parser.readfp(file_object)
+        # Read *from* object.</t>
+<t tx="ekr.20160203075612.1">import ast
+from collections import OrderedDict
+    # Requires Python 2.7 or above. Without OrderedDict
+    # the configparser will give random order for patterns.
+try:
+    import ConfigParser as configparser # Python 2
+except ImportError:
+    import configparser # Python 3
+import glob
+import optparse
+import os
+import re
+try:
+    import io.StringIO as StringIO # Python 3
+except ImportError:
+    import StringIO
+import sys</t>
+<t tx="ekr.20160203094439.1">
+def is_section_name(self, s):
+    
+    def munge(s):
+        return s.strip().lower().replace(' ','')
+    
+    s = s.strip()
+    if s.startswith('[') and s.endswith(']'):
+        s = munge(s[1:-1])
+        for s2 in self.section_names:
+            if s == munge(s2):
+                return True
+    return False
+</t>
+<t tx="ekr.20160203095618.1">
+def callers(self, n=4, count=0, excludeCaller=True, files=False):
+    '''Return a list containing the callers of the function that called g.callerList.
+
+    If the excludeCaller keyword is True (the default), g.callers is not on the list.
+
+    If the files keyword argument is True, filenames are included in the list.
+    '''
+    # sys._getframe throws ValueError in both cpython and jython if there are less than i entries.
+    # The jython stack often has less than 8 entries,
+    # so we must be careful to call g._callerName with smaller values of i first.
+    result = []
+    i = 3 if excludeCaller else 2
+    while 1:
+        s = _callerName(i, files=files)
+        # print(i,s)
+        if s:
+            result.append(s)
+        if not s or len(result) &gt;= n: break
+        i += 1
+    result.reverse()
+    if count &gt; 0: result = result[: count]
+    sep = '\n' if files else ','
+    return sep.join(result)
+</t>
+<t tx="ekr.20160203095618.2">
+def _callerName(self, n=1, files=False):
+    # print('_callerName: %s %s' % (n,files))
+    try: # get the function name from the call stack.
+        f1 = sys._getframe(n) # The stack frame, n levels up.
+        code1 = f1.f_code # The code object
+        name = code1.co_name
+        if name == '__init__':
+            name = '__init__(%s,line %s)' % (
+                shortFileName(code1.co_filename), code1.co_firstlineno)
+        if files:
+            return '%s:%s' % (shortFilename(code1.co_filename), name)
+        else:
+            return name # The code name
+    except ValueError:
+        # print('g._callerName: ValueError',n)
+        return '' # The stack is not deep enough.
+    except Exception:
+        es_exception()
+        return '' # "&lt;no caller name&gt;"
+</t>
+<t tx="ekr.20160203105356.1">
+def create_parser(self):
+    
+    # Create the parser
+    parser = configparser.RawConfigParser(dict_type=OrderedDict)
+        # Requires Python 2.7
+    parser.optionxform = str
+    return parser
+   </t>
+<t tx="ekr.20160203105721.1">
+def get_config_string(self):
+    
+    fn = self.finalize(self.config_fn)
+    if os.path.exists(fn):
+        if self.verbose:
+            print('\nconfiguration file: %s\n' % fn)
+        f = open(fn, 'r')
+        s = f.read()
+        f.close()
+        return s
+    else:
+        print('\nconfiguration file not found: %s' % fn)
+        return None
+    </t>
 </tnodes>
 </leo_file>
