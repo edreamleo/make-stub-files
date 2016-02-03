@@ -8,8 +8,6 @@ For full details, see README.md.
 This file is in the public domain.
 '''
 
-new_code = True # True: use new pattern-matching scheme.
-
 import ast
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
@@ -118,7 +116,7 @@ class AstFormatter:
     def do_GeneratorExp(self, node):
         elt = self.visit(node.elt) or ''
         gens = [self.visit(z) for z in node.generators]
-        gens = [z if z else '<**None**>' for z in gens] ### Kludge: probable bug.
+        gens = [z if z else '<**None**>' for z in gens] # Kludge: probable bug.
         return '<gen %s for %s>' % (elt, ','.join(gens))
 
     def do_AugLoad(self, node):
@@ -248,7 +246,7 @@ class AstFormatter:
     def do_ListComp(self, node):
         elt = self.visit(node.elt)
         gens = [self.visit(z) for z in node.generators]
-        gens = [z if z else '<**None**>' for z in gens] ### Kludge: probable bug.
+        gens = [z if z else '<**None**>' for z in gens] # Kludge: probable bug.
         return '%s for %s' % (elt, ''.join(gens))
 
     def do_Name(self, node):
@@ -864,18 +862,8 @@ class StandAloneMakeStubFile:
         self.trace = False
         self.warn = False
         # Pattern lists, set by config sections...
-        self.arg_patterns = [] # [Arg Patterns]
         self.def_patterns = [] # [Def Name Patterns]
         self.general_patterns = [] # [General Patterns]
-        if new_code:
-            # Dicts set by scan_options.
-            self.keys_d = {}
-            self.patterns_d = {}
-        else:
-            self.post_return_patterns = [] # [Post Return Patterns]
-            self.pre_return_patterns = [] # [Pre Return Patterns]
-            self.return_patterns = [] # [Return Patterns]
-        
     def finalize(self, fn):
         '''Finalize and regularize a filename.'''
         fn = os.path.expanduser(fn)
@@ -1020,15 +1008,8 @@ class StandAloneMakeStubFile:
                 for z in self.prefix_lines:
                     print(z)
                 print('')
-        self.arg_patterns = self.scan_patterns('Arg Patterns')
         self.def_patterns = self.scan_patterns('Def Name Patterns')
         self.general_patterns = self.scan_patterns('General Patterns')
-        if new_code:
-            pass
-        else:
-            self.post_return_patterns = self.scan_patterns('Post Return Patterns')
-            self.pre_return_patterns = self.scan_patterns('Pre Return Patterns')
-            self.return_patterns = self.scan_patterns('Return Patterns')
 
     def scan_patterns(self, section_name):
         '''Parse the config section into a list of patterns, preserving order.'''
@@ -1065,17 +1046,9 @@ class StubFormatter (AstFormatter):
     making pattern substitutions in Name and operator nodes.
     '''
 
-    if new_code:
-
-        def __init__(self, general_patterns):
-            '''Ctor for StubFormatter class.'''
-            self.general_patterns = general_patterns
-            # self.keys_d = keys_d
-                # Keys are node.__class__.__name__.
-                # Values are pattern keys.
-            # self.patterns_d = patterns_d
-                # Keys are pattern keys.
-                # Values are lists of Patterns.
+    def __init__(self, general_patterns):
+        '''Ctor for StubFormatter class.'''
+        self.general_patterns = general_patterns
 
     def match(self, patterns, s):
         '''Return s with at most one pattern matched.'''
@@ -1085,17 +1058,16 @@ class StubFormatter (AstFormatter):
                 break
         return s
 
-    if new_code:
-
-        def visit(self, node):
-            '''
-            Return the formatted version of an Ast node after
-            applying all general patterns.
-            '''
-            s = AstFormatter.visit(self, node)
-            for pattern in self.general_patterns:
-                found, s = pattern.match(s)
-            return s
+    def visit(self, node):
+        '''
+        Return the formatted version of an Ast node after
+        applying all general patterns.
+        '''
+        # This is the heart of this script.
+        s = AstFormatter.visit(self, node)
+        for pattern in self.general_patterns:
+            found, s = pattern.match(s)
+        return s
 
     # Return generic markers to allow better pattern matches.
 
@@ -1120,30 +1092,9 @@ class StubFormatter (AstFormatter):
         StubFormatter.do_Return.
         Result does not start with 'return' nor end with a newline.
         '''
-        trace = False
         s = AstFormatter.do_Return(self, node)
         assert s.startswith('return'), repr(s)
-        s = s[len('return'):].strip()
-        if new_code:
-            if trace: g.trace(s)
-            return s
-        else:
-            # if trace: g.trace('(StubFormatter)', s)
-            if s.startswith('(') and s.endswith(')'):
-                # Defensive code: ensure the parens are balanced.
-                i = Pattern('(*)', 'not-used').match_balanced(s[0], s, 0)
-                if i == len(s):
-                    s1 = s
-                    s = 'Tuple[%s]' % s[1:-1]
-                    if trace: g.trace(s1, '==>', s)
-            elif s.startswith('[') and s.endswith(']'):
-                # Defensive code: ensure the brackets are balanced.
-                i = Pattern('[*]', 'not-used').match_balanced(s[0], s, 0)
-                if i == len(s):
-                    s1 = s
-                    s = 'List[%s]' % s[1:-1]
-                    if trace: g.trace(s1, '==>', s)
-            return s
+        return s[len('return'):].strip()
 
 
 class StubTraverser (ast.NodeVisitor):
@@ -1155,11 +1106,8 @@ class StubTraverser (ast.NodeVisitor):
             # A StandAloneMakeStubFile instance.
         # Internal state ivars...
         self.class_name_stack = []
-        if new_code:
-            self.format = StubFormatter(x.general_patterns).format
-            self.arg_format = AstArgFormatter().format
-        else:
-            pass
+        self.format = StubFormatter(x.general_patterns).format
+        self.arg_format = AstArgFormatter().format
         self.in_function = False
         self.level = 0
         self.output_file = None
@@ -1173,22 +1121,9 @@ class StubTraverser (ast.NodeVisitor):
         self.trace = x.trace
         self.warn = x.warn
         # Copies of controller patterns...
-        if new_code:
-            self.arg_patterns = x.arg_patterns
-            self.def_patterns = x.def_patterns
-            self.general_patterns = x.general_patterns
-            # self.post_return_patterns = x.post_return_patterns
-            # self.pre_return_patterns = x.pre_return_patterns
-            # self.return_patterns = x.return_patterns
-            self.keys_d = x.keys_d
-            self.patterns_d = x.patterns_d
-        else:
-            self.arg_patterns = x.arg_patterns
-            self.def_patterns = x.def_patterns
-            self.general_patterns = x.general_patterns
-            self.post_return_patterns = x.post_return_patterns
-            self.pre_return_patterns = x.pre_return_patterns
-            self.return_patterns = x.return_patterns
+        self.def_patterns = x.def_patterns
+        self.general_patterns = x.general_patterns
+        
 
     def indent(self, s):
         '''Return s, properly indented.'''
@@ -1294,23 +1229,13 @@ class StubTraverser (ast.NodeVisitor):
         '''Add an annotation for s if possible.'''
         if s == 'self':
             return s
-        default_pattern = None
-        for patterns in (self.arg_patterns, self.general_patterns):
-            for pattern in patterns:
-                if pattern.find_s == '.*':
-                    default_pattern = pattern
-                        # Match the default pattern last.
-                else:
-                    # Succeed only if the entire pattern matches.
-                    if pattern.match_entire_string(s):
-                        return '%s: %s' % (s, pattern.repl_s)
-        if default_pattern:
-            return '%s: %s' % (s, default_pattern.repl_s)
-        else:
-            if self.warn and s not in self.warn_list:
-                self.warn_list.append(s)
-                print('no annotation for %s' % s)
-            return s
+        for pattern in self.general_patterns:
+            if pattern.match_entire_string(s):
+                return '%s: %s' % (s, pattern.repl_s)
+        if self.warn and s not in self.warn_list:
+            self.warn_list.append(s)
+            print('no annotation for %s' % s)
+        return s
 
     def format_returns(self, node):
         '''
@@ -1336,11 +1261,8 @@ class StubTraverser (ast.NodeVisitor):
                     g.trace('*name pattern %s: %s -> %s' % (
                         pattern.find_s, name, s))
                 return s + ': ...'
-        # Step 3: munge each return value, and merge them.
-        ### r = [self.munge_ret(name, z) for z in r1]
-        r = r1
-            # Make type substitutions.
-        r = sorted(set(r))
+        # Step 3: Calculate return types.
+        r = sorted(set(r1))
             # Remove duplicates
         if len(r) == 0:
             return 'None: ...'

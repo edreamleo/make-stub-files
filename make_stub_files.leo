@@ -157,9 +157,9 @@
 <v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
 <v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
 <v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
+<v t="ekr.20160126153212.91" a="M"><vh>st.munge_arg</vh></v>
 </v>
-<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160126153212.90" a="M"><vh>st.format_returns &amp; helpers</vh>
 <v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
 <v t="ekr.20160130034812.1"><vh>st.is_known_type</vh></v>
 <v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
@@ -181,12 +181,9 @@
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
-<v t="ekr.20160128113859.1"></v>
-<v t="ekr.20160128051025.1"></v>
-<v t="ekr.20160128190112.1"></v>
-<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160126153212.90" a="M"></v>
+<v t="ekr.20160126153212.91" a="M"></v>
 </v>
-<v t="ekr.20160203055631.1"><vh>* Remove new_code switch &amp; clean code</vh></v>
 <v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
@@ -200,8 +197,6 @@ For full details, see README.md.
 
 This file is in the public domain.
 '''
-
-new_code = True # True: use new pattern-matching scheme.
 
 import ast
 from collections import OrderedDict
@@ -268,7 +263,7 @@ def do_Expression(self, node):
 def do_GeneratorExp(self, node):
     elt = self.visit(node.elt) or ''
     gens = [self.visit(z) for z in node.generators]
-    gens = [z if z else '&lt;**None**&gt;' for z in gens] ### Kludge: probable bug.
+    gens = [z if z else '&lt;**None**&gt;' for z in gens] # Kludge: probable bug.
     return '&lt;gen %s for %s&gt;' % (elt, ','.join(gens))
 </t>
 <t tx="ekr.20160126153212.17">
@@ -424,7 +419,7 @@ def do_List(self, node):
 def do_ListComp(self, node):
     elt = self.visit(node.elt)
     gens = [self.visit(z) for z in node.generators]
-    gens = [z if z else '&lt;**None**&gt;' for z in gens] ### Kludge: probable bug.
+    gens = [z if z else '&lt;**None**&gt;' for z in gens] # Kludge: probable bug.
     return '%s for %s' % (elt, ''.join(gens))
 </t>
 <t tx="ekr.20160126153212.32">
@@ -899,18 +894,9 @@ def __init__ (self):
     self.trace = False
     self.warn = False
     # Pattern lists, set by config sections...
-    self.arg_patterns = [] # [Arg Patterns]
     self.def_patterns = [] # [Def Name Patterns]
     self.general_patterns = [] # [General Patterns]
-    if new_code:
-        # Dicts set by scan_options.
-        self.keys_d = {}
-        self.patterns_d = {}
-    else:
-        self.post_return_patterns = [] # [Post Return Patterns]
-        self.pre_return_patterns = [] # [Pre Return Patterns]
-        self.return_patterns = [] # [Return Patterns]
-    </t>
+</t>
 <t tx="ekr.20160126153212.75">
 def make_stub_file(self, fn):
     '''
@@ -1043,15 +1029,8 @@ def scan_command_line(self):
             for z in self.prefix_lines:
                 print(z)
             print('')
-    self.arg_patterns = self.scan_patterns('Arg Patterns')
     self.def_patterns = self.scan_patterns('Def Name Patterns')
     self.general_patterns = self.scan_patterns('General Patterns')
-    if new_code:
-        pass
-    else:
-        self.post_return_patterns = self.scan_patterns('Post Return Patterns')
-        self.pre_return_patterns = self.scan_patterns('Pre Return Patterns')
-        self.return_patterns = self.scan_patterns('Return Patterns')
 </t>
 <t tx="ekr.20160126153212.79">
 def scan_patterns(self, section_name):
@@ -1140,11 +1119,8 @@ def __init__(self, controller):
         # A StandAloneMakeStubFile instance.
     # Internal state ivars...
     self.class_name_stack = []
-    if new_code:
-        self.format = StubFormatter(x.general_patterns).format
-        self.arg_format = AstArgFormatter().format
-    else:
-        pass
+    self.format = StubFormatter(x.general_patterns).format
+    self.arg_format = AstArgFormatter().format
     self.in_function = False
     self.level = 0
     self.output_file = None
@@ -1158,23 +1134,9 @@ def __init__(self, controller):
     self.trace = x.trace
     self.warn = x.warn
     # Copies of controller patterns...
-    if new_code:
-        self.arg_patterns = x.arg_patterns
-        self.def_patterns = x.def_patterns
-        self.general_patterns = x.general_patterns
-        # self.post_return_patterns = x.post_return_patterns
-        # self.pre_return_patterns = x.pre_return_patterns
-        # self.return_patterns = x.return_patterns
-        self.keys_d = x.keys_d
-        self.patterns_d = x.patterns_d
-    else:
-        self.arg_patterns = x.arg_patterns
-        self.def_patterns = x.def_patterns
-        self.general_patterns = x.general_patterns
-        self.post_return_patterns = x.post_return_patterns
-        self.pre_return_patterns = x.pre_return_patterns
-        self.return_patterns = x.return_patterns
-</t>
+    self.def_patterns = x.def_patterns
+    self.general_patterns = x.general_patterns
+    </t>
 <t tx="ekr.20160126153212.84">
 def indent(self, s):
     '''Return s, properly indented.'''
@@ -1323,11 +1285,8 @@ def format_returns(self, node):
                 g.trace('*name pattern %s: %s -&gt; %s' % (
                     pattern.find_s, name, s))
             return s + ': ...'
-    # Step 3: munge each return value, and merge them.
-    ### r = [self.munge_ret(name, z) for z in r1]
-    r = r1
-        # Make type substitutions.
-    r = sorted(set(r))
+    # Step 3: Calculate return types.
+    r = sorted(set(r1))
         # Remove duplicates
     if len(r) == 0:
         return 'None: ...'
@@ -1345,23 +1304,13 @@ def munge_arg(self, s):
     '''Add an annotation for s if possible.'''
     if s == 'self':
         return s
-    default_pattern = None
-    for patterns in (self.arg_patterns, self.general_patterns):
-        for pattern in patterns:
-            if pattern.find_s == '.*':
-                default_pattern = pattern
-                    # Match the default pattern last.
-            else:
-                # Succeed only if the entire pattern matches.
-                if pattern.match_entire_string(s):
-                    return '%s: %s' % (s, pattern.repl_s)
-    if default_pattern:
-        return '%s: %s' % (s, default_pattern.repl_s)
-    else:
-        if self.warn and s not in self.warn_list:
-            self.warn_list.append(s)
-            print('no annotation for %s' % s)
-        return s
+    for pattern in self.general_patterns:
+        if pattern.match_entire_string(s):
+            return '%s: %s' % (s, pattern.repl_s)
+    if self.warn and s not in self.warn_list:
+        self.warn_list.append(s)
+        print('no annotation for %s' % s)
+    return s
 </t>
 <t tx="ekr.20160126153212.92">
 def munge_ret(self, name, s):
@@ -2000,12 +1949,14 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- Remove new_code switch.
-
 - Protect lines starting with '[' that aren't a real section.
+
+- Add Stub class: it's a prerequisite for --update.
 
 ** Run without config file.
     - Parse pattern lists internally.
+    
+--update.
 
 ** Use [Def Name Patterns] to make inferences!
 
@@ -2016,8 +1967,6 @@ def is_known_type(self, s):
     
 - Recognize recursive calls.
     - Just remove them!
-
---update.
 
 - Task oriented docs
 
@@ -2099,55 +2048,25 @@ def do_Return(self, node):
     StubFormatter.do_Return.
     Result does not start with 'return' nor end with a newline.
     '''
-    trace = False
     s = AstFormatter.do_Return(self, node)
     assert s.startswith('return'), repr(s)
-    s = s[len('return'):].strip()
-    if new_code:
-        if trace: g.trace(s)
-        return s
-    else:
-        # if trace: g.trace('(StubFormatter)', s)
-        if s.startswith('(') and s.endswith(')'):
-            # Defensive code: ensure the parens are balanced.
-            i = Pattern('(*)', 'not-used').match_balanced(s[0], s, 0)
-            if i == len(s):
-                s1 = s
-                s = 'Tuple[%s]' % s[1:-1]
-                if trace: g.trace(s1, '==&gt;', s)
-        elif s.startswith('[') and s.endswith(']'):
-            # Defensive code: ensure the brackets are balanced.
-            i = Pattern('[*]', 'not-used').match_balanced(s[0], s, 0)
-            if i == len(s):
-                s1 = s
-                s = 'List[%s]' % s[1:-1]
-                if trace: g.trace(s1, '==&gt;', s)
-        return s
+    return s[len('return'):].strip()
 </t>
 <t tx="ekr.20160202061118.1">
-if new_code:
-
-    def visit(self, node):
-        '''
-        Return the formatted version of an Ast node after
-        applying all general patterns.
-        '''
-        s = AstFormatter.visit(self, node)
-        for pattern in self.general_patterns:
-            found, s = pattern.match(s)
-        return s</t>
+def visit(self, node):
+    '''
+    Return the formatted version of an Ast node after
+    applying all general patterns.
+    '''
+    # This is the heart of this script.
+    s = AstFormatter.visit(self, node)
+    for pattern in self.general_patterns:
+        found, s = pattern.match(s)
+    return s</t>
 <t tx="ekr.20160202061329.1">
-if new_code:
-
-    def __init__(self, general_patterns):
-        '''Ctor for StubFormatter class.'''
-        self.general_patterns = general_patterns
-        # self.keys_d = keys_d
-            # Keys are node.__class__.__name__.
-            # Values are pattern keys.
-        # self.patterns_d = patterns_d
-            # Keys are pattern keys.
-            # Values are lists of Patterns.
+def __init__(self, general_patterns):
+    '''Ctor for StubFormatter class.'''
+    self.general_patterns = general_patterns
 </t>
 <t tx="ekr.20160202064553.1">
 def match(self, patterns, s):
@@ -2182,9 +2101,7 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-Retired munge_ret and (!) match_return_patterns.
-Pylint is happy and the output remains as expected.
-</t>
+Removed the new_code switch. All tests pass.</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2219,6 +2136,5 @@ def cls(self):
     if sys.platform.lower().startswith('win'):
         os.system('cls')
 </t>
-<t tx="ekr.20160203055631.1"></t>
 </tnodes>
 </leo_file>
