@@ -689,6 +689,7 @@ class Pattern:
         self.find_s = find_s
         self.repl_s = repl_s
         if self.is_balanced():
+            # if find_s.endswith('*'): g.trace(find_s)
             self.regex = None
         else:
             # Escape all dangerous characters.
@@ -699,12 +700,6 @@ class Pattern:
                 else:
                     result.append('\\'+ch)
             self.regex = re.compile(''.join(result))
-            # # # Careful: add sep only when the entire find_s is an identifier.
-            # # # sep = r'\b'
-            # # # s = find_s
-            # # # s2 = s.replace('_','')
-            # # # if s2 and s2[0].isalpha():
-                # # # s = sep + s + sep
         self.trace = trace
 
     def __repr__(self):
@@ -716,6 +711,8 @@ class Pattern:
     def is_balanced(self):
         '''Return True if self.s is a balanced pattern.'''
         s = self.find_s
+        if s.endswith('*'):
+            return True
         for pattern in ('(*)', '[*]', '{*}'):
             if s.find(pattern) > -1:
                 return True
@@ -745,15 +742,21 @@ class Pattern:
     def full_balanced_match(self, s, i, trace=False):
         '''Return the index of the end of the match found at s[i:] or None.'''
         i1 = i
-        trace = trace or self.trace
+        trace = trace or self.trace # or self.find_s.endswith('*')
+        if trace: g.trace(self.find_s, s[i:].rstrip())
         pattern = self.find_s
         j = 0 # index into pattern
-        while i < len(s) and j < len(pattern) and s[i] == pattern[j]:
+        while i < len(s) and j < len(pattern) and pattern[j] in ('*', s[i]):
             progress = i
             if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
                 delim = pattern[j]
                 i = self.match_balanced(delim, s, i, trace=trace)
                 j += 3
+            elif j == len(pattern)-1 and pattern[j] == '*':
+                # A trailing * matches the rest of the string.
+                j += 1
+                i = len(s)
+                break
             else:
                 i += 1
                 j += 1
@@ -1343,8 +1346,6 @@ class StubTraverser (ast.NodeVisitor):
         - Patterns in [Def Name Patterns] override all other patterns.
         - Otherwise, return a list of return values.
         '''
-        # Shortcut everything if node.name matches any
-        # pattern in self.def_patterns
         trace = self.trace
         name = self.get_def_name(node)
         r1 = [self.format(z) for z in self.returns]
@@ -1356,12 +1357,12 @@ class StubTraverser (ast.NodeVisitor):
             return 'None: ...'
         # Step 2: [Def Name Patterns] override all other patterns.
         for pattern in self.def_patterns:
-            find_s, repl_s = pattern.find_s, pattern.repl_s
-            match = re.search(find_s, name)
-            if match and match.group(0) == name:
+            found, s = pattern.match(name)
+            if found:
                 if trace:
-                    g.trace('*name pattern %s: %s -> %s' % (find_s, name, repl_s))
-                return repl_s + ': ...'
+                    g.trace('*name pattern %s: %s -> %s' % (
+                        pattern.find_s, name, s))
+                return s + ': ...'
         # Step 3: munge each return value, and merge them.
         r = [self.munge_ret(name, z) for z in r1]
             # Make type substitutions.

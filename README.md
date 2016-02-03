@@ -79,6 +79,49 @@ of the configuration file using the --config command-line option.
 The configuration file uses the .ini format. It has several
 configuration sections, all optional.
 
+#### Patterns
+
+The [Def Name Patterns] and [General Patterns] configuration sections
+specify patterns. All patterns have the form:
+
+    find-string: replacement-string
+    
+Colons are not allowed in the find-string. This is a limitation of .ini files.
+
+There are two kinds of patterns: plain patterns and balanced patterns.
+
+**Balanced patterns** are patterns that:
+
+A: contain either `(*)`, `[*]`, or `{*}` in the find-string or,
+
+B: end with '*'.
+
+Unlike regular expressions, `(*)`, `[*]`, or `{*}` match only
+balanced brackets. A trailing `*` matches the rest of the find-string.
+
+Examples:
+
+    str(*): str
+    StubTraverser.do_*
+    
+Balanced patterns such as:
+
+    [*]: List[*]
+
+work as expected. The script replaces the `*` in replacement-strings with
+whatever matched `*` in the find-string.
+
+**Note**: Blanced patterns will never match argument names.
+
+A pattern is a **plain pattern** if it is not a balanced pattern.
+
+The script matches patterns to *all parts* of return expressions. The
+script matches patterns in the order they appear in each section, but
+in practice the order doesn't matter.
+
+.. **Note**: Preceed patterns starting with `[` by `\\` (two back slashes)
+.. so that the configParser does not think that the `[` starts a section name.
+
 #### [Global]
 
 This configuration section specifies the files list, prefix lines and
@@ -100,52 +143,6 @@ output directory. For example:
         from typing import TypeVar, Iterable, Tuple
         T = TypeVar('T', int, float, complex)
 
-#### Patterns used in [xxx Patterns] sections.
-
-The remaining configuration sections specify patterns that associate
-annotations with argument lists or return values. All patterns have the form:
-
-    find-string: replacement-string
-    
-Colons are not allowed in the find-string.  This is a limitation of .ini files.
-
-There are two kinds of patterns: regex patterns and balanced patterns.
-**Balanced patterns** contain either `(*)`, `[*]`, or `{*}` in the
-find-string. Unlike regular expressions, balanced patterns match only
-balanced brackets.
-
-For example:
-
-    str(*): str
-    
-Balanced patterns such as:
-
-    [*]: List[*]
-
-work as expected. The script replaces the `*` in replacement-strings with
-whatever matched `*` in the find-string.
-
-A pattern is a **regex pattern** if and only if it is *not* a balanced
-pattern. The find-string is a python regular expression. At present, the
-replacement-string is a *plain* string. That is, \1, \2, etc. are not
-expanded in the replacement-string. It could be done, but at present it
-does not seem necessary.
-
-**Note**: Regex and balanced patterns may appear in any section. However,
-balanced patterns will never match argument names.
-
-The script matches patterns in the order they appear in each section. As a
-special case, the script matches the .* pattern (a regex pattern) last,
-regardless of its position in each section.
-
-**Note**: The script adds \b to the start and end of regex find-strings,
-but *only* for find-strings composed solely of alphanumeric characters and
-underscores. This is an important convenience, but conceivably it could
-cause problems in some cases.
-
-**Note**: Preceed patterns starting with `[` by `\\` (two back slashes) so that
-the configParser does not think that the `[` starts a section name.
-        
 #### [Def Name Patterns]
 
 The script matches the find-strings in this section against names of
@@ -156,7 +153,7 @@ names of the form:
 
 When a find-string matches, the replacement-string becomes the return type
 in the stub, without any further pattern matching. That is, this section
-*overrides* the [General Patterns] and [Return Patterns] sections.
+*overrides* [General Patterns].
 
 Example 1:
 
@@ -168,84 +165,30 @@ Any function named myFunction returns List[str].
 Example 2:
 
     [Def Name Patterns]
-    MyClass\.myMethod: str
+    MyClass.myMethod: str
     
 The myMethod method of the MyClass class returns str.
-
-Here, the find-string is a regex (because it's not a balanced expression).
-Using \. in the find-string as shown is best. In most cases, however, using
-MyClass.myMethod as the find-string would also match as expected.
 
 Example 3:
 
     [Def Name Patterns]
-    MyClass\.do_.*: str
+    MyClass.do_*: str
     
 All methods of the MyClass class whose names start with "do_" return str.
         
-#### [Arg Patterns]
+#### [General Patterns]
 
-The script matches the patterns in this section against argument names. When
-a find-string matches, the script adds the replacement-string as an annotation.
-
-Example 1:
-
-    [Arg Patterns]
-    aList: Sequence
-    
-Converts arguments named aList to aList: Sequence.
-
-Example 2:
-
-Given the function:
-
-    def whatever(aList, aList1, aList5):
-        pass
-        
-the pattern:
-
-    [Arg Patterns]
-    aList[1-2]: Sequence
-    
-creates the stub:
-
-    def whatever(aList: Sequence, aList1: Sequence, aList5) --> None: ...
-        pass
-
-#### [Pre Return Patterns], [Return Patterns] and [Post Return Patterns]
-
-For each function or method, the script matches the patterns in these three
-sections against all return expressions in each function or method as follows:
-
-1. Matches each pattern in [Pre Return Patterns] once.
-
-2. Matches all patterns in [Return Patterns] repeatedly until no further matches are
-possible.
-
-3. Matches each pattern in [Post Return Patterns] once.
+For each function or method, the script matches the patterns in this
+section against **all parts** of all return expressions in each function or method.
 
 The intent of the patterns in this section should be to **reduce** return
 expressions to **known types**. A known type is a either a name of a type
 class, such as int, str, long, etc. or a **type hint**, as per
 [Pep 484](https://www.python.org/dev/peps/pep-0484/).
 
-**Warning**: Avoid **lengthening patterns** such as:
-
-        s[0-3]?: str # Wrong.
-    
-inside the [Return Patterns] section. This pattern will cause an ever
-increasing search string! Use this pattern instead:
-
-        \bs[0-3]?\b: str # Correct.
-
-This script ends repeated pattern matching after 50 iterations. Unbounded
-matches produce "interesting" results that are easily visible in the
-output.
-
 The script *always* produces a syntactically correct stub, even if the
-patterns in this section (and in the [General Patterns] section) do not, in
-fact, reduce to a known type. For unknown types, the script does the
-following:
+patterns do not reduce the return expression to a known type. For unknown
+types, the script does the following:
 
 1. Uses Any as the type of the function or method.
 
@@ -276,14 +219,6 @@ the config file.
 expression. Comments never appear in return expressions, and all strings in
 return values appear as str. As a result, there is no context to worry
 about context in which patterns are matched. Very short patterns suffice.
-    
-#### [General Patterns]
-
-The patterns in this section apply to *both* argument lists *and* return values.
-
-The patterns in this section work as if they appeared at the end of all
-non-repeating patterns: namely [Arg Patterns], [Pre Return Patterns] and
-[Post Return Patterns].
 
 ### Why this script is important
 
@@ -332,4 +267,4 @@ function annotations into source files using stub files as data. The
 "reverse" script should be more straightforward than this script.
 
 Edward K. Ream
-January 2016
+January, February 2016

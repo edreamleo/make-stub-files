@@ -1,3 +1,4 @@
+import pdb
 import unittest
 import make_stub_files as msf
 
@@ -9,15 +10,18 @@ class TestMakeStubFiles(unittest.TestCase):
         
         trace = False
         table = (
+            # Unused regex tests.
+            # ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
+            # ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
             ('s', 's', 'str', 'str'),
             ('abc', 'abc', 'ABC', 'ABC'),
             ('str(str)', 'str(*)', 'str', 'str'),
-            ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
-            ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
             ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
             ('(int,str)', '(*)', 'Tuple[*]', 'Tuple[int,str]'), # Guido bug 2.
+            ('abcxyz', 'abc*', 'xxx', 'xxx'), # New test for trailing *.
         )
         for s, find, repl, expected in table:
+            # pdb.set_trace()
             pattern = msf.Pattern(find, repl)
             result = pattern.match_entire_string(s, trace=trace)
             assert result, (result, s, find, repl, expected)

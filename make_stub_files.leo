@@ -120,11 +120,11 @@
 <v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
 <v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
 <v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
-<v t="ekr.20160128042705.1" a="M"><vh>pattern.all_matches &amp; helpers</vh>
+<v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
 <v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
 <v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
 </v>
-<v t="ekr.20160202070025.1"><vh>pattern.match (new)</vh></v>
+<v t="ekr.20160202070025.1"><vh>pattern.match</vh></v>
 <v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
 <v t="ekr.20160131204607.1"><vh>pattern.replace</vh></v>
 </v>
@@ -176,11 +176,17 @@
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
 <v t="ekr.20160128104639.1"></v>
-<v t="ekr.20160131174909.1"><vh>** To do</vh></v>
+<v t="ekr.20160131174909.1"><vh>** To do</vh>
+<v t="ekr.20160203042406.1"><vh>* Update the docs!</vh></v>
+<v t="ekr.20160203055631.1"><vh>* Remove new_code switch &amp; clean code</vh></v>
+</v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
 <v t="ekr.20160128113859.1"></v>
+<v t="ekr.20160128051025.1"></v>
+<v t="ekr.20160128190112.1"></v>
+<v t="ekr.20160126153212.90"></v>
 </v>
 <v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
@@ -1303,8 +1309,6 @@ def format_returns(self, node):
     - Patterns in [Def Name Patterns] override all other patterns.
     - Otherwise, return a list of return values.
     '''
-    # Shortcut everything if node.name matches any
-    # pattern in self.def_patterns
     trace = self.trace
     name = self.get_def_name(node)
     r1 = [self.format(z) for z in self.returns]
@@ -1316,12 +1320,12 @@ def format_returns(self, node):
         return 'None: ...'
     # Step 2: [Def Name Patterns] override all other patterns.
     for pattern in self.def_patterns:
-        find_s, repl_s = pattern.find_s, pattern.repl_s
-        match = re.search(find_s, name)
-        if match and match.group(0) == name:
+        found, s = pattern.match(name)
+        if found:
             if trace:
-                g.trace('*name pattern %s: %s -&gt; %s' % (find_s, name, repl_s))
-            return repl_s + ': ...'
+                g.trace('*name pattern %s: %s -&gt; %s' % (
+                    pattern.find_s, name, s))
+            return s + ': ...'
     # Step 3: munge each return value, and merge them.
     r = [self.munge_ret(name, z) for z in r1]
         # Make type substitutions.
@@ -1559,6 +1563,8 @@ def all_matches(self, s, trace=False):
 def is_balanced(self):
     '''Return True if self.s is a balanced pattern.'''
     s = self.find_s
+    if s.endswith('*'):
+        return True
     for pattern in ('(*)', '[*]', '{*}'):
         if s.find(pattern) &gt; -1:
             return True
@@ -1595,15 +1601,21 @@ def match_balanced(self, delim, s, i, trace=False):
 def full_balanced_match(self, s, i, trace=False):
     '''Return the index of the end of the match found at s[i:] or None.'''
     i1 = i
-    trace = trace or self.trace
+    trace = trace or self.trace # or self.find_s.endswith('*')
+    if trace: g.trace(self.find_s, s[i:].rstrip())
     pattern = self.find_s
     j = 0 # index into pattern
-    while i &lt; len(s) and j &lt; len(pattern) and s[i] == pattern[j]:
+    while i &lt; len(s) and j &lt; len(pattern) and pattern[j] in ('*', s[i]):
         progress = i
         if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
             delim = pattern[j]
             i = self.match_balanced(delim, s, i, trace=trace)
             j += 3
+        elif j == len(pattern)-1 and pattern[j] == '*':
+            # A trailing * matches the rest of the string.
+            j += 1
+            i = len(s)
+            break
         else:
             i += 1
             j += 1
@@ -1718,9 +1730,10 @@ prefix_lines:
 
 [Def Name Patterns]
 
-# The returns are inherent in the design.
+# The returns are inherent in the design of make_stub_files.py:
 AstFormatter.do_*: str
-StubFormatter.do_.*: str
+StubFormatter.do_*: str
+StubTraverser.do_*: str
 
 # Pattern.all_matches: Sequence
 # Pattern.full_balanced_match: Optional[int]
@@ -1794,6 +1807,7 @@ def __init__ (self, find_s, repl_s='', trace=False):
     self.find_s = find_s
     self.repl_s = repl_s
     if self.is_balanced():
+        # if find_s.endswith('*'): g.trace(find_s)
         self.regex = None
     else:
         # Escape all dangerous characters.
@@ -1804,12 +1818,6 @@ def __init__ (self, find_s, repl_s='', trace=False):
             else:
                 result.append('\\'+ch)
         self.regex = re.compile(''.join(result))
-        # # # Careful: add sep only when the entire find_s is an identifier.
-        # # # sep = r'\b'
-        # # # s = find_s
-        # # # s2 = s.replace('_','')
-        # # # if s2 and s2[0].isalpha():
-            # # # s = sep + s + sep
     self.trace = trace
 </t>
 <t tx="ekr.20160128113914.1">
@@ -1851,7 +1859,8 @@ def run_all_unit_tests(self):
     unittest.TextTestRunner(verbosity=0).run(suite)
 </t>
 <t tx="ekr.20160128154704.1"></t>
-<t tx="ekr.20160128154715.1">import unittest
+<t tx="ekr.20160128154715.1">import pdb
+import unittest
 import make_stub_files as msf
 
 class TestMakeStubFiles(unittest.TestCase):
@@ -1864,15 +1873,18 @@ if __name__ == '__main__':
     
     trace = False
     table = (
+        # Unused regex tests.
+        # ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
+        # ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
         ('s', 's', 'str', 'str'),
         ('abc', 'abc', 'ABC', 'ABC'),
         ('str(str)', 'str(*)', 'str', 'str'),
-        ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
-        ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
         ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
         ('(int,str)', '(*)', 'Tuple[*]', 'Tuple[int,str]'), # Guido bug 2.
+        ('abcxyz', 'abc*', 'xxx', 'xxx'), # New test for trailing *.
     )
     for s, find, repl, expected in table:
+        # pdb.set_trace()
         pattern = msf.Pattern(find, repl)
         result = pattern.match_entire_string(s, trace=trace)
         assert result, (result, s, find, repl, expected)
@@ -1992,19 +2004,19 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-* Update the docs.
+- Remove new_code switch.
 
 - Protect lines starting with '[' that aren't a real section.
 
-** Use [Def Name Patterns] to make inferences!
-
-- Replace regex matches with plain matches.
-  Escape all characters that aren't alnum or _
-
-- Optionally generate Any for all unknown argument types.
-
 ** Run without config file.
     - Parse pattern lists internally.
+
+** Use [Def Name Patterns] to make inferences!
+
+- Simulate --infer by adding many more patterns.
+  Test speed by intentionally slowing st.visit.
+
+- Optionally generate Any for all unknown argument types.
     
 - Recognize recursive calls.
     - Just remove them!
@@ -2199,8 +2211,13 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-The pattern ctor now protects all non-identifier characters.
-This allows the Pattern class to use regex.compile to speed searches.</t>
+Support * in balanced patterns.
+
+- Changed Pattern.full_balanced_match
+- st.format_returns now calls Pattern.match to check [Def Name Patterns].
+- Added a new unit test.
+
+Updated readme file to match present code.</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2235,5 +2252,7 @@ def cls(self):
     if sys.platform.lower().startswith('win'):
         os.system('cls')
 </t>
+<t tx="ekr.20160203042406.1"></t>
+<t tx="ekr.20160203055631.1"></t>
 </tnodes>
 </leo_file>
