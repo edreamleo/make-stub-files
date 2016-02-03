@@ -43,16 +43,14 @@ the script produces the stub:
     def foo(i: int, s: str) --> str: ...
 
 The make_stub_files script eliminates much of the drudgery of creating
-[python stub (.pyi) files]( https://www.python.org/dev/peps/pep-0484/#stub-files)
-from python source files.
+[python stub (.pyi) files]
+(https://www.python.org/dev/peps/pep-0484/#stub-files)
+from python source files. This script should encourage more people to use mypy. Stub files can be used by people who use Python 2.x code bases.
 
 GvR says, "We actually do have a [stub generator](https://github.com/JukkaL/mypy/blob/master/mypy/stubgen.py)
 as part of mypy now (it has a few options) but yours has the advantage of
 providing a way to tune the generated signatures... This allows for a nice
 iterative way of developing stubs."
-
-This script should encourage more people to use mypy. Stub files can be
-used by people who use Python 2.x code bases.
 
 ### Command-line arguments
 

@@ -1088,39 +1088,14 @@ class StubFormatter (AstFormatter):
     if new_code:
 
         def visit(self, node):
-            '''Return the formatted version of an Ast node.'''
-            trace = False
-            name = node.__class__.__name__
-            s = s1 = AstFormatter.visit(self, node)
+            '''
+            Return the formatted version of an Ast node after
+            applying all general patterns.
+            '''
+            s = AstFormatter.visit(self, node)
             for pattern in self.general_patterns:
                 found, s = pattern.match(s)
-                if found:
-                    if trace and name != 'Name':
-                        g.trace('---- %s: %s->%s' % (name, s1, s))
-                    # break
             return s
-    #################
-            # aList = self.keys_d.get(name, [])
-            # for key in aList:
-                # # Return after the first match.
-                # patterns = self.patterns_d.get(key, [])
-                # for pattern in patterns:
-                    # found, s = pattern.match(s)
-                    # if found:
-                        # if trace: g.trace('---- %s: %s->%s' % (name, s1, s))
-                        # return s
-    #################
-                # else: # Match repeatedly.
-                    # count, found = 0, True
-                    # patterns = self.patterns_d.get(key)
-                    # while found and count < 50:
-                        # count += 1
-                        # found = False
-                        # for pattern in patterns:
-                            # found2, s = pattern.match(s)
-                            # found = found or found2
-                            # if found2:
-                                # if trace: g.trace('---- %s: %s->%s' % (name, s1, s))
 
     # Return generic markers to allow better pattern matches.
 
@@ -1185,8 +1160,6 @@ class StubTraverser (ast.NodeVisitor):
             self.arg_format = AstArgFormatter().format
         else:
             pass
-            ### pylint: disable=no-value-for-parameter
-            ### self.format = StubFormatter().format
         self.in_function = False
         self.level = 0
         self.output_file = None
@@ -1364,7 +1337,8 @@ class StubTraverser (ast.NodeVisitor):
                         pattern.find_s, name, s))
                 return s + ': ...'
         # Step 3: munge each return value, and merge them.
-        r = [self.munge_ret(name, z) for z in r1]
+        ### r = [self.munge_ret(name, z) for z in r1]
+        r = r1
             # Make type substitutions.
         r = sorted(set(r))
             # Remove duplicates
@@ -1469,54 +1443,6 @@ class StubTraverser (ast.NodeVisitor):
         else:
             name = node.name
         return name
-
-    def munge_ret(self, name, s):
-        '''replace a return value by a type if possible.'''
-        trace = self.trace
-        if trace: g.trace('====', name)
-        if new_code:
-            # For now: match general patterns only.
-            ### junk, s = self.match_return_patterns(name, self.general_patterns, s)
-            return s
-        else:
-            # Match pre-patterns.
-            for patterns in (self.pre_return_patterns, self.general_patterns):
-                junk, s = self.match_return_patterns(name, patterns, s)
-            # Repeatedly match return patterns.
-            count, found = 0, True
-            while found and count < 50:
-                count += 1
-                found, s = self.match_return_patterns(name, self.return_patterns, s)
-            # Match post-patterns.
-            for patterns in (self.post_return_patterns, self.general_patterns):
-                junk, s = self.match_return_patterns(name, patterns, s)
-            if trace: g.trace('-----',s)
-            return s
-
-    def match_return_patterns(self, name, patterns, s):
-        '''
-        Match all the given patterns, except the .* pattern.
-        Return (found, s) if any succeed.
-        '''
-        trace = False or self.trace # or name.endswith('munge_arg')
-        s1 = s
-        default_pattern = None
-        if trace: g.trace('===== %s: %s' % (name, s1))
-        for pattern in patterns:
-            if pattern.find_s == '.*':
-                # The user should use [Def Name Patterns] instead.
-                pass
-            else:
-                # Find all non-overlapping matches.
-                # Replace the matches in reverse order.
-                matches = pattern.all_matches(s, trace=trace)
-                for m in reversed(matches):
-                    s = pattern.replace(m, s, trace=trace)
-        found = s1 != s
-        if trace and found:
-            g.trace('returns %s\n' % s)
-        return found, s
-        
 
     def visit_Return(self, node):
 

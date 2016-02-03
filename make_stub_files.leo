@@ -10,7 +10,11 @@
 <preferences/>
 <find_panel_settings/>
 <vnodes>
-<v t="ekr.20160126153016.3"><vh>Startup</vh></v>
+<v t="ekr.20160126153016.3"><vh>Unused files</vh>
+<v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helper</vh>
+<v t="ekr.20160126153212.93"><vh>st.match_ret_patterns</vh></v>
+</v>
+</v>
 <v t="ekr.20160128104714.1"><vh>Config files</vh>
 <v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
 <v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
@@ -159,9 +163,6 @@
 <v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
 <v t="ekr.20160130034812.1"><vh>st.is_known_type</vh></v>
 <v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
-<v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helper</vh>
-<v t="ekr.20160126153212.93"><vh>st.match_ret_patterns</vh></v>
-</v>
 </v>
 </v>
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
@@ -176,10 +177,7 @@
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
 <v t="ekr.20160128104639.1"></v>
-<v t="ekr.20160131174909.1"><vh>** To do</vh>
-<v t="ekr.20160203042406.1"><vh>* Update the docs!</vh></v>
-<v t="ekr.20160203055631.1"><vh>* Remove new_code switch &amp; clean code</vh></v>
-</v>
+<v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
@@ -188,6 +186,7 @@
 <v t="ekr.20160128190112.1"></v>
 <v t="ekr.20160126153212.90"></v>
 </v>
+<v t="ekr.20160203055631.1"><vh>* Remove new_code switch &amp; clean code</vh></v>
 <v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
@@ -1146,8 +1145,6 @@ def __init__(self, controller):
         self.arg_format = AstArgFormatter().format
     else:
         pass
-        ### pylint: disable=no-value-for-parameter
-        ### self.format = StubFormatter().format
     self.in_function = False
     self.level = 0
     self.output_file = None
@@ -1327,7 +1324,8 @@ def format_returns(self, node):
                     pattern.find_s, name, s))
             return s + ': ...'
     # Step 3: munge each return value, and merge them.
-    r = [self.munge_ret(name, z) for z in r1]
+    ### r = [self.munge_ret(name, z) for z in r1]
+    r = r1
         # Make type substitutions.
     r = sorted(set(r))
         # Remove duplicates
@@ -1371,8 +1369,6 @@ def munge_ret(self, name, s):
     trace = self.trace
     if trace: g.trace('====', name)
     if new_code:
-        # For now: match general patterns only.
-        ### junk, s = self.match_return_patterns(name, self.general_patterns, s)
         return s
     else:
         # Match pre-patterns.
@@ -2132,39 +2128,14 @@ def do_Return(self, node):
 if new_code:
 
     def visit(self, node):
-        '''Return the formatted version of an Ast node.'''
-        trace = False
-        name = node.__class__.__name__
-        s = s1 = AstFormatter.visit(self, node)
+        '''
+        Return the formatted version of an Ast node after
+        applying all general patterns.
+        '''
+        s = AstFormatter.visit(self, node)
         for pattern in self.general_patterns:
             found, s = pattern.match(s)
-            if found:
-                if trace and name != 'Name':
-                    g.trace('---- %s: %s-&gt;%s' % (name, s1, s))
-                # break
-        return s
-#################
-        # aList = self.keys_d.get(name, [])
-        # for key in aList:
-            # # Return after the first match.
-            # patterns = self.patterns_d.get(key, [])
-            # for pattern in patterns:
-                # found, s = pattern.match(s)
-                # if found:
-                    # if trace: g.trace('---- %s: %s-&gt;%s' % (name, s1, s))
-                    # return s
-#################
-            # else: # Match repeatedly.
-                # count, found = 0, True
-                # patterns = self.patterns_d.get(key)
-                # while found and count &lt; 50:
-                    # count += 1
-                    # found = False
-                    # for pattern in patterns:
-                        # found2, s = pattern.match(s)
-                        # found = found or found2
-                        # if found2:
-                            # if trace: g.trace('---- %s: %s-&gt;%s' % (name, s1, s))</t>
+        return s</t>
 <t tx="ekr.20160202061329.1">
 if new_code:
 
@@ -2211,13 +2182,9 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-Support * in balanced patterns.
-
-- Changed Pattern.full_balanced_match
-- st.format_returns now calls Pattern.match to check [Def Name Patterns].
-- Added a new unit test.
-
-Updated readme file to match present code.</t>
+Retired munge_ret and (!) match_return_patterns.
+Pylint is happy and the output remains as expected.
+</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2252,7 +2219,6 @@ def cls(self):
     if sys.platform.lower().startswith('win'):
         os.system('cls')
 </t>
-<t tx="ekr.20160203042406.1"></t>
 <t tx="ekr.20160203055631.1"></t>
 </tnodes>
 </leo_file>
