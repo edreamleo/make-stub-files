@@ -1040,6 +1040,26 @@ class StandAloneMakeStubFile:
         return aList
 
 
+class Stub:
+    '''
+    A class representing a stub: it's name, text, parent and children.
+    This class is a prerequisite for -- update.
+    '''
+
+    def __init__(self, name, parent, s):
+        '''Stub ctor.'''
+        self.children = []
+        self.name = name
+        self.parent = parent
+        self.s = s
+
+    def __repr__(self):
+        '''Stub.__repr__.'''
+        return 'Stub: %s' % self.name
+        
+    __str__ = __repr__
+
+
 class StubFormatter (AstFormatter):
     '''
     Formats an ast.Node and its descendants,

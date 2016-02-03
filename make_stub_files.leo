@@ -31,6 +31,7 @@
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
+<v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
 <v t="ekr.20160126153212.4"><vh> f.Entries</vh>
@@ -143,6 +144,9 @@
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
+<v t="ekr.20160203073604.1"><vh>class Stub</vh>
+<v t="ekr.20160203073713.1"><vh>stub.ctor &amp; __repr__</vh></v>
+</v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
@@ -157,9 +161,9 @@
 <v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
 <v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
 <v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160126153212.91" a="M"><vh>st.munge_arg</vh></v>
+<v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
 </v>
-<v t="ekr.20160126153212.90" a="M"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
 <v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
 <v t="ekr.20160130034812.1"><vh>st.is_known_type</vh></v>
 <v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
@@ -176,13 +180,11 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
-<v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
-<v t="ekr.20160126153212.90" a="M"></v>
-<v t="ekr.20160126153212.91" a="M"></v>
+<v t="ekr.20160203073604.1"></v>
 </v>
 <v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
@@ -1951,12 +1953,15 @@ def is_known_type(self, s):
 
 - Protect lines starting with '[' that aren't a real section.
 
-- Add Stub class: it's a prerequisite for --update.
-
 ** Run without config file.
     - Parse pattern lists internally.
     
 --update.
+    - Finish Stub class.
+    - Use Stub class to write normal output.
+    - At present, calls to self.out happen in:
+        - st.run, to output prefix lines,
+        - st.ClassDef and st.FunctionDef.
 
 ** Use [Def Name Patterns] to make inferences!
 
@@ -2101,7 +2106,9 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-Removed the new_code switch. All tests pass.</t>
+- Added first draft of Stub class.
+  The code will eventually create Stubs instead of calling self.out.
+</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2136,5 +2143,26 @@ def cls(self):
     if sys.platform.lower().startswith('win'):
         os.system('cls')
 </t>
+<t tx="ekr.20160203073604.1">
+
+class Stub:
+    '''
+    A class representing a stub: it's name, text, parent and children.
+    This class is a prerequisite for -- update.
+    '''
+    @others</t>
+<t tx="ekr.20160203073713.1">
+def __init__(self, name, parent, s):
+    '''Stub ctor.'''
+    self.children = []
+    self.name = name
+    self.parent = parent
+    self.s = s
+
+def __repr__(self):
+    '''Stub.__repr__.'''
+    return 'Stub: %s' % self.name
+    
+__str__ = __repr__</t>
 </tnodes>
 </leo_file>
