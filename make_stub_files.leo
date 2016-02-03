@@ -33,6 +33,7 @@
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
+<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh>&lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
@@ -195,14 +196,13 @@
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
-<v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.74"></v>
 <v t="ekr.20160126153212.76"></v>
 <v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
 </v>
-<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
+<v t="ekr.20160203073604.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1973,30 +1973,32 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- What to do about num, number, float, complex, etc.?
+- Use Stub class to write normal output.
+  At present, calls to self.out happen in:
+    - st.run, to output prefix lines,
+    - st.ClassDef and st.FunctionDef.
     
 --update.
-    - Finish Stub class.
-    - Use Stub class to write normal output.
-    - At present, calls to self.out happen in:
-        - st.run, to output prefix lines,
-        - st.ClassDef and st.FunctionDef.
-
-** Use [Def Name Patterns] to make inferences!
-
-- Simulate --infer by adding many more patterns.
-  Test speed by intentionally slowing st.visit.
-
-- Optionally generate Any for all unknown argument types.
     
-- Recognize recursive calls.
-    - Just remove them!
-
+- sf.visit is a bottleneck when many patterns exist.
+  I tested this by repeating the sf.visit loop 10 times.
+        
 - Task oriented docs
+        
+- Optionally generate Any for all unknown argument types.
 
 - Preserve existing annotations?
   It doesn't seem urgent.
   The script would have to be run with Python 3.
+
+=== Inferences
+        
+- Add more inferences. (Simulates --infer)
+
+** Use [Def Name Patterns] to make inferences!
+    
+- Recognize recursive calls.
+    - Just remove them!
 </t>
 <t tx="ekr.20160131175042.1">class TestClass:
     '''A class containing constructs that have caused difficulties.'''
