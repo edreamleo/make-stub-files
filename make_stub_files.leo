@@ -2106,9 +2106,9 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-- Added first draft of Stub class.
-  The code will eventually create Stubs instead of calling self.out.
-</t>
+Added first draft of Stub class.
+The code will eventually create Stubs instead of calling self.out.
+This will make it easy to alphabetize stubs, and to find new or deleted stubs.</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
