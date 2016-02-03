@@ -11,6 +11,10 @@
 <find_panel_settings/>
 <vnodes>
 <v t="ekr.20160126153016.3"><vh>Startup</vh></v>
+<v t="ekr.20160202182500.1"><vh>No longer used</vh>
+<v t="ekr.20160202083330.1"><vh>msf.create_keys_d (Not used)</vh></v>
+<v t="ekr.20160202083421.1"><vh>msf.scan_pattern_lists (Not used)</vh></v>
+</v>
 <v t="ekr.20160128104714.1"><vh>Config files</vh>
 <v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
 <v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
@@ -27,7 +31,6 @@
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
-<v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
 <v t="ekr.20160126153212.4"><vh> f.Entries</vh>
@@ -109,7 +112,11 @@
 <v t="ekr.20160126153212.72"><vh>f.op_name</vh></v>
 </v>
 </v>
+<v t="ekr.20160202165117.1"><vh>class AstArgFormatter (AstFormatter)</vh>
+<v t="ekr.20160202165143.1"><vh>sf.Constants &amp; Name</vh></v>
+</v>
 <v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
+<v t="ekr.20160202170529.1"><vh>g.cls</vh></v>
 <v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
 <v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
 </v>
@@ -133,15 +140,13 @@
 <v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
 <v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
-<v t="ekr.20160202083330.1" a="M"><vh>msf.create_keys_d (To do: finish)</vh></v>
-<v t="ekr.20160202083421.1"><vh>msf.scan_pattern_lists (New)</vh></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
-<v t="ekr.20160202064553.1"><vh>sf.match (Test)</vh></v>
-<v t="ekr.20160202061118.1"><vh>sf.visit (New)</vh></v>
+<v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
+<v t="ekr.20160202061118.1"><vh>sf.visit</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants &amp; Name</vh></v>
 <v t="ekr.20160201194801.1"><vh>sf.Return (Revised)</vh></v>
 </v>
@@ -174,22 +179,15 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
+<v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
-<v t="ekr.20160202084936.1"><vh>Found: (flattened) (word, body) new_code</vh>
-<v t="ekr.20160126153212.74"></v>
 <v t="ekr.20160126153212.78"></v>
-<v t="ekr.20160202061329.1"></v>
-<v t="ekr.20160201194801.1"></v>
+<v t="ekr.20160126153212.79"></v>
 <v t="ekr.20160202061118.1"></v>
-<v t="ekr.20160126153212.83"></v>
-<v t="ekr.20160126153212.92"></v>
-</v>
-<v t="ekr.20160126153212.78"></v>
-<v t="ekr.20160126153212.88"></v>
 <v t="ekr.20160126153212.93"></v>
+<v t="ekr.20160126153212.88"></v>
 </v>
-<v t="ekr.20160202083330.1" a="M"></v>
 <v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
@@ -235,6 +233,7 @@ def main():
     The driver for the stand-alone version of make-stub-files.
     All options come from ~/stubs/make_stub_files.cfg.
     '''
+    # g.cls()
     controller = StandAloneMakeStubFile()
     controller.scan_command_line()
     controller.scan_options()
@@ -1049,8 +1048,7 @@ def scan_command_line(self):
     self.def_patterns = self.scan_patterns('Def Name Patterns')
     self.general_patterns = self.scan_patterns('General Patterns')
     if new_code:
-        self.keys_d = self.create_keys_d()
-        self.patterns_d = self.scan_pattern_lists('Return Patterns')
+        pass
     else:
         self.post_return_patterns = self.scan_patterns('Post Return Patterns')
         self.pre_return_patterns = self.scan_patterns('Pre Return Patterns')
@@ -1059,23 +1057,30 @@ def scan_command_line(self):
 <t tx="ekr.20160126153212.79">
 def scan_patterns(self, section_name):
     '''Parse the config section into a list of patterns, preserving order.'''
-    parser, verbose = self.parser, self.verbose
+    trace = False or self.verbose
+    parser = self.parser
     aList = []
     if section_name in parser.sections():
-        if verbose: print('%s...\n' % section_name)
+        seen = set()
         for key in parser.options(section_name):
             value = parser.get(section_name, key)
             # A kludge: strip leading \\ from patterns.
             if key.startswith(r'\\'):
                 key = key[2:]
-            pattern = Pattern(key, value, self.trace)
-            aList.append(pattern)
-            if verbose: print(pattern)
-        if verbose: print('')
-    elif verbose:
-        print('no section: %s' % section_name)
-        print(parser.sections())
-        print('')
+            if key in seen:
+                g.trace('duplicate key', key)
+            else:
+                seen.add(key)
+                aList.append(Pattern(key, value, self.trace))
+        if trace:
+            print('%s...\n' % section_name)
+            for z in aList:
+                print(z)
+            print('')
+    # elif trace:
+        # print('no section: %s' % section_name)
+        # print(parser.sections())
+        # print('')
     return aList
 </t>
 <t tx="ekr.20160126153212.8">
@@ -1099,8 +1104,8 @@ def do_ClassDef(self, node):
 
 class StubFormatter (AstFormatter):
     '''
-    Just like the AstFormatter class, except it prints the class
-    names of constants instead of actual values.
+    Formats an ast.Node and its descendants,
+    making pattern substitutions in Name and operator nodes.
     '''
     @others
 </t>
@@ -1137,9 +1142,12 @@ def __init__(self, controller):
     # Internal state ivars...
     self.class_name_stack = []
     if new_code:
-        self.format = StubFormatter(x.keys_d, x.patterns_d).format
+        self.format = StubFormatter(x.general_patterns).format
+        self.arg_format = AstArgFormatter().format
     else:
-        self.format = StubFormatter().format
+        pass
+        ### pylint: disable=no-value-for-parameter
+        ### self.format = StubFormatter().format
     self.in_function = False
     self.level = 0
     self.output_file = None
@@ -1256,7 +1264,7 @@ def format_arguments(self, node):
     Similar to AstFormat.do_arguments, but it is not a visitor!
     '''
     assert isinstance(node,ast.arguments), node
-    args = [self.format(z) for z in node.args]
+    args = [self.raw_format(z) for z in node.args]
     defaults = [self.raw_format(z) for z in node.defaults]
     # Assign default values to the last args.
     result = []
@@ -1366,7 +1374,7 @@ def munge_ret(self, name, s):
     if trace: g.trace('====', name)
     if new_code:
         # For now: match general patterns only.
-        junk, s = self.match_return_patterns(name, self.general_patterns, s)
+        ### junk, s = self.match_return_patterns(name, self.general_patterns, s)
         return s
     else:
         # Match pre-patterns.
@@ -1728,82 +1736,61 @@ StubTraverser.match_return_patterns: Tuple[bool,str]
 StubTraverser.match_return_pattern: Optional[str]
 StubTraverser.match_balanced: int
 
-[Arg Patterns]
-
-# Default patterns should *only* appear here.
-# Use [Def Name Patterns] to set default return types.
-
-# Without the .* default, -w generates warnings for:
-# delim, find_f, fn, name, pattern, repl_s, section_name
-
-patterns: Sequence
-trace: bool
-controller: StandAloneMakeStubFile
-parser: optparse.OptionParser
-### .*: str
-
 [General Patterns]
 
 a: str
 aList: List
-fn: str
+controller: StandAloneMakeStubFile
+find_s: str
+# fn: str
 node: Node
-# str%(*): str
-# str%str: str
-# str+str: str
+parser: optparse.OptionParser
+patterns: List
+general_patterns: List[Pattern]
+repl_s: str
 strict: bool
-\bi[0-3]?\b: int
-\bs[0-3]?\b: str
+trace: bool
 
-# Guido
-group: str
-ndots: int
-os.sep.join(*): str
-
-[Pre Return Patterns]
-
+a: str
+aList: List
 found: str
+fn: str
+group: str
+i1: int
+i2: int
+i: int
+j1: int
+j2: int
+j: int
+n1: int
+n2: int
+n: int
 name: str
+ndots: int
+s: str
+s1: str
+s2: str
+# Was Call
+all(*): bool
+len(*): int
+tuple(*): Tuple[*]
+str.join(*): str
+# Was Name...
 number: int
-
-# These would be dangerous. Reversing the order would be wrong.
-### \\[*]: List[*]
-### (*):Tuple[*]
-
-[Return Patterns]
-
-name:
-    s: str
-    name: str
-call:
-    all(*): bool
-    len(*): int
-    tuple(*): Tuple[*]
-    str.join(*): str
-return:
-    (*): Tuple[*]
-    [*]: List[*]
-    {*}: dict
-    str.join(*): str
-+:
-    str\+str: str
-    str\+comments: str
-%:
-    str%str: str
-    str%(*): str
-
-### Old patterns.
-# all(*): bool
-# len(*): int
-# str%(*): str
-# str.join(*): str
-# \bstr\b\+\bstr\b: str
-# \bstr\b\+\bcomments\b: str
-# tuple(*): Tuple[*]
-
-[Post Return Patterns]
-
+# Was: return
+(*): Tuple[*]
+\\[*]: List[*]
+{*}: dict
+os.sep.join(*): str
+str.join(*): str
 str[*]: str
+# Was +:
+str\+str: str
+str\+comments: str
+# Was %:
+str%str: str
+str%(*): str
+str%Tuple[*]: str
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
@@ -2005,8 +1992,14 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
+* Update the docs.
+
+- Optionally generate  Any for all unknown argument types.
+
 ** Run without config file.
     - Parse pattern lists internally.
+    
+- Replace regex matches with plain matches.
     
 - Recognize recursive calls.
     - Just remove them!
@@ -2030,8 +2023,10 @@ def is_known_type(self, s):
     return [a]</t>
 <t tx="ekr.20160131180118.1">class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
-    @others</t>
-<t tx="ekr.20160131180244.1">def pdb(self):
+    @others
+</t>
+<t tx="ekr.20160131180244.1">
+def pdb(self):
     try:
         import leo.core.leoGlobals as leo_g
         leo_g.pdb()
@@ -2039,7 +2034,8 @@ def is_known_type(self, s):
         import pdb
         pdb.set_trace()
 </t>
-<t tx="ekr.20160131180306.1">def trace(self, *args, **keys):
+<t tx="ekr.20160131180306.1">
+def trace(self, *args, **keys):
     try:
         import leo.core.leoGlobals as leo_g
         leo_g.trace(caller_level=2, *args, **keys)
@@ -2119,37 +2115,49 @@ def do_Return(self, node):
 if new_code:
 
     def visit(self, node):
-        '''Return the formatted version of an Ast node, or list of Ast nodes.'''
+        '''Return the formatted version of an Ast node.'''
         trace = False
         name = node.__class__.__name__
-        s = AstFormatter.visit(self, node)
-        aList = self.keys_d.get(name, [])
-        for key in aList:
-            count, found = 0, True
-            patterns = self.patterns_d.get(key)
-            while found and count &lt; 50:
-                count += 1
-                found = False
-                for pattern in patterns:
-                    s1 = s
-                    found2, s = pattern.match(s)
-                    found = found or found2
-                    if found2:
-                        if trace: g.trace('---- %s: %s-&gt;%s' % (name, s1, s))
-                        s1 = s
-                        if name != 'Return':
-                            return s
+        s = s1 = AstFormatter.visit(self, node)
+        for pattern in self.general_patterns:
+            found, s = pattern.match(s)
+            if found:
+                if trace and name != 'Name':
+                    g.trace('---- %s: %s-&gt;%s' % (name, s1, s))
+                # break
         return s
-</t>
+#################
+        # aList = self.keys_d.get(name, [])
+        # for key in aList:
+            # # Return after the first match.
+            # patterns = self.patterns_d.get(key, [])
+            # for pattern in patterns:
+                # found, s = pattern.match(s)
+                # if found:
+                    # if trace: g.trace('---- %s: %s-&gt;%s' % (name, s1, s))
+                    # return s
+#################
+            # else: # Match repeatedly.
+                # count, found = 0, True
+                # patterns = self.patterns_d.get(key)
+                # while found and count &lt; 50:
+                    # count += 1
+                    # found = False
+                    # for pattern in patterns:
+                        # found2, s = pattern.match(s)
+                        # found = found or found2
+                        # if found2:
+                            # if trace: g.trace('---- %s: %s-&gt;%s' % (name, s1, s))</t>
 <t tx="ekr.20160202061329.1">
 if new_code:
 
-    def __init__(self, keys_d, patterns_d, ):
+    def __init__(self, general_patterns):
         '''Ctor for StubFormatter class.'''
-        self.keys_d = keys_d
+        self.general_patterns = general_patterns
+        # self.keys_d = keys_d
             # Keys are node.__class__.__name__.
             # Values are pattern keys.
-        self.patterns_d = patterns_d
+        # self.patterns_d = patterns_d
             # Keys are pattern keys.
             # Values are lists of Patterns.
 </t>
@@ -2185,17 +2193,39 @@ def match(self, patterns, s):
 </t>
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
-Hurray! The code now works with -c msf.cfg -o
 
-At present, msf.create_keys_d() only makes entries for
-BinOp, Call, Name, and Return nodes.
-These corresond to 'name', 'call', '+', '%', and 'return' keys.
+Everything has become clear, and simple:
 
-scan_pattern_lists does *not* at present, copy [General Patterns] to the end of
-of these pattern classes. The code to do so has been disabled.
+- msf.cfg works using only [Def Name Patterns] and [General Patterns]!
+    - Gone is the endless confusion about where to put patterns.
+    - The user no longer needs to know when patterns are applied.
+      (In fact, st.visit applies all patterns to all ast nodes!)
+    - All patterns are now at the "top" level of the above sections.
 
-The patterns in msf.cfg do a remarkably good job. It may be possible
-to eliminate some of them.  We shall see.
+- st.visit matches *all* [General Patterns] for all nodes.
+    - This appears to solve all problems and all confusions.
+    - The local context naturally limits searches.
+    - Experiments show that repeated matching *never* happens in st.visit.
+      However, it wouldn't make any difference if it did.
+    - There is now no need ever to impose a loop count on any loop.
+    - There is no further need for the keys_dict or pattern_dict.
+    - create_keys_dict and scan_patterns_lists have been retired.
+      
+- Added AstArgFormatter class.
+    - It generalizes arg values without doing other replacements.
+    - This little behind-the-scenes class is essential to
+      simpifying user patterns!
+
+- scan_patterns warns about duplicate keys.
+  
+To do:
+
+- Remove all code disabled when new_code is False.
+- Update the docs.
+- All other items in the To-do list in make_stub_files.leo.
+- A key that starts with [ creates endless confusion.
+  Such keys must be preceded by two back slashes, but
+  it would be good to warn the user.  It may not be possible...
 </t>
 <t tx="ekr.20160202083330.1">
 def create_keys_d(self):
@@ -2205,6 +2235,7 @@ def create_keys_d(self):
     Values are a list of the corresponding pattern keys.
     '''
     # For now, just add the keys we actually use.
+    ##### Just use the ast keys ??????
     return {
         'BinOp': ['+', '%',],
         'Call': ['call',],
@@ -2248,6 +2279,7 @@ def scan_pattern_lists(self, section_name):
         for key in d:
             aList = d.get(key)
             aList.extend(self.general_patterns)
+            aList = list(set(aList))
             d[key] = aList
     if trace:
         g.trace('returns...')
@@ -2256,7 +2288,40 @@ def scan_pattern_lists(self, section_name):
             print(key + ':' + sep + sep.join([repr(z) for z in d.get(key)]))
     return d
 </t>
-<t tx="ekr.20160202084936.1"></t>
 <t tx="ekr.20160202120035.1"></t>
+<t tx="ekr.20160202165117.1">
+
+class AstArgFormatter (AstFormatter):
+    '''
+    Just like the AstFormatter class, except it prints the class
+    names of constants instead of actual values.
+    '''
+    @others</t>
+<t tx="ekr.20160202165143.1">
+# Return generic markers to allow better pattern matches.
+
+def do_BoolOp(self, node): # Python 2.x only.
+    return 'bool'
+
+def do_Bytes(self, node): # Python 3.x only.
+    return 'bytes' # return str(node.s)
+
+def do_Name(self, node):
+    return 'bool' if node.id in ('True', 'False') else node.id
+
+def do_Num(self, node):
+    return 'number' # return repr(node.n)
+
+def do_Str(self, node):
+    '''This represents a string constant.'''
+    return 'str' # return repr(node.s)
+</t>
+<t tx="ekr.20160202170529.1">
+def cls(self):
+    '''Clear the screen.'''
+    if sys.platform.lower().startswith('win'):
+        os.system('cls')
+</t>
+<t tx="ekr.20160202182500.1"></t>
 </tnodes>
 </leo_file>

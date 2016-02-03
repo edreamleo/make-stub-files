@@ -624,8 +624,39 @@ class AstFormatter:
         name = d.get(self.kind(node),'<%s>' % node.__class__.__name__)
         if strict: assert name,self.kind(node)
         return name
+
+
+class AstArgFormatter (AstFormatter):
+    '''
+    Just like the AstFormatter class, except it prints the class
+    names of constants instead of actual values.
+    '''
+
+    # Return generic markers to allow better pattern matches.
+
+    def do_BoolOp(self, node): # Python 2.x only.
+        return 'bool'
+
+    def do_Bytes(self, node): # Python 3.x only.
+        return 'bytes' # return str(node.s)
+
+    def do_Name(self, node):
+        return 'bool' if node.id in ('True', 'False') else node.id
+
+    def do_Num(self, node):
+        return 'number' # return repr(node.n)
+
+    def do_Str(self, node):
+        '''This represents a string constant.'''
+        return 'str' # return repr(node.s)
 class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
+
+    def cls(self):
+        '''Clear the screen.'''
+        if sys.platform.lower().startswith('win'):
+            os.system('cls')
+
     def pdb(self):
         try:
             import leo.core.leoGlobals as leo_g
@@ -633,6 +664,7 @@ class LeoGlobals:
         except ImportError:
             import pdb
             pdb.set_trace()
+
     def trace(self, *args, **keys):
         try:
             import leo.core.leoGlobals as leo_g
@@ -982,107 +1014,56 @@ class StandAloneMakeStubFile:
         self.def_patterns = self.scan_patterns('Def Name Patterns')
         self.general_patterns = self.scan_patterns('General Patterns')
         if new_code:
-            self.keys_d = self.create_keys_d()
-            self.patterns_d = self.scan_pattern_lists('Return Patterns')
+            pass
         else:
             self.post_return_patterns = self.scan_patterns('Post Return Patterns')
             self.pre_return_patterns = self.scan_patterns('Pre Return Patterns')
             self.return_patterns = self.scan_patterns('Return Patterns')
 
-    def create_keys_d(self):
-        '''
-        Return self.keys_d.
-        Keys are ast.Node.__class__.__name__.
-        Values are a list of the corresponding pattern keys.
-        '''
-        # For now, just add the keys we actually use.
-        return {
-            'BinOp': ['+', '%',],
-            'Call': ['call',],
-            'Name': ['name',],
-            'Return': ['return',],
-        }
-
-    def scan_pattern_lists(self, section_name):
-        '''Return self.patterns_d.'''
-        trace = False
-        parser, verbose = self.parser, self.verbose
-        d = {}
-        if section_name in parser.sections():
-            if verbose: print('%s...\n' % section_name)
-            for key in parser.options(section_name):
-                s1 = parser.get(section_name, key)
-                aList = s1.split('\n')
-                aList = [z.strip() for z in aList if z.strip()]
-                # if trace: g.trace(key+'...')
-                for s in aList:
-                    data = s.split(':',1)
-                    try:
-                        key2, value2 = data
-                        key2, value2 = key2.strip(), value2.strip()
-                        if not key2.startswith('#'):
-                            aList2 = d.get(key, [])
-                            pattern = Pattern(key2, value2)
-                            aList2.append(pattern)
-                            d[key] = aList2
-                        # g.trace('  ', key, pattern)
-                    except ValueError:
-                        print('bad pattern: %s' % (s1.strip()))
-                if verbose: print(pattern)
-            if verbose: print('')
-        elif verbose:
-            print('no section: %s' % section_name)
-            print(parser.sections())
-            print('')
-        # Add all the general patterns.
-        if 0:
-            for key in d:
-                aList = d.get(key)
-                aList.extend(self.general_patterns)
-                d[key] = aList
-        if trace:
-            g.trace('returns...')
-            sep = '\n  '
-            for key in sorted(d):
-                print(key + ':' + sep + sep.join([repr(z) for z in d.get(key)]))
-        return d
-
     def scan_patterns(self, section_name):
         '''Parse the config section into a list of patterns, preserving order.'''
-        parser, verbose = self.parser, self.verbose
+        trace = False or self.verbose
+        parser = self.parser
         aList = []
         if section_name in parser.sections():
-            if verbose: print('%s...\n' % section_name)
+            seen = set()
             for key in parser.options(section_name):
                 value = parser.get(section_name, key)
                 # A kludge: strip leading \\ from patterns.
                 if key.startswith(r'\\'):
                     key = key[2:]
-                pattern = Pattern(key, value, self.trace)
-                aList.append(pattern)
-                if verbose: print(pattern)
-            if verbose: print('')
-        elif verbose:
-            print('no section: %s' % section_name)
-            print(parser.sections())
-            print('')
+                if key in seen:
+                    g.trace('duplicate key', key)
+                else:
+                    seen.add(key)
+                    aList.append(Pattern(key, value, self.trace))
+            if trace:
+                print('%s...\n' % section_name)
+                for z in aList:
+                    print(z)
+                print('')
+        # elif trace:
+            # print('no section: %s' % section_name)
+            # print(parser.sections())
+            # print('')
         return aList
 
 
 class StubFormatter (AstFormatter):
     '''
-    Just like the AstFormatter class, except it prints the class
-    names of constants instead of actual values.
+    Formats an ast.Node and its descendants,
+    making pattern substitutions in Name and operator nodes.
     '''
 
     if new_code:
 
-        def __init__(self, keys_d, patterns_d, ):
+        def __init__(self, general_patterns):
             '''Ctor for StubFormatter class.'''
-            self.keys_d = keys_d
+            self.general_patterns = general_patterns
+            # self.keys_d = keys_d
                 # Keys are node.__class__.__name__.
                 # Values are pattern keys.
-            self.patterns_d = patterns_d
+            # self.patterns_d = patterns_d
                 # Keys are pattern keys.
                 # Values are lists of Patterns.
 
@@ -1097,27 +1078,39 @@ class StubFormatter (AstFormatter):
     if new_code:
 
         def visit(self, node):
-            '''Return the formatted version of an Ast node, or list of Ast nodes.'''
+            '''Return the formatted version of an Ast node.'''
             trace = False
             name = node.__class__.__name__
-            s = AstFormatter.visit(self, node)
-            aList = self.keys_d.get(name, [])
-            for key in aList:
-                count, found = 0, True
-                patterns = self.patterns_d.get(key)
-                while found and count < 50:
-                    count += 1
-                    found = False
-                    for pattern in patterns:
-                        s1 = s
-                        found2, s = pattern.match(s)
-                        found = found or found2
-                        if found2:
-                            if trace: g.trace('---- %s: %s->%s' % (name, s1, s))
-                            s1 = s
-                            if name != 'Return':
-                                return s
+            s = s1 = AstFormatter.visit(self, node)
+            for pattern in self.general_patterns:
+                found, s = pattern.match(s)
+                if found:
+                    if trace and name != 'Name':
+                        g.trace('---- %s: %s->%s' % (name, s1, s))
+                    # break
             return s
+    #################
+            # aList = self.keys_d.get(name, [])
+            # for key in aList:
+                # # Return after the first match.
+                # patterns = self.patterns_d.get(key, [])
+                # for pattern in patterns:
+                    # found, s = pattern.match(s)
+                    # if found:
+                        # if trace: g.trace('---- %s: %s->%s' % (name, s1, s))
+                        # return s
+    #################
+                # else: # Match repeatedly.
+                    # count, found = 0, True
+                    # patterns = self.patterns_d.get(key)
+                    # while found and count < 50:
+                        # count += 1
+                        # found = False
+                        # for pattern in patterns:
+                            # found2, s = pattern.match(s)
+                            # found = found or found2
+                            # if found2:
+                                # if trace: g.trace('---- %s: %s->%s' % (name, s1, s))
 
     # Return generic markers to allow better pattern matches.
 
@@ -1178,9 +1171,12 @@ class StubTraverser (ast.NodeVisitor):
         # Internal state ivars...
         self.class_name_stack = []
         if new_code:
-            self.format = StubFormatter(x.keys_d, x.patterns_d).format
+            self.format = StubFormatter(x.general_patterns).format
+            self.arg_format = AstArgFormatter().format
         else:
-            self.format = StubFormatter().format
+            pass
+            ### pylint: disable=no-value-for-parameter
+            ### self.format = StubFormatter().format
         self.in_function = False
         self.level = 0
         self.output_file = None
@@ -1292,7 +1288,7 @@ class StubTraverser (ast.NodeVisitor):
         Similar to AstFormat.do_arguments, but it is not a visitor!
         '''
         assert isinstance(node,ast.arguments), node
-        args = [self.format(z) for z in node.args]
+        args = [self.raw_format(z) for z in node.args]
         defaults = [self.raw_format(z) for z in node.defaults]
         # Assign default values to the last args.
         result = []
@@ -1472,7 +1468,7 @@ class StubTraverser (ast.NodeVisitor):
         if trace: g.trace('====', name)
         if new_code:
             # For now: match general patterns only.
-            junk, s = self.match_return_patterns(name, self.general_patterns, s)
+            ### junk, s = self.match_return_patterns(name, self.general_patterns, s)
             return s
         else:
             # Match pre-patterns.
@@ -1550,6 +1546,7 @@ def main():
     The driver for the stand-alone version of make-stub-files.
     All options come from ~/stubs/make_stub_files.cfg.
     '''
+    # g.cls()
     controller = StandAloneMakeStubFile()
     controller.scan_command_line()
     controller.scan_options()
