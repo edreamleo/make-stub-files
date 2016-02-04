@@ -33,6 +33,7 @@
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
+<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh>&lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
@@ -207,7 +208,6 @@
 <v t="ekr.20160126153212.87"></v>
 <v t="ekr.20160126153212.88"></v>
 </v>
-<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1999,19 +1999,18 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- Use Stub class to write normal output.
-  At present, calls to self.out happen in:
-    - st.run, to output prefix lines,
-    - st.ClassDef and st.FunctionDef.
-    
---update.
+Design --update.
     
 - sf.visit is a bottleneck when many patterns exist.
   I tested this by repeating the sf.visit loop 10 times.
+  How many patterns could we handle?
+  When there are many patterns, individual nodes could match only those
+  patterns that have been assigned to them.
         
 - Task oriented docs
         
 - Optionally generate Any for all unknown argument types.
+
 
 - Preserve existing annotations?
   It doesn't seem urgent.
@@ -2151,7 +2150,8 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-The Stub class is operational. It allows stubs to be sorted.</t>
+The Stub class is operational. It allows stubs to be sorted.
+It is likely to have other uses in the --update logic.</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
