@@ -1036,7 +1036,8 @@ def scan_command_line(self):
             self.output_directory = None # inhibit run().
     if 'prefix_lines' in parser.options('Global'):
         prefix = parser.get('Global', 'prefix_lines')
-        self.prefix_lines = [z.strip() for z in prefix.split('\n') if z.strip()]
+        self.prefix_lines = prefix.split('\n')
+            # The parser does not preserve leading whitespace.
         if verbose:
             print('Prefix lines...\n')
             for z in self.prefix_lines:
@@ -1703,9 +1704,9 @@ output_directory: .
     
 prefix_lines:
     from typing import Any, Dict, Optional, Sequence, Tuple, Union
-    # At present, I don't understand how to tell mypy about ast.Node
-    # import ast
-    # Node = ast.Node
+        # At present, I don't understand how to tell mypy about ast.Node
+        # import ast
+        # Node = ast.Node
     Node = Any
 
 [Def Name Patterns]
@@ -2000,30 +2001,33 @@ def is_known_type(self, s):
 @wrap
 
 Design --update.
+
+- Optionally generate Any for all unknown argument types.
     
-- sf.visit is a bottleneck when many patterns exist.
-  I tested this by repeating the sf.visit loop 10 times.
-  How many patterns could we handle?
-  When there are many patterns, individual nodes could match only those
-  patterns that have been assigned to them.
+Post: About speed with many patterns
+
+    sf.visit is a bottleneck when many patterns exist. I tested this by
+    repeating the sf.visit loop 10 times. How many patterns could we
+    handle? When there are many patterns, individual nodes could match only
+    those patterns that have been assigned to them.
+    
+    The --infer option would imply many patterns in addition to user
+    patterns. The good news: we could **discover which patterns match
+    where**, and assign specific patterns to specific (new) visitors.
+    
+    In short, **the original scheme was a premature optimization.**
         
 - Task oriented docs
-        
-- Optionally generate Any for all unknown argument types.
 
+Post: Cool inferences:
+        
+- Add more inferences. (Simulates --infer)
+- Use [Def Name Patterns] to make inferences!
+- Recognize recursive calls. Just remove them!
 
 - Preserve existing annotations?
   It doesn't seem urgent.
   The script would have to be run with Python 3.
-
-=== Inferences
-        
-- Add more inferences. (Simulates --infer)
-
-** Use [Def Name Patterns] to make inferences!
-    
-- Recognize recursive calls.
-    - Just remove them!
 </t>
 <t tx="ekr.20160131175042.1">class TestClass:
     '''A class containing constructs that have caused difficulties.'''
@@ -2419,10 +2423,11 @@ def __hash__(self):
 def output_stubs(self, stub, sort_flag):
     '''Output this stub and all its descendants.'''
     for s in stub.out_list or []:
+        # Indentation must be present when an item is added to stub.out_list.
         if self.output_file:
-            self.output_file.write(self.indent(s)+'\n')
+            self.output_file.write(s+'\n')
         else:
-            print(self.indent(s))
+            print(s)
     children = sorted(stub.children) if sort_flag else stub.children
     for child in children:
         self.output_stubs(child, sort_flag)

@@ -1072,7 +1072,8 @@ class StandAloneMakeStubFile:
                 self.output_directory = None # inhibit run().
         if 'prefix_lines' in parser.options('Global'):
             prefix = parser.get('Global', 'prefix_lines')
-            self.prefix_lines = [z.strip() for z in prefix.split('\n') if z.strip()]
+            self.prefix_lines = prefix.split('\n')
+                # The parser does not preserve leading whitespace.
             if verbose:
                 print('Prefix lines...\n')
                 for z in self.prefix_lines:
@@ -1330,10 +1331,11 @@ class StubTraverser (ast.NodeVisitor):
     def output_stubs(self, stub, sort_flag):
         '''Output this stub and all its descendants.'''
         for s in stub.out_list or []:
+            # Indentation must be present when an item is added to stub.out_list.
             if self.output_file:
-                self.output_file.write(self.indent(s)+'\n')
+                self.output_file.write(s+'\n')
             else:
-                print(self.indent(s))
+                print(s)
         children = sorted(stub.children) if sort_flag else stub.children
         for child in children:
             self.output_stubs(child, sort_flag)
