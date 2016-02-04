@@ -1167,6 +1167,7 @@ def __init__(self, controller):
 <t tx="ekr.20160126153212.84">
 def indent(self, s):
     '''Return s, properly indented.'''
+    # This version of indent *is* used.
     return '%s%s' % (' ' * 4 * self.level, s)
 
 def out(self, s):
