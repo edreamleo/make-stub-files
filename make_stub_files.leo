@@ -33,7 +33,6 @@
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
-<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh>&lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
@@ -164,10 +163,12 @@
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
+<v t="ekr.20160204154036.1"><vh>sf.indent</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
-<v t="ekr.20160202061118.1"><vh>sf.visit</vh></v>
-<v t="ekr.20160126153212.81"><vh>sf.Constants &amp; Name</vh></v>
+<v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
+<v t="ekr.20160126153212.81"><vh>sf.Constants</vh></v>
 <v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
+<v t="ekr.20160204153904.1"><vh>sf.Name</vh></v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
@@ -196,18 +197,24 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
+<v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
+<v t="ekr.20160126153212.74"></v>
 <v t="ekr.20160126153212.76"></v>
 <v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
+<v t="ekr.20160202061329.1"></v>
+<v t="ekr.20160202061118.1"></v>
 <v t="ekr.20160126153212.84"></v>
 <v t="ekr.20160203183228.1"></v>
 <v t="ekr.20160126153212.85"></v>
 <v t="ekr.20160126153212.87"></v>
 <v t="ekr.20160126153212.88"></v>
 </v>
+<v t="ekr.20160204113206.1"><vh>msf.create_patterns_dict TO DO</vh></v>
+<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -910,6 +917,8 @@ def __init__ (self):
         'Global', 'Def Name Patterns', 'General Patterns')
     self.def_patterns = [] # [Def Name Patterns]
     self.general_patterns = [] # [General Patterns]
+    self.names_dict = {}
+    self.patterns_dict = {}
 </t>
 <t tx="ekr.20160126153212.75">
 def make_stub_file(self, fn):
@@ -1111,9 +1120,6 @@ def do_BoolOp(self, node): # Python 2.x only.
 def do_Bytes(self, node): # Python 3.x only.
     return 'bytes' # return str(node.s)
 
-def do_Name(self, node):
-    return 'bool' if node.id in ('True', 'False') else node.id
-
 def do_Num(self, node):
     return 'number' # return repr(node.n)
 
@@ -1134,7 +1140,10 @@ def __init__(self, controller):
         # A StandAloneMakeStubFile instance.
     # Internal state ivars...
     self.class_name_stack = []
-    self.format = StubFormatter(x.general_patterns).format
+    sf = StubFormatter(x.general_patterns,
+                       x.names_dict,
+                       x.patterns_dict)
+    self.format = sf.format
     self.arg_format = AstArgFormatter().format
     self.in_function = False
     self.level = 0
@@ -1151,7 +1160,9 @@ def __init__(self, controller):
     self.warn = x.warn
     # Copies of controller patterns...
     self.def_patterns = x.def_patterns
+    self.names_dict = x.names_dict
     self.general_patterns = x.general_patterns
+    self.patterns_dict = x.patterns_dict
     </t>
 <t tx="ekr.20160126153212.84">
 def indent(self, s):
@@ -2004,19 +2015,6 @@ Design --update.
 
 - Optionally generate Any for all unknown argument types.
     
-Post: About speed with many patterns
-
-    sf.visit is a bottleneck when many patterns exist. I tested this by
-    repeating the sf.visit loop 10 times. How many patterns could we
-    handle? When there are many patterns, individual nodes could match only
-    those patterns that have been assigned to them.
-    
-    The --infer option would imply many patterns in addition to user
-    patterns. The good news: we could **discover which patterns match
-    where**, and assign specific patterns to specific (new) visitors.
-    
-    In short, **the original scheme was a premature optimization.**
-        
 - Task oriented docs
 
 Post: Cool inferences:
@@ -2117,9 +2115,11 @@ def visit(self, node):
         found, s = pattern.match(s)
     return s</t>
 <t tx="ekr.20160202061329.1">
-def __init__(self, general_patterns):
+def __init__(self, general_patterns, names_dict, patterns_dict):
     '''Ctor for StubFormatter class.'''
     self.general_patterns = general_patterns
+    self.names_dict = names_dict
+    self.patterns_dict = patterns_dict
 </t>
 <t tx="ekr.20160202064553.1">
 def match(self, patterns, s):
@@ -2154,8 +2154,10 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-The Stub class is operational. It allows stubs to be sorted.
-It is likely to have other uses in the --update logic.</t>
+Revised StubFormatter.Name and indent.
+- There is no need for a helper class!
+- Indent can simply be a do-nothing.
+- Output is unchanged, except for the new methods.</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2438,6 +2440,18 @@ def shortFileName(self,fileName, n=None):
         return os.path.basename(fileName)
     else:
         return '/'.join(fileName.replace('\\', '/').split('/')[-n:])
+</t>
+<t tx="ekr.20160204113206.1"></t>
+<t tx="ekr.20160204153904.1">
+def do_Name(self, node):
+    
+    name = self.names_dict.get(node.id, node.id)
+    return 'bool' if name in ('True', 'False') else name
+</t>
+<t tx="ekr.20160204154036.1">
+def indent(self, s):
+    # return '%s%s' % (' ' * 4 * self.level, s)
+    return s
 </t>
 </tnodes>
 </leo_file>

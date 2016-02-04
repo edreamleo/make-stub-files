@@ -935,6 +935,8 @@ class StandAloneMakeStubFile:
             'Global', 'Def Name Patterns', 'General Patterns')
         self.def_patterns = [] # [Def Name Patterns]
         self.general_patterns = [] # [General Patterns]
+        self.names_dict = {}
+        self.patterns_dict = {}
     def finalize(self, fn):
         '''Finalize and regularize a filename.'''
         fn = os.path.expanduser(fn)
@@ -1236,9 +1238,15 @@ class StubFormatter (AstFormatter):
     making pattern substitutions in Name and operator nodes.
     '''
 
-    def __init__(self, general_patterns):
+    def __init__(self, general_patterns, names_dict, patterns_dict):
         '''Ctor for StubFormatter class.'''
         self.general_patterns = general_patterns
+        self.names_dict = names_dict
+        self.patterns_dict = patterns_dict
+
+    def indent(self, s):
+        # return '%s%s' % (' ' * 4 * self.level, s)
+        return s
 
     def match(self, patterns, s):
         '''Return s with at most one pattern matched.'''
@@ -1267,9 +1275,6 @@ class StubFormatter (AstFormatter):
     def do_Bytes(self, node): # Python 3.x only.
         return 'bytes' # return str(node.s)
 
-    def do_Name(self, node):
-        return 'bool' if node.id in ('True', 'False') else node.id
-
     def do_Num(self, node):
         return 'number' # return repr(node.n)
 
@@ -1284,6 +1289,11 @@ class StubFormatter (AstFormatter):
         # Stripping the 'return' here is useful.
         return s[len('return'):].strip()
 
+    def do_Name(self, node):
+        
+        name = self.names_dict.get(node.id, node.id)
+        return 'bool' if name in ('True', 'False') else name
+
 
 class StubTraverser (ast.NodeVisitor):
     '''An ast.Node traverser class that outputs a stub for each class or def.'''
@@ -1294,7 +1304,10 @@ class StubTraverser (ast.NodeVisitor):
             # A StandAloneMakeStubFile instance.
         # Internal state ivars...
         self.class_name_stack = []
-        self.format = StubFormatter(x.general_patterns).format
+        sf = StubFormatter(x.general_patterns,
+                           x.names_dict,
+                           x.patterns_dict)
+        self.format = sf.format
         self.arg_format = AstArgFormatter().format
         self.in_function = False
         self.level = 0
@@ -1311,7 +1324,9 @@ class StubTraverser (ast.NodeVisitor):
         self.warn = x.warn
         # Copies of controller patterns...
         self.def_patterns = x.def_patterns
+        self.names_dict = x.names_dict
         self.general_patterns = x.general_patterns
+        self.patterns_dict = x.patterns_dict
         
 
     def indent(self, s):
