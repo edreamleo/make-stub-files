@@ -33,7 +33,6 @@
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
-<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh>&lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
@@ -124,6 +123,7 @@
 <v t="ekr.20160203095618.1"><vh>g.callers</vh></v>
 <v t="ekr.20160202170529.1"><vh>g.cls</vh></v>
 <v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
+<v t="ekr.20160203183934.1"><vh>g.shortFileName</vh></v>
 <v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
 </v>
 <v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
@@ -171,6 +171,7 @@
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
 <v t="ekr.20160126153212.84"><vh>st.indent &amp; out</vh></v>
+<v t="ekr.20160203183228.1"><vh>st.output_stubs</vh></v>
 <v t="ekr.20160126153212.85"><vh>st.run</vh></v>
 <v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
 <v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
@@ -196,13 +197,17 @@
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
-<v t="ekr.20160126153212.74"></v>
 <v t="ekr.20160126153212.76"></v>
 <v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
+<v t="ekr.20160126153212.84"></v>
+<v t="ekr.20160203183228.1"></v>
+<v t="ekr.20160126153212.85"></v>
+<v t="ekr.20160126153212.87"></v>
+<v t="ekr.20160126153212.88"></v>
 </v>
-<v t="ekr.20160203073604.1"></v>
+<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -945,7 +950,7 @@ def run(self):
         else:
             print('no output directory')
     elif not self.enable_unit_tests:
-         print('no input files')
+        print('no input files')
 </t>
 <t tx="ekr.20160126153212.77">
 def scan_command_line(self):
@@ -1133,6 +1138,7 @@ def __init__(self, controller):
     self.in_function = False
     self.level = 0
     self.output_file = None
+    self.parent_stub = None
     self.raw_format = AstFormatter().format
     self.returns = []
     self.warn_list = []
@@ -1153,10 +1159,13 @@ def indent(self, s):
 
 def out(self, s):
     '''Output the string to the console or the file.'''
-    if self.output_file:
-        self.output_file.write(self.indent(s)+'\n')
+    s = self.indent(s)
+    if self.parent_stub:
+        self.parent_stub.out_list.append(s)
+    elif self.output_file:
+        self.output_file.write(s+'\n')
     else:
-        print(self.indent(s))
+        print(s)
 </t>
 <t tx="ekr.20160126153212.85">
 def run(self, node):
@@ -1166,12 +1175,23 @@ def run(self, node):
     if os.path.exists(fn) and not self.overwrite:
         print('file exists: %s' % fn)
     elif not dir_ or os.path.exists(dir_):
-        self.output_file = open(fn, 'w')
-        for z in self.prefix_lines or []:
-            self.out(z.strip())
-        self.visit(node)
-        self.output_file.close()
-        self.output_file = None
+        if 1: # Delayed output allows sorting.
+            self.parent_stub = Stub('root','Root',parent=None)
+            for z in self.prefix_lines or []:
+                self.parent_stub.out_list.append(z)
+            self.visit(node)
+            self.output_file = open(fn, 'w')
+            self.output_stubs(self.parent_stub, sort_flag=True)
+            self.output_file.close()
+            self.output_file = None
+            self.parent_stub = None
+        else:
+            self.output_file = open(fn, 'w')
+            for z in self.prefix_lines or []:
+                self.out(z.strip())
+            self.visit(node)
+            self.output_file.close()
+            self.output_file = None
         print('wrote: %s' % fn)
     else:
         print('output directory not not found: %s' % dir_)
@@ -1182,6 +1202,8 @@ def run(self, node):
 
 def visit_ClassDef(self, node):
 
+    old_stub = self.parent_stub
+    self.parent_stub = Stub('class', node.name, old_stub)
     # Format...
     if not node.name.startswith('_'):
         if node.bases:
@@ -1199,6 +1221,7 @@ def visit_ClassDef(self, node):
     self.class_name_stack.pop()
     self.level -= 1
     self.in_function = old_in_function
+    self.parent_stub = old_stub
 </t>
 <t tx="ekr.20160126153212.88">
 # FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
@@ -1209,6 +1232,8 @@ def visit_FunctionDef(self, node):
     # We do not generate stubs for inner defs.
     if self.in_function: # or node.name.startswith('_'):
         return
+    old_stub = self.parent_stub
+    self.parent_stub = Stub('def', node.name, old_stub)
     # First, visit the function body.
     self.returns = []
     self.in_function = True
@@ -1222,6 +1247,7 @@ def visit_FunctionDef(self, node):
         node.name,
         self.format_arguments(node.args),
         self.format_returns(node)))
+    self.parent_stub = old_stub
 </t>
 <t tx="ekr.20160126153212.89">
 # arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
@@ -2125,11 +2151,7 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-python make_stub_files.py file-name now works.
-The script now handles missing config file gracefully.
-There is no longer a default config file, and none is needed:
-- The script now runs with reasonble defaults when there is no config file.
-- The output directory defaults to '.'</t>
+The Stub class is operational. It allows stubs to be sorted.</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2173,12 +2195,16 @@ class Stub(object):
     '''
     @others</t>
 <t tx="ekr.20160203073713.1">
-def __init__(self, name, parent, s):
+def __init__(self, kind, name, parent):
     '''Stub ctor.'''
     self.children = []
+    self.kind = kind
     self.name = name
+    self.out_list = []
     self.parent = parent
-    self.s = s
+    if parent:
+        assert isinstance(parent, Stub)
+        parent.children.append(self)
 
 def __repr__(self):
     '''Stub.__repr__.'''
@@ -2248,7 +2274,7 @@ def callers(self, n=4, count=0, excludeCaller=True, files=False):
     result = []
     i = 3 if excludeCaller else 2
     while 1:
-        s = _callerName(i, files=files)
+        s = self._callerName(i, files=files)
         # print(i,s)
         if s:
             result.append(s)
@@ -2268,16 +2294,16 @@ def _callerName(self, n=1, files=False):
         name = code1.co_name
         if name == '__init__':
             name = '__init__(%s,line %s)' % (
-                shortFileName(code1.co_filename), code1.co_firstlineno)
+                self.shortFileName(code1.co_filename), code1.co_firstlineno)
         if files:
-            return '%s:%s' % (shortFilename(code1.co_filename), name)
+            return '%s:%s' % (self.shortFileName(code1.co_filename), name)
         else:
             return name # The code name
     except ValueError:
         # print('g._callerName: ValueError',n)
         return '' # The stack is not deep enough.
     except Exception:
-        es_exception()
+        # es_exception()
         return '' # "&lt;no caller name&gt;"
 </t>
 <t tx="ekr.20160203105356.1">
@@ -2307,7 +2333,7 @@ def get_config_string(self):
 def __eq__(self, obj):
     """Stub.__eq__. Return ordering among siblings."""
     if isinstance(obj, Stub):
-        return self.name == obj.name()
+        return self.name == obj.name
     else:
         return NotImplemented
 
@@ -2368,8 +2394,8 @@ def __le__(self, other):
 <t tx="ekr.20160203134704.1">
 def full_name(self):
     '''Return full path to top parent.'''
-    if parent:
-        return '%s.%s' % (parent.full_name(), self.name)
+    if self.parent:
+        return '%s.%s' % (self.parent.full_name(), self.name)
     else:
         return self.name
 </t>
@@ -2377,7 +2403,7 @@ def full_name(self):
 def __hash__(self):
     '''Stub.__hash__'''
     if self.parent:
-        return parent.hash() + len(self.children)
+        return self.parent.hash() + len(self.children)
     else:
         return len(self.children)
 </t>
@@ -2389,5 +2415,24 @@ def __hash__(self):
         return name1 &gt; name2
     else:
         return bool(name1)</t>
+<t tx="ekr.20160203183228.1">
+def output_stubs(self, stub, sort_flag):
+    '''Output this stub and all its descendants.'''
+    for s in stub.out_list or []:
+        if self.output_file:
+            self.output_file.write(self.indent(s)+'\n')
+        else:
+            print(self.indent(s))
+    children = sorted(stub.children) if sort_flag else stub.children
+    for child in children:
+        self.output_stubs(child, sort_flag)
+</t>
+<t tx="ekr.20160203183934.1">
+def shortFileName(self,fileName, n=None):
+    if n is None or n &lt; 1:
+        return os.path.basename(fileName)
+    else:
+        return '/'.join(fileName.replace('\\', '/').split('/')[-n:])
+</t>
 </tnodes>
 </leo_file>

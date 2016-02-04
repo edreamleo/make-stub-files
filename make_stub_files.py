@@ -661,16 +661,16 @@ class LeoGlobals:
             name = code1.co_name
             if name == '__init__':
                 name = '__init__(%s,line %s)' % (
-                    shortFileName(code1.co_filename), code1.co_firstlineno)
+                    self.shortFileName(code1.co_filename), code1.co_firstlineno)
             if files:
-                return '%s:%s' % (shortFilename(code1.co_filename), name)
+                return '%s:%s' % (self.shortFileName(code1.co_filename), name)
             else:
                 return name # The code name
         except ValueError:
             # print('g._callerName: ValueError',n)
             return '' # The stack is not deep enough.
         except Exception:
-            es_exception()
+            # es_exception()
             return '' # "<no caller name>"
 
     def callers(self, n=4, count=0, excludeCaller=True, files=False):
@@ -686,7 +686,7 @@ class LeoGlobals:
         result = []
         i = 3 if excludeCaller else 2
         while 1:
-            s = _callerName(i, files=files)
+            s = self._callerName(i, files=files)
             # print(i,s)
             if s:
                 result.append(s)
@@ -709,6 +709,12 @@ class LeoGlobals:
         except ImportError:
             import pdb
             pdb.set_trace()
+
+    def shortFileName(self,fileName, n=None):
+        if n is None or n < 1:
+            return os.path.basename(fileName)
+        else:
+            return '/'.join(fileName.replace('\\', '/').split('/')[-n:])
 
     def trace(self, *args, **keys):
         try:
@@ -973,7 +979,7 @@ class StandAloneMakeStubFile:
             else:
                 print('no output directory')
         elif not self.enable_unit_tests:
-             print('no input files')
+            print('no input files')
 
     def run_all_unit_tests(self):
         
@@ -1164,12 +1170,16 @@ class Stub(object):
     This class is a prerequisite for -- update.
     '''
 
-    def __init__(self, name, parent, s):
+    def __init__(self, kind, name, parent):
         '''Stub ctor.'''
         self.children = []
+        self.kind = kind
         self.name = name
+        self.out_list = []
         self.parent = parent
-        self.s = s
+        if parent:
+            assert isinstance(parent, Stub)
+            parent.children.append(self)
 
     def __repr__(self):
         '''Stub.__repr__.'''
@@ -1180,7 +1190,7 @@ class Stub(object):
     def __eq__(self, obj):
         """Stub.__eq__. Return ordering among siblings."""
         if isinstance(obj, Stub):
-            return self.name == obj.name()
+            return self.name == obj.name
         else:
             return NotImplemented
 
@@ -1207,14 +1217,14 @@ class Stub(object):
     def __hash__(self):
         '''Stub.__hash__'''
         if self.parent:
-            return parent.hash() + len(self.children)
+            return self.parent.hash() + len(self.children)
         else:
             return len(self.children)
 
     def full_name(self):
         '''Return full path to top parent.'''
-        if parent:
-            return '%s.%s' % (parent.full_name(), self.name)
+        if self.parent:
+            return '%s.%s' % (self.parent.full_name(), self.name)
         else:
             return self.name
 
@@ -1288,6 +1298,7 @@ class StubTraverser (ast.NodeVisitor):
         self.in_function = False
         self.level = 0
         self.output_file = None
+        self.parent_stub = None
         self.raw_format = AstFormatter().format
         self.returns = []
         self.warn_list = []
@@ -1308,10 +1319,24 @@ class StubTraverser (ast.NodeVisitor):
 
     def out(self, s):
         '''Output the string to the console or the file.'''
-        if self.output_file:
-            self.output_file.write(self.indent(s)+'\n')
+        s = self.indent(s)
+        if self.parent_stub:
+            self.parent_stub.out_list.append(s)
+        elif self.output_file:
+            self.output_file.write(s+'\n')
         else:
-            print(self.indent(s))
+            print(s)
+
+    def output_stubs(self, stub, sort_flag):
+        '''Output this stub and all its descendants.'''
+        for s in stub.out_list or []:
+            if self.output_file:
+                self.output_file.write(self.indent(s)+'\n')
+            else:
+                print(self.indent(s))
+        children = sorted(stub.children) if sort_flag else stub.children
+        for child in children:
+            self.output_stubs(child, sort_flag)
 
     def run(self, node):
         '''StubTraverser.run: write the stubs in node's tree to self.output_fn.'''
@@ -1320,12 +1345,23 @@ class StubTraverser (ast.NodeVisitor):
         if os.path.exists(fn) and not self.overwrite:
             print('file exists: %s' % fn)
         elif not dir_ or os.path.exists(dir_):
-            self.output_file = open(fn, 'w')
-            for z in self.prefix_lines or []:
-                self.out(z.strip())
-            self.visit(node)
-            self.output_file.close()
-            self.output_file = None
+            if 1: # Delayed output allows sorting.
+                self.parent_stub = Stub('root','Root',parent=None)
+                for z in self.prefix_lines or []:
+                    self.parent_stub.out_list.append(z)
+                self.visit(node)
+                self.output_file = open(fn, 'w')
+                self.output_stubs(self.parent_stub, sort_flag=True)
+                self.output_file.close()
+                self.output_file = None
+                self.parent_stub = None
+            else:
+                self.output_file = open(fn, 'w')
+                for z in self.prefix_lines or []:
+                    self.out(z.strip())
+                self.visit(node)
+                self.output_file.close()
+                self.output_file = None
             print('wrote: %s' % fn)
         else:
             print('output directory not not found: %s' % dir_)
@@ -1335,6 +1371,8 @@ class StubTraverser (ast.NodeVisitor):
 
     def visit_ClassDef(self, node):
 
+        old_stub = self.parent_stub
+        self.parent_stub = Stub('class', node.name, old_stub)
         # Format...
         if not node.name.startswith('_'):
             if node.bases:
@@ -1352,6 +1390,7 @@ class StubTraverser (ast.NodeVisitor):
         self.class_name_stack.pop()
         self.level -= 1
         self.in_function = old_in_function
+        self.parent_stub = old_stub
 
     # FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
 
@@ -1361,6 +1400,8 @@ class StubTraverser (ast.NodeVisitor):
         # We do not generate stubs for inner defs.
         if self.in_function: # or node.name.startswith('_'):
             return
+        old_stub = self.parent_stub
+        self.parent_stub = Stub('def', node.name, old_stub)
         # First, visit the function body.
         self.returns = []
         self.in_function = True
@@ -1374,6 +1415,7 @@ class StubTraverser (ast.NodeVisitor):
             node.name,
             self.format_arguments(node.args),
             self.format_returns(node)))
+        self.parent_stub = old_stub
 
     # arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
 
