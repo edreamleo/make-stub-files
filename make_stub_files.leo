@@ -162,13 +162,13 @@
 <v t="ekr.20160203134704.1"><vh>stub.full_name</vh></v>
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
+<v t="ekr.20160126153212.81"><vh>sf.Constants</vh></v>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
 <v t="ekr.20160204154036.1"><vh>sf.indent</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
-<v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
-<v t="ekr.20160126153212.81"><vh>sf.Constants</vh></v>
-<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
 <v t="ekr.20160204153904.1"><vh>sf.Name</vh></v>
+<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
+<v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
@@ -2445,7 +2445,7 @@ def shortFileName(self,fileName, n=None):
 <t tx="ekr.20160204113206.1"></t>
 <t tx="ekr.20160204153904.1">
 def do_Name(self, node):
-    
+    '''StubFormatter.do_name.'''
     name = self.names_dict.get(node.id, node.id)
     return 'bool' if name in ('True', 'False') else name
 </t>

@@ -1238,6 +1238,21 @@ class StubFormatter (AstFormatter):
     making pattern substitutions in Name and operator nodes.
     '''
 
+    # Return generic markers to allow better pattern matches.
+
+    def do_BoolOp(self, node): # Python 2.x only.
+        return 'bool'
+
+    def do_Bytes(self, node): # Python 3.x only.
+        return 'bytes' # return str(node.s)
+
+    def do_Num(self, node):
+        return 'number' # return repr(node.n)
+
+    def do_Str(self, node):
+        '''This represents a string constant.'''
+        return 'str' # return repr(node.s)
+
     def __init__(self, general_patterns, names_dict, patterns_dict):
         '''Ctor for StubFormatter class.'''
         self.general_patterns = general_patterns
@@ -1256,6 +1271,18 @@ class StubFormatter (AstFormatter):
                 break
         return s
 
+    def do_Name(self, node):
+        '''StubFormatter.do_name.'''
+        name = self.names_dict.get(node.id, node.id)
+        return 'bool' if name in ('True', 'False') else name
+
+    def do_Return(self, node):
+        '''StubFormatter.do_Return. Return only the return expression itself.'''
+        s = AstFormatter.do_Return(self, node)
+        assert s.startswith('return'), repr(s)
+        # Stripping the 'return' here is useful.
+        return s[len('return'):].strip()
+
     def visit(self, node):
         '''
         Return the formatted version of an Ast node after
@@ -1266,33 +1293,6 @@ class StubFormatter (AstFormatter):
         for pattern in self.general_patterns:
             found, s = pattern.match(s)
         return s
-
-    # Return generic markers to allow better pattern matches.
-
-    def do_BoolOp(self, node): # Python 2.x only.
-        return 'bool'
-
-    def do_Bytes(self, node): # Python 3.x only.
-        return 'bytes' # return str(node.s)
-
-    def do_Num(self, node):
-        return 'number' # return repr(node.n)
-
-    def do_Str(self, node):
-        '''This represents a string constant.'''
-        return 'str' # return repr(node.s)
-
-    def do_Return(self, node):
-        '''StubFormatter.do_Return. Return only the return expression itself.'''
-        s = AstFormatter.do_Return(self, node)
-        assert s.startswith('return'), repr(s)
-        # Stripping the 'return' here is useful.
-        return s[len('return'):].strip()
-
-    def do_Name(self, node):
-        
-        name = self.names_dict.get(node.id, node.id)
-        return 'bool' if name in ('True', 'False') else name
 
 
 class StubTraverser (ast.NodeVisitor):
