@@ -1023,7 +1023,7 @@ class StandAloneMakeStubFile:
         self.enable_unit_tests=options.test
         self.fast_match = options.fast
         self.overwrite = options.overwrite
-        self.update = options.update
+        self.update_flag = options.update
         self.verbose = options.verbose
         self.warn = options.warn
         if options.fn:
@@ -1435,6 +1435,7 @@ class StubTraverser (ast.NodeVisitor):
         self.output_fn = x.output_fn
         self.overwrite = x.overwrite
         self.prefix_lines = x.prefix_lines
+        self.update_flag = x.update_flag
         self.warn = x.warn
         # Copies of controller patterns...
         self.def_patterns = x.def_patterns
@@ -1478,23 +1479,18 @@ class StubTraverser (ast.NodeVisitor):
             print('file exists: %s' % fn)
         elif not dir_ or os.path.exists(dir_):
             t1 = time.clock()
-            if 1: # Delayed output allows sorting.
-                self.parent_stub = Stub('root','Root',parent=None)
-                for z in self.prefix_lines or []:
-                    self.parent_stub.out_list.append(z)
-                self.visit(node)
-                self.output_file = open(fn, 'w')
-                self.output_stubs(self.parent_stub, sort_flag=True)
-                self.output_file.close()
-                self.output_file = None
-                self.parent_stub = None
-            else:
-                self.output_file = open(fn, 'w')
-                for z in self.prefix_lines or []:
-                    self.out(z.strip())
-                self.visit(node)
-                self.output_file.close()
-                self.output_file = None
+            # Delayed output allows sorting.
+            self.parent_stub = Stub('root','Root',parent=None)
+            for z in self.prefix_lines or []:
+                self.parent_stub.out_list.append(z)
+            self.visit(node)
+            if self.update_flag:
+                self.update()
+            self.output_file = open(fn, 'w')
+            self.output_stubs(self.parent_stub, sort_flag=True)
+            self.output_file.close()
+            self.output_file = None
+            self.parent_stub = None
             t2 = time.clock()
             # slow: 6.7 sec. # Fast: 0.4 sec.
             # print('fast_match: %s' % fast_match)
@@ -1502,6 +1498,9 @@ class StubTraverser (ast.NodeVisitor):
         else:
             print('output directory not not found: %s' % dir_)
 
+    def update(self):
+        '''Alter self.parent_stub so it contains only updated stubs.'''
+        g.trace('--update not ready yet')
 
     # ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
 
