@@ -31,7 +31,6 @@
 </v>
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
-<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 <v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh>&lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
@@ -203,16 +202,9 @@
 </v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160126153212.74"></v>
-<v t="ekr.20160204170443.1"></v>
-<v t="ekr.20160204170921.1"></v>
-<v t="ekr.20160204113206.1"></v>
-<v t="ekr.20160126153212.77"></v>
-<v t="ekr.20160126153212.78"></v>
-<v t="ekr.20160126153212.79"></v>
-<v t="ekr.20160126153212.81"></v>
-<v t="ekr.20160204153904.1"></v>
 <v t="ekr.20160202061118.1"></v>
 <v t="ekr.20160126153212.85"></v>
+<v t="ekr.20160126153212.77"></v>
 </v>
 </vnodes>
 <tnodes>
@@ -227,8 +219,6 @@ For full details, see README.md.
 This file is in the public domain.
 '''
 &lt;&lt; imports &gt;&gt;
-
-fast_match = True
 
 @others
 g = LeoGlobals() # For ekr.
@@ -903,6 +893,7 @@ def __init__ (self):
     self.config_fn = None
         # self.finalize('~/stubs/make_stub_files.cfg')
     self.enable_unit_tests = False
+    self.fast_match = False
     self.files = [] # May also be set in the config file.
     self.verbose = False # Trace config arguments.
     # Ivars set in the config file...
@@ -989,6 +980,7 @@ def scan_command_line(self):
     options, args = parser.parse_args()
     # Handle the options...
     self.enable_unit_tests=options.unit_test
+    self.fast_match = options.fast
     self.overwrite = options.overwrite
     self.verbose = options.verbose
     self.warn = options.warn
@@ -1146,9 +1138,7 @@ def __init__(self, controller):
         # A StandAloneMakeStubFile instance.
     # Internal state ivars...
     self.class_name_stack = []
-    sf = StubFormatter(x.general_patterns,
-                       x.names_dict,
-                       x.patterns_dict)
+    sf = StubFormatter(controller)
     self.format = sf.format
     self.arg_format = AstArgFormatter().format
     self.in_function = False
@@ -1159,6 +1149,7 @@ def __init__(self, controller):
     self.returns = []
     self.warn_list = []
     # Copies of controller ivars...
+    self.fast_match = x.fast_match
     self.output_fn = x.output_fn
     self.overwrite = x.overwrite
     self.prefix_lines = x.prefix_lines
@@ -1214,7 +1205,7 @@ def run(self, node):
         t2 = time.clock()
         # slow: 6.7 sec. # Fast: 0.4 sec.
         # print('fast_match: %s' % fast_match)
-        print('wrote: %s in %4.2f sec' % (fn, t2-t1))
+        print('wrote: (fast=%s) %s in %4.2f sec' % (self.fast_match, fn, t2-t1))
     else:
         print('output directory not not found: %s' % dir_)
 
@@ -1972,12 +1963,9 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
+- Do --update.
 - Post (reply): Use [Def Name Patterns] to make inferences!
-- Add --fast.
-- Remove --trace and --verbose.
 - Optionally generate Any for all unknown argument types.
-
-=== Urgent: Do --update.
 - Task oriented docs
 
 Status:
@@ -2079,7 +2067,7 @@ def visit(self, node):
     '''
     # This is the heart of this script.
     s = AstFormatter.visit(self, node)
-    if fast_match:
+    if self.fast_match:
         # Match only the patterns associated with this node.
         name = node.__class__.__name__
         for pattern in self.patterns_dict.get(name, []):
@@ -2100,11 +2088,13 @@ def visit(self, node):
     return s
 </t>
 <t tx="ekr.20160202061329.1">
-def __init__(self, general_patterns, names_dict, patterns_dict):
+def __init__(self, controller):
     '''Ctor for StubFormatter class.'''
-    self.general_patterns = general_patterns
-    self.names_dict = names_dict
-    self.patterns_dict = patterns_dict
+    self.controller = x = controller
+    self.fast_match = x.fast_match
+    self.general_patterns = x.general_patterns
+    self.names_dict = x.names_dict
+    self.patterns_dict = x.patterns_dict
 </t>
 <t tx="ekr.20160202064553.1">
 def match(self, patterns, s):
@@ -2136,15 +2126,6 @@ def match(self, patterns, s):
             return True, s
         else:
             return False, s
-</t>
-<t tx="ekr.20160202080826.1">@language rest
-@wrap
-
-Added fast_match code. Fast 0.4 sec. Slow: 6.7 sec.
-- The patterns_dict now associates op names with lists of ast.Node names.
-- The names_dict associates names with patterns.  Used in do_name.
-- New methods: make_op_name_dict, make_patterns_dict, find_pattern_ops.
-- Added timing to StubTraverser.run
 </t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
