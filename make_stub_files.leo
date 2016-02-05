@@ -31,6 +31,7 @@
 </v>
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
+<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 <v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh>&lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
@@ -213,7 +214,6 @@
 <v t="ekr.20160202061118.1"></v>
 <v t="ekr.20160126153212.85"></v>
 </v>
-<v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -904,7 +904,6 @@ def __init__ (self):
         # self.finalize('~/stubs/make_stub_files.cfg')
     self.enable_unit_tests = False
     self.files = [] # May also be set in the config file.
-    self.trace = False # Trace pattern substitutions.
     self.verbose = False # Trace config arguments.
     # Ivars set in the config file...
     self.output_fn = None
@@ -912,7 +911,6 @@ def __init__ (self):
         # self.finalize('~/stubs')
     self.overwrite = False
     self.prefix_lines = []
-    self.trace = False
     self.warn = False
     # Pattern lists, set by config sections...
     self.section_names = (
@@ -975,10 +973,12 @@ def scan_command_line(self):
         help='full path to configuration file')
     add('-d', '--dir', dest='dir',
         help='full path to the output directory')
+    add('-f', '--fast', action='store_true', default=False,
+        help= 'Fast matching (experimental)')
     add('-o', '--overwrite', action='store_true', default=False,
         help='overwrite existing stub (.pyi) files')
-    add('-t', '--trace', action='store_true', default=False,
-        help='trace argument substitutions')
+    # add('-t', '--trace', action='store_true', default=False,
+        # help='trace argument substitutions')
     add('-u', '--unit-test', action='store_true', default=False,
         help='enable unit tests at startup')
     add('-v', '--verbose', action='store_true', default=False,
@@ -990,8 +990,7 @@ def scan_command_line(self):
     # Handle the options...
     self.enable_unit_tests=options.unit_test
     self.overwrite = options.overwrite
-    self.trace = self.trace or options.trace
-    self.verbose = self.verbose or options.verbose
+    self.verbose = options.verbose
     self.warn = options.warn
     if options.fn:
         self.config_fn = options.fn
@@ -1013,7 +1012,7 @@ def scan_command_line(self):
 <t tx="ekr.20160126153212.78">
 def scan_options(self):
     '''Set all configuration-related ivars.'''
-    verbose = False or self.verbose
+    trace = False
     if not self.config_fn:
         return
     self.parser = parser = self.create_parser()
@@ -1032,7 +1031,7 @@ def scan_options(self):
     for z in files:
         files2.extend(glob.glob(self.finalize(z)))
     self.files = [z for z in files2 if z and os.path.exists(z)]
-    if verbose:
+    if trace:
         print('Files (from %s)...\n' % files_source)
         for z in self.files:
             print(z)
@@ -1042,7 +1041,7 @@ def scan_options(self):
         output_dir = self.finalize(s)
         if os.path.exists(output_dir):
             self.output_directory = output_dir
-            if verbose:
+            if self.verbose:
                 print('output directory: %s\n' % output_dir)
         else:
             print('output directory not found: %s\n' % output_dir)
@@ -1051,7 +1050,7 @@ def scan_options(self):
         prefix = parser.get('Global', 'prefix_lines')
         self.prefix_lines = prefix.split('\n')
             # The parser does not preserve leading whitespace.
-        if verbose:
+        if trace:
             print('Prefix lines...\n')
             for z in self.prefix_lines:
                 print(z)
@@ -1063,7 +1062,7 @@ def scan_options(self):
 <t tx="ekr.20160126153212.79">
 def scan_patterns(self, section_name):
     '''Parse the config section into a list of patterns, preserving order.'''
-    trace = False or self.verbose
+    trace = False
     parser = self.parser
     aList = []
     if parser.has_section(section_name):
@@ -1078,7 +1077,7 @@ def scan_patterns(self, section_name):
                 g.trace('duplicate key', key)
             else:
                 seen.add(key)
-                aList.append(Pattern(key, value, self.trace))
+                aList.append(Pattern(key, value))
         if trace:
             g.trace('%s...\n' % section_name)
             for z in aList:
@@ -1163,7 +1162,6 @@ def __init__(self, controller):
     self.output_fn = x.output_fn
     self.overwrite = x.overwrite
     self.prefix_lines = x.prefix_lines
-    self.trace = x.trace
     self.warn = x.warn
     # Copies of controller patterns...
     self.def_patterns = x.def_patterns
@@ -1327,7 +1325,7 @@ def format_returns(self, node):
     - Patterns in [Def Name Patterns] override all other patterns.
     - Otherwise, return a list of return values.
     '''
-    trace = self.trace
+    trace = False
     name = self.get_def_name(node)
     r1 = [self.format(z) for z in self.returns]
         # Allow StubFormatter.do_Return to do the hack.
@@ -1494,17 +1492,17 @@ class Pattern(object):
     @others
 </t>
 <t tx="ekr.20160128042705.1">
-def all_matches(self, s, trace=False):
+def all_matches(self, s):
     '''
     Return a list of match objects for all matches in s.
     These are regex match objects or (start, end) for balanced searches.
     '''
-    trace = trace or self.trace
+    trace = False
     if self.is_balanced():
         aList, i = [], 0
         while i &lt; len(s):
             progress = i
-            j = self.full_balanced_match(s, i, trace=trace)
+            j = self.full_balanced_match(s, i)
             if j is None:
                 i += 1
             else:
@@ -1527,11 +1525,12 @@ def is_balanced(self):
     return False
 </t>
 <t tx="ekr.20160128045845.1">
-def match_balanced(self, delim, s, i, trace=False):
+def match_balanced(self, delim, s, i):
     '''
     delim == s[i] and delim is in '([{'
     Return the index of the end of the balanced parenthesized string, or len(s)+1.
     '''
+    trace = False
     assert s[i] == delim, s[i]
     assert delim in '([{'
     delim2 = ')]}'['([{'.index(delim)]
@@ -1554,10 +1553,10 @@ def match_balanced(self, delim, s, i, trace=False):
     return len(s) + 1
 </t>
 <t tx="ekr.20160128051025.1">
-def full_balanced_match(self, s, i, trace=False):
+def full_balanced_match(self, s, i):
     '''Return the index of the end of the match found at s[i:] or None.'''
     i1 = i
-    trace = trace or self.trace # or self.find_s.endswith('*')
+    trace = False
     if trace: g.trace(self.find_s, s[i:].rstrip())
     pattern = self.find_s
     j = 0 # index into pattern
@@ -1565,7 +1564,7 @@ def full_balanced_match(self, s, i, trace=False):
         progress = i
         if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
             delim = pattern[j]
-            i = self.match_balanced(delim, s, i, trace=trace)
+            i = self.match_balanced(delim, s, i)
             j += 3
         elif j == len(pattern)-1 and pattern[j] == '*':
             # A trailing * matches the rest of the string.
@@ -1760,9 +1759,8 @@ tuple(*): Tuple[*]
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
 <t tx="ekr.20160128113859.1">
-def __init__ (self, find_s, repl_s='', trace=False):
+def __init__ (self, find_s, repl_s=''):
     '''Ctor for the Pattern class.'''
-   
     self.find_s = find_s
     self.repl_s = repl_s
     if self.is_balanced():
@@ -1776,7 +1774,6 @@ def __init__ (self, find_s, repl_s='', trace=False):
             else:
                 result.append('\\'+ch)
         self.regex = re.compile(''.join(result))
-    self.trace = trace
 </t>
 <t tx="ekr.20160128113914.1">
 def __repr__(self):
@@ -1786,10 +1783,10 @@ def __repr__(self):
 __str__ = __repr__
 </t>
 <t tx="ekr.20160128114726.1">
-def match_entire_string(self, s, trace=False):
+def match_entire_string(self, s):
     '''Return True if s matches self.find_s'''
     if self.is_balanced():
-        j = self.full_balanced_match(s, 0, trace=trace)
+        j = self.full_balanced_match(s, 0)
         return j is not None
     else:
         m = self.regex.match(s)
@@ -1975,17 +1972,24 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- Remove trace and verbose options.
-- Optionally generate Any for all unknown argument types.
-- Task oriented docs
-- Design --update.
 - Post (reply): Use [Def Name Patterns] to make inferences!
+- Add --fast.
+- Remove --trace and --verbose.
+- Optionally generate Any for all unknown argument types.
+
+=== Urgent: Do --update.
+- Task oriented docs
+
+Status:
+- Need a better pattern language.
+    - Doesn't handle ops like "in", "not", "and", "or".
+    - Doesn't handle `* not in *`, for example
+- A slightly different traverser could do "real" type inference.
+  It's not clear whether it would really be better.
 
 Later:
-
 - Add more inferences. (Simulates --infer)
 - Preserve existing annotations?
-  It doesn't seem urgent.
   The script would have to be run with Python 3.
 </t>
 <t tx="ekr.20160131175042.1">class TestClass:
@@ -2025,8 +2029,9 @@ def trace(self, *args, **keys):
     # return self.is_known_type(s[1:-1])
     return f(s[1:-1])</t>
 <t tx="ekr.20160131204607.1">
-def replace(self, m, s, trace=False):
+def replace(self, m, s):
     '''Use m (returned by all_matches) to replace the pattern in s.'''
+    trace = False
     if self.is_balanced():
         start, end = m
     else:
@@ -2110,13 +2115,14 @@ def match(self, patterns, s):
             break
     return s
 </t>
-<t tx="ekr.20160202070025.1">def match(self, s, trace=False):
+<t tx="ekr.20160202070025.1">def match(self, s):
     '''
     Perform the match on the entire string if possible.
     Return (found, new s)
     '''
+    trace = False
     if self.is_balanced():
-        j = self.full_balanced_match(s, 0, trace=trace)
+        j = self.full_balanced_match(s, 0)
         if j is None:
             return False, s
         else:

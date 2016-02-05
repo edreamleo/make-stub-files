@@ -738,9 +738,8 @@ class Pattern(object):
             s = pattern.replace(m, s)
     '''
 
-    def __init__ (self, find_s, repl_s='', trace=False):
+    def __init__ (self, find_s, repl_s=''):
         '''Ctor for the Pattern class.'''
-       
         self.find_s = find_s
         self.repl_s = repl_s
         if self.is_balanced():
@@ -754,7 +753,6 @@ class Pattern(object):
                 else:
                     result.append('\\'+ch)
             self.regex = re.compile(''.join(result))
-        self.trace = trace
 
     def __eq__(self, obj):
         """Return True if two Patterns are equivalent."""
@@ -787,17 +785,17 @@ class Pattern(object):
                 return True
         return False
 
-    def all_matches(self, s, trace=False):
+    def all_matches(self, s):
         '''
         Return a list of match objects for all matches in s.
         These are regex match objects or (start, end) for balanced searches.
         '''
-        trace = trace or self.trace
+        trace = False
         if self.is_balanced():
             aList, i = [], 0
             while i < len(s):
                 progress = i
-                j = self.full_balanced_match(s, i, trace=trace)
+                j = self.full_balanced_match(s, i)
                 if j is None:
                     i += 1
                 else:
@@ -808,10 +806,10 @@ class Pattern(object):
         else:
             return list(self.regex.finditer(s))
 
-    def full_balanced_match(self, s, i, trace=False):
+    def full_balanced_match(self, s, i):
         '''Return the index of the end of the match found at s[i:] or None.'''
         i1 = i
-        trace = trace or self.trace # or self.find_s.endswith('*')
+        trace = False
         if trace: g.trace(self.find_s, s[i:].rstrip())
         pattern = self.find_s
         j = 0 # index into pattern
@@ -819,7 +817,7 @@ class Pattern(object):
             progress = i
             if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
                 delim = pattern[j]
-                i = self.match_balanced(delim, s, i, trace=trace)
+                i = self.match_balanced(delim, s, i)
                 j += 3
             elif j == len(pattern)-1 and pattern[j] == '*':
                 # A trailing * matches the rest of the string.
@@ -835,11 +833,12 @@ class Pattern(object):
             g.trace('%s -> %s' % (pattern, s[i1:i]))
         return i if found else None
 
-    def match_balanced(self, delim, s, i, trace=False):
+    def match_balanced(self, delim, s, i):
         '''
         delim == s[i] and delim is in '([{'
         Return the index of the end of the balanced parenthesized string, or len(s)+1.
         '''
+        trace = False
         assert s[i] == delim, s[i]
         assert delim in '([{'
         delim2 = ')]}'['([{'.index(delim)]
@@ -860,13 +859,14 @@ class Pattern(object):
         # Unmatched: a syntax error.
         print('***** unmatched %s in %s' % (delim, s))
         return len(s) + 1
-    def match(self, s, trace=False):
+    def match(self, s):
         '''
         Perform the match on the entire string if possible.
         Return (found, new s)
         '''
+        trace = False
         if self.is_balanced():
-            j = self.full_balanced_match(s, 0, trace=trace)
+            j = self.full_balanced_match(s, 0)
             if j is None:
                 return False, s
             else:
@@ -881,17 +881,18 @@ class Pattern(object):
             else:
                 return False, s
 
-    def match_entire_string(self, s, trace=False):
+    def match_entire_string(self, s):
         '''Return True if s matches self.find_s'''
         if self.is_balanced():
-            j = self.full_balanced_match(s, 0, trace=trace)
+            j = self.full_balanced_match(s, 0)
             return j is not None
         else:
             m = self.regex.match(s)
             return m and m.group(0) == s
 
-    def replace(self, m, s, trace=False):
+    def replace(self, m, s):
         '''Use m (returned by all_matches) to replace the pattern in s.'''
+        trace = False
         if self.is_balanced():
             start, end = m
         else:
@@ -924,7 +925,6 @@ class StandAloneMakeStubFile:
             # self.finalize('~/stubs/make_stub_files.cfg')
         self.enable_unit_tests = False
         self.files = [] # May also be set in the config file.
-        self.trace = False # Trace pattern substitutions.
         self.verbose = False # Trace config arguments.
         # Ivars set in the config file...
         self.output_fn = None
@@ -932,7 +932,6 @@ class StandAloneMakeStubFile:
             # self.finalize('~/stubs')
         self.overwrite = False
         self.prefix_lines = []
-        self.trace = False
         self.warn = False
         # Pattern lists, set by config sections...
         self.section_names = (
@@ -1007,10 +1006,12 @@ class StandAloneMakeStubFile:
             help='full path to configuration file')
         add('-d', '--dir', dest='dir',
             help='full path to the output directory')
+        add('-f', '--fast', action='store_true', default=False,
+            help= 'Fast matching (experimental)')
         add('-o', '--overwrite', action='store_true', default=False,
             help='overwrite existing stub (.pyi) files')
-        add('-t', '--trace', action='store_true', default=False,
-            help='trace argument substitutions')
+        # add('-t', '--trace', action='store_true', default=False,
+            # help='trace argument substitutions')
         add('-u', '--unit-test', action='store_true', default=False,
             help='enable unit tests at startup')
         add('-v', '--verbose', action='store_true', default=False,
@@ -1022,8 +1023,7 @@ class StandAloneMakeStubFile:
         # Handle the options...
         self.enable_unit_tests=options.unit_test
         self.overwrite = options.overwrite
-        self.trace = self.trace or options.trace
-        self.verbose = self.verbose or options.verbose
+        self.verbose = options.verbose
         self.warn = options.warn
         if options.fn:
             self.config_fn = options.fn
@@ -1044,7 +1044,7 @@ class StandAloneMakeStubFile:
 
     def scan_options(self):
         '''Set all configuration-related ivars.'''
-        verbose = False or self.verbose
+        trace = False
         if not self.config_fn:
             return
         self.parser = parser = self.create_parser()
@@ -1063,7 +1063,7 @@ class StandAloneMakeStubFile:
         for z in files:
             files2.extend(glob.glob(self.finalize(z)))
         self.files = [z for z in files2 if z and os.path.exists(z)]
-        if verbose:
+        if trace:
             print('Files (from %s)...\n' % files_source)
             for z in self.files:
                 print(z)
@@ -1073,7 +1073,7 @@ class StandAloneMakeStubFile:
             output_dir = self.finalize(s)
             if os.path.exists(output_dir):
                 self.output_directory = output_dir
-                if verbose:
+                if self.verbose:
                     print('output directory: %s\n' % output_dir)
             else:
                 print('output directory not found: %s\n' % output_dir)
@@ -1082,7 +1082,7 @@ class StandAloneMakeStubFile:
             prefix = parser.get('Global', 'prefix_lines')
             self.prefix_lines = prefix.split('\n')
                 # The parser does not preserve leading whitespace.
-            if verbose:
+            if trace:
                 print('Prefix lines...\n')
                 for z in self.prefix_lines:
                     print(z)
@@ -1235,7 +1235,7 @@ class StandAloneMakeStubFile:
 
     def scan_patterns(self, section_name):
         '''Parse the config section into a list of patterns, preserving order.'''
-        trace = False or self.verbose
+        trace = False
         parser = self.parser
         aList = []
         if parser.has_section(section_name):
@@ -1250,7 +1250,7 @@ class StandAloneMakeStubFile:
                     g.trace('duplicate key', key)
                 else:
                     seen.add(key)
-                    aList.append(Pattern(key, value, self.trace))
+                    aList.append(Pattern(key, value))
             if trace:
                 g.trace('%s...\n' % section_name)
                 for z in aList:
@@ -1433,7 +1433,6 @@ class StubTraverser (ast.NodeVisitor):
         self.output_fn = x.output_fn
         self.overwrite = x.overwrite
         self.prefix_lines = x.prefix_lines
-        self.trace = x.trace
         self.warn = x.warn
         # Copies of controller patterns...
         self.def_patterns = x.def_patterns
@@ -1598,7 +1597,7 @@ class StubTraverser (ast.NodeVisitor):
         - Patterns in [Def Name Patterns] override all other patterns.
         - Otherwise, return a list of return values.
         '''
-        trace = self.trace
+        trace = False
         name = self.get_def_name(node)
         r1 = [self.format(z) for z in self.returns]
             # Allow StubFormatter.do_Return to do the hack.
