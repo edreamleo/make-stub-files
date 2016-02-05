@@ -11,9 +11,6 @@
 <find_panel_settings/>
 <vnodes>
 <v t="ekr.20160126153016.3"><vh>Unused</vh>
-<v t="ekr.20160126153212.92"><vh>st.munge_ret &amp; helper</vh>
-<v t="ekr.20160126153212.93"><vh>st.match_ret_patterns</vh></v>
-</v>
 <v t="ekr.20160203134203.1"><vh>pattern.__gt/lt/ge/le__</vh></v>
 <v t="ekr.20160203154154.1"><vh>from Stub.__gt__</vh></v>
 </v>
@@ -33,6 +30,8 @@
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
 </v>
+<v t="ekr.20160131174909.1"><vh>** To do</vh></v>
+<v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh>&lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
@@ -147,10 +146,13 @@
 <v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
 <v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
+<v t="ekr.20160204170921.1"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
+<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops</vh></v>
 <v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
 <v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
 <v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
+<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict</vh></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
@@ -162,19 +164,20 @@
 <v t="ekr.20160203134704.1"><vh>stub.full_name</vh></v>
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
-<v t="ekr.20160126153212.81"><vh>sf.Constants</vh></v>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
-<v t="ekr.20160204154036.1"><vh>sf.indent</vh></v>
+<v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
+<v t="ekr.20160204164606.1"><vh>sf.visitors</vh>
+<v t="ekr.20160126153212.81"><vh>sf.Constants</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
 <v t="ekr.20160204153904.1"><vh>sf.Name</vh></v>
 <v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
-<v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
+</v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
 <v t="ekr.20160126153212.84"><vh>st.indent &amp; out</vh></v>
 <v t="ekr.20160203183228.1"><vh>st.output_stubs</vh></v>
-<v t="ekr.20160126153212.85"><vh>st.run</vh></v>
+<v t="ekr.20160126153212.85"><vh>st.run (main line)</vh></v>
 <v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
 <v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
 <v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
@@ -197,23 +200,19 @@
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
 </v>
-<v t="ekr.20160128104639.1"></v>
-<v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160126153212.74"></v>
-<v t="ekr.20160126153212.76"></v>
+<v t="ekr.20160204170443.1"></v>
+<v t="ekr.20160204170921.1"></v>
+<v t="ekr.20160204113206.1"></v>
 <v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160126153212.78"></v>
 <v t="ekr.20160126153212.79"></v>
-<v t="ekr.20160202061329.1"></v>
+<v t="ekr.20160126153212.81"></v>
+<v t="ekr.20160204153904.1"></v>
 <v t="ekr.20160202061118.1"></v>
-<v t="ekr.20160126153212.84"></v>
-<v t="ekr.20160203183228.1"></v>
 <v t="ekr.20160126153212.85"></v>
-<v t="ekr.20160126153212.87"></v>
-<v t="ekr.20160126153212.88"></v>
 </v>
-<v t="ekr.20160204113206.1"><vh>msf.create_patterns_dict TO DO</vh></v>
 <v t="ekr.20160202080826.1"><vh>Last checkin log</vh></v>
 </vnodes>
 <tnodes>
@@ -228,6 +227,9 @@ For full details, see README.md.
 This file is in the public domain.
 '''
 &lt;&lt; imports &gt;&gt;
+
+fast_match = True
+
 @others
 g = LeoGlobals() # For ekr.
 if __name__ == "__main__":
@@ -918,6 +920,7 @@ def __init__ (self):
     self.def_patterns = [] # [Def Name Patterns]
     self.general_patterns = [] # [General Patterns]
     self.names_dict = {}
+    self.op_name_dict = self.make_op_name_dict()
     self.patterns_dict = {}
 </t>
 <t tx="ekr.20160126153212.75">
@@ -1007,7 +1010,8 @@ def scan_command_line(self):
         if args:
             self.files = args
 </t>
-<t tx="ekr.20160126153212.78">def scan_options(self):
+<t tx="ekr.20160126153212.78">
+def scan_options(self):
     '''Set all configuration-related ivars.'''
     verbose = False or self.verbose
     if not self.config_fn:
@@ -1054,6 +1058,7 @@ def scan_command_line(self):
             print('')
     self.def_patterns = self.scan_patterns('Def Name Patterns')
     self.general_patterns = self.scan_patterns('General Patterns')
+    self.make_patterns_dict()
 </t>
 <t tx="ekr.20160126153212.79">
 def scan_patterns(self, section_name):
@@ -1121,6 +1126,8 @@ def do_Bytes(self, node): # Python 3.x only.
     return 'bytes' # return str(node.s)
 
 def do_Num(self, node):
+    # make_patterns_dict treats 'number' as a special case.
+    # return self.names_dict.get('number', 'number')
     return 'number' # return repr(node.n)
 
 def do_Str(self, node):
@@ -1188,6 +1195,7 @@ def run(self, node):
     if os.path.exists(fn) and not self.overwrite:
         print('file exists: %s' % fn)
     elif not dir_ or os.path.exists(dir_):
+        t1 = time.clock()
         if 1: # Delayed output allows sorting.
             self.parent_stub = Stub('root','Root',parent=None)
             for z in self.prefix_lines or []:
@@ -1205,7 +1213,10 @@ def run(self, node):
             self.visit(node)
             self.output_file.close()
             self.output_file = None
-        print('wrote: %s' % fn)
+        t2 = time.clock()
+        # slow: 6.7 sec. # Fast: 0.4 sec.
+        # print('fast_match: %s' % fast_match)
+        print('wrote: %s in %4.2f sec' % (fn, t2-t1))
     else:
         print('output directory not not found: %s' % dir_)
 
@@ -1359,54 +1370,6 @@ def munge_arg(self, s):
         self.warn_list.append(s)
         print('no annotation for %s' % s)
     return s
-</t>
-<t tx="ekr.20160126153212.92">
-def munge_ret(self, name, s):
-    '''replace a return value by a type if possible.'''
-    trace = self.trace
-    if trace: g.trace('====', name)
-    if new_code:
-        return s
-    else:
-        # Match pre-patterns.
-        for patterns in (self.pre_return_patterns, self.general_patterns):
-            junk, s = self.match_return_patterns(name, patterns, s)
-        # Repeatedly match return patterns.
-        count, found = 0, True
-        while found and count &lt; 50:
-            count += 1
-            found, s = self.match_return_patterns(name, self.return_patterns, s)
-        # Match post-patterns.
-        for patterns in (self.post_return_patterns, self.general_patterns):
-            junk, s = self.match_return_patterns(name, patterns, s)
-        if trace: g.trace('-----',s)
-        return s
-</t>
-<t tx="ekr.20160126153212.93">
-def match_return_patterns(self, name, patterns, s):
-    '''
-    Match all the given patterns, except the .* pattern.
-    Return (found, s) if any succeed.
-    '''
-    trace = False or self.trace # or name.endswith('munge_arg')
-    s1 = s
-    default_pattern = None
-    if trace: g.trace('===== %s: %s' % (name, s1))
-    for pattern in patterns:
-        if pattern.find_s == '.*':
-            # The user should use [Def Name Patterns] instead.
-            pass
-        else:
-            # Find all non-overlapping matches.
-            # Replace the matches in reverse order.
-            matches = pattern.all_matches(s, trace=trace)
-            for m in reversed(matches):
-                s = pattern.replace(m, s, trace=trace)
-    found = s1 != s
-    if trace and found:
-        g.trace('returns %s\n' % s)
-    return found, s
-    
 </t>
 <t tx="ekr.20160126153212.99">
 def visit_Return(self, node):
@@ -1765,7 +1728,6 @@ n: int
 name: str
 ndots: int
 node: Node
-number: int
 os.sep.join(*): str
 parser: optparse.OptionParser
 patterns: List
@@ -1776,6 +1738,7 @@ s2: str
 strict: bool
 trace: bool
 # Type computations...
+number: int
 int+int: int
 int(*): int
 hash(*): int
@@ -2012,18 +1975,15 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-Design --update.
-
+- Remove trace and verbose options.
 - Optionally generate Any for all unknown argument types.
-    
 - Task oriented docs
+- Design --update.
+- Post (reply): Use [Def Name Patterns] to make inferences!
 
-Post: Cool inferences:
-        
+Later:
+
 - Add more inferences. (Simulates --infer)
-- Use [Def Name Patterns] to make inferences!
-- Recognize recursive calls. Just remove them!
-
 - Preserve existing annotations?
   It doesn't seem urgent.
   The script would have to be run with Python 3.
@@ -2105,6 +2065,8 @@ def do_Return(self, node):
     return s[len('return'):].strip()
 </t>
 <t tx="ekr.20160202061118.1">
+seen_patterns = []
+
 def visit(self, node):
     '''
     Return the formatted version of an Ast node after
@@ -2112,9 +2074,26 @@ def visit(self, node):
     '''
     # This is the heart of this script.
     s = AstFormatter.visit(self, node)
-    for pattern in self.general_patterns:
-        found, s = pattern.match(s)
-    return s</t>
+    if fast_match:
+        # Match only the patterns associated with this node.
+        name = node.__class__.__name__
+        for pattern in self.patterns_dict.get(name, []):
+            found, s = pattern.match(s)
+            # if found and pattern not in self.seen_patterns:
+                # self.seen_patterns.append(pattern)
+                # g.trace('%10s %s' % (name, pattern))
+        # Debugging
+        # if 0: # This finds and reports all missed patterns.
+            # for pattern in self.general_patterns:
+                # found, s = pattern.match(s)
+                # if True and found and pattern not in self.seen_patterns:
+                    # self.seen_patterns.append(pattern)
+                    # g.trace('**** %5s %s' % (name, pattern))
+    else: # old code: match all general patterns.
+        for pattern in self.general_patterns:
+            found, s = pattern.match(s)
+    return s
+</t>
 <t tx="ekr.20160202061329.1">
 def __init__(self, general_patterns, names_dict, patterns_dict):
     '''Ctor for StubFormatter class.'''
@@ -2155,10 +2134,12 @@ def match(self, patterns, s):
 <t tx="ekr.20160202080826.1">@language rest
 @wrap
 
-Revised StubFormatter.Name and indent.
-- There is no need for a helper class!
-- Indent can simply be a do-nothing.
-- Output is unchanged, except for the new methods.</t>
+Added fast_match code. Fast 0.4 sec. Slow: 6.7 sec.
+- The patterns_dict now associates op names with lists of ast.Node names.
+- The names_dict associates names with patterns.  Used in do_name.
+- New methods: make_op_name_dict, make_patterns_dict, find_pattern_ops.
+- Added timing to StubTraverser.run
+</t>
 <t tx="ekr.20160202120035.1"></t>
 <t tx="ekr.20160202165117.1">
 
@@ -2248,6 +2229,7 @@ import glob
 import optparse
 import os
 import re
+import time
 try:
     import io.StringIO as StringIO # Python 3
 except ImportError:
@@ -2442,17 +2424,105 @@ def shortFileName(self,fileName, n=None):
     else:
         return '/'.join(fileName.replace('\\', '/').split('/')[-n:])
 </t>
-<t tx="ekr.20160204113206.1"></t>
+<t tx="ekr.20160204113206.1">
+def make_patterns_dict(self):
+    '''Assign all patterns to the appropriate ast.Node.'''
+    for pattern in self.general_patterns:
+        ops = self.find_pattern_ops(pattern)
+        if ops:
+            for op in ops:
+                # Add the pattern to op's list.
+                op_names = self.op_name_dict.get(op)
+                for op_name in op_names:
+                    aList = self.patterns_dict.get(op_name, [])
+                    aList.append(pattern)
+                    self.patterns_dict[op_name] = aList
+        else:
+            # Enter the name in self.names_dict.
+            name = pattern.find_s
+            # Special case for 'number'
+            if name == 'number':
+                aList = self.patterns_dict.get('Num', [])
+                aList.append(pattern)
+                self.patterns_dict['Num'] = aList
+            elif name in self.names_dict:
+                g.trace('duplicate pattern', pattern)
+            else:
+                self.names_dict [name] = pattern.repl_s
+    if 0:
+        g.trace('names_dict...')
+        for z in sorted(self.names_dict):
+            print('  %s: %s' % (z, self.names_dict.get(z)))
+    if 0:
+        g.trace('patterns_dict...')
+        for z in sorted(self.patterns_dict):
+            aList = self.patterns_dict.get(z)
+            print(z)
+            for pattern in sorted(aList):
+                print('  '+repr(pattern))
+    # Note: retain self.general_patterns for use in argument lists.
+</t>
 <t tx="ekr.20160204153904.1">
 def do_Name(self, node):
     '''StubFormatter.do_name.'''
     name = self.names_dict.get(node.id, node.id)
+    # if node.id in self.names_dict: g.trace(node.id, '==&gt;', name)
     return 'bool' if name in ('True', 'False') else name
 </t>
-<t tx="ekr.20160204154036.1">
-def indent(self, s):
-    # return '%s%s' % (' ' * 4 * self.level, s)
-    return s
+<t tx="ekr.20160204164606.1"></t>
+<t tx="ekr.20160204170443.1">
+def find_pattern_ops(self, pattern):
+    '''Return a list of operators in pattern.find_s.'''
+    d = self.op_name_dict
+    keys1, keys2, keys3 = [], [], []
+    for op in d:
+        aList = d.get(op)
+        if len(op) == 3:
+            keys3.append(op)
+        elif len(op) == 2:
+            keys2.append(op)
+        elif len(op) == 1:
+            keys1.append(op)
+        else:
+            g.trace('bad op', op)
+    ops = []
+    s = s1 = pattern.find_s
+    for aList in (keys3, keys2, keys1):
+        for op in aList:
+            if s.find(op) &gt; -1:
+                s = s.replace(op, '')
+                ops.append(op)
+    # if ops: g.trace(s1, ops)
+    return ops
+</t>
+<t tx="ekr.20160204170921.1">
+def make_op_name_dict(self):
+    '''
+    Make a dict whose keys are operators ('+', '+=', etc),
+    and whose values are lists of values of ast.Node.__class__.__name__.
+    '''
+    d = {
+        '.':   ['Attr',],
+        '(*)': ['Call', 'Tuple',],
+        '[*]': ['List', 'Subscript',],
+        '{*}': ['???',],
+        ### 'and': 'BoolOp',
+        ### 'or':  'BoolOp',
+    }
+    # operator = Add | Sub | Mult | Div | Mod | Pow | LShift 
+    # | RShift | BitOr | BitXor | BitAnd | FloorDiv
+    for op in (
+        '+', '-', '*', '/', '%', '**', '&lt;&lt;',
+        '&gt;&gt;', '|', '^', '&amp;', '//',
+    ):
+        d[op] = ['BinOp',]
+    # cmpop = Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn
+    for op in (
+        '==', '!=', '&lt;', '&lt;=', '&gt;', '&gt;=',
+        ### 'is', 'is not', 'in', 'not in',
+    ):
+        d[op] = ['Compare',]
+    return d
 </t>
 </tnodes>
 </leo_file>

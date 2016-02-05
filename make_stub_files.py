@@ -19,11 +19,15 @@ import glob
 import optparse
 import os
 import re
+import time
 try:
     import io.StringIO as StringIO # Python 3
 except ImportError:
     import StringIO
 import sys
+
+fast_match = True
+
 
 
 class AstFormatter:
@@ -936,6 +940,7 @@ class StandAloneMakeStubFile:
         self.def_patterns = [] # [Def Name Patterns]
         self.general_patterns = [] # [General Patterns]
         self.names_dict = {}
+        self.op_name_dict = self.make_op_name_dict()
         self.patterns_dict = {}
     def finalize(self, fn):
         '''Finalize and regularize a filename.'''
@@ -1036,6 +1041,7 @@ class StandAloneMakeStubFile:
             args = [self.finalize(z) for z in args]
             if args:
                 self.files = args
+
     def scan_options(self):
         '''Set all configuration-related ivars.'''
         verbose = False or self.verbose
@@ -1083,6 +1089,35 @@ class StandAloneMakeStubFile:
                 print('')
         self.def_patterns = self.scan_patterns('Def Name Patterns')
         self.general_patterns = self.scan_patterns('General Patterns')
+        self.make_patterns_dict()
+
+    def make_op_name_dict(self):
+        '''
+        Make a dict whose keys are operators ('+', '+=', etc),
+        and whose values are lists of values of ast.Node.__class__.__name__.
+        '''
+        d = {
+            '.':   ['Attr',],
+            '(*)': ['Call', 'Tuple',],
+            '[*]': ['List', 'Subscript',],
+            '{*}': ['???',],
+            ### 'and': 'BoolOp',
+            ### 'or':  'BoolOp',
+        }
+        # operator = Add | Sub | Mult | Div | Mod | Pow | LShift 
+        # | RShift | BitOr | BitXor | BitAnd | FloorDiv
+        for op in (
+            '+', '-', '*', '/', '%', '**', '<<',
+            '>>', '|', '^', '&', '//',
+        ):
+            d[op] = ['BinOp',]
+        # cmpop = Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn
+        for op in (
+            '==', '!=', '<', '<=', '>', '>=',
+            ### 'is', 'is not', 'in', 'not in',
+        ):
+            d[op] = ['Compare',]
+        return d
 
     def create_parser(self):
         '''Create a RawConfigParser and return it.'''
@@ -1090,6 +1125,30 @@ class StandAloneMakeStubFile:
             # Requires Python 2.7
         parser.optionxform = str
         return parser
+
+    def find_pattern_ops(self, pattern):
+        '''Return a list of operators in pattern.find_s.'''
+        d = self.op_name_dict
+        keys1, keys2, keys3 = [], [], []
+        for op in d:
+            aList = d.get(op)
+            if len(op) == 3:
+                keys3.append(op)
+            elif len(op) == 2:
+                keys2.append(op)
+            elif len(op) == 1:
+                keys1.append(op)
+            else:
+                g.trace('bad op', op)
+        ops = []
+        s = s1 = pattern.find_s
+        for aList in (keys3, keys2, keys1):
+            for op in aList:
+                if s.find(op) > -1:
+                    s = s.replace(op, '')
+                    ops.append(op)
+        # if ops: g.trace(s1, ops)
+        return ops
 
     def get_config_string(self):
         
@@ -1136,6 +1195,43 @@ class StandAloneMakeStubFile:
                 if s == munge(s2):
                     return True
         return False
+
+    def make_patterns_dict(self):
+        '''Assign all patterns to the appropriate ast.Node.'''
+        for pattern in self.general_patterns:
+            ops = self.find_pattern_ops(pattern)
+            if ops:
+                for op in ops:
+                    # Add the pattern to op's list.
+                    op_names = self.op_name_dict.get(op)
+                    for op_name in op_names:
+                        aList = self.patterns_dict.get(op_name, [])
+                        aList.append(pattern)
+                        self.patterns_dict[op_name] = aList
+            else:
+                # Enter the name in self.names_dict.
+                name = pattern.find_s
+                # Special case for 'number'
+                if name == 'number':
+                    aList = self.patterns_dict.get('Num', [])
+                    aList.append(pattern)
+                    self.patterns_dict['Num'] = aList
+                elif name in self.names_dict:
+                    g.trace('duplicate pattern', pattern)
+                else:
+                    self.names_dict [name] = pattern.repl_s
+        if 0:
+            g.trace('names_dict...')
+            for z in sorted(self.names_dict):
+                print('  %s: %s' % (z, self.names_dict.get(z)))
+        if 0:
+            g.trace('patterns_dict...')
+            for z in sorted(self.patterns_dict):
+                aList = self.patterns_dict.get(z)
+                print(z)
+                for pattern in sorted(aList):
+                    print('  '+repr(pattern))
+        # Note: retain self.general_patterns for use in argument lists.
 
     def scan_patterns(self, section_name):
         '''Parse the config section into a list of patterns, preserving order.'''
@@ -1238,6 +1334,41 @@ class StubFormatter (AstFormatter):
     making pattern substitutions in Name and operator nodes.
     '''
 
+    def __init__(self, general_patterns, names_dict, patterns_dict):
+        '''Ctor for StubFormatter class.'''
+        self.general_patterns = general_patterns
+        self.names_dict = names_dict
+        self.patterns_dict = patterns_dict
+
+    seen_patterns = []
+
+    def visit(self, node):
+        '''
+        Return the formatted version of an Ast node after
+        applying all general patterns.
+        '''
+        # This is the heart of this script.
+        s = AstFormatter.visit(self, node)
+        if fast_match:
+            # Match only the patterns associated with this node.
+            name = node.__class__.__name__
+            for pattern in self.patterns_dict.get(name, []):
+                found, s = pattern.match(s)
+                # if found and pattern not in self.seen_patterns:
+                    # self.seen_patterns.append(pattern)
+                    # g.trace('%10s %s' % (name, pattern))
+            # Debugging
+            # if 0: # This finds and reports all missed patterns.
+                # for pattern in self.general_patterns:
+                    # found, s = pattern.match(s)
+                    # if True and found and pattern not in self.seen_patterns:
+                        # self.seen_patterns.append(pattern)
+                        # g.trace('**** %5s %s' % (name, pattern))
+        else: # old code: match all general patterns.
+            for pattern in self.general_patterns:
+                found, s = pattern.match(s)
+        return s
+
     # Return generic markers to allow better pattern matches.
 
     def do_BoolOp(self, node): # Python 2.x only.
@@ -1247,21 +1378,13 @@ class StubFormatter (AstFormatter):
         return 'bytes' # return str(node.s)
 
     def do_Num(self, node):
+        # make_patterns_dict treats 'number' as a special case.
+        # return self.names_dict.get('number', 'number')
         return 'number' # return repr(node.n)
 
     def do_Str(self, node):
         '''This represents a string constant.'''
         return 'str' # return repr(node.s)
-
-    def __init__(self, general_patterns, names_dict, patterns_dict):
-        '''Ctor for StubFormatter class.'''
-        self.general_patterns = general_patterns
-        self.names_dict = names_dict
-        self.patterns_dict = patterns_dict
-
-    def indent(self, s):
-        # return '%s%s' % (' ' * 4 * self.level, s)
-        return s
 
     def match(self, patterns, s):
         '''Return s with at most one pattern matched.'''
@@ -1274,6 +1397,7 @@ class StubFormatter (AstFormatter):
     def do_Name(self, node):
         '''StubFormatter.do_name.'''
         name = self.names_dict.get(node.id, node.id)
+        # if node.id in self.names_dict: g.trace(node.id, '==>', name)
         return 'bool' if name in ('True', 'False') else name
 
     def do_Return(self, node):
@@ -1282,17 +1406,6 @@ class StubFormatter (AstFormatter):
         assert s.startswith('return'), repr(s)
         # Stripping the 'return' here is useful.
         return s[len('return'):].strip()
-
-    def visit(self, node):
-        '''
-        Return the formatted version of an Ast node after
-        applying all general patterns.
-        '''
-        # This is the heart of this script.
-        s = AstFormatter.visit(self, node)
-        for pattern in self.general_patterns:
-            found, s = pattern.match(s)
-        return s
 
 
 class StubTraverser (ast.NodeVisitor):
@@ -1363,6 +1476,7 @@ class StubTraverser (ast.NodeVisitor):
         if os.path.exists(fn) and not self.overwrite:
             print('file exists: %s' % fn)
         elif not dir_ or os.path.exists(dir_):
+            t1 = time.clock()
             if 1: # Delayed output allows sorting.
                 self.parent_stub = Stub('root','Root',parent=None)
                 for z in self.prefix_lines or []:
@@ -1380,7 +1494,10 @@ class StubTraverser (ast.NodeVisitor):
                 self.visit(node)
                 self.output_file.close()
                 self.output_file = None
-            print('wrote: %s' % fn)
+            t2 = time.clock()
+            # slow: 6.7 sec. # Fast: 0.4 sec.
+            # print('fast_match: %s' % fast_match)
+            print('wrote: %s in %4.2f sec' % (fn, t2-t1))
         else:
             print('output directory not not found: %s' % dir_)
 
