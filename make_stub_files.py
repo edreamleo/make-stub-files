@@ -1343,6 +1343,14 @@ class StubFormatter (AstFormatter):
         self.names_dict = x.names_dict
         self.patterns_dict = x.patterns_dict
 
+    def match(self, patterns, s):
+        '''Return s with at most one pattern matched.'''
+        for pattern in patterns:
+            found, s = pattern.match(s)
+            if found:
+                break
+        return s
+
     seen_patterns = []
 
     def visit(self, node):
@@ -1372,10 +1380,9 @@ class StubFormatter (AstFormatter):
                 found, s = pattern.match(s)
         return s
 
-    # Return generic markers to allow better pattern matches.
+    # StubFormatter visitors for operands...
 
-    def do_BoolOp(self, node): # Python 2.x only.
-        return 'bool'
+    # Return generic markers to allow better pattern matches.
 
     def do_Bytes(self, node): # Python 3.x only.
         return 'bytes' # return str(node.s)
@@ -1389,26 +1396,63 @@ class StubFormatter (AstFormatter):
         '''This represents a string constant.'''
         return 'str' # return repr(node.s)
 
-    def match(self, patterns, s):
-        '''Return s with at most one pattern matched.'''
-        for pattern in patterns:
-            found, s = pattern.match(s)
-            if found:
-                break
-        return s
-
     def do_Name(self, node):
-        '''StubFormatter.do_name.'''
+        '''StubFormatter ast.Name visitor.'''
         name = self.names_dict.get(node.id, node.id)
         # if node.id in self.names_dict: g.trace(node.id, '==>', name)
         return 'bool' if name in ('True', 'False') else name
 
     def do_Return(self, node):
-        '''StubFormatter.do_Return. Return only the return expression itself.'''
+        '''
+        StubFormatter ast.Return vsitor.
+        Return only the return expression itself.
+        '''
         s = AstFormatter.do_Return(self, node)
         assert s.startswith('return'), repr(s)
-        # Stripping the 'return' here is useful.
         return s[len('return'):].strip()
+
+    # StubFormatter visitors for operators...
+
+    def do_BinOp(self, node):
+        '''StubFormatter ast.BinOp visitor.'''
+        return '%s%s%s' % (
+            self.visit(node.left),
+            self.op_name(node.op),
+            self.visit(node.right))
+
+    def do_BoolOp(self, node): # Python 2.x only.
+        '''StubFormatter ast.BoolOp visitor.'''
+        return 'bool'
+        # op_name = self.op_name(node.op)
+        # values = [self.visit(z) for z in node.values]
+        # return op_name.join(values)
+
+    def do_Compare(self, node):
+        '''StubFormatter ast.Compare visitor.'''
+        result = []
+        lt = self.visit(node.left)
+        ops = [self.op_name(z) for z in node.ops]
+        comps = [self.visit(z) for z in node.comparators]
+        result.append(lt)
+        if len(ops) == len(comps):
+            for i in range(len(ops)):
+                result.append('%s%s' % (ops[i], comps[i]))
+        else:
+            print('can not happen: ops', repr(ops), 'comparators', repr(comps))
+        return ''.join(result)
+
+    def do_IfExp(self, node):
+        '''StubFormatter ast.IfExp (ternary operator) visitor.'''
+        return '%s if %s else %s ' % (
+            self.visit(node.body),
+            self.visit(node.test),
+            self.visit(node.orelse))
+
+    def do_UnaryOp(self, node):
+        '''StubFormatter ast.UnaryOp visitor.'''
+        return '%s%s' % (
+            self.op_name(node.op),
+            self.visit(node.operand))
 
 
 class StubTraverser (ast.NodeVisitor):
@@ -1501,6 +1545,12 @@ class StubTraverser (ast.NodeVisitor):
     def update(self):
         '''Alter self.parent_stub so it contains only updated stubs.'''
         g.trace('--update not ready yet')
+        
+        # Read the existing stub file, if present.
+        
+        # Compare the stub file with the stubs about to be written.
+        
+        # Merge the old, unchanged, stubs with the new stubs.
 
     # ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
 

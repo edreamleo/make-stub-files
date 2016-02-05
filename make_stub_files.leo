@@ -165,12 +165,19 @@
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
-<v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
-<v t="ekr.20160204164606.1"><vh>sf.visitors</vh>
-<v t="ekr.20160126153212.81"><vh>sf.Constants</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
+<v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
+<v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
+<v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
 <v t="ekr.20160204153904.1"><vh>sf.Name</vh></v>
 <v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
+</v>
+<v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
+<v t="ekr.20160205053641.2"><vh>sf.BinOp</vh></v>
+<v t="ekr.20160205053641.3"><vh>sf.BoolOp</vh></v>
+<v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
+<v t="ekr.20160205053641.6"><vh>sf.IfExp</vh></v>
+<v t="ekr.20160205053641.5"><vh>sf.UnaryOp</vh></v>
 </v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
@@ -207,6 +214,7 @@
 <v t="ekr.20160126153212.85"></v>
 <v t="ekr.20160126153212.77"></v>
 </v>
+<v t="ekr.20160204224242.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1111,9 +1119,6 @@ class StubFormatter (AstFormatter):
 </t>
 <t tx="ekr.20160126153212.81">
 # Return generic markers to allow better pattern matches.
-
-def do_BoolOp(self, node): # Python 2.x only.
-    return 'bool'
 
 def do_Bytes(self, node): # Python 3.x only.
     return 'bytes' # return str(node.s)
@@ -2049,10 +2054,12 @@ def replace(self, m, s):
 </t>
 <t tx="ekr.20160201194801.1">
 def do_Return(self, node):
-    '''StubFormatter.do_Return. Return only the return expression itself.'''
+    '''
+    StubFormatter ast.Return vsitor.
+    Return only the return expression itself.
+    '''
     s = AstFormatter.do_Return(self, node)
     assert s.startswith('return'), repr(s)
-    # Stripping the 'return' here is useful.
     return s[len('return'):].strip()
 </t>
 <t tx="ekr.20160202061118.1">
@@ -2449,12 +2456,11 @@ def make_patterns_dict(self):
 </t>
 <t tx="ekr.20160204153904.1">
 def do_Name(self, node):
-    '''StubFormatter.do_name.'''
+    '''StubFormatter ast.Name visitor.'''
     name = self.names_dict.get(node.id, node.id)
     # if node.id in self.names_dict: g.trace(node.id, '==&gt;', name)
     return 'bool' if name in ('True', 'False') else name
 </t>
-<t tx="ekr.20160204164606.1"></t>
 <t tx="ekr.20160204170443.1">
 def find_pattern_ops(self, pattern):
     '''Return a list of operators in pattern.find_s.'''
@@ -2511,6 +2517,64 @@ def make_op_name_dict(self):
 </t>
 <t tx="ekr.20160204224242.1">def update(self):
     '''Alter self.parent_stub so it contains only updated stubs.'''
-    g.trace('--update not ready yet')</t>
+    g.trace('--update not ready yet')
+    
+    # Read the existing stub file, if present.
+    
+    # Compare the stub file with the stubs about to be written.
+    
+    # Merge the old, unchanged, stubs with the new stubs.
+</t>
+<t tx="ekr.20160205053641.1">
+# StubFormatter visitors for operators...
+</t>
+<t tx="ekr.20160205053641.2">
+def do_BinOp(self, node):
+    '''StubFormatter ast.BinOp visitor.'''
+    return '%s%s%s' % (
+        self.visit(node.left),
+        self.op_name(node.op),
+        self.visit(node.right))
+</t>
+<t tx="ekr.20160205053641.3">
+def do_BoolOp(self, node): # Python 2.x only.
+    '''StubFormatter ast.BoolOp visitor.'''
+    return 'bool'
+    # op_name = self.op_name(node.op)
+    # values = [self.visit(z) for z in node.values]
+    # return op_name.join(values)
+</t>
+<t tx="ekr.20160205053641.4">
+def do_Compare(self, node):
+    '''StubFormatter ast.Compare visitor.'''
+    result = []
+    lt = self.visit(node.left)
+    ops = [self.op_name(z) for z in node.ops]
+    comps = [self.visit(z) for z in node.comparators]
+    result.append(lt)
+    if len(ops) == len(comps):
+        for i in range(len(ops)):
+            result.append('%s%s' % (ops[i], comps[i]))
+    else:
+        print('can not happen: ops', repr(ops), 'comparators', repr(comps))
+    return ''.join(result)
+</t>
+<t tx="ekr.20160205053641.5">
+def do_UnaryOp(self, node):
+    '''StubFormatter ast.UnaryOp visitor.'''
+    return '%s%s' % (
+        self.op_name(node.op),
+        self.visit(node.operand))
+</t>
+<t tx="ekr.20160205053641.6">
+def do_IfExp(self, node):
+    '''StubFormatter ast.IfExp (ternary operator) visitor.'''
+    return '%s if %s else %s ' % (
+        self.visit(node.body),
+        self.visit(node.test),
+        self.visit(node.orelse))
+</t>
+<t tx="ekr.20160205053705.1">
+# StubFormatter visitors for operands...</t>
 </tnodes>
 </leo_file>
