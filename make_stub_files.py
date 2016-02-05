@@ -1009,10 +1009,10 @@ class StandAloneMakeStubFile:
             help= 'Fast matching (experimental)')
         add('-o', '--overwrite', action='store_true', default=False,
             help='overwrite existing stub (.pyi) files')
-        # add('-t', '--trace', action='store_true', default=False,
-            # help='trace argument substitutions')
-        add('-u', '--unit-test', action='store_true', default=False,
-            help='enable unit tests at startup')
+        add('-t', '--test', action='store_true', default=False,
+            help='run tests on startup')
+        add('-u', '--update', action='store_true', default=False,
+            help='update existing stub file')
         add('-v', '--verbose', action='store_true', default=False,
             help='trace configuration settings')
         add('-w', '--warn', action='store_true', default=False,
@@ -1020,9 +1020,10 @@ class StandAloneMakeStubFile:
         # Parse the options
         options, args = parser.parse_args()
         # Handle the options...
-        self.enable_unit_tests=options.unit_test
+        self.enable_unit_tests=options.test
         self.fast_match = options.fast
         self.overwrite = options.overwrite
+        self.update = options.update
         self.verbose = options.verbose
         self.warn = options.warn
         if options.fn:

@@ -7,8 +7,7 @@ class TestMakeStubFiles(unittest.TestCase):
     # def setUp(self):
         # '''Called before each test.'''
     def test_pattern_class(self):
-        
-        trace = False
+
         table = (
             # Unused regex tests.
             # ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
@@ -23,9 +22,9 @@ class TestMakeStubFiles(unittest.TestCase):
         for s, find, repl, expected in table:
             # pdb.set_trace()
             pattern = msf.Pattern(find, repl)
-            result = pattern.match_entire_string(s, trace=trace)
+            result = pattern.match_entire_string(s)
             assert result, (result, s, find, repl, expected)
-            aList = pattern.all_matches(s, trace=trace)
+            aList = pattern.all_matches(s)
             assert len(aList) == 1, aList
         p1 = msf.Pattern('abc','xyz')
         p2 = msf.Pattern('abc','xyz')

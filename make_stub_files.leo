@@ -968,10 +968,10 @@ def scan_command_line(self):
         help= 'Fast matching (experimental)')
     add('-o', '--overwrite', action='store_true', default=False,
         help='overwrite existing stub (.pyi) files')
-    # add('-t', '--trace', action='store_true', default=False,
-        # help='trace argument substitutions')
-    add('-u', '--unit-test', action='store_true', default=False,
-        help='enable unit tests at startup')
+    add('-t', '--test', action='store_true', default=False,
+        help='run tests on startup')
+    add('-u', '--update', action='store_true', default=False,
+        help='update existing stub file')
     add('-v', '--verbose', action='store_true', default=False,
         help='trace configuration settings')
     add('-w', '--warn', action='store_true', default=False,
@@ -979,9 +979,10 @@ def scan_command_line(self):
     # Parse the options
     options, args = parser.parse_args()
     # Handle the options...
-    self.enable_unit_tests=options.unit_test
+    self.enable_unit_tests=options.test
     self.fast_match = options.fast
     self.overwrite = options.overwrite
+    self.update = options.update
     self.verbose = options.verbose
     self.warn = options.warn
     if options.fn:
@@ -1816,8 +1817,7 @@ class TestMakeStubFiles(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()</t>
 <t tx="ekr.20160128190112.1">def test_pattern_class(self):
-    
-    trace = False
+
     table = (
         # Unused regex tests.
         # ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
@@ -1832,9 +1832,9 @@ if __name__ == '__main__':
     for s, find, repl, expected in table:
         # pdb.set_trace()
         pattern = msf.Pattern(find, repl)
-        result = pattern.match_entire_string(s, trace=trace)
+        result = pattern.match_entire_string(s)
         assert result, (result, s, find, repl, expected)
-        aList = pattern.all_matches(s, trace=trace)
+        aList = pattern.all_matches(s)
         assert len(aList) == 1, aList
     p1 = msf.Pattern('abc','xyz')
     p2 = msf.Pattern('abc','xyz')
