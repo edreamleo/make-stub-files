@@ -215,6 +215,7 @@
 <v t="ekr.20160126153212.77"></v>
 </v>
 <v t="ekr.20160204224242.1"></v>
+<v t="ekr.20160126153921.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -974,11 +975,11 @@ def scan_command_line(self):
     add('-d', '--dir', dest='dir',
         help='full path to the output directory')
     add('-f', '--fast', action='store_true', default=False,
-        help= 'Fast matching (experimental)')
+        help= 'fast matching (experimental)')
     add('-o', '--overwrite', action='store_true', default=False,
         help='overwrite existing stub (.pyi) files')
     add('-t', '--test', action='store_true', default=False,
-        help='run tests on startup')
+        help='run unit tests on startup')
     add('-u', '--update', action='store_true', default=False,
         help='update existing stub file')
     add('-v', '--verbose', action='store_true', default=False,
@@ -1966,22 +1967,12 @@ def is_known_type(self, s):
 @wrap
 
 - Do --update.
-
 - Post (reply): Use [Def Name Patterns] to make inferences!
 - Optionally generate Any for all unknown argument types.
 - Task oriented docs
 
-Status:
-- Need a better pattern language.
-    - Doesn't handle ops like "in", "not", "and", "or".
-    - Doesn't handle `* not in *`, for example
-- A slightly different traverser could do "real" type inference.
-  It's not clear whether it would really be better.
-
-Later:
-- Add more inferences. (Simulates --infer)
-- Preserve existing annotations?
-  The script would have to be run with Python 3.
+*** Do type inference in operator visitors.
+    This would eliminate most (all?) complex user-defined patterns.
 </t>
 <t tx="ekr.20160131175042.1">class TestClass:
     '''A class containing constructs that have caused difficulties.'''

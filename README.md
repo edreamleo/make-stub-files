@@ -54,25 +54,25 @@ iterative way of developing stubs."
 
 ### Command-line arguments
 
-    Usage: make_stub_files.py [options] file1 file2 ...
+    Usage: make_stub_files.py [options] file1, file2, ...
     
     Options:
       -h, --help          show this help message and exit
-      -c FN, --config=FN  full path to alternate configuration file
+      -c FN, --config=FN  full path to configuration file
       -d DIR, --dir=DIR   full path to the output directory
+      -f, --fast          fast matching (experimental)
       -o, --overwrite     overwrite existing stub (.pyi) files
-      -t, --trace         trace argument substitutions
-      -u, --unit-test     enable unit tests at startup
+      -t, --test          run unit tests on startup
+      -u, --update        update existing stub file
       -v, --verbose       trace configuration settings
       -w, --warn          warn about unannotated args
-      
+       
 *Note*: glob.glob wildcards can be used in file1, file2, ...
 
 ### The configuration file
 
-By default, the configuration file is ~/stubs/make_stub_files.cfg. ~/stubs
-is mypy's default directory for stubs. You can change the name and location
-of the configuration file using the --config command-line option.
+The --config command-line option specifies the full path to the optional
+configuration file.
 
 The configuration file uses the .ini format. It has several
 configuration sections, all optional.

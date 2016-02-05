@@ -1006,11 +1006,11 @@ class StandAloneMakeStubFile:
         add('-d', '--dir', dest='dir',
             help='full path to the output directory')
         add('-f', '--fast', action='store_true', default=False,
-            help= 'Fast matching (experimental)')
+            help= 'fast matching (experimental)')
         add('-o', '--overwrite', action='store_true', default=False,
             help='overwrite existing stub (.pyi) files')
         add('-t', '--test', action='store_true', default=False,
-            help='run tests on startup')
+            help='run unit tests on startup')
         add('-u', '--update', action='store_true', default=False,
             help='update existing stub file')
         add('-v', '--verbose', action='store_true', default=False,
