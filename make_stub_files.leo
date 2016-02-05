@@ -33,8 +33,8 @@
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
-<v t="ekr.20160203075612.1"><vh>&lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
-<v t="ekr.20160126153212.3"><vh>class AstFormatter</vh>
+<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
+<v t="ekr.20160126153212.3"><vh> class AstFormatter</vh>
 <v t="ekr.20160126153212.4"><vh> f.Entries</vh>
 <v t="ekr.20160126153212.5"><vh>f.format</vh></v>
 <v t="ekr.20160126153212.6"><vh>f.visit</vh></v>
@@ -168,24 +168,44 @@
 <v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
 <v t="ekr.20160202061118.1"><vh>sf.visit (Main Line) (To be deleted)</vh></v>
 <v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
+<v t="ekr.20160205103604.1"><vh>NOT USED: f.Operands</vh>
+<v t="ekr.20160205103604.2"><vh>f.arguments</vh></v>
+<v t="ekr.20160205103604.3"><vh>f.arg (Python3 only)</vh></v>
+<v t="ekr.20160205103604.6"><vh>f.Call &amp; f.keyword</vh>
+<v t="ekr.20160205103604.7"><vh>f.keyword</vh></v>
+</v>
+<v t="ekr.20160205103604.8"><vh>f.comprehension</vh></v>
+<v t="ekr.20160205103604.10"><vh>f.Ellipsis</vh></v>
+<v t="ekr.20160205103604.11"><vh>f.ExtSlice</vh></v>
+<v t="ekr.20160205103604.12"><vh>f.Index</vh></v>
+<v t="ekr.20160205103604.17"><vh>f.Repr</vh></v>
+<v t="ekr.20160205103604.18"><vh>f.Slice</vh></v>
+</v>
+<v t="ekr.20160205103604.4"><vh>sf.Attribute (To do)</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
+<v t="ekr.20160205103604.9"><vh>sf.Dict (To do)</vh></v>
 <v t="ekr.20160204153904.1"><vh>sf.Name</vh></v>
-<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
+<v t="ekr.20160205103604.20"><vh>sf.Subscript (To do. How???)</vh></v>
+<v t="ekr.20160205103604.21"><vh>sf.Tuple (Test)</vh></v>
 </v>
 <v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
-<v t="ekr.20160205053641.2"><vh>sf.BinOp</vh></v>
-<v t="ekr.20160205053641.3"><vh>sf.BoolOp</vh></v>
+<v t="ekr.20160205053641.2"><vh>sf.BinOp (Improve)</vh></v>
+<v t="ekr.20160205053641.3"><vh>sf.BoolOp (Problems)</vh></v>
 <v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
-<v t="ekr.20160205053641.6"><vh>sf.IfExp</vh></v>
+<v t="ekr.20160205053641.6"><vh>sf.IfExp (Test)</vh></v>
 <v t="ekr.20160205053641.5"><vh>sf.UnaryOp</vh></v>
 </v>
+<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
 <v t="ekr.20160126153212.84"><vh>st.indent &amp; out</vh></v>
 <v t="ekr.20160203183228.1"><vh>st.output_stubs</vh></v>
-<v t="ekr.20160126153212.85"><vh>st.run (main line)</vh></v>
-<v t="ekr.20160204224242.1"><vh>st.update</vh></v>
+<v t="ekr.20160126153212.85"><vh>st.run (main line, calls update)</vh></v>
+<v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
+<v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
+<v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
+</v>
 <v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
 <v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
 <v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
@@ -193,7 +213,6 @@
 </v>
 <v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
 <v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
-<v t="ekr.20160130034812.1"><vh>st.is_known_type</vh></v>
 <v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
 </v>
 </v>
@@ -205,17 +224,33 @@
 <v t="ekr.20160131192735.1"><vh>return_array</vh></v>
 <v t="ekr.20160201125349.1"><vh>parse_group (Guido)</vh></v>
 </v>
+<v t="ekr.20160130034812.1"><vh>is_known_type</vh></v>
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160126172747.1"><vh>pdb</vh></v>
+<v t="ekr.20160205101134.1"><vh>reduce_numbers</vh></v>
+<v t="ekr.20160205072101.1"><vh>reduce_types</vh></v>
+</v>
+<v t="ekr.20160205102734.1"><vh>Problems</vh>
+<v t="ekr.20160126153212.5"></v>
 </v>
 <v t="ekr.20160202120035.1"><vh>Recent</vh>
 <v t="ekr.20160126153212.74"></v>
+<v t="ekr.20160204170921.1"></v>
 <v t="ekr.20160202061118.1"></v>
 <v t="ekr.20160126153212.85"></v>
 <v t="ekr.20160126153212.77"></v>
-</v>
 <v t="ekr.20160204224242.1"></v>
-<v t="ekr.20160126153921.1"></v>
+<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160130032546.1"></v>
+</v>
+<v t="ekr.20160205105235.1"><vh>Automatic type computation in StubFormatter</vh>
+<v t="ekr.20160130034812.1"></v>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160205101134.1"></v>
+<v t="ekr.20160205053641.1"></v>
+<v t="ekr.20160205053705.1"></v>
+</v>
+<v t="ekr.20160205105304.1"><vh>Last log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1200,7 +1235,7 @@ def run(self, node):
             self.parent_stub.out_list.append(z)
         self.visit(node)
         if self.update_flag:
-            self.update()
+            self.update(fn)
         self.output_file = open(fn, 'w')
         self.output_stubs(self.parent_stub, sort_flag=True)
         self.output_file.close()
@@ -1322,11 +1357,11 @@ def format_returns(self, node):
     '''
     trace = False
     name = self.get_def_name(node)
-    r1 = [self.format(z) for z in self.returns]
+    r = [self.format(z) for z in self.returns]
         # Allow StubFormatter.do_Return to do the hack.
     # Step 1: Return None if there are no return statements.
     if trace and self.returns:
-        g.trace('name: %s r:\n%s' % (name, r1))
+        g.trace('name: %s r:\n%s' % (name, r))
     if not [z for z in self.returns if z.value != None]:
         return 'None: ...'
     # Step 2: [Def Name Patterns] override all other patterns.
@@ -1338,18 +1373,7 @@ def format_returns(self, node):
                     pattern.find_s, name, s))
             return s + ': ...'
     # Step 3: Calculate return types.
-    r = sorted(set(r1))
-        # Remove duplicates
-    if len(r) == 0:
-        return 'None: ...'
-    if len(r) == 1:
-        kind = None
-    elif 'None' in r:
-        r.remove('None')
-        kind = 'Optional'
-    else:
-        kind = 'Union'
-    return self.format_return_expressions(r1, r, kind)
+    return self.format_return_expressions(r)
 </t>
 <t tx="ekr.20160126153212.91">
 def munge_arg(self, s):
@@ -1699,10 +1723,9 @@ StubTraverser.do_*: str
 [General Patterns]
 
 # Declarations of names..
-
 a: str
 aList: List
-all(*): bool
+comments: str
 controller: StandAloneMakeStubFile
 find_s: str
 fn: str
@@ -1715,7 +1738,6 @@ i: int
 j1: int
 j2: int
 j: int
-len(*): int
 n1: int
 n2: int
 n: int
@@ -1725,31 +1747,39 @@ node: Node
 os.sep.join(*): str
 parser: optparse.OptionParser
 patterns: List
+r[*]: str
 repl_s: str
 s: str
 s1: str
 s2: str
 strict: bool
 trace: bool
-# Type computations...
-number: int
-int+int: int
+# Known functions...
+self.__eq__(*): bool
+self.__ne__(*): bool
+self.__gt__(*): bool
+self.__lt__(*): bool
+all(*): bool
+any(*): bool
 int(*): int
 hash(*): int
+len(*): int
 repr(*): str
 str%(*): str
-# str%Tuple[*]: str
-# str%str: str
-str%*: str
-str+comments: str
-str+str: str
 str.join(*): str
 str.join(*): str
-str[*]: str
 tuple(*): Tuple[*]
-{*}: dict
-(*): Tuple[*]
-[*]: List[*]
+# Type computations...
+# Still work to do:
+    # {*}: dict
+    # (*): Tuple[*]
+    # [*]: List[*]
+# These are now done automatically
+    # str%*: str
+    # str+str: str
+    # str[*]: str
+    # number: int
+    # int+int: int
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
@@ -1881,7 +1911,7 @@ def test_is_known_type(self):
 <t tx="ekr.20160128225533.1">*.pyc
 test/*.pyc</t>
 <t tx="ekr.20160130032546.1">
-def format_return_expressions(self, aList1, aList, kind):
+def format_return_expressions(self, aList1):
     '''
     aList is a list of return expressions.
     All patterns have been applied.
@@ -1890,14 +1920,14 @@ def format_return_expressions(self, aList1, aList, kind):
     - Otherwise, add Any # e to the result.
     Return the properly indented result.
     '''
+    aList = sorted(set(aList1))
+        # Remove duplicates
     comments, results, unknowns = [], [], False
     lws =  '\n' + ' '*4
     for i, e in enumerate(aList):
-        comma = ',' if i &lt; len(aList) - 1 else ''
         comments.append('# return ' + e)
-        results.append(e + comma)
-        if not self.is_known_type(e):
-            # g.trace('****', repr(e))
+        results.append(e)
+        if not is_known_type(e):
             unknowns = True
     if unknowns:
         comments1 = ['# return ' + e for e in list(set(aList1))]
@@ -1905,30 +1935,26 @@ def format_return_expressions(self, aList1, aList, kind):
         sep = ['# reduced...'] if comments1 else []
         comments = ''.join([lws + self.indent(z) for z in comments1 + sep + comments])
         return 'Any: ...' + comments
-    if kind == 'Union' and len(results) == 1:
-        kind = None
-    if len(results) == 1:
-        s = results[0]
     else:
-        s = ''.join([lws + self.indent(z) for z in results])
-    if kind:
-        s = '%s[%s]' % (kind, s)
-    return s + ': ...'
-    
+        s = reduce_types(results)
+        return s + ': ...'
 </t>
 <t tx="ekr.20160130034812.1">
-def is_known_type(self, s):
+def is_known_type(s):
     '''
     Return True if s is nothing but a single known type.
     Recursively test inner types in square brackets.
     '''
+    s = s.strip()
     if s in (
+        'None', None,
+        'number',
         'bool', 'bytes', 'complex', 'dict', 'float', 'int',
         'list', 'long', 'str', 'tuple', 'unicode',
     ):
         return True
     if s.startswith('[') and s.endswith(']'):
-        return self.is_known_type(s[1:-1])
+        return is_known_type(s[1:-1])
     table = (
         'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
         'BinaryIO', 'ByteString',
@@ -1958,7 +1984,7 @@ def is_known_type(self, s):
             assert brackets and brackets[0] == '[' and brackets[-1] == ']'
             s3 = brackets[1:-1]
             if s3:
-                return all([self.is_known_type(z) for z in s3.split(',')])
+                return all([is_known_type(z.strip()) for z in s3.split(',')])
             else:
                 return True
     return False
@@ -1966,13 +1992,16 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- Do --update.
+- --update.
 - Post (reply): Use [Def Name Patterns] to make inferences!
 - Optionally generate Any for all unknown argument types.
 - Task oriented docs
 
 *** Do type inference in operator visitors.
     This would eliminate most (all?) complex user-defined patterns.
+    
+    - Create st.reduce_types(aList)
+    - st.BoolOp should return st.reduce(aList), **not** bool
 </t>
 <t tx="ekr.20160131175042.1">class TestClass:
     '''A class containing constructs that have caused difficulties.'''
@@ -2507,11 +2536,15 @@ def make_op_name_dict(self):
         d[op] = ['Compare',]
     return d
 </t>
-<t tx="ekr.20160204224242.1">def update(self):
+<t tx="ekr.20160204224242.1">def update(self, fn):
     '''Alter self.parent_stub so it contains only updated stubs.'''
     g.trace('--update not ready yet')
-    
-    # Read the existing stub file, if present.
+    s = self.get_stub_file(fn)
+    if not s.strip():
+        return
+    stub = self.parse_stub_file(s)
+    if not stub:
+        return
     
     # Compare the stub file with the stubs about to be written.
     
@@ -2523,50 +2556,307 @@ def make_op_name_dict(self):
 <t tx="ekr.20160205053641.2">
 def do_BinOp(self, node):
     '''StubFormatter ast.BinOp visitor.'''
-    return '%s%s%s' % (
-        self.visit(node.left),
-        self.op_name(node.op),
-        self.visit(node.right))
+    trace = True
+    numbers = ['complex', 'float', 'int', 'number',]
+    op = self.op_name(node.op)
+    lhs = self.visit(node.left)
+    rhs = self.visit(node.right)  
+    if lhs == rhs:
+        return lhs ### Perhaps not right in all cases.
+    elif lhs in numbers and rhs in numbers:
+        return reduce_types([lhs, rhs])
+        # return 'number'
+    elif lhs == 'str' and op in '%*':
+        return 'str'
+    else:
+        if trace and lhs == 'str':
+            g.trace('***** unknown', lhs, op, rhs)
+        # Fall back to the base-class behavior.
+        return '%s%s%s' % (
+            self.visit(node.left),
+            self.op_name(node.op),
+            self.visit(node.right))
 </t>
 <t tx="ekr.20160205053641.3">
 def do_BoolOp(self, node): # Python 2.x only.
-    '''StubFormatter ast.BoolOp visitor.'''
-    return 'bool'
+    '''
+    StubFormatter ast.BoolOp visitor for 'and' and 'or'.
+    Neither necessarily returns a Boolean.
+    '''
     # op_name = self.op_name(node.op)
-    # values = [self.visit(z) for z in node.values]
-    # return op_name.join(values)
+    values = [self.visit(z) for z in node.values]
+    # g.trace('*******', values)
+    return reduce_types(values)
 </t>
 <t tx="ekr.20160205053641.4">
 def do_Compare(self, node):
-    '''StubFormatter ast.Compare visitor.'''
-    result = []
-    lt = self.visit(node.left)
-    ops = [self.op_name(z) for z in node.ops]
-    comps = [self.visit(z) for z in node.comparators]
-    result.append(lt)
-    if len(ops) == len(comps):
-        for i in range(len(ops)):
-            result.append('%s%s' % (ops[i], comps[i]))
-    else:
-        print('can not happen: ops', repr(ops), 'comparators', repr(comps))
-    return ''.join(result)
+    '''
+    StubFormatter ast.Compare visitor for these ops:
+    '==', '!=', '&lt;', '&lt;=', '&gt;', '&gt;=', 'is', 'is not', 'in', 'not in',
+    '''
+    return 'bool' # This *is* correct.
 </t>
 <t tx="ekr.20160205053641.5">
 def do_UnaryOp(self, node):
     '''StubFormatter ast.UnaryOp visitor.'''
-    return '%s%s' % (
-        self.op_name(node.op),
-        self.visit(node.operand))
+    op = self.op_name(node.op)
+    if op == ' not ':
+        return 'bool'
+    else:
+        return '%s%s' % (
+            self.op_name(node.op),
+            self.visit(node.operand))
 </t>
 <t tx="ekr.20160205053641.6">
 def do_IfExp(self, node):
     '''StubFormatter ast.IfExp (ternary operator) visitor.'''
-    return '%s if %s else %s ' % (
-        self.visit(node.body),
-        self.visit(node.test),
-        self.visit(node.orelse))
+    if 0:
+        return '%s if %s else %s ' % (
+            self.visit(node.body),
+            self.visit(node.test),
+            self.visit(node.orelse))
+    else:
+        return reduce_types([
+            self.visit(node.test),
+            self.visit(node.orelse)])
 </t>
 <t tx="ekr.20160205053705.1">
 # StubFormatter visitors for operands...</t>
+<t tx="ekr.20160205060709.1">def get_stub_file(self, fn):
+    '''Read the stub file into s.'''
+    g.trace(fn)
+    if os.path.exists(fn):
+        try:
+            s = open(fn, 'r').read()
+        except Exception:
+            print('--update: error reading %s' % fn)
+            s = ''
+        return s
+    else:
+        print('--update: not found: %s' % fn)
+        return ''
+    </t>
+<t tx="ekr.20160205060807.1">def parse_stub_file(self, s):
+    '''
+    Parse the stub file whose contents is s into a tree of Stubs.
+    
+    Parse the file by hand, so that --update can be run with Python 2.
+    '''
+    return None
+</t>
+<t tx="ekr.20160205072101.1">
+def reduce_types(aList):
+    '''Return a string containing the reduction of all types in aList.'''
+    trace = False
+    if None in aList:
+        aList.remove(None)
+    if not aList:
+        return 'None'
+    r = sorted(set(aList))
+    if not all([is_known_type(z) for z in r]):
+        if trace:
+            if 0:
+                for z in r:
+                    if not is_known_type(z):
+                        g.trace('unknown',z)
+            g.trace('%10s %s ==&gt; Any' % ('unknown', r))
+        return 'Any'
+    elif len(r) == 1:
+        return r[0] if r[0] else 'None'
+    # len(r) &gt;= 2...
+    kind = 'Optional' if 'None' in r else 'Union'
+    if 'None' in r:
+        r.remove('None')
+        if len(r) == 1:
+            if trace: g.trace('%10s %s' % (kind, r))
+            return 'Optional[%s]' % (r[0])
+    r = reduce_numbers(r)
+    if len(r) == 1:
+        if trace: g.trace('%10s %r' % ('Reduced', r[0]))
+        return r[0]
+    else:
+        if trace: g.trace('%10s %s' % (kind, r))
+        return '%s[%s]' % (kind, ', '.join(sorted(r)))
+</t>
+<t tx="ekr.20160205101134.1">
+def reduce_numbers(aList):
+    '''Return aList with the most general number.'''
+    numbers = ('number', 'complex', 'float', 'int')
+    for kind in numbers:
+        if kind in numbers:
+            break
+    else:
+        return aList
+    assert kind in numbers
+    aList = [z for z in aList if z not in numbers]
+    aList.append(kind)
+    return aList
+</t>
+<t tx="ekr.20160205102734.1">def format(self, node: Node) -&gt; Union[Any, number, str]: ...
+</t>
+<t tx="ekr.20160205103604.1">
+# Operands...
+
+if 0:
+    @others</t>
+<t tx="ekr.20160205103604.10">
+def do_Ellipsis(self, node):
+    return '...'
+</t>
+<t tx="ekr.20160205103604.11">
+def do_ExtSlice(self, node):
+    return ':'.join([self.visit(z) for z in node.dims])
+</t>
+<t tx="ekr.20160205103604.12">
+def do_Index(self, node):
+    return self.visit(node.value)
+</t>
+<t tx="ekr.20160205103604.17">
+# Python 2.x only
+
+def do_Repr(self, node):
+    return 'repr(%s)' % self.visit(node.value)
+</t>
+<t tx="ekr.20160205103604.18">
+def do_Slice(self, node):
+    lower, upper, step = '', '', ''
+    if getattr(node, 'lower', None) is not None:
+        lower = self.visit(node.lower)
+    if getattr(node, 'upper', None) is not None:
+        upper = self.visit(node.upper)
+    if getattr(node, 'step', None) is not None:
+        step = self.visit(node.step)
+    if step:
+        return '%s:%s:%s' % (lower, upper, step)
+    else:
+        return '%s:%s' % (lower, upper)
+</t>
+<t tx="ekr.20160205103604.2">
+# arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
+
+def do_arguments(self, node):
+    '''Format the arguments node.'''
+    kind = self.kind(node)
+    assert kind == 'arguments', kind
+    args = [self.visit(z) for z in node.args]
+    defaults = [self.visit(z) for z in node.defaults]
+    # Assign default values to the last args.
+    args2 = []
+    n_plain = len(args) - len(defaults)
+    for i in range(len(args)):
+        if i &lt; n_plain:
+            args2.append(args[i])
+        else:
+            args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
+    # Now add the vararg and kwarg args.
+    name = getattr(node, 'vararg', None)
+    if name: args2.append('*' + name)
+    name = getattr(node, 'kwarg', None)
+    if name: args2.append('**' + name)
+    return ','.join(args2)
+</t>
+<t tx="ekr.20160205103604.20">
+# Subscript(expr value, slice slice, expr_context ctx)
+
+def do_Subscript(self, node):
+    value = self.visit(node.value)
+    the_slice = self.visit(node.slice)
+    return '%s[%s]' % (value, the_slice)
+</t>
+<t tx="ekr.20160205103604.21">
+def do_Tuple(self, node):
+    elts = [self.visit(z) for z in node.elts]
+    # return '(%s)' % ','.join(elts)
+    return 'Tuple[%s]' % ','.join(elts)
+</t>
+<t tx="ekr.20160205103604.3">
+# Python 3:
+# arg = (identifier arg, expr? annotation)
+
+def do_arg(self, node):
+    if node.annotation:
+        return self.visit(node.annotation)
+    else:
+        return ''
+</t>
+<t tx="ekr.20160205103604.4">
+# Attribute(expr value, identifier attr, expr_context ctx)
+
+def do_Attribute(self, node):
+    return '%s.%s' % (
+        self.visit(node.value),
+        node.attr) # Don't visit node.attr: it is always a string.
+</t>
+<t tx="ekr.20160205103604.6">
+# Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
+
+def do_Call(self, node):
+    func = self.visit(node.func)
+    args = [self.visit(z) for z in node.args]
+    for z in node.keywords:
+        # Calls f.do_keyword.
+        args.append(self.visit(z))
+    if getattr(node, 'starargs', None):
+        args.append('*%s' % (self.visit(node.starargs)))
+    if getattr(node, 'kwargs', None):
+        args.append('**%s' % (self.visit(node.kwargs)))
+    args = [z for z in args if z] # Kludge: Defensive coding.
+    return '%s(%s)' % (func, ','.join(args))
+</t>
+<t tx="ekr.20160205103604.7">
+# keyword = (identifier arg, expr value)
+
+def do_keyword(self, node):
+    # node.arg is a string.
+    value = self.visit(node.value)
+    # This is a keyword *arg*, not a Python keyword!
+    return '%s=%s' % (node.arg, value)
+</t>
+<t tx="ekr.20160205103604.8">
+def do_comprehension(self, node):
+    result = []
+    name = self.visit(node.target) # A name.
+    it = self.visit(node.iter) # An attribute.
+    result.append('%s in %s' % (name, it))
+    ifs = [self.visit(z) for z in node.ifs]
+    if ifs:
+        result.append(' if %s' % (''.join(ifs)))
+    return ''.join(result)
+</t>
+<t tx="ekr.20160205103604.9">
+def do_Dict(self, node):
+    result = []
+    keys = [self.visit(z) for z in node.keys]
+    values = [self.visit(z) for z in node.values]
+    if len(keys) == len(values):
+        result.append('{\n' if keys else '{')
+        items = []
+        for i in range(len(keys)):
+            items.append('  %s:%s' % (keys[i], values[i]))
+        result.append(',\n'.join(items))
+        result.append('\n}' if keys else '}')
+    else:
+        print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
+            repr(keys), repr(values)))
+    return ''.join(result)
+</t>
+<t tx="ekr.20160205105235.1"></t>
+<t tx="ekr.20160205105304.1">@language rest
+@wrap
+
+The beginning of the end of complex user patterns.
+
+- Removed all complex patterns from msf.cfg.
+    - The code works better than before, even without complex patterns.
+    - More work remains.
+    - Added rich comparison names to msf.cfg.
+- Added None, 'None' and 'number' to is_known_type.
+- Added reduce_types and reduce_numbers outer functions.
+    - These simplify format_returns and its format_return_expressions.
+- Added type computation in StubFormatter class.
+    - Most of the work is done in do_BinOp.
+    - This kind of pattern matching is very easy.
+
+</t>
 </tnodes>
 </leo_file>
