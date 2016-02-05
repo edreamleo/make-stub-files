@@ -1359,23 +1359,24 @@ class StubFormatter (AstFormatter):
         applying all general patterns.
         '''
         # This is the heart of this script.
+        trace = False
         s = AstFormatter.visit(self, node)
         if self.fast_match:
             # Match only the patterns associated with this node.
             name = node.__class__.__name__
             for pattern in self.patterns_dict.get(name, []):
                 found, s = pattern.match(s)
-                # if found and pattern not in self.seen_patterns:
-                    # self.seen_patterns.append(pattern)
-                    # g.trace('%10s %s' % (name, pattern))
-            # Debugging
-            # if 0: # This finds and reports all missed patterns.
-                # for pattern in self.general_patterns:
-                    # found, s = pattern.match(s)
-                    # if True and found and pattern not in self.seen_patterns:
-                        # self.seen_patterns.append(pattern)
-                        # g.trace('**** %5s %s' % (name, pattern))
-        else: # old code: match all general patterns.
+                if trace and found and pattern not in self.seen_patterns:
+                    self.seen_patterns.append(pattern)
+                    g.trace('%10s %s' % (name, pattern))
+            if trace:
+                # This finds and reports all missed patterns.
+                for pattern in self.general_patterns:
+                    found, s = pattern.match(s)
+                    if True and found and pattern not in self.seen_patterns:
+                        self.seen_patterns.append(pattern)
+                        g.trace('**** %5s %s' % (name, pattern))
+        else: # Match all general patterns.
             for pattern in self.general_patterns:
                 found, s = pattern.match(s)
         return s
