@@ -7,7 +7,6 @@ class TestMakeStubFiles(unittest.TestCase):
     # def setUp(self):
         # '''Called before each test.'''
     def test_pattern_class(self):
-
         table = (
             # Unused regex tests.
             # ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
@@ -18,6 +17,8 @@ class TestMakeStubFiles(unittest.TestCase):
             ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
             ('(int,str)', '(*)', 'Tuple[*]', 'Tuple[int,str]'), # Guido bug 2.
             ('abcxyz', 'abc*', 'xxx', 'xxx'), # New test for trailing *.
+            ('list(self.regex.finditer(str))','list(*)','List(*)',
+             'List[self.regex.finditer(str)]'),
         )
         for s, find, repl, expected in table:
             # pdb.set_trace()
@@ -26,6 +27,9 @@ class TestMakeStubFiles(unittest.TestCase):
             assert result, (result, s, find, repl, expected)
             aList = pattern.all_matches(s)
             assert len(aList) == 1, aList
+            found, s2 = pattern.match(s)
+            assert found, 'after pattern.match(s)'
+            assert s2 == expected, ('expected', expected, 'got', s2)
         p1 = msf.Pattern('abc','xyz')
         p2 = msf.Pattern('abc','xyz')
         p3 = msf.Pattern('abc','pdq')
@@ -39,7 +43,6 @@ class TestMakeStubFiles(unittest.TestCase):
         assert p3 not in aSet
         assert list(aSet) == [p1] == [p2]
         aSet.add(p3)
-
 
     def test_is_known_type(self):
         '''Test that is_known_type handles brackets reasonably.'''
@@ -57,9 +60,9 @@ class TestMakeStubFiles(unittest.TestCase):
         )
         c = msf.StandAloneMakeStubFile()
         for s in good:
-            assert msf.StubTraverser(c).is_known_type(s), s
+            assert msf.is_known_type(s), s
         for s in bad:
-            assert not msf.StubTraverser(c).is_known_type(s), s
+            assert not msf.is_known_type(s), s
     
 if __name__ == '__main__':
     unittest.main()
