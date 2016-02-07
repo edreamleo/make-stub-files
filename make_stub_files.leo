@@ -84,7 +84,9 @@
 <v t="ekr.20160130034812.1"><vh>is_known_type</vh></v>
 <v t="ekr.20160207051316.1"></v>
 <v t="ekr.20160205101134.1"></v>
-<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh></v>
+<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
+<v t="ekr.20160207133035.1"><vh>&lt;&lt; define show &gt;&gt;</vh></v>
+</v>
 </v>
 <v t="ekr.20160207115947.1"><vh>@test truncate</vh>
 <v t="ekr.20160207115604.1"><vh>truncate</vh></v>
@@ -240,7 +242,7 @@
 <v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
 </v>
 <v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
-<v t="ekr.20160205053641.6"><vh>sf.IfExp (Test)</vh></v>
+<v t="ekr.20160205053641.6"><vh>sf.IfExp</vh></v>
 <v t="ekr.20160205142626.1"><vh>sf.Subscript</vh></v>
 <v t="ekr.20160205053641.5"><vh>sf.UnaryOp</vh></v>
 </v>
@@ -280,15 +282,16 @@
 <v t="ekr.20160205053641.1"></v>
 <v t="ekr.20160126153212.89"></v>
 <v t="ekr.20160130032546.1"></v>
+</v>
+<v t="ekr.20160131174909.1"><vh>** to do</vh></v>
 <v t="ekr.20160207112208.1"><vh>re: trace_* options</vh>
 <v t="ekr.20160202070025.1"></v>
 <v t="ekr.20160204170443.1"></v>
 <v t="ekr.20160204113206.1"></v>
 <v t="ekr.20160205072101.1"></v>
 </v>
-</v>
-<v t="ekr.20160131174909.1"><vh>** to do</vh></v>
-<v t="ekr.20160207130356.1"><vh>Log</vh></v>
+<v t="ekr.20160205053641.6"></v>
+<v t="ekr.20160207133757.1"><vh>Log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2091,6 +2094,9 @@ Fix this mypy complaint:
 * Test regex patterns.
  
 *** Recognize [Def Name Patterns] and recursive calls in function returns.
+
+- Add more binop patterns.
+
 *** --update.
 
 - Post: announce new formatting of stub files &amp; complete handling of elementary types.
@@ -2777,7 +2783,7 @@ def do_IfExp(self, node):
         # At present, visitors must return strings.
         # even if Union[x,y] causes trouble later.
         return reduce_types(
-            [self.visit(node.test), self.visit(node.orelse)],
+            [self.visit(node.body), self.visit(node.orelse)],
             trace=self.trace_reduce)
 </t>
 <t tx="ekr.20160205053705.1">
@@ -2814,17 +2820,7 @@ def reduce_types(aList, newlines=False, trace=False):
     '''
     trace = False or trace
     aList1 = aList[:]
-    
-    def show(s, known=True):
-        '''Show the result of the reduction.'''
-        s2 = s.replace('\n','').replace(' ','').strip().replace(',]',']')
-            # Undo newline option if possible.
-        if trace:
-            r = sorted(set([z.replace('\n',' ') for z in aList1]))
-            sep = ' ' if known else '?'
-            g.trace('%30s %s &lt;== %s' % (s2, sep, r))
-        return s2 if len(s2) &lt; 25 else s
-
+    &lt;&lt; define show &gt;&gt;
     while None in aList:
         aList.remove(None)
     if not aList:
@@ -3469,16 +3465,21 @@ def truncate(s, n):
 for s1, s2 in table:
     got = truncate(s1, 5)
     assert s2 == got, (s1, 'expected', s2, 'got', got)</t>
-<t tx="ekr.20160207130356.1">Fixed a recent bug in msf.find_pattern_ops and added lots of tracing.
-Mypy has only one complaint about make_stub_files.pyi
-    def splitLines(self, s: str) -&gt; Union[List[],str]: ...
-
-- find_pattern_ops was not properly handling ops such as 'in', 'not in', etc.
-  A false match of 'aList' against 'in' disabled `aList: whatever`.
-- Added --trace_patterns, --trace_matches, --trace_reduce, --trace-visitors
-    - --trace-visitors does nothing yet.
-    - Added trace keyword args to functions/methods affected by --trace-*.
-- Significantly improved tracing in reduce_types (--reduce)
-- Added truncate(s, n).</t>
+<t tx="ekr.20160207133035.1">def show(s, known=True):
+    '''Show the result of the reduction.'''
+    s2 = s.replace('\n','').replace(' ','').strip().replace(',]',']')
+        # Undo newline option if possible.
+    if trace:
+        r = sorted(set([z.replace('\n',' ') for z in aList1]))
+        if True or len(r) &gt; 1:
+            sep = ' ' if known else '?'
+            if 1:
+                caller = g.callers(2).split(',')[0]
+                g.trace('%30s %s &lt;== %-40s' % (s2, sep, r), caller)
+            else:
+                g.trace('%30s %s &lt;== %s' % (s2, sep, r))
+    return s2 if len(s2) &lt; 25 else s</t>
+<t tx="ekr.20160207133757.1">
+Fixed a bug in sf.IfExp that was producing invalid results.</t>
 </tnodes>
 </leo_file>

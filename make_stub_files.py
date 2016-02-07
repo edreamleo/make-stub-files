@@ -159,17 +159,20 @@ def reduce_types(aList, newlines=False, trace=False):
     '''
     trace = False or trace
     aList1 = aList[:]
-    
     def show(s, known=True):
         '''Show the result of the reduction.'''
         s2 = s.replace('\n','').replace(' ','').strip().replace(',]',']')
             # Undo newline option if possible.
         if trace:
             r = sorted(set([z.replace('\n',' ') for z in aList1]))
-            sep = ' ' if known else '?'
-            g.trace('%30s %s <== %s' % (s2, sep, r))
+            if True or len(r) > 1:
+                sep = ' ' if known else '?'
+                if 1:
+                    caller = g.callers(2).split(',')[0]
+                    g.trace('%30s %s <== %-40s' % (s2, sep, r), caller)
+                else:
+                    g.trace('%30s %s <== %s' % (s2, sep, r))
         return s2 if len(s2) < 25 else s
-
     while None in aList:
         aList.remove(None)
     if not aList:
@@ -1802,7 +1805,7 @@ class StubFormatter (AstFormatter):
             # At present, visitors must return strings.
             # even if Union[x,y] causes trouble later.
             return reduce_types(
-                [self.visit(node.test), self.visit(node.orelse)],
+                [self.visit(node.body), self.visit(node.orelse)],
                 trace=self.trace_reduce)
 
     # Subscript(expr value, slice slice, expr_context ctx)
