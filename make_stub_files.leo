@@ -31,6 +31,7 @@
 <v t="ekr.20160203134203.1"><vh>pattern.__gt/lt/ge/le__</vh></v>
 <v t="ekr.20160203154154.1"><vh>from Stub.__gt__</vh></v>
 <v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
+<v t="ekr.20160202064553.1"><vh>sf.match (to be removed)</vh></v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Test files</vh>
 <v t="ekr.20160128154715.1"><vh>@clean test/test_msf.py</vh>
@@ -67,7 +68,7 @@
 <v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
 <v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
 </v>
-<v t="ekr.20160202070025.1"><vh>pattern.match</vh></v>
+<v t="ekr.20160202070025.1"><vh>pattern.match (trace-matches)</vh></v>
 <v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
 <v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
 <v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
@@ -83,7 +84,10 @@
 <v t="ekr.20160130034812.1"><vh>is_known_type</vh></v>
 <v t="ekr.20160207051316.1"></v>
 <v t="ekr.20160205101134.1"></v>
-<v t="ekr.20160205072101.1"><vh>reduce_types (returns string)</vh></v>
+<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh></v>
+</v>
+<v t="ekr.20160207115947.1"><vh>@test truncate</vh>
+<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
 </v>
 </v>
 <v t="ekr.20160206165656.1"></v>
@@ -97,6 +101,7 @@
 <v t="ekr.20160205101134.1"></v>
 <v t="ekr.20160205072101.1"></v>
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
+<v t="ekr.20160207115604.1"></v>
 </v>
 <v t="ekr.20160126153212.3"><vh> class AstFormatter</vh>
 <v t="ekr.20160126153212.4"><vh> f.Entries</vh>
@@ -201,11 +206,11 @@
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160204170921.1"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops</vh></v>
+<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
 <v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
 <v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
 <v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict</vh></v>
+<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
@@ -218,9 +223,8 @@
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
-<v t="ekr.20160202064553.1"><vh>sf.match (to be removed)</vh></v>
-<v t="ekr.20160205131910.1"><vh>sf.match_all</vh></v>
-<v t="ekr.20160206203133.1"><vh>sf.visit (tracing)</vh></v>
+<v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
+<v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
 <v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
 <v t="ekr.20160205103604.4"><vh>sf.Attribute</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
@@ -271,29 +275,20 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160207111247.1"><vh>Checkin log</vh></v>
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
-<v t="ekr.20160130034812.1"></v>
-<v t="ekr.20160207051316.1"></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160205103604.6"></v>
-<v t="ekr.20160205103604.9"></v>
-<v t="ekr.20160206204452.1"></v>
 <v t="ekr.20160205053705.1"></v>
 <v t="ekr.20160205053641.1"></v>
 <v t="ekr.20160126153212.89"></v>
 <v t="ekr.20160130032546.1"></v>
-<v t="ekr.20160207050818.1"><vh>Visitors must return strings</vh>
-<v t="ekr.20160205053641.3"></v>
-<v t="ekr.20160205053641.6"></v>
-<v t="ekr.20160205053641.2"></v>
-</v>
-<v t="ekr.20160207062251.1"><vh>** several name patterns are not working</vh>
-<v t="ekr.20160205103604.4"></v>
-<v t="ekr.20160204153904.1"></v>
+<v t="ekr.20160207112208.1"><vh>re: trace_* options</vh>
+<v t="ekr.20160202070025.1"></v>
+<v t="ekr.20160204170443.1"></v>
+<v t="ekr.20160204113206.1"></v>
+<v t="ekr.20160205072101.1"></v>
 </v>
 </v>
 <v t="ekr.20160131174909.1"><vh>** to do</vh></v>
+<v t="ekr.20160207130356.1"><vh>Log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -997,6 +992,10 @@ def __init__ (self):
         # self.finalize('~/stubs')
     self.overwrite = False
     self.prefix_lines = []
+    self.trace_matches = False
+    self.trace_patterns = False
+    self.trace_reduce = False
+    self.trace_visitors = False
     self.update_flag = False
     self.verbose = False # Trace config arguments.
     self.warn = False
@@ -1065,6 +1064,15 @@ def scan_command_line(self):
         help='overwrite existing stub (.pyi) files')
     add('-t', '--test', action='store_true', default=False,
         help='run unit tests on startup')
+    add('--trace-matches', action='store_true', default=False,
+        help='trace Pattern.matches')
+    add('--trace-patterns', action='store_true', default=False,
+        help='trace pattern creation')
+    add('--trace-reduce', action='store_true', default=False,
+        help='trace st.reduce_types')
+    ### To do
+    # add('--trace-visitors', action='store_true', default=False,
+        # help='trace visitor results')
     add('-u', '--update', action='store_true', default=False,
         help='update existing stub file')
     add('-v', '--verbose', action='store_true', default=False,
@@ -1076,6 +1084,10 @@ def scan_command_line(self):
     # Handle the options...
     self.enable_unit_tests=options.test
     self.overwrite = options.overwrite
+    self.trace_matches = options.trace_matches
+    self.trace_patterns = options.trace_patterns
+    self.trace_reduce = options.trace_reduce
+    ### self.trace_visitors = options.trace_visitors
     self.update_flag = options.update
     self.verbose = options.verbose
     self.warn = options.warn
@@ -1149,7 +1161,7 @@ def scan_options(self):
 <t tx="ekr.20160126153212.79">
 def scan_patterns(self, section_name):
     '''Parse the config section into a list of patterns, preserving order.'''
-    trace = False
+    trace = False or self.trace_patterns
     parser = self.parser
     aList = []
     if parser.has_section(section_name):
@@ -1245,6 +1257,10 @@ def __init__(self, controller):
     self.overwrite = x.overwrite
     self.prefix_lines = x.prefix_lines
     self.update_flag = x.update_flag
+    self.trace_matches = x.trace_matches
+    self.trace_patterns = x.trace_patterns
+    self.trace_reduce = x.trace_reduce
+    self.trace_visitors = x.trace_visitors
     self.verbose = x.verbose
     self.warn = x.warn
     # Copies of controller patterns...
@@ -1608,7 +1624,6 @@ def match_balanced(self, delim, s, i):
         assert progress &lt; i
     # Unmatched: a syntax error.
     print('***** unmatched %s in %s' % (delim, s))
-    print(g.callers())
     return len(s) + 1
 </t>
 <t tx="ekr.20160128051025.1">
@@ -1762,12 +1777,10 @@ StubTraverser.do_*: str
 
 [General Patterns]
 
-# Declarations of names..
+# Declarations of names...
+NotImplemented: bool
 a: str
-aList: List
-# Don't work
-### aList: List[Any]
-### aList: List
+aList: List[Any]
 comments: str
 controller: StandAloneMakeStubFile
 find_s: str
@@ -1983,12 +1996,16 @@ def format_return_expressions(self, raw_returns, reduced_returns):
         results = ''.join([lws + self.indent(z) for z in aList])
         # Put the return lines in their proper places.
         if known:
-            s = reduce_types(reduced_returns, newlines=True)
+            s = reduce_types(reduced_returns,
+                             newlines=True,
+                             trace=self.trace_reduce)
             return s + ': ...' + results
         else:
             return 'Any: ...' + results
     else:
-        s = reduce_types(reduced_returns, newlines=True)
+        s = reduce_types(reduced_returns,
+                         newlines=True,
+                         trace=self.trace_reduce)
         return s + ': ...'
 </t>
 <t tx="ekr.20160130034812.1">
@@ -2062,14 +2079,17 @@ def is_known_type(s):
     return False
 </t>
 <t tx="ekr.20160131174909.1">
-- Add trace-patterns, trace-matches, trace-visitors.
-  These are for users, not me.
+Fix this mypy complaint:
+    def splitLines(self, s: str) -&gt; Union[List[],str]: ...
 
-*** Fix bug: aList not handled correctly
-    Test regex patterns.
-    
-*** Merge unions in reduce_types.
-    
+=== Improve reduce_types:
+- Send name into reduce_types.
+- Merge List and Tuple types?
+
+-- Support --trace-visitors
+
+* Test regex patterns.
+ 
 *** Recognize [Def Name Patterns] and recursive calls in function returns.
 *** --update.
 
@@ -2220,11 +2240,16 @@ def __init__(self, controller):
     self.general_patterns = x.general_patterns
     self.names_dict = x.names_dict
     self.patterns_dict = x.patterns_dict
+    self.trace_matches = x.trace_matches
+    self.trace_patterns = x.trace_patterns
+    self.trace_reduce = x.trace_reduce
+    self.trace_visitors = x.trace_visitors
     self.verbose = x.verbose
 </t>
 <t tx="ekr.20160202064553.1">
 def match(self, patterns, s):
     '''Return s with at most one pattern matched.'''
+    assert False, g.callers()
     for pattern in patterns:
         found, s = pattern.match(s)
         if found:
@@ -2232,24 +2257,28 @@ def match(self, patterns, s):
     return s
 </t>
 <t tx="ekr.20160202070025.1">
-def match(self, s):
+def match(self, s, trace=False):
     '''
     Perform the match on the entire string if possible.
     Return (found, new s)
     '''
-    trace = False
+    trace = False or trace
     if self.is_balanced():
         j = self.full_balanced_match(s, 0)
         if j is None:
             return False, s
         else:
+            s1 = s
             start, end = 0, len(s)
             s = self.replace_balanced(s, start, end)
+            if trace: g.trace('%50s' % (truncate(s1,50)), self)
             return True, s
     else:
         m = self.regex.match(s)
         if m and m.group(0) == s:
+            s1 = s
             s = self.replace_regex(m, s)
+            if trace: g.trace('%50s' % (truncate(s1,50)), self)
             return True, s
         else:
             return False, s
@@ -2542,6 +2571,7 @@ def shortFileName(self,fileName, n=None):
 <t tx="ekr.20160204113206.1">
 def make_patterns_dict(self):
     '''Assign all patterns to the appropriate ast.Node.'''
+    trace = False or self.trace_patterns
     for pattern in self.general_patterns:
         ops = self.find_pattern_ops(pattern)
         if ops:
@@ -2597,7 +2627,7 @@ def do_Name(self, node):
 <t tx="ekr.20160204170443.1">
 def find_pattern_ops(self, pattern):
     '''Return a list of operators in pattern.find_s.'''
-    trace = False
+    trace = False or self.trace_patterns
     d = self.op_name_dict
     keys1, keys2, keys3, keys9 = [], [], [], []
     for op in d:
@@ -2615,11 +2645,19 @@ def find_pattern_ops(self, pattern):
             g.trace('bad op', op)
     ops = []
     s = s1 = pattern.find_s
-    for aList in (keys9, keys3, keys2, keys1):
+    for aList in (keys3, keys2, keys1):
         for op in aList:
+            # Must match word here!
             if s.find(op) &gt; -1:
                 s = s.replace(op, '')
                 ops.append(op)
+    # Handle the keys9 list very carefully.
+    for op in keys9:
+        target = ' %s ' % op
+        if s.find(target) &gt; -1:
+            ops.append(op)
+            break # Only one match allowed.
+            
     if trace and ops: g.trace(s1, ops)
     return ops
 </t>
@@ -2680,7 +2718,7 @@ def do_BinOp(self, node):
     elif lhs == rhs:
         return lhs ### Perhaps not always right.
     elif lhs in numbers and rhs in numbers:
-        return reduce_types([lhs, rhs])
+        return reduce_types([lhs, rhs], trace=self.trace_reduce)
             # At present, visitors must return strings.
             # even if Union[x,y] causes trouble later.
             # reduce_numbers would be wrong: it returns a list.
@@ -2703,7 +2741,7 @@ def do_BoolOp(self, node): # Python 2.x only.
     '''
     # op_name = self.op_name(node.op)
     values = [self.visit(z) for z in node.values]
-    return reduce_types(values)
+    return reduce_types(values, trace=self.trace_reduce)
         # At present, visitors must return strings.
         # even if Union[x,y] causes trouble later.
 </t>
@@ -2738,9 +2776,9 @@ def do_IfExp(self, node):
     else:
         # At present, visitors must return strings.
         # even if Union[x,y] causes trouble later.
-        return reduce_types([
-            self.visit(node.test),
-            self.visit(node.orelse)])
+        return reduce_types(
+            [self.visit(node.test), self.visit(node.orelse)],
+            trace=self.trace_reduce)
 </t>
 <t tx="ekr.20160205053705.1">
 # StubFormatter visitors for operands...</t>
@@ -2769,41 +2807,45 @@ def parse_stub_file(self, s):
     return None
 </t>
 <t tx="ekr.20160205072101.1">
-def reduce_types(aList, newlines=False):
+def reduce_types(aList, newlines=False, trace=False):
     '''
     Return a string containing the reduction of all types in aList.
+    The --trace-reduce command-line option sets trace=True.
     '''
-    trace = False
+    trace = False or trace
+    aList1 = aList[:]
+    
+    def show(s, known=True):
+        '''Show the result of the reduction.'''
+        s2 = s.replace('\n','').replace(' ','').strip().replace(',]',']')
+            # Undo newline option if possible.
+        if trace:
+            r = sorted(set([z.replace('\n',' ') for z in aList1]))
+            sep = ' ' if known else '?'
+            g.trace('%30s %s &lt;== %s' % (s2, sep, r))
+        return s2 if len(s2) &lt; 25 else s
+
     while None in aList:
         aList.remove(None)
     if not aList:
-        return 'None'
+        return show('None')
     r = sorted(set(aList))
     if not all([is_known_type(z) for z in r]):
-        if trace:
-            if 0:
-                for z in r:
-                    if not is_known_type(z):
-                        g.trace('unknown',z)
-            g.trace('%10s %s ==&gt; Any' % ('unknown', r))
-        return 'Any'
+        return show('Any', known=False)
     elif len(r) == 1:
-        return r[0]
+        return show(r[0])
     if 'None' in r:
         kind = 'Optional'
         while 'None' in r:
             r.remove('None')
-        if trace: g.trace('%10s %s' % (kind, r))
-        return 'Optional[%s]' % (r[0])
+        return show('Optional[%s]' % r[0])
     r = reduce_numbers(r)
     if len(r) == 1:
-        if trace: g.trace('%10s %r' % ('Reduced', r[0]))
-        return r[0]
+        return show(r[0])
     elif newlines:
-        return 'Union[\n    %s,\n]' % (',\n    '.join(sorted(r)))
+        return show('Union[\n    %s,\n]' % (',\n    '.join(sorted(r))))
     else:
-        if trace: g.trace('%10s %s' % ('Union', r))
-        return 'Union[%s]' % (', '.join(sorted(r)))
+        return show('Union[%s]' % (', '.join(sorted(r))))
 </t>
 <t tx="ekr.20160205101134.1">
 def reduce_numbers(aList):
@@ -2896,20 +2938,19 @@ matched_d = {}
 
 def match_all(self, node, s):
     '''Match all the patterns for the given node.'''
-    trace = False
+    trace = False or self.trace_matches
     d = self.matched_d
     name = node.__class__.__name__
     for pattern in self.patterns_dict.get(name, []):
         s1 = s
-        found, s = pattern.match(s)
+        found, s = pattern.match(s,trace=trace)
         if found:
-            # if pattern.find_s == 'list(*)': g.pdb()
             if trace:
                 aList = d.get(name, [])
                 if pattern not in aList:
                     aList.append(pattern)
                     d [name] = aList
-                    g.trace('%10s %s' % (name, pattern))
+                    g.trace('%46s %s' % (name, pattern))
             break
     return s</t>
 <t tx="ekr.20160205133120.1"></t>
@@ -3368,7 +3409,6 @@ def split_types(s):
             i1 = i+1
     aList.append(s[i1:].strip())
     return aList</t>
-<t tx="ekr.20160207050818.1"></t>
 <t tx="ekr.20160207051316.1">
 def merge_types(a1, a2):
     '''
@@ -3404,7 +3444,6 @@ for a1, a2, expected in table:
     got = merge_types(a1, a2)
     assert expected == got, (a1, a2, 'expected:', expected, 'got', got)
 </t>
-<t tx="ekr.20160207062251.1"></t>
 <t tx="ekr.20160207105647.1"></t>
 <t tx="ekr.20160207105710.1">for p in c.all_unique_positions():
     if p.h.startswith('@') or p.h.strip().startswith('&lt;&lt;'):
@@ -3413,7 +3452,33 @@ for a1, a2, expected in table:
         print(repr(p.b[:3]), p.h)
 print('done')
 </t>
-<t tx="ekr.20160207111247.1">
-- Added functions that caused mypy complaints to test/test.py</t>
+<t tx="ekr.20160207112208.1"></t>
+<t tx="ekr.20160207115604.1">
+def truncate(s, n):
+    '''Return s truncated to n characers.'''
+    return s if len(s) &lt;= n else s[:n-3] + '...'
+</t>
+<t tx="ekr.20160207115947.1">table = (
+    ('abc',     'abc'),
+    ('abcd',    'abcd'),
+    ('abcde',   'abcde'),
+    ('abcdef',  'ab...'),
+    ('abcdefg', 'ab...'),
+)
+@others  
+for s1, s2 in table:
+    got = truncate(s1, 5)
+    assert s2 == got, (s1, 'expected', s2, 'got', got)</t>
+<t tx="ekr.20160207130356.1">Fixed a recent bug in msf.find_pattern_ops and added lots of tracing.
+Mypy has only one complaint about make_stub_files.pyi
+    def splitLines(self, s: str) -&gt; Union[List[],str]: ...
+
+- find_pattern_ops was not properly handling ops such as 'in', 'not in', etc.
+  A false match of 'aList' against 'in' disabled `aList: whatever`.
+- Added --trace_patterns, --trace_matches, --trace_reduce, --trace-visitors
+    - --trace-visitors does nothing yet.
+    - Added trace keyword args to functions/methods affected by --trace-*.
+- Significantly improved tracing in reduce_types (--reduce)
+- Added truncate(s, n).</t>
 </tnodes>
 </leo_file>

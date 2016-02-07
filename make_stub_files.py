@@ -152,41 +152,45 @@ def reduce_numbers(aList):
         aList.append(found)
     return aList
 
-def reduce_types(aList, newlines=False):
+def reduce_types(aList, newlines=False, trace=False):
     '''
     Return a string containing the reduction of all types in aList.
+    The --trace-reduce command-line option sets trace=True.
     '''
-    trace = False
+    trace = False or trace
+    aList1 = aList[:]
+    
+    def show(s, known=True):
+        '''Show the result of the reduction.'''
+        s2 = s.replace('\n','').replace(' ','').strip().replace(',]',']')
+            # Undo newline option if possible.
+        if trace:
+            r = sorted(set([z.replace('\n',' ') for z in aList1]))
+            sep = ' ' if known else '?'
+            g.trace('%30s %s <== %s' % (s2, sep, r))
+        return s2 if len(s2) < 25 else s
+
     while None in aList:
         aList.remove(None)
     if not aList:
-        return 'None'
+        return show('None')
     r = sorted(set(aList))
     if not all([is_known_type(z) for z in r]):
-        if trace:
-            if 0:
-                for z in r:
-                    if not is_known_type(z):
-                        g.trace('unknown',z)
-            g.trace('%10s %s ==> Any' % ('unknown', r))
-        return 'Any'
+        return show('Any', known=False)
     elif len(r) == 1:
-        return r[0]
+        return show(r[0])
     if 'None' in r:
         kind = 'Optional'
         while 'None' in r:
             r.remove('None')
-        if trace: g.trace('%10s %s' % (kind, r))
-        return 'Optional[%s]' % (r[0])
+        return show('Optional[%s]' % r[0])
     r = reduce_numbers(r)
     if len(r) == 1:
-        if trace: g.trace('%10s %r' % ('Reduced', r[0]))
-        return r[0]
+        return show(r[0])
     elif newlines:
-        return 'Union[\n    %s,\n]' % (',\n    '.join(sorted(r)))
+        return show('Union[\n    %s,\n]' % (',\n    '.join(sorted(r))))
     else:
-        if trace: g.trace('%10s %s' % ('Union', r))
-        return 'Union[%s]' % (', '.join(sorted(r)))
+        return show('Union[%s]' % (', '.join(sorted(r))))
 
 def split_types(s):
     '''Split types on *outer level* commas.'''
@@ -201,6 +205,10 @@ def split_types(s):
             i1 = i+1
     aList.append(s[i1:].strip())
     return aList
+
+def truncate(s, n):
+    '''Return s truncated to n characers.'''
+    return s if len(s) <= n else s[:n-3] + '...'
 
 
 class AstFormatter:
@@ -1050,27 +1058,30 @@ class Pattern(object):
             assert progress < i
         # Unmatched: a syntax error.
         print('***** unmatched %s in %s' % (delim, s))
-        print(g.callers())
         return len(s) + 1
 
-    def match(self, s):
+    def match(self, s, trace=False):
         '''
         Perform the match on the entire string if possible.
         Return (found, new s)
         '''
-        trace = False
+        trace = False or trace
         if self.is_balanced():
             j = self.full_balanced_match(s, 0)
             if j is None:
                 return False, s
             else:
+                s1 = s
                 start, end = 0, len(s)
                 s = self.replace_balanced(s, start, end)
+                if trace: g.trace('%50s' % (truncate(s1,50)), self)
                 return True, s
         else:
             m = self.regex.match(s)
             if m and m.group(0) == s:
+                s1 = s
                 s = self.replace_regex(m, s)
+                if trace: g.trace('%50s' % (truncate(s1,50)), self)
                 return True, s
             else:
                 return False, s
@@ -1153,6 +1164,10 @@ class StandAloneMakeStubFile:
             # self.finalize('~/stubs')
         self.overwrite = False
         self.prefix_lines = []
+        self.trace_matches = False
+        self.trace_patterns = False
+        self.trace_reduce = False
+        self.trace_visitors = False
         self.update_flag = False
         self.verbose = False # Trace config arguments.
         self.warn = False
@@ -1234,6 +1249,15 @@ class StandAloneMakeStubFile:
             help='overwrite existing stub (.pyi) files')
         add('-t', '--test', action='store_true', default=False,
             help='run unit tests on startup')
+        add('--trace-matches', action='store_true', default=False,
+            help='trace Pattern.matches')
+        add('--trace-patterns', action='store_true', default=False,
+            help='trace pattern creation')
+        add('--trace-reduce', action='store_true', default=False,
+            help='trace st.reduce_types')
+        ### To do
+        # add('--trace-visitors', action='store_true', default=False,
+            # help='trace visitor results')
         add('-u', '--update', action='store_true', default=False,
             help='update existing stub file')
         add('-v', '--verbose', action='store_true', default=False,
@@ -1245,6 +1269,10 @@ class StandAloneMakeStubFile:
         # Handle the options...
         self.enable_unit_tests=options.test
         self.overwrite = options.overwrite
+        self.trace_matches = options.trace_matches
+        self.trace_patterns = options.trace_patterns
+        self.trace_reduce = options.trace_reduce
+        ### self.trace_visitors = options.trace_visitors
         self.update_flag = options.update
         self.verbose = options.verbose
         self.warn = options.warn
@@ -1348,7 +1376,7 @@ class StandAloneMakeStubFile:
 
     def find_pattern_ops(self, pattern):
         '''Return a list of operators in pattern.find_s.'''
-        trace = False
+        trace = False or self.trace_patterns
         d = self.op_name_dict
         keys1, keys2, keys3, keys9 = [], [], [], []
         for op in d:
@@ -1366,11 +1394,19 @@ class StandAloneMakeStubFile:
                 g.trace('bad op', op)
         ops = []
         s = s1 = pattern.find_s
-        for aList in (keys9, keys3, keys2, keys1):
+        for aList in (keys3, keys2, keys1):
             for op in aList:
+                # Must match word here!
                 if s.find(op) > -1:
                     s = s.replace(op, '')
                     ops.append(op)
+        # Handle the keys9 list very carefully.
+        for op in keys9:
+            target = ' %s ' % op
+            if s.find(target) > -1:
+                ops.append(op)
+                break # Only one match allowed.
+                
         if trace and ops: g.trace(s1, ops)
         return ops
 
@@ -1422,6 +1458,7 @@ class StandAloneMakeStubFile:
 
     def make_patterns_dict(self):
         '''Assign all patterns to the appropriate ast.Node.'''
+        trace = False or self.trace_patterns
         for pattern in self.general_patterns:
             ops = self.find_pattern_ops(pattern)
             if ops:
@@ -1459,7 +1496,7 @@ class StandAloneMakeStubFile:
 
     def scan_patterns(self, section_name):
         '''Parse the config section into a list of patterns, preserving order.'''
-        trace = False
+        trace = False or self.trace_patterns
         parser = self.parser
         aList = []
         if parser.has_section(section_name):
@@ -1564,34 +1601,29 @@ class StubFormatter (AstFormatter):
         self.general_patterns = x.general_patterns
         self.names_dict = x.names_dict
         self.patterns_dict = x.patterns_dict
+        self.trace_matches = x.trace_matches
+        self.trace_patterns = x.trace_patterns
+        self.trace_reduce = x.trace_reduce
+        self.trace_visitors = x.trace_visitors
         self.verbose = x.verbose
-
-    def match(self, patterns, s):
-        '''Return s with at most one pattern matched.'''
-        for pattern in patterns:
-            found, s = pattern.match(s)
-            if found:
-                break
-        return s
 
     matched_d = {}
 
     def match_all(self, node, s):
         '''Match all the patterns for the given node.'''
-        trace = False
+        trace = False or self.trace_matches
         d = self.matched_d
         name = node.__class__.__name__
         for pattern in self.patterns_dict.get(name, []):
             s1 = s
-            found, s = pattern.match(s)
+            found, s = pattern.match(s,trace=trace)
             if found:
-                # if pattern.find_s == 'list(*)': g.pdb()
                 if trace:
                     aList = d.get(name, [])
                     if pattern not in aList:
                         aList.append(pattern)
                         d [name] = aList
-                        g.trace('%10s %s' % (name, pattern))
+                        g.trace('%46s %s' % (name, pattern))
                 break
         return s
 
@@ -1698,7 +1730,7 @@ class StubFormatter (AstFormatter):
         elif lhs == rhs:
             return lhs ### Perhaps not always right.
         elif lhs in numbers and rhs in numbers:
-            return reduce_types([lhs, rhs])
+            return reduce_types([lhs, rhs], trace=self.trace_reduce)
                 # At present, visitors must return strings.
                 # even if Union[x,y] causes trouble later.
                 # reduce_numbers would be wrong: it returns a list.
@@ -1720,7 +1752,7 @@ class StubFormatter (AstFormatter):
         '''
         # op_name = self.op_name(node.op)
         values = [self.visit(z) for z in node.values]
-        return reduce_types(values)
+        return reduce_types(values, trace=self.trace_reduce)
             # At present, visitors must return strings.
             # even if Union[x,y] causes trouble later.
 
@@ -1769,9 +1801,9 @@ class StubFormatter (AstFormatter):
         else:
             # At present, visitors must return strings.
             # even if Union[x,y] causes trouble later.
-            return reduce_types([
-                self.visit(node.test),
-                self.visit(node.orelse)])
+            return reduce_types(
+                [self.visit(node.test), self.visit(node.orelse)],
+                trace=self.trace_reduce)
 
     # Subscript(expr value, slice slice, expr_context ctx)
 
@@ -1827,6 +1859,10 @@ class StubTraverser (ast.NodeVisitor):
         self.overwrite = x.overwrite
         self.prefix_lines = x.prefix_lines
         self.update_flag = x.update_flag
+        self.trace_matches = x.trace_matches
+        self.trace_patterns = x.trace_patterns
+        self.trace_reduce = x.trace_reduce
+        self.trace_visitors = x.trace_visitors
         self.verbose = x.verbose
         self.warn = x.warn
         # Copies of controller patterns...
@@ -2066,12 +2102,16 @@ class StubTraverser (ast.NodeVisitor):
             results = ''.join([lws + self.indent(z) for z in aList])
             # Put the return lines in their proper places.
             if known:
-                s = reduce_types(reduced_returns, newlines=True)
+                s = reduce_types(reduced_returns,
+                                 newlines=True,
+                                 trace=self.trace_reduce)
                 return s + ': ...' + results
             else:
                 return 'Any: ...' + results
         else:
-            s = reduce_types(reduced_returns, newlines=True)
+            s = reduce_types(reduced_returns,
+                             newlines=True,
+                             trace=self.trace_reduce)
             return s + ': ...'
 
     def get_def_name(self, node):
