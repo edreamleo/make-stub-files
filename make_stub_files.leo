@@ -274,10 +274,9 @@
 <v t="ekr.20160206204452.1"></v>
 <v t="ekr.20160205103604.9"></v>
 <v t="ekr.20160130034812.1"></v>
+</v>
 <v t="ekr.20160205072101.1"></v>
 <v t="ekr.20160130032546.1"></v>
-</v>
-<v t="ekr.20160206215423.1"><vh>Checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1971,7 +1970,7 @@ def format_return_expressions(self, raw_returns, reduced_returns):
         else:
             return 'Any: ...' + results
     else:
-        s = reduce_types(reduced_returns)
+        s = reduce_types(reduced_returns, newlines=True)
         return s + ': ...'
 </t>
 <t tx="ekr.20160130034812.1">
@@ -3218,23 +3217,5 @@ def split_types(s):
     aList.append(s[i1:].strip())
     return aList</t>
 <t tx="ekr.20160206215414.1"></t>
-<t tx="ekr.20160206215423.1">@language rest
-@wrap
-
-The script handles all common types without *any* type-related patterns.
-See test\test.py for examples of the greatly improved output.
-
-- Added a version of st.visit that can trace node types.
-- do_Dict and do_List produce proper types.
-- do_Call now converts dict(*), list(*), set(*) and tuple(*) to types
-  without using user patterns.
-- When --verbose is in effect, return comments are always shown.
-- Corrected is_known_type in several ways.
-  Most importantly, it uses the new split_types helper to deal with
-  comma-separated lists inside type expressions.
-  split_types handles nested square brackets properly.
-- test\test.py now contains nothing but return statements.
-  This should have been done long ago.
-  </t>
 </tnodes>
 </leo_file>

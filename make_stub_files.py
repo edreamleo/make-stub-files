@@ -1881,7 +1881,7 @@ class StubTraverser (ast.NodeVisitor):
             else:
                 return 'Any: ...' + results
         else:
-            s = reduce_types(reduced_returns)
+            s = reduce_types(reduced_returns, newlines=True)
             return s + ': ...'
     def get_def_name(self, node):
         '''Return the representaion of a function or method name.'''
