@@ -270,14 +270,11 @@
 </v>
 </v>
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
-<v t="ekr.20160126153212.85"></v>
-<v t="ekr.20160130034812.1"></v>
-<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160206104634.1"></v>
 <v t="ekr.20160205053705.1"></v>
 <v t="ekr.20160205053641.1"></v>
+<v t="ekr.20160130032546.1"></v>
 </v>
-<v t="ekr.20160206173953.1"><vh>** better traces of return expressions</vh></v>
-<v t="ekr.20160206174014.1"><vh>Checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -454,12 +451,15 @@ def do_Dict(self, node):
     keys = [self.visit(z) for z in node.keys]
     values = [self.visit(z) for z in node.values]
     if len(keys) == len(values):
-        result.append('{\n' if keys else '{')
+        # result.append('{\n' if keys else '{')
+        result.append('{')
         items = []
         for i in range(len(keys)):
-            items.append('  %s:%s' % (keys[i], values[i]))
-        result.append(',\n'.join(items))
-        result.append('\n}' if keys else '}')
+            items.append('%s:%s' % (keys[i], values[i]))
+        result.append(', '.join(items))
+        result.append('}')
+        # result.append(',\n'.join(items))
+        # result.append('\n}' if keys else '}')
     else:
         print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
             repr(keys), repr(values)))
@@ -1226,6 +1226,7 @@ def __init__(self, controller):
     self.overwrite = x.overwrite
     self.prefix_lines = x.prefix_lines
     self.update_flag = x.update_flag
+    self.verbose = x.verbose
     self.warn = x.warn
     # Copies of controller patterns...
     self.def_patterns = x.def_patterns
@@ -1384,6 +1385,7 @@ def format_returns(self, node):
     '''
     trace = False
     name = self.get_def_name(node)
+    raw = [self.raw_format(z) for z in self.returns]
     r = [self.format(z) for z in self.returns]
         # Allow StubFormatter.do_Return to do the hack.
     # Step 1: Return None if there are no return statements.
@@ -1400,7 +1402,7 @@ def format_returns(self, node):
                     pattern.find_s, name, s))
             return s + ': ...'
     # Step 3: Calculate return types.
-    return self.format_return_expressions(r)
+    return self.format_return_expressions(raw, r)
 </t>
 <t tx="ekr.20160126153212.91">
 def munge_arg(self, s):
@@ -1937,32 +1939,29 @@ def test_is_known_type(self):
 <t tx="ekr.20160128225533.1">*.pyc
 test/*.pyc</t>
 <t tx="ekr.20160130032546.1">
-def format_return_expressions(self, aList1):
+def format_return_expressions(self, raw_returns, reduced_returns):
     '''
-    aList is a list of return expressions.
-    All patterns have been applied.
-    For each expression e:
+    aList is a list of maximally reduced return expressions.
+    For each expression e in Alist:
     - If e is a single known type, add e to the result.
     - Otherwise, add Any # e to the result.
     Return the properly indented result.
     '''
-    aList = sorted(set(aList1))
-        # Remove duplicates
-    comments, results, unknowns = [], [], False
+    assert len(raw_returns) == len(reduced_returns)
     lws =  '\n' + ' '*4
-    for i, e in enumerate(aList):
-        comments.append('# return ' + e)
-        results.append(e)
-        if not is_known_type(e):
-            unknowns = True
-    if unknowns:
-        comments1 = ['# return ' + e for e in list(set(aList1))]
-        comments1 = [z for z in comments1 if z not in comments]
-        sep = ['# reduced...'] if comments1 else []
-        comments = ''.join([lws + self.indent(z) for z in comments1 + sep + comments])
-        return 'Any: ...' + comments
+    n = len(raw_returns)
+    known = all([is_known_type(e) for e in reduced_returns])
+    if not known or self.verbose:
+        aList = []
+        for i in range(n):
+            e, raw = reduced_returns[i], raw_returns[i]
+            known = ' ' if is_known_type(e) else '?'
+            aList.append('# %s %s: %s' % (' ', i, raw))
+            aList.append('# %s %s: return %s' % (known, i, e))
+        results = ''.join([lws + self.indent(z) for z in aList])
+        return 'Any: ...' + results
     else:
-        s = reduce_types(results)
+        s = reduce_types(reduced_returns)
         return s + ': ...'
 </t>
 <t tx="ekr.20160130034812.1">
@@ -2018,8 +2017,10 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
+- Post: announce regex work.
+- Post: how to run unit tests.
+
 - Post (reply): Use [Def Name Patterns] to make inferences!
-- Post: regex's could be easy.
 - Optionally generate Any for all unknown argument types.
 - --update.
 - Task oriented docs
@@ -2873,12 +2874,12 @@ def do_Dict(self, node):
     keys = [self.visit(z) for z in node.keys]
     values = [self.visit(z) for z in node.values]
     if len(keys) == len(values):
-        result.append('{\n' if keys else '{')
+        result.append('{')
         items = []
         for i in range(len(keys)):
-            items.append('  %s:%s' % (keys[i], values[i]))
-        result.append(',\n'.join(items))
-        result.append('\n}' if keys else '}')
+            items.append('%s:%s' % (keys[i], values[i]))
+        result.append(', '.join(items))
+        result.append('}')
     else:
         print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
             repr(keys), repr(values)))
@@ -3201,12 +3202,6 @@ table = (
 for aList, expected in table:
     got = reduce_types(aList)
     assert expected == got,  (aList, 'expected:', expected, 'got', got)
-</t>
-<t tx="ekr.20160206173953.1"></t>
-<t tx="ekr.20160206174014.1">@language rest
-@wrap
-
-Allow regex patterns, including replaces. Regex patterns must end with '$'.
 </t>
 <t tx="ekr.20160206174054.1">
 def is_regex(self):

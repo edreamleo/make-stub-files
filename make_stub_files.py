@@ -221,12 +221,15 @@ class AstFormatter:
         keys = [self.visit(z) for z in node.keys]
         values = [self.visit(z) for z in node.values]
         if len(keys) == len(values):
-            result.append('{\n' if keys else '{')
+            # result.append('{\n' if keys else '{')
+            result.append('{')
             items = []
             for i in range(len(keys)):
-                items.append('  %s:%s' % (keys[i], values[i]))
-            result.append(',\n'.join(items))
-            result.append('\n}' if keys else '}')
+                items.append('%s:%s' % (keys[i], values[i]))
+            result.append(', '.join(items))
+            result.append('}')
+            # result.append(',\n'.join(items))
+            # result.append('\n}' if keys else '}')
         else:
             print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
                 repr(keys), repr(values)))
@@ -1521,12 +1524,12 @@ class StubFormatter (AstFormatter):
         keys = [self.visit(z) for z in node.keys]
         values = [self.visit(z) for z in node.values]
         if len(keys) == len(values):
-            result.append('{\n' if keys else '{')
+            result.append('{')
             items = []
             for i in range(len(keys)):
-                items.append('  %s:%s' % (keys[i], values[i]))
-            result.append(',\n'.join(items))
-            result.append('\n}' if keys else '}')
+                items.append('%s:%s' % (keys[i], values[i]))
+            result.append(', '.join(items))
+            result.append('}')
         else:
             print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
                 repr(keys), repr(values)))
@@ -1688,6 +1691,7 @@ class StubTraverser (ast.NodeVisitor):
         self.overwrite = x.overwrite
         self.prefix_lines = x.prefix_lines
         self.update_flag = x.update_flag
+        self.verbose = x.verbose
         self.warn = x.warn
         # Copies of controller patterns...
         self.def_patterns = x.def_patterns
@@ -1881,6 +1885,7 @@ class StubTraverser (ast.NodeVisitor):
         '''
         trace = False
         name = self.get_def_name(node)
+        raw = [self.raw_format(z) for z in self.returns]
         r = [self.format(z) for z in self.returns]
             # Allow StubFormatter.do_Return to do the hack.
         # Step 1: Return None if there are no return statements.
@@ -1897,34 +1902,31 @@ class StubTraverser (ast.NodeVisitor):
                         pattern.find_s, name, s))
                 return s + ': ...'
         # Step 3: Calculate return types.
-        return self.format_return_expressions(r)
+        return self.format_return_expressions(raw, r)
 
-    def format_return_expressions(self, aList1):
+    def format_return_expressions(self, raw_returns, reduced_returns):
         '''
-        aList is a list of return expressions.
-        All patterns have been applied.
-        For each expression e:
+        aList is a list of maximally reduced return expressions.
+        For each expression e in Alist:
         - If e is a single known type, add e to the result.
         - Otherwise, add Any # e to the result.
         Return the properly indented result.
         '''
-        aList = sorted(set(aList1))
-            # Remove duplicates
-        comments, results, unknowns = [], [], False
+        assert len(raw_returns) == len(reduced_returns)
         lws =  '\n' + ' '*4
-        for i, e in enumerate(aList):
-            comments.append('# return ' + e)
-            results.append(e)
-            if not is_known_type(e):
-                unknowns = True
-        if unknowns:
-            comments1 = ['# return ' + e for e in list(set(aList1))]
-            comments1 = [z for z in comments1 if z not in comments]
-            sep = ['# reduced...'] if comments1 else []
-            comments = ''.join([lws + self.indent(z) for z in comments1 + sep + comments])
-            return 'Any: ...' + comments
+        n = len(raw_returns)
+        known = all([is_known_type(e) for e in reduced_returns])
+        if not known or self.verbose:
+            aList = []
+            for i in range(n):
+                e, raw = reduced_returns[i], raw_returns[i]
+                known = ' ' if is_known_type(e) else '?'
+                aList.append('# %s %s: %s' % (' ', i, raw))
+                aList.append('# %s %s: return %s' % (known, i, e))
+            results = ''.join([lws + self.indent(z) for z in aList])
+            return 'Any: ...' + results
         else:
-            s = reduce_types(results)
+            s = reduce_types(reduced_returns)
             return s + ': ...'
     def get_def_name(self, node):
         '''Return the representaion of a function or method name.'''

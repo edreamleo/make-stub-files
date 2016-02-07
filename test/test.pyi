@@ -1,16 +1,28 @@
 
 def return_every_kind(a: Any) -> Any: ...
-    # return Tuple[str, str]
-    # return [number,number]
-    # return complex(number,number)
-    # return dict([str,str])
-    # return float(number)
-    # return int(number)
-    # return list(number,number)
-    # return long(number)
-    # return number
-    # return tuple(str,str)
-    # return {
-  str:str
-}
-    # return {}
+    #   0: return 1
+    #   0: return number
+    #   1: return 1.0
+    #   1: return number
+    #   2: return float(1.0)
+    # ? 2: return float(number)
+    #   3: return complex(2.0,3.0)
+    # ? 3: return complex(number,number)
+    #   4: return long(1)
+    # ? 4: return long(number)
+    #   5: return ('a', 'b')
+    #   5: return Tuple[str, str]
+    #   6: return [1,2]
+    # ? 6: return [number,number]
+    #   7: return {}
+    # ? 7: return {}
+    #   8: return {'x':'y'}
+    # ? 8: return {str:str}
+    #   9: return dict(['p','q'])
+    # ? 9: return dict([str,str])
+    #   10: return list(1,2)
+    # ? 10: return list(number,number)
+    #   11: return int(0.5)
+    # ? 11: return int(number)
+    #   12: return tuple('a1','b1')
+    # ? 12: return tuple(str,str)
