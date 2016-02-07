@@ -48,6 +48,38 @@
 <v t="ekr.20160128105006.1"><vh>Doc files</vh>
 <v t="ekr.20160126153921.1"><vh>@edit README.md</vh></v>
 </v>
+<v t="ekr.20160206171945.1"><vh>Unit tests</vh>
+<v t="ekr.20160206110004.1"><vh>@test Pattern class</vh>
+<v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
+<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
+<v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
+<v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
+<v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
+<v t="ekr.20160206174054.1"><vh>pattern.is_regex</vh></v>
+<v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
+<v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
+<v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
+</v>
+<v t="ekr.20160202070025.1"><vh>pattern.match</vh></v>
+<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
+<v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
+<v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
+<v t="ekr.20160206174547.1"><vh>pattern.replace_regex</vh></v>
+</v>
+</v>
+</v>
+<v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
+<v t="ekr.20160205101134.1"><vh>reduce_numbers</vh></v>
+</v>
+<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
+<v t="ekr.20160128041938.1"></v>
+<v t="ekr.20160130034812.1"><vh>is_known_type &amp; helper</vh>
+<v t="ekr.20160206212123.1"><vh>split_types</vh></v>
+</v>
+<v t="ekr.20160205101134.1"></v>
+<v t="ekr.20160205072101.1"><vh>reduce_types</vh></v>
+</v>
+</v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160126153212.3"><vh> class AstFormatter</vh>
@@ -142,23 +174,7 @@
 <v t="ekr.20160206101140.1"><vh>g.splitLines</vh></v>
 <v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
 </v>
-<v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
-<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
-<v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
-<v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
-<v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
-<v t="ekr.20160206174054.1"><vh>pattern.is_regex</vh></v>
-<v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
-<v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
-<v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
-</v>
-<v t="ekr.20160202070025.1"><vh>pattern.match</vh></v>
-<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
-<v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
-<v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
-<v t="ekr.20160206174547.1"><vh>pattern.replace_regex</vh></v>
-</v>
-</v>
+<v t="ekr.20160128041938.1"></v>
 <v t="ekr.20160126153212.73"><vh>class StandAloneMakeStubFile</vh>
 <v t="ekr.20160126153212.74"><vh>msf.ctor</vh></v>
 <v t="ekr.20160126165907.1"><vh>msf.finalize</vh></v>
@@ -188,28 +204,20 @@
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match (to be removed)</vh></v>
 <v t="ekr.20160205131910.1"><vh>sf.match_all</vh></v>
+<v t="ekr.20160206203133.1"><vh>sf.visit (tracing)</vh></v>
 <v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
-<v t="ekr.20160205103604.1"><vh>NOT USED: f.Operands</vh>
-<v t="ekr.20160205103604.2"><vh>f.arguments</vh></v>
-<v t="ekr.20160205103604.3"><vh>f.arg (Python3 only)</vh></v>
-<v t="ekr.20160205103604.8"><vh>f.comprehension</vh></v>
-<v t="ekr.20160205103604.10"><vh>f.Ellipsis</vh></v>
-<v t="ekr.20160205103604.11"><vh>f.ExtSlice</vh></v>
-<v t="ekr.20160205103604.12"><vh>f.Index</vh></v>
-<v t="ekr.20160205103604.17"><vh>f.Repr</vh></v>
-<v t="ekr.20160205103604.18"><vh>f.Slice</vh></v>
-</v>
 <v t="ekr.20160205103604.4"><vh>sf.Attribute</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
-<v t="ekr.20160205103604.9"><vh>sf.Dict (To do)</vh></v>
+<v t="ekr.20160205103604.9"><vh>sf.Dict</vh></v>
+<v t="ekr.20160206204452.1"><vh>sf.List</vh></v>
 <v t="ekr.20160204153904.1"><vh>sf.Name</vh></v>
 <v t="ekr.20160126153212.38"><vh>sf.Tuple</vh></v>
 </v>
 <v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
 <v t="ekr.20160205053641.2"><vh>sf.BinOp (Improve)</vh></v>
 <v t="ekr.20160205053641.3"><vh>sf.BoolOp (Problems)</vh></v>
-<v t="ekr.20160205103604.6"><vh>sf.Call &amp; f.keyword</vh>
-<v t="ekr.20160205103604.7"><vh>f.keyword</vh></v>
+<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword</vh>
+<v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
 </v>
 <v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
 <v t="ekr.20160205053641.6"><vh>sf.IfExp (Test)</vh></v>
@@ -247,34 +255,29 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 <v t="ekr.20160206104634.1"><vh>top-level functions</vh>
-<v t="ekr.20160130034812.1"><vh>is_known_type</vh></v>
+<v t="ekr.20160130034812.1"></v>
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160206120522.1"><vh>pdb</vh></v>
-<v t="ekr.20160205101134.1"><vh>reduce_numbers</vh></v>
-<v t="ekr.20160205072101.1"><vh>reduce_types</vh></v>
+<v t="ekr.20160205101134.1"></v>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160206212123.1"></v>
 </v>
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
-<v t="ekr.20160206171945.1"><vh>Unit tests</vh>
-<v t="ekr.20160206110004.1"><vh>@test Pattern class</vh>
-<v t="ekr.20160128041938.1"></v>
-</v>
-<v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
-<v t="ekr.20160205101134.1"></v>
-</v>
-<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
-<v t="ekr.20160128041938.1"></v>
-<v t="ekr.20160130034812.1"></v>
-<v t="ekr.20160205101134.1"></v>
-<v t="ekr.20160205072101.1"></v>
-</v>
-</v>
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
 <v t="ekr.20160206104634.1"></v>
 <v t="ekr.20160205053705.1"></v>
 <v t="ekr.20160205053641.1"></v>
+</v>
+<v t="ekr.20160206215414.1"><vh>Most recent</vh>
+<v t="ekr.20160205103604.6"></v>
+<v t="ekr.20160206204452.1"></v>
+<v t="ekr.20160205103604.9"></v>
+<v t="ekr.20160130034812.1"></v>
+<v t="ekr.20160205072101.1"></v>
 <v t="ekr.20160130032546.1"></v>
 </v>
+<v t="ekr.20160206215423.1"><vh>Checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1287,7 +1290,7 @@ def visit_ClassDef(self, node):
     # Format...
     if not node.name.startswith('_'):
         if node.bases:
-            s = '(%s)' % ','.join([self.format(z) for z in node.bases])
+            s = '(%s)' % ', '.join([self.format(z) for z in node.bases])
         else:
             s = ''
         self.out('class %s%s:' % (node.name, s))
@@ -1588,6 +1591,7 @@ def match_balanced(self, delim, s, i):
         assert progress &lt; i
     # Unmatched: a syntax error.
     print('***** unmatched %s in %s' % (delim, s))
+    print(g.callers())
     return len(s) + 1
 </t>
 <t tx="ekr.20160128051025.1">
@@ -1952,6 +1956,7 @@ def format_return_expressions(self, raw_returns, reduced_returns):
     n = len(raw_returns)
     known = all([is_known_type(e) for e in reduced_returns])
     if not known or self.verbose:
+        # First, generate the return lines.
         aList = []
         for i in range(n):
             e, raw = reduced_returns[i], raw_returns[i]
@@ -1959,7 +1964,12 @@ def format_return_expressions(self, raw_returns, reduced_returns):
             aList.append('# %s %s: %s' % (' ', i, raw))
             aList.append('# %s %s: return %s' % (known, i, e))
         results = ''.join([lws + self.indent(z) for z in aList])
-        return 'Any: ...' + results
+        # Put the return lines in their proper places.
+        if known:
+            s = reduce_types(reduced_returns, newlines=True)
+            return s + ': ...' + results
+        else:
+            return 'Any: ...' + results
     else:
         s = reduce_types(reduced_returns)
         return s + ': ...'
@@ -1970,17 +1980,34 @@ def is_known_type(s):
     Return True if s is nothing but a single known type.
     Recursively test inner types in square brackets.
     '''
+    trace = True
+    s1 = s
     s = s.strip()
-    if s in (
-        'None', None,
-        'number',
-        'bool', 'bytes', 'complex', 'dict', 'float', 'int',
-        'list', 'long', 'str', 'tuple', 'unicode',
-    ):
-        return True
-    if s.startswith('[') and s.endswith(']'):
-        return is_known_type(s[1:-1])
     table = (
+        # None,
+        'None', 
+        'complex', 'float', 'int', 'long', 'number',
+        'dict', 'list', 'tuple',
+        'bool', 'bytes', 'str', 'unicode',
+    )
+    for s2 in table:
+        if s2 == s:
+            return True
+        elif Pattern(s2+'(*)', s).match_entire_string(s):
+            return True
+    if s.startswith('[') and s.endswith(']'):
+        inner = s[1:-1]
+        return is_known_type(inner) if inner else True
+    elif s.startswith('(') and s.endswith(')'):
+        inner = s[1:-1]
+        return is_known_type(inner) if inner else True
+    elif s.startswith('{') and s.endswith('}'):
+        return True ### Not yet.
+        # inner = s[1:-1]
+        # return is_known_type(inner) if inner else True
+    table = (
+        # Pep 484: https://www.python.org/dev/peps/pep-0484/
+        # typing module: https://docs.python.org/3/library/typing.html
         'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
         'BinaryIO', 'ByteString',
         'Callable', 'CallableMeta', 'Container',
@@ -2005,23 +2032,27 @@ def is_known_type(s):
         pattern = Pattern(s2+'[*]', s)
         if pattern.match_entire_string(s):
             # Look inside the square brackets.
+            # if s.startswith('Dict[List'): g.pdb()
             brackets = s[len(s2):]
             assert brackets and brackets[0] == '[' and brackets[-1] == ']'
             s3 = brackets[1:-1]
             if s3:
-                return all([is_known_type(z.strip()) for z in s3.split(',')])
+                return all([is_known_type(z.strip())
+                    for z in split_types(s3)])
             else:
                 return True
+    if trace: g.trace('Fail:', s1)
     return False
 </t>
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
+- Post: announce new formatting of stub files &amp; complete handling of elementary types.
 - Post: announce regex work.
 - Post: how to run unit tests.
-
 - Post (reply): Use [Def Name Patterns] to make inferences!
 - Optionally generate Any for all unknown argument types.
+
 - --update.
 - Task oriented docs
 </t>
@@ -2156,6 +2187,7 @@ def __init__(self, controller):
     self.general_patterns = x.general_patterns
     self.names_dict = x.names_dict
     self.patterns_dict = x.patterns_dict
+    self.verbose = x.verbose
 </t>
 <t tx="ekr.20160202064553.1">
 def match(self, patterns, s):
@@ -2166,7 +2198,8 @@ def match(self, patterns, s):
             break
     return s
 </t>
-<t tx="ekr.20160202070025.1">def match(self, s):
+<t tx="ekr.20160202070025.1">
+def match(self, s):
     '''
     Perform the match on the entire string if possible.
     Return (found, new s)
@@ -2689,7 +2722,7 @@ def do_IfExp(self, node):
     return None
 </t>
 <t tx="ekr.20160205072101.1">
-def reduce_types(aList):
+def reduce_types(aList, newlines=False):
     '''Return a string containing the reduction of all types in aList.'''
     trace = False
     if None in aList:
@@ -2718,6 +2751,8 @@ def reduce_types(aList):
     if len(r) == 1:
         if trace: g.trace('%10s %r' % ('Reduced', r[0]))
         return r[0]
+    elif newlines:
+        return '%s[\n    %s,\n]' % (kind, ',\n    '.join(sorted(r)))
     else:
         if trace: g.trace('%10s %s' % (kind, r))
         return '%s[%s]' % (kind, ', '.join(sorted(r)))
@@ -2742,77 +2777,6 @@ def reduce_numbers(aList):
         aList = [z for z in aList if z not in numbers]
         aList.append(found)
     return aList
-</t>
-<t tx="ekr.20160205103604.1">
-# Operands...
-
-if 0:
-    @others</t>
-<t tx="ekr.20160205103604.10">
-def do_Ellipsis(self, node):
-    return '...'
-</t>
-<t tx="ekr.20160205103604.11">
-def do_ExtSlice(self, node):
-    return ':'.join([self.visit(z) for z in node.dims])
-</t>
-<t tx="ekr.20160205103604.12">
-def do_Index(self, node):
-    return self.visit(node.value)
-</t>
-<t tx="ekr.20160205103604.17">
-# Python 2.x only
-
-def do_Repr(self, node):
-    return 'repr(%s)' % self.visit(node.value)
-</t>
-<t tx="ekr.20160205103604.18">
-def do_Slice(self, node):
-    lower, upper, step = '', '', ''
-    if getattr(node, 'lower', None) is not None:
-        lower = self.visit(node.lower)
-    if getattr(node, 'upper', None) is not None:
-        upper = self.visit(node.upper)
-    if getattr(node, 'step', None) is not None:
-        step = self.visit(node.step)
-    if step:
-        return '%s:%s:%s' % (lower, upper, step)
-    else:
-        return '%s:%s' % (lower, upper)
-</t>
-<t tx="ekr.20160205103604.2">
-# arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
-
-def do_arguments(self, node):
-    '''Format the arguments node.'''
-    kind = self.kind(node)
-    assert kind == 'arguments', kind
-    args = [self.visit(z) for z in node.args]
-    defaults = [self.visit(z) for z in node.defaults]
-    # Assign default values to the last args.
-    args2 = []
-    n_plain = len(args) - len(defaults)
-    for i in range(len(args)):
-        if i &lt; n_plain:
-            args2.append(args[i])
-        else:
-            args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
-    # Now add the vararg and kwarg args.
-    name = getattr(node, 'vararg', None)
-    if name: args2.append('*' + name)
-    name = getattr(node, 'kwarg', None)
-    if name: args2.append('**' + name)
-    return ','.join(args2)
-</t>
-<t tx="ekr.20160205103604.3">
-# Python 3:
-# arg = (identifier arg, expr? annotation)
-
-def do_arg(self, node):
-    if node.annotation:
-        return self.visit(node.annotation)
-    else:
-        return ''
 </t>
 <t tx="ekr.20160205103604.4">
 # Attribute(expr value, identifier attr, expr_context ctx)
@@ -2845,7 +2809,11 @@ def do_Call(self, node):
     if getattr(node, 'kwargs', None):
         args.append('**%s' % (self.visit(node.kwargs)))
     args = [z for z in args if z] # Kludge: Defensive coding.
-    s = '%s(%s)' % (func, ','.join(args))
+    # Explicit pattern:
+    if func in ('dict', 'list', 'set', 'tuple',):
+        s = '%s[%s]' % (func.capitalize(), ', '.join(args))
+    else:
+        s = '%s(%s)' % (func, ', '.join(args))
     return self.match_all(node, s)
 </t>
 <t tx="ekr.20160205103604.7">
@@ -2856,17 +2824,6 @@ def do_keyword(self, node):
     value = self.visit(node.value)
     # This is a keyword *arg*, not a Python keyword!
     return '%s=%s' % (node.arg, value)
-</t>
-<t tx="ekr.20160205103604.8">
-def do_comprehension(self, node):
-    result = []
-    name = self.visit(node.target) # A name.
-    it = self.visit(node.iter) # An attribute.
-    result.append('%s in %s' % (name, it))
-    ifs = [self.visit(z) for z in node.ifs]
-    if ifs:
-        result.append(' if %s' % (''.join(ifs)))
-    return ''.join(result)
 </t>
 <t tx="ekr.20160205103604.9">
 def do_Dict(self, node):
@@ -2883,7 +2840,8 @@ def do_Dict(self, node):
     else:
         print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
             repr(keys), repr(values)))
-    return ''.join(result)
+    # return ''.join(result)
+    return 'Dict[%s]' % ''.join(result)
 </t>
 <t tx="ekr.20160205131910.1">
 matched_d = {}
@@ -3148,10 +3106,8 @@ aSet.add(p3)
 [Global]
 
 files: test/test.py
-    
 output_directory: ./test
-    
-prefix_lines:
+# prefix_lines:
 
 [Def Name Patterns]
 
@@ -3162,20 +3118,21 @@ a: Any
 s: str
 aList: List[Any]
 </t>
-<t tx="ekr.20160206165656.1">def return_every_kind(a):
-    if a == 1:   return 1
-    elif a == 2: return 1.0
-    elif a == 3: return float(1.0)
-    elif a == 4: return complex(2.0,3.0)
-    elif a == 5: return long(1)
-    elif a == 5: return ('a','b')
-    elif a == 6: return [1, 2]
-    elif a == x: return {}
-    elif a == x: return {'x': 'y',}
-    elif a == x: return dict(['p', 'q'])
-    elif a == x: return list(1,2)
-    elif a == x: return int(0.5)
-    elif a == x: return tuple('a1', 'b1')</t>
+<t tx="ekr.20160206165656.1">def return_every_kind(a, b):
+    # pylint: disable=unreachable
+    return 1
+    return 1.0
+    return float(1.0)
+    return complex(2.0,3.0)
+    return long(1)
+    return ('a','b')
+    return [1, 2]
+    return {}
+    return {'x': 'y',}
+    return dict(['p', 'q'])
+    return list(1,2)
+    return int(0.5)
+    return tuple('a1', 'b1')</t>
 <t tx="ekr.20160206170515.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
 table = (
     ([i,i],     [i]),
@@ -3231,5 +3188,53 @@ def replace(self, m, s):
     else:
         return self.replace_regex(m, s)
 </t>
+<t tx="ekr.20160206203133.1">
+def visit(self, node):
+    '''StubFormatter.visit: supports --verbose tracing.'''
+    s = AstFormatter.visit(self, node)
+    # if self.verbose:
+        # g.trace('%12s %s' % (node.__class__.__name__,s))
+    return s</t>
+<t tx="ekr.20160206204452.1">
+def do_List(self, node):
+    '''StubFormatter.List.'''
+    elts = [self.visit(z) for z in node.elts]
+    elst = [z for z in elts if z] # Defensive.
+    # g.trace('=====',elts)
+    return 'List[%s]' % ', '.join(elts)
+</t>
+<t tx="ekr.20160206212123.1">
+def split_types(s):
+    '''Split types on *outer level* commas.'''
+    aList, i1, level = [], 0, 0
+    for i, ch in enumerate(s):
+        if ch == '[':
+            level += 1
+        elif ch == ']':
+            level -= 1
+        elif ch == ',' and level == 0:
+            aList.append(s[i1:i])
+            i1 = i+1
+    aList.append(s[i1:].strip())
+    return aList</t>
+<t tx="ekr.20160206215414.1"></t>
+<t tx="ekr.20160206215423.1">@language rest
+@wrap
+
+The script handles all common types without *any* type-related patterns.
+See test\test.py for examples of the greatly improved output.
+
+- Added a version of st.visit that can trace node types.
+- do_Dict and do_List produce proper types.
+- do_Call now converts dict(*), list(*), set(*) and tuple(*) to types
+  without using user patterns.
+- When --verbose is in effect, return comments are always shown.
+- Corrected is_known_type in several ways.
+  Most importantly, it uses the new split_types helper to deal with
+  comma-separated lists inside type expressions.
+  split_types handles nested square brackets properly.
+- test\test.py now contains nothing but return statements.
+  This should have been done long ago.
+  </t>
 </tnodes>
 </leo_file>

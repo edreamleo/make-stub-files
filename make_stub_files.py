@@ -873,7 +873,9 @@ class Pattern(object):
             assert progress < i
         # Unmatched: a syntax error.
         print('***** unmatched %s in %s' % (delim, s))
+        print(g.callers())
         return len(s) + 1
+
     def match(self, s):
         '''
         Perform the match on the entire string if possible.
@@ -1384,6 +1386,7 @@ class StubFormatter (AstFormatter):
         self.general_patterns = x.general_patterns
         self.names_dict = x.names_dict
         self.patterns_dict = x.patterns_dict
+        self.verbose = x.verbose
 
     def match(self, patterns, s):
         '''Return s with at most one pattern matched.'''
@@ -1414,80 +1417,14 @@ class StubFormatter (AstFormatter):
                 break
         return s
 
+    def visit(self, node):
+        '''StubFormatter.visit: supports --verbose tracing.'''
+        s = AstFormatter.visit(self, node)
+        # if self.verbose:
+            # g.trace('%12s %s' % (node.__class__.__name__,s))
+        return s
+
     # StubFormatter visitors for operands...
-
-    # Operands...
-
-    if 0:
-
-        # arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
-
-        def do_arguments(self, node):
-            '''Format the arguments node.'''
-            kind = self.kind(node)
-            assert kind == 'arguments', kind
-            args = [self.visit(z) for z in node.args]
-            defaults = [self.visit(z) for z in node.defaults]
-            # Assign default values to the last args.
-            args2 = []
-            n_plain = len(args) - len(defaults)
-            for i in range(len(args)):
-                if i < n_plain:
-                    args2.append(args[i])
-                else:
-                    args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
-            # Now add the vararg and kwarg args.
-            name = getattr(node, 'vararg', None)
-            if name: args2.append('*' + name)
-            name = getattr(node, 'kwarg', None)
-            if name: args2.append('**' + name)
-            return ','.join(args2)
-
-        # Python 3:
-        # arg = (identifier arg, expr? annotation)
-
-        def do_arg(self, node):
-            if node.annotation:
-                return self.visit(node.annotation)
-            else:
-                return ''
-
-        def do_comprehension(self, node):
-            result = []
-            name = self.visit(node.target) # A name.
-            it = self.visit(node.iter) # An attribute.
-            result.append('%s in %s' % (name, it))
-            ifs = [self.visit(z) for z in node.ifs]
-            if ifs:
-                result.append(' if %s' % (''.join(ifs)))
-            return ''.join(result)
-
-        def do_Ellipsis(self, node):
-            return '...'
-
-        def do_ExtSlice(self, node):
-            return ':'.join([self.visit(z) for z in node.dims])
-
-        def do_Index(self, node):
-            return self.visit(node.value)
-
-        # Python 2.x only
-
-        def do_Repr(self, node):
-            return 'repr(%s)' % self.visit(node.value)
-
-        def do_Slice(self, node):
-            lower, upper, step = '', '', ''
-            if getattr(node, 'lower', None) is not None:
-                lower = self.visit(node.lower)
-            if getattr(node, 'upper', None) is not None:
-                upper = self.visit(node.upper)
-            if getattr(node, 'step', None) is not None:
-                step = self.visit(node.step)
-            if step:
-                return '%s:%s:%s' % (lower, upper, step)
-            else:
-                return '%s:%s' % (lower, upper)
 
     # Attribute(expr value, identifier attr, expr_context ctx)
 
@@ -1533,7 +1470,15 @@ class StubFormatter (AstFormatter):
         else:
             print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
                 repr(keys), repr(values)))
-        return ''.join(result)
+        # return ''.join(result)
+        return 'Dict[%s]' % ''.join(result)
+
+    def do_List(self, node):
+        '''StubFormatter.List.'''
+        elts = [self.visit(z) for z in node.elts]
+        elst = [z for z in elts if z] # Defensive.
+        # g.trace('=====',elts)
+        return 'List[%s]' % ', '.join(elts)
     seen_names = []
 
     def do_Name(self, node):
@@ -1607,7 +1552,11 @@ class StubFormatter (AstFormatter):
         if getattr(node, 'kwargs', None):
             args.append('**%s' % (self.visit(node.kwargs)))
         args = [z for z in args if z] # Kludge: Defensive coding.
-        s = '%s(%s)' % (func, ','.join(args))
+        # Explicit pattern:
+        if func in ('dict', 'list', 'set', 'tuple',):
+            s = '%s[%s]' % (func.capitalize(), ', '.join(args))
+        else:
+            s = '%s(%s)' % (func, ', '.join(args))
         return self.match_all(node, s)
 
     # keyword = (identifier arg, expr value)
@@ -1796,7 +1745,7 @@ class StubTraverser (ast.NodeVisitor):
         # Format...
         if not node.name.startswith('_'):
             if node.bases:
-                s = '(%s)' % ','.join([self.format(z) for z in node.bases])
+                s = '(%s)' % ', '.join([self.format(z) for z in node.bases])
             else:
                 s = ''
             self.out('class %s%s:' % (node.name, s))
@@ -1917,6 +1866,7 @@ class StubTraverser (ast.NodeVisitor):
         n = len(raw_returns)
         known = all([is_known_type(e) for e in reduced_returns])
         if not known or self.verbose:
+            # First, generate the return lines.
             aList = []
             for i in range(n):
                 e, raw = reduced_returns[i], raw_returns[i]
@@ -1924,7 +1874,12 @@ class StubTraverser (ast.NodeVisitor):
                 aList.append('# %s %s: %s' % (' ', i, raw))
                 aList.append('# %s %s: return %s' % (known, i, e))
             results = ''.join([lws + self.indent(z) for z in aList])
-            return 'Any: ...' + results
+            # Put the return lines in their proper places.
+            if known:
+                s = reduce_types(reduced_returns, newlines=True)
+                return s + ': ...' + results
+            else:
+                return 'Any: ...' + results
         else:
             s = reduce_types(reduced_returns)
             return s + ': ...'
@@ -1984,17 +1939,34 @@ def is_known_type(s):
     Return True if s is nothing but a single known type.
     Recursively test inner types in square brackets.
     '''
+    trace = True
+    s1 = s
     s = s.strip()
-    if s in (
-        'None', None,
-        'number',
-        'bool', 'bytes', 'complex', 'dict', 'float', 'int',
-        'list', 'long', 'str', 'tuple', 'unicode',
-    ):
-        return True
-    if s.startswith('[') and s.endswith(']'):
-        return is_known_type(s[1:-1])
     table = (
+        # None,
+        'None', 
+        'complex', 'float', 'int', 'long', 'number',
+        'dict', 'list', 'tuple',
+        'bool', 'bytes', 'str', 'unicode',
+    )
+    for s2 in table:
+        if s2 == s:
+            return True
+        elif Pattern(s2+'(*)', s).match_entire_string(s):
+            return True
+    if s.startswith('[') and s.endswith(']'):
+        inner = s[1:-1]
+        return is_known_type(inner) if inner else True
+    elif s.startswith('(') and s.endswith(')'):
+        inner = s[1:-1]
+        return is_known_type(inner) if inner else True
+    elif s.startswith('{') and s.endswith('}'):
+        return True ### Not yet.
+        # inner = s[1:-1]
+        # return is_known_type(inner) if inner else True
+    table = (
+        # Pep 484: https://www.python.org/dev/peps/pep-0484/
+        # typing module: https://docs.python.org/3/library/typing.html
         'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
         'BinaryIO', 'ByteString',
         'Callable', 'CallableMeta', 'Container',
@@ -2019,14 +1991,31 @@ def is_known_type(s):
         pattern = Pattern(s2+'[*]', s)
         if pattern.match_entire_string(s):
             # Look inside the square brackets.
+            # if s.startswith('Dict[List'): g.pdb()
             brackets = s[len(s2):]
             assert brackets and brackets[0] == '[' and brackets[-1] == ']'
             s3 = brackets[1:-1]
             if s3:
-                return all([is_known_type(z.strip()) for z in s3.split(',')])
+                return all([is_known_type(z.strip())
+                    for z in split_types(s3)])
             else:
                 return True
+    if trace: g.trace('Fail:', s1)
     return False
+
+def split_types(s):
+    '''Split types on *outer level* commas.'''
+    aList, i1, level = [], 0, 0
+    for i, ch in enumerate(s):
+        if ch == '[':
+            level += 1
+        elif ch == ']':
+            level -= 1
+        elif ch == ',' and level == 0:
+            aList.append(s[i1:i])
+            i1 = i+1
+    aList.append(s[i1:].strip())
+    return aList
 
 def main():
     '''
@@ -2068,7 +2057,7 @@ def reduce_numbers(aList):
         aList.append(found)
     return aList
 
-def reduce_types(aList):
+def reduce_types(aList, newlines=False):
     '''Return a string containing the reduction of all types in aList.'''
     trace = False
     if None in aList:
@@ -2097,9 +2086,25 @@ def reduce_types(aList):
     if len(r) == 1:
         if trace: g.trace('%10s %r' % ('Reduced', r[0]))
         return r[0]
+    elif newlines:
+        return '%s[\n    %s,\n]' % (kind, ',\n    '.join(sorted(r)))
     else:
         if trace: g.trace('%10s %s' % (kind, r))
         return '%s[%s]' % (kind, ', '.join(sorted(r)))
+
+def split_types(s):
+    '''Split types on *outer level* commas.'''
+    aList, i1, level = [], 0, 0
+    for i, ch in enumerate(s):
+        if ch == '[':
+            level += 1
+        elif ch == ']':
+            level -= 1
+        elif ch == ',' and level == 0:
+            aList.append(s[i1:i])
+            i1 = i+1
+    aList.append(s[i1:].strip())
+    return aList
 g = LeoGlobals() # For ekr.
 if __name__ == "__main__":
     main()
