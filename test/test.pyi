@@ -1,4 +1,4 @@
-def return_every_kind(a: Any, b) -> Union[
+def return_every_kind(a: Any, b: Any) -> Union[
     Dict[List[str, str]],
     Dict[{str:str}],
     Dict[{}],

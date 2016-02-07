@@ -1823,7 +1823,7 @@ class StubTraverser (ast.NodeVisitor):
         if self.warn and s not in self.warn_list:
             self.warn_list.append(s)
             print('no annotation for %s' % s)
-        return s
+        return s + ': Any'
 
     def format_returns(self, node):
         '''

@@ -270,13 +270,14 @@
 <v t="ekr.20160205053641.1"></v>
 </v>
 <v t="ekr.20160206215414.1"><vh>Most recent</vh>
-<v t="ekr.20160205103604.6"></v>
-<v t="ekr.20160206204452.1"></v>
-<v t="ekr.20160205103604.9"></v>
 <v t="ekr.20160130034812.1"></v>
-</v>
 <v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160205103604.6"></v>
+<v t="ekr.20160205103604.9"></v>
+<v t="ekr.20160206204452.1"></v>
 <v t="ekr.20160130032546.1"></v>
+<v t="ekr.20160126153212.89"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1417,7 +1418,7 @@ def munge_arg(self, s):
     if self.warn and s not in self.warn_list:
         self.warn_list.append(s)
         print('no annotation for %s' % s)
-    return s
+    return s + ': Any'
 </t>
 <t tx="ekr.20160126153212.99">
 def visit_Return(self, node):
@@ -2050,7 +2051,6 @@ def is_known_type(s):
 - Post: announce regex work.
 - Post: how to run unit tests.
 - Post (reply): Use [Def Name Patterns] to make inferences!
-- Optionally generate Any for all unknown argument types.
 
 - --update.
 - Task oriented docs
