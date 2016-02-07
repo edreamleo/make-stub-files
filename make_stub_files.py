@@ -122,6 +122,7 @@ def merge_types(a1, a2):
     r1 = a1 if isinstance(a1, (list, tuple)) else [a1]
     r2 = a2 if isinstance(a2, (list, tuple)) else [a2]
     return sorted(set(r1 + r2))
+
 def pdb(self):
     '''Invoke a debugger during unit testing.'''
     try:
@@ -829,6 +830,8 @@ class AstArgFormatter (AstFormatter):
     def do_Str(self, node):
         '''This represents a string constant.'''
         return 'str' # return repr(node.s)
+
+
 class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
 
@@ -1161,6 +1164,7 @@ class StandAloneMakeStubFile:
         self.names_dict = {}
         self.op_name_dict = self.make_op_name_dict()
         self.patterns_dict = {}
+
     def finalize(self, fn):
         '''Finalize and regularize a filename.'''
         fn = os.path.expanduser(fn)
@@ -1653,6 +1657,7 @@ class StubFormatter (AstFormatter):
         elst = [z for z in elts if z] # Defensive.
         # g.trace('=====',elts)
         return 'List[%s]' % ', '.join(elts)
+
     seen_names = []
 
     def do_Name(self, node):
@@ -1883,6 +1888,7 @@ class StubTraverser (ast.NodeVisitor):
         else:
             print('output directory not not found: %s' % dir_)
 
+
     def update(self, fn):
         '''Alter self.parent_stub so it contains only updated stubs.'''
         g.trace('--update not ready yet')
@@ -1896,6 +1902,7 @@ class StubTraverser (ast.NodeVisitor):
         # Compare the stub file with the stubs about to be written.
         
         # Merge the old, unchanged, stubs with the new stubs.
+
     def get_stub_file(self, fn):
         '''Read the stub file into s.'''
         g.trace(fn)
@@ -1910,6 +1917,7 @@ class StubTraverser (ast.NodeVisitor):
             print('--update: not found: %s' % fn)
             return ''
         
+
     def parse_stub_file(self, s):
         '''
         Parse the stub file whose contents is s into a tree of Stubs.
@@ -2065,6 +2073,7 @@ class StubTraverser (ast.NodeVisitor):
         else:
             s = reduce_types(reduced_returns, newlines=True)
             return s + ': ...'
+
     def get_def_name(self, node):
         '''Return the representaion of a function or method name.'''
         if self.class_name_stack:
@@ -2091,6 +2100,7 @@ class TestClass:
     # pylint: disable=undefined-variable
     # pylint: disable=no-self-argument
     # pylint: disable=no-method-argument
+
     def parse_group(group):
         if len(group) >= 3 and group[-2] == 'as':
             del group[-2:]
@@ -2103,13 +2113,17 @@ class TestClass:
         del group[:i]
         assert all(g == '.' for g in group[1::2]), group
         return ndots, os.sep.join(group[::2])
+
     def return_all(self):
         return all([is_known_type(z) for z in s3.split(',')])
         # return all(['abc'])
+
     def return_array():
         return f(s[1:-1])
+
     def return_list(self, a):
         return [a]
+
     def return_two_lists(s):
         if 1:
             return aList

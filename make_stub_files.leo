@@ -10,12 +10,7 @@
 <preferences/>
 <find_panel_settings/>
 <vnodes>
-<v t="ekr.20160126153016.3"><vh>Unused</vh>
-<v t="ekr.20160203134203.1"><vh>pattern.__gt/lt/ge/le__</vh></v>
-<v t="ekr.20160203154154.1"><vh>from Stub.__gt__</vh></v>
-<v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
-</v>
-<v t="ekr.20160128154704.1"><vh>Test files</vh>
+<v t="ekr.20160207105647.1"><vh>Scripts</vh>
 <v t="ekr.20160206095102.1"><vh>@button write-unit-tests</vh>
 <v t="ekr.20160206095102.2"><vh>&lt;&lt; docstring &gt;&gt; (write-unit-tests)</vh></v>
 <v t="ekr.20160206101802.3"><vh>class TestWriter</vh>
@@ -30,6 +25,14 @@
 <v t="ekr.20160206101802.11"><vh>write_file</vh></v>
 </v>
 </v>
+<v t="ekr.20160207105710.1"><vh>@button check-leading-lines</vh></v>
+</v>
+<v t="ekr.20160126153016.3"><vh>Unused</vh>
+<v t="ekr.20160203134203.1"><vh>pattern.__gt/lt/ge/le__</vh></v>
+<v t="ekr.20160203154154.1"><vh>from Stub.__gt__</vh></v>
+<v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
+</v>
+<v t="ekr.20160128154704.1"><vh>Test files</vh>
 <v t="ekr.20160128154715.1"><vh>@clean test/test_msf.py</vh>
 <v t="ekr.20160128190252.1"><vh>setUp</vh></v>
 <v t="ekr.20160128190112.1"><vh>test_pattern_class</vh></v>
@@ -47,6 +50,7 @@
 </v>
 <v t="ekr.20160128105006.1"><vh>Doc files</vh>
 <v t="ekr.20160126153921.1"><vh>@edit README.md</vh></v>
+<v t="ekr.20160207101607.1"><vh>@edit theory.md</vh></v>
 </v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
@@ -82,7 +86,7 @@
 <v t="ekr.20160205072101.1"><vh>reduce_types (returns string)</vh></v>
 </v>
 </v>
-<v t="ekr.20160128104639.1"></v>
+<v t="ekr.20160206165656.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
@@ -267,7 +271,7 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160131174909.1"><vh>** To do</vh></v>
+<v t="ekr.20160207111247.1"><vh>Checkin log</vh></v>
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
 <v t="ekr.20160130034812.1"></v>
 <v t="ekr.20160207051316.1"></v>
@@ -284,12 +288,12 @@
 <v t="ekr.20160205053641.6"></v>
 <v t="ekr.20160205053641.2"></v>
 </v>
-</v>
 <v t="ekr.20160207062251.1"><vh>** several name patterns are not working</vh>
 <v t="ekr.20160205103604.4"></v>
 <v t="ekr.20160204153904.1"></v>
 </v>
-<v t="ekr.20160207064626.1"><vh>checkin log</vh></v>
+</v>
+<v t="ekr.20160131174909.1"><vh>** to do</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1524,7 +1528,8 @@ str%str: str
 
 .*__name__: str
 </t>
-<t tx="ekr.20160126165907.1">def finalize(self, fn):
+<t tx="ekr.20160126165907.1">
+def finalize(self, fn):
     '''Finalize and regularize a filename.'''
     fn = os.path.expanduser(fn)
     fn = os.path.abspath(fn)
@@ -1855,7 +1860,8 @@ def match_entire_string(self, s):
         m = self.regex.match(s)
         return m and m.group(0) == s
 </t>
-<t tx="ekr.20160128122410.1">def get_def_name(self, node):
+<t tx="ekr.20160128122410.1">
+def get_def_name(self, node):
     '''Return the representaion of a function or method name.'''
     if self.class_name_stack:
         name = '%s.%s' % (self.class_name_stack[-1], node.name)
@@ -1876,10 +1882,7 @@ def run_all_unit_tests(self):
     suite = loader.loadTestsFromTestCase(test_msf.TestMakeStubFiles)
     unittest.TextTestRunner(verbosity=0).run(suite)
 </t>
-<t tx="ekr.20160128154704.1"># Problem:
-# def format(self, node: Node) -&gt; Union[Any, number, str]: ...
-
-</t>
+<t tx="ekr.20160128154704.1"></t>
 <t tx="ekr.20160128154715.1">import pdb
 import unittest
 import make_stub_files as msf
@@ -1890,7 +1893,8 @@ class TestMakeStubFiles(unittest.TestCase):
     
 if __name__ == '__main__':
     unittest.main()</t>
-<t tx="ekr.20160128190112.1">def test_pattern_class(self):
+<t tx="ekr.20160128190112.1">
+def test_pattern_class(self):
     table = (
         # Unused regex tests.
         # ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
@@ -1949,7 +1953,8 @@ def test_is_known_type(self):
     for s in bad:
         assert not msf.is_known_type(s), s
 </t>
-<t tx="ekr.20160128190252.1"># def setUp(self):
+<t tx="ekr.20160128190252.1">
+# def setUp(self):
     # '''Called before each test.'''
 </t>
 <t tx="ekr.20160128225533.1">*.pyc
@@ -2056,33 +2061,26 @@ def is_known_type(s):
     if trace: g.trace('Fail:', s1)
     return False
 </t>
-<t tx="ekr.20160131174909.1">@language rest
-@wrap
+<t tx="ekr.20160131174909.1">
+- Add trace-patterns, trace-matches, trace-visitors.
+  These are for users, not me.
+
+*** Fix bug: aList not handled correctly
+    Test regex patterns.
+    
+*** Merge unions in reduce_types.
+    
+*** Recognize [Def Name Patterns] and recursive calls in function returns.
+*** --update.
 
 - Post: announce new formatting of stub files &amp; complete handling of elementary types.
 - Post: announce regex work.
 - Post: how to run unit tests.
 - Post: what to do about 'number': is reduce_numbers correct?
-
-*** Fix bug: aList not handled correctly
-    add self.debug switches in various classes.
-    Add --log: enable debug logging
-    Is -db legal?
-    
-- Consider merging unions in reduce_types.
-
-- Run on make_stub_files.py.  Check with mypy.
-- Are user patterns recognized everywhere?
-    - Explain the code and the issues.
-    
-==== Can we allow visitors to return lists???
-
-** Recognize [Def Name Patterns] and recursive calls in function returns.
-** --update.
-
-- Documentation: Theory of operation (Guide to the code)
-
 - Task oriented docs.  After --update.
+
+@language rest
+@wrap
 </t>
 <t tx="ekr.20160131175042.1">
 
@@ -2096,9 +2094,12 @@ class TestClass:
     # pylint: disable=no-self-argument
     # pylint: disable=no-method-argument
     @others</t>
-<t tx="ekr.20160131175118.1">def return_list(self, a):
+<t tx="ekr.20160131175118.1">
+def return_list(self, a):
     return [a]</t>
-<t tx="ekr.20160131180118.1">class LeoGlobals:
+<t tx="ekr.20160131180118.1">
+
+class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
     @others
 </t>
@@ -2119,10 +2120,12 @@ def trace(self, *args, **keys):
     except ImportError:
         print(args, keys)
 </t>
-<t tx="ekr.20160131192406.1">def return_all(self):
+<t tx="ekr.20160131192406.1">
+def return_all(self):
     return all([is_known_type(z) for z in s3.split(',')])
     # return all(['abc'])</t>
-<t tx="ekr.20160131192735.1">def return_array():
+<t tx="ekr.20160131192735.1">
+def return_array():
     return f(s[1:-1])</t>
 <t tx="ekr.20160131204607.1">
 def replace_balanced(self, s1, start, end):
@@ -2154,7 +2157,8 @@ def replace_balanced(self, s1, start, end):
     if trace: g.trace('repl',self.repl_s,'==&gt;',repl)
     return s1[:start] + repl + s1[end:]
 </t>
-<t tx="ekr.20160201125349.1">def parse_group(group):
+<t tx="ekr.20160201125349.1">
+def parse_group(group):
     if len(group) &gt;= 3 and group[-2] == 'as':
         del group[-2:]
     ndots = 0
@@ -2177,7 +2181,8 @@ def do_Return(self, node):
     assert s.startswith('return'), repr(s)
     return s[len('return'):].strip()
 </t>
-<t tx="ekr.20160202061118.1">if 0:
+<t tx="ekr.20160202061118.1">
+if 0:
     seen_patterns = []
     
     def visit(self, node):
@@ -2453,7 +2458,8 @@ def __ne__(self, obj):
 def __hash__(self):
     '''Pattern.__hash__'''
     return len(self.find_s) + len(self.repl_s)</t>
-<t tx="ekr.20160203134203.1"># Ordering among Patterns is not important.
+<t tx="ekr.20160203134203.1">
+# Ordering among Patterns is not important.
 
 # def __gt__(self, obj):
     # '''Return True if self appears after other in outline order.'''
@@ -2504,7 +2510,8 @@ def __hash__(self):
     else:
         return len(self.children)
 </t>
-<t tx="ekr.20160203154154.1">    name1 = self.parent.full_name() if self.parent else None
+<t tx="ekr.20160203154154.1">
+    name1 = self.parent.full_name() if self.parent else None
     name2 = obj.parent.full_name() if obj.parent else None
     if name1 == name2:
         return self.name &gt; obj.name
@@ -2570,7 +2577,8 @@ def make_patterns_dict(self):
                 print('  '+repr(pattern))
     # Note: retain self.general_patterns for use in argument lists.
 </t>
-<t tx="ekr.20160204153904.1">seen_names = []
+<t tx="ekr.20160204153904.1">
+seen_names = []
 
 def do_Name(self, node):
     '''StubFormatter ast.Name visitor.'''
@@ -2641,7 +2649,8 @@ def make_op_name_dict(self):
         d[op] = ['Compare',]
     return d
 </t>
-<t tx="ekr.20160204224242.1">def update(self, fn):
+<t tx="ekr.20160204224242.1">
+def update(self, fn):
     '''Alter self.parent_stub so it contains only updated stubs.'''
     g.trace('--update not ready yet')
     s = self.get_stub_file(fn)
@@ -2735,7 +2744,8 @@ def do_IfExp(self, node):
 </t>
 <t tx="ekr.20160205053705.1">
 # StubFormatter visitors for operands...</t>
-<t tx="ekr.20160205060709.1">def get_stub_file(self, fn):
+<t tx="ekr.20160205060709.1">
+def get_stub_file(self, fn):
     '''Read the stub file into s.'''
     g.trace(fn)
     if os.path.exists(fn):
@@ -2749,7 +2759,8 @@ def do_IfExp(self, node):
         print('--update: not found: %s' % fn)
         return ''
     </t>
-<t tx="ekr.20160205060807.1">def parse_stub_file(self, s):
+<t tx="ekr.20160205060807.1">
+def parse_stub_file(self, s):
     '''
     Parse the stub file whose contents is s into a tree of Stubs.
     
@@ -2917,7 +2928,8 @@ def do_Tuple(self, node):
     elts = [self.visit(z) for z in node.elts]
     return '(%s)' % ', '.join(elts)
 </t>
-<t tx="ekr.20160205161341.1">def return_two_lists(s):
+<t tx="ekr.20160205161341.1">
+def return_two_lists(s):
     if 1:
         return aList
     else:
@@ -2965,7 +2977,8 @@ def splitLines(self, s):
     '''Split s into lines, preserving trailing newlines.'''
     return s.splitlines(True) if s else []
 </t>
-<t tx="ekr.20160206101802.10">def test(self,fn):
+<t tx="ekr.20160206101802.10">
+def test(self,fn):
     '''Test the newly created file.'''
     import imp
     import sys
@@ -2982,7 +2995,8 @@ def splitLines(self, s):
         print('can not import: %s' % (name))
         g.es_print_exception()
 </t>
-<t tx="ekr.20160206101802.11">def write_file(self,fn):
+<t tx="ekr.20160206101802.11">
+def write_file(self,fn):
 
     assert g.os_path_exists(self.path),self.path
     fn = g.os_path_finalize_join(self.path,fn)
@@ -2992,7 +3006,9 @@ def splitLines(self, s):
         f.write(self.test_template % (self.clean(p.h),self.get_body(p)))
     f.close()
 </t>
-<t tx="ekr.20160206101802.3">class TestWriter:
+<t tx="ekr.20160206101802.3">
+
+class TestWriter:
     
     &lt;&lt; define file_template &gt;&gt;
     &lt;&lt; define test_template &gt;&gt;
@@ -3015,7 +3031,8 @@ class %s (unittest.TestCase):
 
 test_template = g.adjustTripleString(test_template,c.tab_width)
 </t>
-<t tx="ekr.20160206101802.6">def __init__(self,c,path=''):
+<t tx="ekr.20160206101802.6">
+def __init__(self,c,path=''):
     '''TestWriter ctor.'''
     self.c = c
     load_dir = g.os_path_dirname(c.fileName())
@@ -3023,7 +3040,8 @@ test_template = g.adjustTripleString(test_template,c.tab_width)
     self.nodes = []
     assert g.os_path_exists(self.path),self.path
 </t>
-<t tx="ekr.20160206101802.7">def clean(self,s):
+<t tx="ekr.20160206101802.7">
+def clean(self,s):
     '''Munge s so that it can be used as a file name.'''
     result,tag = [],'@test'
     if s.startswith(tag):
@@ -3038,7 +3056,8 @@ test_template = g.adjustTripleString(test_template,c.tab_width)
         s = s[:-3]
     return s.strip()
 </t>
-<t tx="ekr.20160206101802.8">def get_body(self,p):
+<t tx="ekr.20160206101802.8">
+def get_body(self,p):
     '''Convert p.b to a valid script.'''
     s = g.getScript(c,p,
                     useSelectedText=False,
@@ -3048,7 +3067,8 @@ test_template = g.adjustTripleString(test_template,c.tab_width)
         # Add leading indentation needed by test_template.
     return s.rstrip()
 </t>
-<t tx="ekr.20160206101802.9">def run(self,fn=None):
+<t tx="ekr.20160206101802.9">
+def run(self,fn=None):
     
     n, p = 0, c.rootPosition()
     while p:
@@ -3074,7 +3094,8 @@ test_template = g.adjustTripleString(test_template,c.tab_width)
         dest = g.os_path_join(self.path, fn) if fn else self.path
         print('wrote %s test%s to %s' % (n,self.plural(n), dest))
 </t>
-<t tx="ekr.20160206103417.1">def plural(self, n):
+<t tx="ekr.20160206103417.1">
+def plural(self, n):
     return 's' if n &gt; 1 else ''
 </t>
 <t tx="ekr.20160206104033.1"># pylint: disable=relative-import
@@ -3128,7 +3149,8 @@ assert p3 not in aSet
 assert list(aSet) == [p1] == [p2]
 aSet.add(p3)
 </t>
-<t tx="ekr.20160206120522.1">def pdb(self):
+<t tx="ekr.20160206120522.1">
+def pdb(self):
     '''Invoke a debugger during unit testing.'''
     try:
         import leo.core.leoGlobals as leo_g
@@ -3156,7 +3178,79 @@ a: Any
 s: str
 aList: List[Any]
 </t>
-<t tx="ekr.20160206165656.1">def return_every_kind(a, b):
+<t tx="ekr.20160206165656.1">'''A test file containing code that caused mypy errors.'''
+
+def is_known_type(s):
+    '''
+    Return True if s is nothing but a single known type.
+    Recursively test inner types in square brackets.
+    '''
+    trace = False
+    s1 = s
+    s = s.strip()
+    table = (
+        # None,
+        'None', 
+        'complex', 'float', 'int', 'long', 'number',
+        'dict', 'list', 'tuple',
+        'bool', 'bytes', 'str', 'unicode',
+    )
+    for s2 in table:
+        if s2 == s:
+            return True
+        elif Pattern(s2+'(*)', s).match_entire_string(s):
+            return True
+    if s.startswith('[') and s.endswith(']'):
+        inner = s[1:-1]
+        return is_known_type(inner) if inner else True
+    elif s.startswith('(') and s.endswith(')'):
+        inner = s[1:-1]
+        return is_known_type(inner) if inner else True
+    elif s.startswith('{') and s.endswith('}'):
+        return True ### Not yet.
+        # inner = s[1:-1]
+        # return is_known_type(inner) if inner else True
+    table = (
+        # Pep 484: https://www.python.org/dev/peps/pep-0484/
+        # typing module: https://docs.python.org/3/library/typing.html
+        'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
+        'BinaryIO', 'ByteString',
+        'Callable', 'CallableMeta', 'Container',
+        'Dict', 'Final', 'Generic', 'GenericMeta', 'Hashable',
+        'IO', 'ItemsView', 'Iterable', 'Iterator',
+        'KT', 'KeysView', 'List',
+        'Mapping', 'MappingView', 'Match',
+        'MutableMapping', 'MutableSequence', 'MutableSet',
+        'NamedTuple', 'Optional', 'OptionalMeta',
+        # 'POSIX', 'PY2', 'PY3',
+        'Pattern', 'Reversible',
+        'Sequence', 'Set', 'Sized',
+        'SupportsAbs', 'SupportsFloat', 'SupportsInt', 'SupportsRound',
+        'T', 'TextIO', 'Tuple', 'TupleMeta',
+        'TypeVar', 'TypingMeta',
+        'Undefined', 'Union', 'UnionMeta',
+        'VT', 'ValuesView', 'VarBinding',
+    )
+    for s2 in table:
+        if s2 == s:
+            return True
+        pattern = Pattern(s2+'[*]', s)
+        if pattern.match_entire_string(s):
+            # Look inside the square brackets.
+            # if s.startswith('Dict[List'): g.pdb()
+            brackets = s[len(s2):]
+            assert brackets and brackets[0] == '[' and brackets[-1] == ']'
+            s3 = brackets[1:-1]
+            if s3:
+                return all([is_known_type(z.strip())
+                    for z in split_types(s3)])
+            else:
+                return True
+    if trace: g.trace('Fail:', s1)
+    return False
+
+
+def return_every_kind(a, b):
     # pylint: disable=unreachable
     return 1
     return 1.0
@@ -3170,7 +3264,21 @@ aList: List[Any]
     return dict(['p', 'q'])
     return list(1,2)
     return int(0.5)
-    return tuple('a1', 'b1')</t>
+    return tuple('a1', 'b1')
+    
+def match_entire_string(self, s):
+    '''Return True if s matches self.find_s'''
+    if self.is_balanced():
+        j = self.full_balanced_match(s, 0)
+        return j is not None
+    else:
+        m = self.regex.match(s)
+        return m and m.group(0) == s
+
+def splitLines(self, s):
+    '''Split s into lines, preserving trailing newlines.'''
+    return s.splitlines(True) if s else []
+</t>
 <t tx="ekr.20160206170515.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
 table = (
     ([i,i],     [i]),
@@ -3297,13 +3405,15 @@ for a1, a2, expected in table:
     assert expected == got, (a1, a2, 'expected:', expected, 'got', got)
 </t>
 <t tx="ekr.20160207062251.1"></t>
-<t tx="ekr.20160207064626.1">@language rest
-@wrap
-
-Corrected several problems and found a few more.
-- Added merge_types method, with unit test.
-  This could only be useful if visitors could return lists of types.
-  This looks like a significant project.
-  For now, reduce_types could merge unions.</t>
+<t tx="ekr.20160207105647.1"></t>
+<t tx="ekr.20160207105710.1">for p in c.all_unique_positions():
+    if p.h.startswith('@') or p.h.strip().startswith('&lt;&lt;'):
+        pass
+    elif p.b.strip() and not p.b.startswith('\n'):
+        print(repr(p.b[:3]), p.h)
+print('done')
+</t>
+<t tx="ekr.20160207111247.1">
+- Added functions that caused mypy complaints to test/test.py</t>
 </tnodes>
 </leo_file>

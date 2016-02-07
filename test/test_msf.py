@@ -4,8 +4,10 @@ import make_stub_files as msf
 
 class TestMakeStubFiles(unittest.TestCase):
     '''Main test class.'''
+
     # def setUp(self):
         # '''Called before each test.'''
+
     def test_pattern_class(self):
         table = (
             # Unused regex tests.
