@@ -147,13 +147,17 @@
 <v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
 <v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
 <v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
+<v t="ekr.20160206174054.1"><vh>pattern.is_regex</vh></v>
 <v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
 <v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
 <v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
 </v>
 <v t="ekr.20160202070025.1"><vh>pattern.match</vh></v>
 <v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
-<v t="ekr.20160131204607.1"><vh>pattern.replace</vh></v>
+<v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
+<v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
+<v t="ekr.20160206174547.1"><vh>pattern.replace_regex</vh></v>
+</v>
 </v>
 <v t="ekr.20160126153212.73"><vh>class StandAloneMakeStubFile</vh>
 <v t="ekr.20160126153212.74"><vh>msf.ctor</vh></v>
@@ -246,8 +250,8 @@
 <v t="ekr.20160130034812.1"><vh>is_known_type</vh></v>
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160206120522.1"><vh>pdb</vh></v>
-<v t="ekr.20160205101134.1"><vh>reduce_numbers (test)</vh></v>
-<v t="ekr.20160205072101.1"><vh>reduce_types REVISE</vh></v>
+<v t="ekr.20160205101134.1"><vh>reduce_numbers</vh></v>
+<v t="ekr.20160205072101.1"><vh>reduce_types</vh></v>
 </v>
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
@@ -258,6 +262,12 @@
 <v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
 <v t="ekr.20160205101134.1"></v>
 </v>
+<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
+<v t="ekr.20160128041938.1"></v>
+<v t="ekr.20160130034812.1"></v>
+<v t="ekr.20160205101134.1"></v>
+<v t="ekr.20160205072101.1"></v>
+</v>
 </v>
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
 <v t="ekr.20160126153212.85"></v>
@@ -266,7 +276,8 @@
 <v t="ekr.20160205053705.1"></v>
 <v t="ekr.20160205053641.1"></v>
 </v>
-<v t="ekr.20160206172115.1"><vh>Checkin log</vh></v>
+<v t="ekr.20160206173953.1"><vh>** better traces of return expressions</vh></v>
+<v t="ekr.20160206174014.1"><vh>Checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1540,7 +1551,7 @@ def all_matches(self, s):
 </t>
 <t tx="ekr.20160128042857.1">
 def is_balanced(self):
-    '''Return True if self.s is a balanced pattern.'''
+    '''Return True if self.find_s is a balanced pattern.'''
     s = self.find_s
     if s.endswith('*'):
         return True
@@ -1795,7 +1806,9 @@ def __init__ (self, find_s, repl_s=''):
     '''Ctor for the Pattern class.'''
     self.find_s = find_s
     self.repl_s = repl_s
-    if self.is_balanced():
+    if self.is_regex():
+        self.regex = re.compile(find_s)
+    elif self.is_balanced():
         self.regex = None
     else:
         # Escape all dangerous characters.
@@ -2052,13 +2065,12 @@ def trace(self, *args, **keys):
 <t tx="ekr.20160131192735.1">def return_array():
     return f(s[1:-1])</t>
 <t tx="ekr.20160131204607.1">
-def replace(self, m, s1):
+def replace_balanced(self, s1, start, end):
     '''
     Use m (returned by all_matches) to replace s by the string implied by repr_s.
     Within repr_s, * star matches corresponding * in find_s
     '''
     trace = False
-    start, end = m if self.is_balanced() else (m.start(), m.end())
     s = s1[start:end]
     f, r = self.find_s, self.repl_s
     i1 = f.find('(*)')
@@ -2164,13 +2176,13 @@ def match(self, patterns, s):
         if j is None:
             return False, s
         else:
-            m = 0, len(s)
-            s = self.replace(m, s)
+            start, end = 0, len(s)
+            s = self.replace_balanced(s, start, end)
             return True, s
     else:
         m = self.regex.match(s)
         if m and m.group(0) == s:
-            s = self.replace(m, s)
+            s = self.replace_regex(m, s)
             return True, s
         else:
             return False, s
@@ -3080,9 +3092,13 @@ unittest.TextTestRunner(verbosity=0).run(suite)
 <t tx="ekr.20160206104634.1"></t>
 <t tx="ekr.20160206110004.1">@others
 import re
-    # ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
-    # ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
+    
 table = (
+    # s,  Pattern.find_s, Pattern.repl_s, expected
+    # Passed...
+    ('aabbcc', '(a+)(b+)(c+)$', r'\3\2\1', 'ccbbaa'),
+    ('[str]', r'\[str\]$', 'xxx', 'xxx'), # Guido bug.
+    ('s3', r's[1-3]?\b$', 'str', 'str'), # lengthening bug.
     ('s', 's', 'str', 'str'),
     ('abc', 'abc', 'ABC', 'ABC'),
     ('str(str)', 'str(*)', 'str', 'str'),
@@ -3094,11 +3110,10 @@ table = (
 )
 for s, find, repl, expected in table:
     pattern = Pattern(find, repl)
-    if 0: # good
-        result = pattern.match_entire_string(s)
-        assert result, (result, s, find, repl, expected)
-        aList = pattern.all_matches(s)
-        assert len(aList) == 1, aList
+    result = pattern.match_entire_string(s)
+    assert result, (result, s, find, repl, expected)
+    aList = pattern.all_matches(s)
+    assert len(aList) == 1, aList
     found, s2 = pattern.match(s)
     assert found, 'after pattern.match(s)'
     assert s2 == expected, (s, pattern, 'expected', expected, 'got', s2)
@@ -3174,15 +3189,52 @@ for aList, expected in table:
     assert expected == got,  (aList, 'expected:', expected, 'got', got)
 </t>
 <t tx="ekr.20160206171945.1"></t>
-<t tx="ekr.20160206172115.1">@language rest
+<t tx="ekr.20160206173343.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
+table = (
+    ([i,i],     i),
+    ([i],       i),
+    ([f, i],    f),
+    ([c, i],    c),
+    ([l, a],    'Union[Any, long]'),
+)
+@others
+for aList, expected in table:
+    got = reduce_types(aList)
+    assert expected == got,  (aList, 'expected:', expected, 'got', got)
+</t>
+<t tx="ekr.20160206173953.1"></t>
+<t tx="ekr.20160206174014.1">@language rest
 @wrap
 
-The code is maturing...
-- Retired st.visit.
-- Rewrote Pattern.replace and tested it with an @test node.
-- Removed the --fast option and associated logic.
-- find_pattern_ops now allows word operators such as 'not in'.
-- Added pattern matches in most of the StubTraverser misitor.
-- Fixed bugs in reduce_numbers.</t>
+Allow regex patterns, including replaces. Regex patterns must end with '$'.
+</t>
+<t tx="ekr.20160206174054.1">
+def is_regex(self):
+    '''
+    Return True if self.find_s is a regular pattern.
+    For now a kludgy convention suffices.
+    '''
+    return self.find_s.endswith('$')
+        # A dollar sign is not valid in any Python expression.
+</t>
+<t tx="ekr.20160206174547.1">
+def replace_regex(self, m, s):
+    '''Do the replacement in s specified by m.'''
+    s = self.repl_s
+    for i in range(9):
+        group = '\\%s' % i
+        if s.find(group) &gt; -1:
+            # g.trace(i, m.group(i))
+            s = s.replace(group, m.group(i))
+    return s</t>
+<t tx="ekr.20160206174740.1">
+def replace(self, m, s):
+    '''Perform any kind of replacement.'''
+    if self.is_balanced():
+        start, end = m
+        return self.replace_balanced(s, start, end)
+    else:
+        return self.replace_regex(m, s)
+</t>
 </tnodes>
 </leo_file>

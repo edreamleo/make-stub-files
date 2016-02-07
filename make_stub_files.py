@@ -744,7 +744,9 @@ class Pattern(object):
         '''Ctor for the Pattern class.'''
         self.find_s = find_s
         self.repl_s = repl_s
-        if self.is_balanced():
+        if self.is_regex():
+            self.regex = re.compile(find_s)
+        elif self.is_balanced():
             self.regex = None
         else:
             # Escape all dangerous characters.
@@ -778,7 +780,7 @@ class Pattern(object):
     __str__ = __repr__
 
     def is_balanced(self):
-        '''Return True if self.s is a balanced pattern.'''
+        '''Return True if self.find_s is a balanced pattern.'''
         s = self.find_s
         if s.endswith('*'):
             return True
@@ -786,6 +788,14 @@ class Pattern(object):
             if s.find(pattern) > -1:
                 return True
         return False
+
+    def is_regex(self):
+        '''
+        Return True if self.find_s is a regular pattern.
+        For now a kludgy convention suffices.
+        '''
+        return self.find_s.endswith('$')
+            # A dollar sign is not valid in any Python expression.
 
     def all_matches(self, s):
         '''
@@ -872,13 +882,13 @@ class Pattern(object):
             if j is None:
                 return False, s
             else:
-                m = 0, len(s)
-                s = self.replace(m, s)
+                start, end = 0, len(s)
+                s = self.replace_balanced(s, start, end)
                 return True, s
         else:
             m = self.regex.match(s)
             if m and m.group(0) == s:
-                s = self.replace(m, s)
+                s = self.replace_regex(m, s)
                 return True, s
             else:
                 return False, s
@@ -892,13 +902,20 @@ class Pattern(object):
             m = self.regex.match(s)
             return m and m.group(0) == s
 
-    def replace(self, m, s1):
+    def replace(self, m, s):
+        '''Perform any kind of replacement.'''
+        if self.is_balanced():
+            start, end = m
+            return self.replace_balanced(s, start, end)
+        else:
+            return self.replace_regex(m, s)
+
+    def replace_balanced(self, s1, start, end):
         '''
         Use m (returned by all_matches) to replace s by the string implied by repr_s.
         Within repr_s, * star matches corresponding * in find_s
         '''
         trace = False
-        start, end = m if self.is_balanced() else (m.start(), m.end())
         s = s1[start:end]
         f, r = self.find_s, self.repl_s
         i1 = f.find('(*)')
@@ -921,6 +938,16 @@ class Pattern(object):
         repl = r[:j] + s_star + r[j+1:]
         if trace: g.trace('repl',self.repl_s,'==>',repl)
         return s1[:start] + repl + s1[end:]
+
+    def replace_regex(self, m, s):
+        '''Do the replacement in s specified by m.'''
+        s = self.repl_s
+        for i in range(9):
+            group = '\\%s' % i
+            if s.find(group) > -1:
+                # g.trace(i, m.group(i))
+                s = s.replace(group, m.group(i))
+        return s
 
 
 class StandAloneMakeStubFile:
