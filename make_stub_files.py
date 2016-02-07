@@ -27,6 +27,180 @@ except ImportError:
 import sys
 
 
+# Top-level functions
+
+def is_known_type(s):
+    '''
+    Return True if s is nothing but a single known type.
+    Recursively test inner types in square brackets.
+    '''
+    trace = False
+    s1 = s
+    s = s.strip()
+    table = (
+        # None,
+        'None', 
+        'complex', 'float', 'int', 'long', 'number',
+        'dict', 'list', 'tuple',
+        'bool', 'bytes', 'str', 'unicode',
+    )
+    for s2 in table:
+        if s2 == s:
+            return True
+        elif Pattern(s2+'(*)', s).match_entire_string(s):
+            return True
+    if s.startswith('[') and s.endswith(']'):
+        inner = s[1:-1]
+        return is_known_type(inner) if inner else True
+    elif s.startswith('(') and s.endswith(')'):
+        inner = s[1:-1]
+        return is_known_type(inner) if inner else True
+    elif s.startswith('{') and s.endswith('}'):
+        return True ### Not yet.
+        # inner = s[1:-1]
+        # return is_known_type(inner) if inner else True
+    table = (
+        # Pep 484: https://www.python.org/dev/peps/pep-0484/
+        # typing module: https://docs.python.org/3/library/typing.html
+        'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
+        'BinaryIO', 'ByteString',
+        'Callable', 'CallableMeta', 'Container',
+        'Dict', 'Final', 'Generic', 'GenericMeta', 'Hashable',
+        'IO', 'ItemsView', 'Iterable', 'Iterator',
+        'KT', 'KeysView', 'List',
+        'Mapping', 'MappingView', 'Match',
+        'MutableMapping', 'MutableSequence', 'MutableSet',
+        'NamedTuple', 'Optional', 'OptionalMeta',
+        # 'POSIX', 'PY2', 'PY3',
+        'Pattern', 'Reversible',
+        'Sequence', 'Set', 'Sized',
+        'SupportsAbs', 'SupportsFloat', 'SupportsInt', 'SupportsRound',
+        'T', 'TextIO', 'Tuple', 'TupleMeta',
+        'TypeVar', 'TypingMeta',
+        'Undefined', 'Union', 'UnionMeta',
+        'VT', 'ValuesView', 'VarBinding',
+    )
+    for s2 in table:
+        if s2 == s:
+            return True
+        pattern = Pattern(s2+'[*]', s)
+        if pattern.match_entire_string(s):
+            # Look inside the square brackets.
+            # if s.startswith('Dict[List'): g.pdb()
+            brackets = s[len(s2):]
+            assert brackets and brackets[0] == '[' and brackets[-1] == ']'
+            s3 = brackets[1:-1]
+            if s3:
+                return all([is_known_type(z.strip())
+                    for z in split_types(s3)])
+            else:
+                return True
+    if trace: g.trace('Fail:', s1)
+    return False
+
+def main():
+    '''
+    The driver for the stand-alone version of make-stub-files.
+    All options come from ~/stubs/make_stub_files.cfg.
+    '''
+    # g.cls()
+    controller = StandAloneMakeStubFile()
+    controller.scan_command_line()
+    controller.scan_options()
+    controller.run()
+    print('done')
+
+def merge_types(a1, a2):
+    '''
+    a1 and a2 may be strings or lists.
+    return a list containing both of them, flattened, without duplicates.
+    '''
+    # Not used at present, and perhaps never.
+    # Only useful if visitors could return either lists or strings.
+    assert a1 is not None
+    assert a2 is not None
+    r1 = a1 if isinstance(a1, (list, tuple)) else [a1]
+    r2 = a2 if isinstance(a2, (list, tuple)) else [a2]
+    return sorted(set(r1 + r2))
+def pdb(self):
+    '''Invoke a debugger during unit testing.'''
+    try:
+        import leo.core.leoGlobals as leo_g
+        leo_g.pdb()
+    except ImportError:
+        import pdb
+        pdb.set_trace()
+
+def reduce_numbers(aList):
+    '''
+    Return aList with all number types in aList replaced by the most
+    general numeric type in aList.
+    '''
+    found = None
+    numbers = ('number', 'complex', 'float', 'long', 'int')
+    for kind in numbers:
+        for z in aList:
+            if z == kind:
+                found = kind
+                break
+        if found:
+            break
+    if found:
+        assert found in numbers, found
+        aList = [z for z in aList if z not in numbers]
+        aList.append(found)
+    return aList
+
+def reduce_types(aList, newlines=False):
+    '''
+    Return a string containing the reduction of all types in aList.
+    '''
+    trace = False
+    while None in aList:
+        aList.remove(None)
+    if not aList:
+        return 'None'
+    r = sorted(set(aList))
+    if not all([is_known_type(z) for z in r]):
+        if trace:
+            if 0:
+                for z in r:
+                    if not is_known_type(z):
+                        g.trace('unknown',z)
+            g.trace('%10s %s ==> Any' % ('unknown', r))
+        return 'Any'
+    elif len(r) == 1:
+        return r[0]
+    if 'None' in r:
+        kind = 'Optional'
+        while 'None' in r:
+            r.remove('None')
+        if trace: g.trace('%10s %s' % (kind, r))
+        return 'Optional[%s]' % (r[0])
+    r = reduce_numbers(r)
+    if len(r) == 1:
+        if trace: g.trace('%10s %r' % ('Reduced', r[0]))
+        return r[0]
+    elif newlines:
+        return 'Union[\n    %s,\n]' % (',\n    '.join(sorted(r)))
+    else:
+        if trace: g.trace('%10s %s' % ('Union', r))
+        return 'Union[%s]' % (', '.join(sorted(r)))
+
+def split_types(s):
+    '''Split types on *outer level* commas.'''
+    aList, i1, level = [], 0, 0
+    for i, ch in enumerate(s):
+        if ch == '[':
+            level += 1
+        elif ch == ']':
+            level -= 1
+        elif ch == ',' and level == 0:
+            aList.append(s[i1:i])
+            i1 = i+1
+    aList.append(s[i1:].strip())
+    return aList
+
 
 class AstFormatter:
     '''
@@ -1059,7 +1233,7 @@ class StandAloneMakeStubFile:
         add('-u', '--update', action='store_true', default=False,
             help='update existing stub file')
         add('-v', '--verbose', action='store_true', default=False,
-            help='trace configuration settings')
+            help='verbose output in .pyi file')
         add('-w', '--warn', action='store_true', default=False,
             help='warn about unannotated args')
         # Parse the options
@@ -1484,14 +1658,16 @@ class StubFormatter (AstFormatter):
     def do_Name(self, node):
         '''StubFormatter ast.Name visitor.'''
         trace = False
-        name = self.names_dict.get(node.id, node.id)
+        d = self.names_dict
+        name = d.get(node.id, node.id)
         s = 'bool' if name in ('True', 'False') else name
-        if trace and self.names_dict.get(node.id) and node.id not in self.seen_names:
+        if trace and node.id not in self.seen_names:
             self.seen_names.append(node.id)
-            s2 = self.names_dict.get(node.id)
-            if s: g.trace(node.id, '==>', s2)
+            if d.get(node.id):
+                g.trace(node.id, '==>', d.get(node.id))
+            elif node.id == 'aList':
+                g.trace('**not found**', node.id)
         return s
-
 
     def do_Tuple(self, node):
         '''StubFormatter.Tuple.'''
@@ -1518,6 +1694,9 @@ class StubFormatter (AstFormatter):
             return lhs ### Perhaps not always right.
         elif lhs in numbers and rhs in numbers:
             return reduce_types([lhs, rhs])
+                # At present, visitors must return strings.
+                # even if Union[x,y] causes trouble later.
+                # reduce_numbers would be wrong: it returns a list.
         elif lhs == 'str' and op in '%*':
             return 'str'
         else:
@@ -1536,8 +1715,9 @@ class StubFormatter (AstFormatter):
         '''
         # op_name = self.op_name(node.op)
         values = [self.visit(z) for z in node.values]
-        # g.trace('*******', values)
         return reduce_types(values)
+            # At present, visitors must return strings.
+            # even if Union[x,y] causes trouble later.
 
     # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
@@ -1582,6 +1762,8 @@ class StubFormatter (AstFormatter):
                 self.visit(node.test),
                 self.visit(node.orelse))
         else:
+            # At present, visitors must return strings.
+            # even if Union[x,y] causes trouble later.
             return reduce_types([
                 self.visit(node.test),
                 self.visit(node.orelse)])
@@ -1933,178 +2115,6 @@ class TestClass:
             return aList
         else:
             return list(self.regex.finditer(s))
-
-def is_known_type(s):
-    '''
-    Return True if s is nothing but a single known type.
-    Recursively test inner types in square brackets.
-    '''
-    trace = True
-    s1 = s
-    s = s.strip()
-    table = (
-        # None,
-        'None', 
-        'complex', 'float', 'int', 'long', 'number',
-        'dict', 'list', 'tuple',
-        'bool', 'bytes', 'str', 'unicode',
-    )
-    for s2 in table:
-        if s2 == s:
-            return True
-        elif Pattern(s2+'(*)', s).match_entire_string(s):
-            return True
-    if s.startswith('[') and s.endswith(']'):
-        inner = s[1:-1]
-        return is_known_type(inner) if inner else True
-    elif s.startswith('(') and s.endswith(')'):
-        inner = s[1:-1]
-        return is_known_type(inner) if inner else True
-    elif s.startswith('{') and s.endswith('}'):
-        return True ### Not yet.
-        # inner = s[1:-1]
-        # return is_known_type(inner) if inner else True
-    table = (
-        # Pep 484: https://www.python.org/dev/peps/pep-0484/
-        # typing module: https://docs.python.org/3/library/typing.html
-        'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
-        'BinaryIO', 'ByteString',
-        'Callable', 'CallableMeta', 'Container',
-        'Dict', 'Final', 'Generic', 'GenericMeta', 'Hashable',
-        'IO', 'ItemsView', 'Iterable', 'Iterator',
-        'KT', 'KeysView', 'List',
-        'Mapping', 'MappingView', 'Match',
-        'MutableMapping', 'MutableSequence', 'MutableSet',
-        'NamedTuple', 'Optional', 'OptionalMeta',
-        # 'POSIX', 'PY2', 'PY3',
-        'Pattern', 'Reversible',
-        'Sequence', 'Set', 'Sized',
-        'SupportsAbs', 'SupportsFloat', 'SupportsInt', 'SupportsRound',
-        'T', 'TextIO', 'Tuple', 'TupleMeta',
-        'TypeVar', 'TypingMeta',
-        'Undefined', 'Union', 'UnionMeta',
-        'VT', 'ValuesView', 'VarBinding',
-    )
-    for s2 in table:
-        if s2 == s:
-            return True
-        pattern = Pattern(s2+'[*]', s)
-        if pattern.match_entire_string(s):
-            # Look inside the square brackets.
-            # if s.startswith('Dict[List'): g.pdb()
-            brackets = s[len(s2):]
-            assert brackets and brackets[0] == '[' and brackets[-1] == ']'
-            s3 = brackets[1:-1]
-            if s3:
-                return all([is_known_type(z.strip())
-                    for z in split_types(s3)])
-            else:
-                return True
-    if trace: g.trace('Fail:', s1)
-    return False
-
-def split_types(s):
-    '''Split types on *outer level* commas.'''
-    aList, i1, level = [], 0, 0
-    for i, ch in enumerate(s):
-        if ch == '[':
-            level += 1
-        elif ch == ']':
-            level -= 1
-        elif ch == ',' and level == 0:
-            aList.append(s[i1:i])
-            i1 = i+1
-    aList.append(s[i1:].strip())
-    return aList
-
-def main():
-    '''
-    The driver for the stand-alone version of make-stub-files.
-    All options come from ~/stubs/make_stub_files.cfg.
-    '''
-    # g.cls()
-    controller = StandAloneMakeStubFile()
-    controller.scan_command_line()
-    controller.scan_options()
-    controller.run()
-    print('done')
-def pdb(self):
-    '''Invoke a debugger during unit testing.'''
-    try:
-        import leo.core.leoGlobals as leo_g
-        leo_g.pdb()
-    except ImportError:
-        import pdb
-        pdb.set_trace()
-
-def reduce_numbers(aList):
-    '''
-    Return aList with all number types in aList replaced by the most
-    general numeric type in aList.
-    '''
-    found = None
-    numbers = ('number', 'complex', 'float', 'long', 'int')
-    for kind in numbers:
-        for z in aList:
-            if z == kind:
-                found = kind
-                break
-        if found:
-            break
-    if found:
-        assert found in numbers, found
-        aList = [z for z in aList if z not in numbers]
-        aList.append(found)
-    return aList
-
-def reduce_types(aList, newlines=False):
-    '''Return a string containing the reduction of all types in aList.'''
-    trace = False
-    if None in aList:
-        aList.remove(None)
-    if not aList:
-        return 'None'
-    r = sorted(set(aList))
-    if not all([is_known_type(z) for z in r]):
-        if trace:
-            if 0:
-                for z in r:
-                    if not is_known_type(z):
-                        g.trace('unknown',z)
-            g.trace('%10s %s ==> Any' % ('unknown', r))
-        return 'Any'
-    elif len(r) == 1:
-        return r[0] if r[0] else 'None'
-    # len(r) >= 2...
-    kind = 'Optional' if 'None' in r else 'Union'
-    if 'None' in r:
-        r.remove('None')
-        if len(r) == 1:
-            if trace: g.trace('%10s %s' % (kind, r))
-            return 'Optional[%s]' % (r[0])
-    r = reduce_numbers(r)
-    if len(r) == 1:
-        if trace: g.trace('%10s %r' % ('Reduced', r[0]))
-        return r[0]
-    elif newlines:
-        return '%s[\n    %s,\n]' % (kind, ',\n    '.join(sorted(r)))
-    else:
-        if trace: g.trace('%10s %s' % (kind, r))
-        return '%s[%s]' % (kind, ', '.join(sorted(r)))
-
-def split_types(s):
-    '''Split types on *outer level* commas.'''
-    aList, i1, level = [], 0, 0
-    for i, ch in enumerate(s):
-        if ch == '[':
-            level += 1
-        elif ch == ']':
-            level -= 1
-        elif ch == ',' and level == 0:
-            aList.append(s[i1:i])
-            i1 = i+1
-    aList.append(s[i1:].strip())
-    return aList
 g = LeoGlobals() # For ekr.
 if __name__ == "__main__":
     main()

@@ -49,6 +49,9 @@
 <v t="ekr.20160126153921.1"><vh>@edit README.md</vh></v>
 </v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
+<v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
+<v t="ekr.20160207051316.1"><vh>merge_types (returns list)</vh></v>
+</v>
 <v t="ekr.20160206110004.1"><vh>@test Pattern class</vh>
 <v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
 <v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
@@ -69,19 +72,28 @@
 </v>
 </v>
 <v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
-<v t="ekr.20160205101134.1"><vh>reduce_numbers</vh></v>
+<v t="ekr.20160205101134.1"><vh>reduce_numbers (returns list)</vh></v>
 </v>
 <v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
 <v t="ekr.20160128041938.1"></v>
-<v t="ekr.20160130034812.1"><vh>is_known_type &amp; helper</vh>
-<v t="ekr.20160206212123.1"><vh>split_types</vh></v>
-</v>
+<v t="ekr.20160130034812.1"><vh>is_known_type</vh></v>
+<v t="ekr.20160207051316.1"></v>
 <v t="ekr.20160205101134.1"></v>
-<v t="ekr.20160205072101.1"><vh>reduce_types</vh></v>
+<v t="ekr.20160205072101.1"><vh>reduce_types (returns string)</vh></v>
 </v>
 </v>
+<v t="ekr.20160128104639.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
+<v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
+<v t="ekr.20160130034812.1"></v>
+<v t="ekr.20160126153212.100"><vh>main</vh></v>
+<v t="ekr.20160207051316.1"></v>
+<v t="ekr.20160206120522.1"><vh>pdb</vh></v>
+<v t="ekr.20160205101134.1"></v>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160206212123.1"><vh>split_types</vh></v>
+</v>
 <v t="ekr.20160126153212.3"><vh> class AstFormatter</vh>
 <v t="ekr.20160126153212.4"><vh> f.Entries</vh>
 <v t="ekr.20160126153212.5"><vh>f.format</vh></v>
@@ -254,30 +266,30 @@
 <v t="ekr.20160131175118.1"><vh>return_list</vh></v>
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
-<v t="ekr.20160206104634.1"><vh>top-level functions</vh>
-<v t="ekr.20160130034812.1"></v>
-<v t="ekr.20160126153212.100"><vh>main</vh></v>
-<v t="ekr.20160206120522.1"><vh>pdb</vh></v>
-<v t="ekr.20160205101134.1"></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160206212123.1"></v>
-</v>
 </v>
 <v t="ekr.20160131174909.1"><vh>** To do</vh></v>
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
-<v t="ekr.20160206104634.1"></v>
-<v t="ekr.20160205053705.1"></v>
-<v t="ekr.20160205053641.1"></v>
-</v>
-<v t="ekr.20160206215414.1"><vh>Most recent</vh>
 <v t="ekr.20160130034812.1"></v>
+<v t="ekr.20160207051316.1"></v>
 <v t="ekr.20160205072101.1"></v>
 <v t="ekr.20160205103604.6"></v>
 <v t="ekr.20160205103604.9"></v>
 <v t="ekr.20160206204452.1"></v>
-<v t="ekr.20160130032546.1"></v>
+<v t="ekr.20160205053705.1"></v>
+<v t="ekr.20160205053641.1"></v>
 <v t="ekr.20160126153212.89"></v>
+<v t="ekr.20160130032546.1"></v>
+<v t="ekr.20160207050818.1"><vh>Visitors must return strings</vh>
+<v t="ekr.20160205053641.3"></v>
+<v t="ekr.20160205053641.6"></v>
+<v t="ekr.20160205053641.2"></v>
 </v>
+</v>
+<v t="ekr.20160207062251.1"><vh>** several name patterns are not working</vh>
+<v t="ekr.20160205103604.4"></v>
+<v t="ekr.20160204153904.1"></v>
+</v>
+<v t="ekr.20160207064626.1"><vh>checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1052,7 +1064,7 @@ def scan_command_line(self):
     add('-u', '--update', action='store_true', default=False,
         help='update existing stub file')
     add('-v', '--verbose', action='store_true', default=False,
-        help='trace configuration settings')
+        help='verbose output in .pyi file')
     add('-w', '--warn', action='store_true', default=False,
         help='warn about unannotated args')
     # Parse the options
@@ -1747,7 +1759,10 @@ StubTraverser.do_*: str
 
 # Declarations of names..
 a: str
-aList: List[Any]
+aList: List
+# Don't work
+### aList: List[Any]
+### aList: List
 comments: str
 controller: StandAloneMakeStubFile
 find_s: str
@@ -1775,14 +1790,20 @@ s1: str
 s2: str
 strict: bool
 trace: bool
+# New known functions
+endswith(*): bool 
+
 # Known functions...
+os.path.basename(*): str
 os.sep.join(*): str
+sep.join(*): str
 self.__eq__(*): bool
 self.__ne__(*): bool
 self.__gt__(*): bool
 self.__lt__(*): bool
 all(*): bool
 any(*): bool
+
 int(*): int
 hash(*): int
 len(*): int
@@ -1791,19 +1812,10 @@ str%(*): str
 str.join(*): str
 str.join(*): str
 r[*]: str
-# Type computations...These could be pre-entered into the patterns dict.
-dict(*): Dict[*]
-list(*): List[*]
-tuple(*): Tuple[*]
-{*}: Dict[*]
-(*): Tuple[*]
-[*]: List[*]   
-# These are now done automatically
-# str%*: str
-# str+str: str
-# str[*]: str
-# number: int
-# int+int: int
+# Put this in the code.
+str[*]: str
+###.*\.__name__$: str
+###.*\.hash()$: int
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
@@ -1980,7 +1992,7 @@ def is_known_type(s):
     Return True if s is nothing but a single known type.
     Recursively test inner types in square brackets.
     '''
-    trace = True
+    trace = False
     s1 = s
     s = s.strip()
     table = (
@@ -2050,9 +2062,25 @@ def is_known_type(s):
 - Post: announce new formatting of stub files &amp; complete handling of elementary types.
 - Post: announce regex work.
 - Post: how to run unit tests.
+- Post: what to do about 'number': is reduce_numbers correct?
+
+*** Fix bug: aList not handled correctly
+    add self.debug switches in various classes.
+    Add --log: enable debug logging
+    Is -db legal?
+    
+- Consider merging unions in reduce_types.
+
+- Run on make_stub_files.py.  Check with mypy.
+- Are user patterns recognized everywhere?
+    - Explain the code and the issues.
+    
+==== Can we allow visitors to return lists???
 
 ** Recognize [Def Name Patterns] and recursive calls in function returns.
 ** --update.
+
+- Documentation: Theory of operation (Guide to the code)
 
 - Task oriented docs.  After --update.
 </t>
@@ -2547,14 +2575,16 @@ def make_patterns_dict(self):
 def do_Name(self, node):
     '''StubFormatter ast.Name visitor.'''
     trace = False
-    name = self.names_dict.get(node.id, node.id)
+    d = self.names_dict
+    name = d.get(node.id, node.id)
     s = 'bool' if name in ('True', 'False') else name
-    if trace and self.names_dict.get(node.id) and node.id not in self.seen_names:
+    if trace and node.id not in self.seen_names:
         self.seen_names.append(node.id)
-        s2 = self.names_dict.get(node.id)
-        if s: g.trace(node.id, '==&gt;', s2)
+        if d.get(node.id):
+            g.trace(node.id, '==&gt;', d.get(node.id))
+        elif node.id == 'aList':
+            g.trace('**not found**', node.id)
     return s
-
 </t>
 <t tx="ekr.20160204170443.1">
 def find_pattern_ops(self, pattern):
@@ -2642,6 +2672,9 @@ def do_BinOp(self, node):
         return lhs ### Perhaps not always right.
     elif lhs in numbers and rhs in numbers:
         return reduce_types([lhs, rhs])
+            # At present, visitors must return strings.
+            # even if Union[x,y] causes trouble later.
+            # reduce_numbers would be wrong: it returns a list.
     elif lhs == 'str' and op in '%*':
         return 'str'
     else:
@@ -2661,8 +2694,9 @@ def do_BoolOp(self, node): # Python 2.x only.
     '''
     # op_name = self.op_name(node.op)
     values = [self.visit(z) for z in node.values]
-    # g.trace('*******', values)
     return reduce_types(values)
+        # At present, visitors must return strings.
+        # even if Union[x,y] causes trouble later.
 </t>
 <t tx="ekr.20160205053641.4">
 def do_Compare(self, node):
@@ -2693,6 +2727,8 @@ def do_IfExp(self, node):
             self.visit(node.test),
             self.visit(node.orelse))
     else:
+        # At present, visitors must return strings.
+        # even if Union[x,y] causes trouble later.
         return reduce_types([
             self.visit(node.test),
             self.visit(node.orelse)])
@@ -2723,9 +2759,11 @@ def do_IfExp(self, node):
 </t>
 <t tx="ekr.20160205072101.1">
 def reduce_types(aList, newlines=False):
-    '''Return a string containing the reduction of all types in aList.'''
+    '''
+    Return a string containing the reduction of all types in aList.
+    '''
     trace = False
-    if None in aList:
+    while None in aList:
         aList.remove(None)
     if not aList:
         return 'None'
@@ -2739,23 +2777,22 @@ def reduce_types(aList, newlines=False):
             g.trace('%10s %s ==&gt; Any' % ('unknown', r))
         return 'Any'
     elif len(r) == 1:
-        return r[0] if r[0] else 'None'
-    # len(r) &gt;= 2...
-    kind = 'Optional' if 'None' in r else 'Union'
+        return r[0]
     if 'None' in r:
-        r.remove('None')
-        if len(r) == 1:
-            if trace: g.trace('%10s %s' % (kind, r))
-            return 'Optional[%s]' % (r[0])
+        kind = 'Optional'
+        while 'None' in r:
+            r.remove('None')
+        if trace: g.trace('%10s %s' % (kind, r))
+        return 'Optional[%s]' % (r[0])
     r = reduce_numbers(r)
     if len(r) == 1:
         if trace: g.trace('%10s %r' % ('Reduced', r[0]))
         return r[0]
     elif newlines:
-        return '%s[\n    %s,\n]' % (kind, ',\n    '.join(sorted(r)))
+        return 'Union[\n    %s,\n]' % (',\n    '.join(sorted(r)))
     else:
-        if trace: g.trace('%10s %s' % (kind, r))
-        return '%s[%s]' % (kind, ', '.join(sorted(r)))
+        if trace: g.trace('%10s %s' % ('Union', r))
+        return 'Union[%s]' % (', '.join(sorted(r)))
 </t>
 <t tx="ekr.20160205101134.1">
 def reduce_numbers(aList):
@@ -3048,7 +3085,8 @@ loader = unittest.TestLoader()
 suite = loader.loadTestsFromTestCase(test_msf.TestMakeStubFiles)
 unittest.TextTestRunner(verbosity=0).run(suite)
 </t>
-<t tx="ekr.20160206104634.1"></t>
+<t tx="ekr.20160206104634.1">
+# Top-level functions</t>
 <t tx="ekr.20160206110004.1">@others
 import re
     
@@ -3148,17 +3186,22 @@ for aList, expected in table:
 </t>
 <t tx="ekr.20160206171945.1"></t>
 <t tx="ekr.20160206173343.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
+none = 'None'
 table = (
     ([i,i],     i),
     ([i],       i),
     ([f, i],    f),
     ([c, i],    c),
     ([l, a],    'Union[Any, long]'),
+    # Handle None
+    ([None],        none),
+    ([None, None],  none),
+    ([None, a, c],  'Union[Any, complex]'),
 )
 @others
 for aList, expected in table:
     got = reduce_types(aList)
-    assert expected == got,  (aList, 'expected:', expected, 'got', got)
+    assert expected == got, (aList, 'expected:', expected, 'got', got)
 </t>
 <t tx="ekr.20160206174054.1">
 def is_regex(self):
@@ -3217,6 +3260,50 @@ def split_types(s):
             i1 = i+1
     aList.append(s[i1:].strip())
     return aList</t>
-<t tx="ekr.20160206215414.1"></t>
+<t tx="ekr.20160207050818.1"></t>
+<t tx="ekr.20160207051316.1">
+def merge_types(a1, a2):
+    '''
+    a1 and a2 may be strings or lists.
+    return a list containing both of them, flattened, without duplicates.
+    '''
+    # Not used at present, and perhaps never.
+    # Only useful if visitors could return either lists or strings.
+    assert a1 is not None
+    assert a2 is not None
+    r1 = a1 if isinstance(a1, (list, tuple)) else [a1]
+    r2 = a2 if isinstance(a2, (list, tuple)) else [a2]
+    return sorted(set(r1 + r2))
+</t>
+<t tx="ekr.20160207051429.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
+none = 'None'
+La, Lc = ['Any'], ['complex']
+Lac, Lai, Lan = ['Any', 'complex'], ['Any', 'int'], ['Any', 'None']
+Laci = ['Any', 'complex', 'int']
+Lnone = ['None']
+table = (
+    (none, Lnone,   Lnone),
+    (none, none,    Lnone),
+    (a, none,       Lan),
+    (a, a,          La),
+    (La, a,         La),
+    (Lac, a,        Lac),
+    (Lac, i,        Laci),
+    (Lac, Lai,      Laci),
+)
+@others
+for a1, a2, expected in table:
+    got = merge_types(a1, a2)
+    assert expected == got, (a1, a2, 'expected:', expected, 'got', got)
+</t>
+<t tx="ekr.20160207062251.1"></t>
+<t tx="ekr.20160207064626.1">@language rest
+@wrap
+
+Corrected several problems and found a few more.
+- Added merge_types method, with unit test.
+  This could only be useful if visitors could return lists of types.
+  This looks like a significant project.
+  For now, reduce_types could merge unions.</t>
 </tnodes>
 </leo_file>
