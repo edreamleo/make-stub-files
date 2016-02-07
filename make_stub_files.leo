@@ -2050,10 +2050,11 @@ def is_known_type(s):
 - Post: announce new formatting of stub files &amp; complete handling of elementary types.
 - Post: announce regex work.
 - Post: how to run unit tests.
-- Post (reply): Use [Def Name Patterns] to make inferences!
 
-- --update.
-- Task oriented docs
+** Recognize [Def Name Patterns] and recursive calls in function returns.
+** --update.
+
+- Task oriented docs.  After --update.
 </t>
 <t tx="ekr.20160131175042.1">
 
