@@ -1382,6 +1382,10 @@ class StandAloneMakeStubFile:
     def find_pattern_ops(self, pattern):
         '''Return a list of operators in pattern.find_s.'''
         trace = False or self.trace_patterns
+        if pattern.is_regex():
+            return []
+                # The special characters in the regex
+                # do not correspond to Python operators!
         d = self.op_name_dict
         keys1, keys2, keys3, keys9 = [], [], [], []
         for op in d:
@@ -1600,9 +1604,11 @@ class StubFormatter (AstFormatter):
     making pattern substitutions in Name and operator nodes.
     '''
 
-    def __init__(self, controller):
+    def __init__(self, controller, traverser):
         '''Ctor for StubFormatter class.'''
         self.controller = x = controller
+        self.traverser = traverser
+            # 2016/02/07: to give the formatter access to the class_stack.
         self.def_patterns = x.def_patterns
         self.general_patterns = x.general_patterns
         self.names_dict = x.names_dict
@@ -1782,14 +1788,16 @@ class StubFormatter (AstFormatter):
         else:
             s = '%s(%s)' % (func, ', '.join(args))
         # First, look at the [Def Name Patterns]
-        if 0:
-            ### To do: compute class_name.method_name
+        if 0: # This never seems to match anything.
+            stack = self.traverser.class_name_stack
+            if stack:
+                name = '%s.%s' % (stack[-1], func)
+            else:
+                name = func
             for pattern in self.def_patterns:
-                found, s = pattern.match(func)
+                found, s = pattern.match(name)
                 if found:
-                    if trace:
-                        g.trace('%s: %s -> %s' % (
-                            pattern.find_s, func, s))
+                    if trace: g.trace('%s: %s -> %s' % (pattern.find_s, name, s))
                     return s
         return self.match_all(node, s)
 
@@ -1861,7 +1869,7 @@ class StubTraverser (ast.NodeVisitor):
             # A StandAloneMakeStubFile instance.
         # Internal state ivars...
         self.class_name_stack = []
-        sf = StubFormatter(controller)
+        sf = StubFormatter(controller=controller,traverser=self)
         self.format = sf.format
         self.arg_format = AstArgFormatter().format
         self.in_function = False

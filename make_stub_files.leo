@@ -291,7 +291,14 @@
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
 <v t="ekr.20160205053705.1"></v>
 <v t="ekr.20160205053641.1"></v>
-<v t="ekr.20160207164915.1"><vh>--trace-*</vh>
+<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
+<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160205103604.6"></v>
+<v t="ekr.20160126153212.88"></v>
+<v t="ekr.20160126153212.87"></v>
+</v>
+<v t="ekr.20160207164915.1"><vh>re: --trace-*</vh>
 <v t="ekr.20160204170443.1"></v>
 <v t="ekr.20160204113206.1"></v>
 <v t="ekr.20160126153212.77"></v>
@@ -299,18 +306,11 @@
 <v t="ekr.20160205072101.1"></v>
 </v>
 </v>
-<v t="ekr.20160131174909.1"><vh>** to do</vh>
-<v t="ekr.20160207165031.1"><vh>reduce_types: merge List &amp; Tuple types</vh>
+<v t="ekr.20160131174909.1"><vh>** to do</vh></v>
+<v t="ekr.20160207165031.1"><vh>re: merge List &amp; Tuple types</vh>
 <v t="ekr.20160205072101.1"></v>
 </v>
-<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
-<v t="ekr.20160126153212.90"></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160205103604.6"></v>
-</v>
-</v>
-<v t="ekr.20160207165017.1"><vh>Test regex patterns</vh></v>
-<v t="ekr.20160207195116.1"><vh>checkin log</vh></v>
+<v t="ekr.20160207215208.1"><vh>Checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1259,7 +1259,7 @@ def __init__(self, controller):
         # A StandAloneMakeStubFile instance.
     # Internal state ivars...
     self.class_name_stack = []
-    sf = StubFormatter(controller)
+    sf = StubFormatter(controller=controller,traverser=self)
     self.format = sf.format
     self.arg_format = AstArgFormatter().format
     self.in_function = False
@@ -1782,6 +1782,9 @@ AstFormatter.do_*: str
 StubFormatter.do_*: str
 StubTraverser.do_*: str
 
+# Test of regex pattern.
+.*__hash__$: int
+
 # Pattern.all_matches: Sequence
 # Pattern.full_balanced_match: Optional[int]
 # Pattern.match_balanced: int
@@ -1824,6 +1827,7 @@ repl_s: str
 s: str
 s1: str
 s2: str
+# s[1-2]?$: str
 strict: bool
 trace: bool
 # New known functions
@@ -1844,6 +1848,7 @@ int(*): int
 hash(*): int
 len(*): int
 repr(*): str
+sorted(*): str
 str%(*): str
 str.join(*): str
 str.join(*): str
@@ -2101,16 +2106,28 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">
 @language rest
 
-- Post: not a prototype. mypy accepts syntax, 
+** Merge Tuple and List interiors in reduce_types.
+
+- Post: not a prototype. mypy accepts syntax.
+        ** Discuss make_stub_files.pyi.
+            - Yes, it's heavily str oriented.
+        ** Discuss material in theory.md.
+           This will be pre-writing for theory.md.
         Rough edges re number types. I reduce_numbers correct?
-- Post: (maybe) announce regex work.
+        Not so easy to use data other than return expressions,
+        but that's not too important now.
+        To do:
+            - More patterns in do_BinOp.
+- Post: Announce regex work.
+        Ignored in [General Patterns] because regex ops don't
+        correspond to python ops.
 - Post: how to run unit tests.
 
 *** --update.
 
 Later:
 - Add more binop patterns.
--  add trace_match helper: use a common seen_dict.
+- (Maybe) add trace_match helper: use a common seen_dict.
    Keys are Node names, values are list of patterns seen for each Node name.
 - Task oriented docs.  After --update.
 
@@ -2248,9 +2265,11 @@ if 0:
         return s
 </t>
 <t tx="ekr.20160202061329.1">
-def __init__(self, controller):
+def __init__(self, controller, traverser):
     '''Ctor for StubFormatter class.'''
     self.controller = x = controller
+    self.traverser = traverser
+        # 2016/02/07: to give the formatter access to the class_stack.
     self.def_patterns = x.def_patterns
     self.general_patterns = x.general_patterns
     self.names_dict = x.names_dict
@@ -2642,6 +2661,10 @@ def do_Name(self, node):
 def find_pattern_ops(self, pattern):
     '''Return a list of operators in pattern.find_s.'''
     trace = False or self.trace_patterns
+    if pattern.is_regex():
+        return []
+            # The special characters in the regex
+            # do not correspond to Python operators!
     d = self.op_name_dict
     keys1, keys2, keys3, keys9 = [], [], [], []
     for op in d:
@@ -2913,14 +2936,16 @@ def do_Call(self, node):
     else:
         s = '%s(%s)' % (func, ', '.join(args))
     # First, look at the [Def Name Patterns]
-    if 0:
-        ### To do: compute class_name.method_name
+    if 0: # This never seems to match anything.
+        stack = self.traverser.class_name_stack
+        if stack:
+            name = '%s.%s' % (stack[-1], func)
+        else:
+            name = func
         for pattern in self.def_patterns:
-            found, s = pattern.match(func)
+            found, s = pattern.match(name)
             if found:
-                if trace:
-                    g.trace('%s: %s -&gt; %s' % (
-                        pattern.find_s, func, s))
+                if trace: g.trace('%s: %s -&gt; %s' % (pattern.find_s, name, s))
                 return s
     return self.match_all(node, s)
 </t>
@@ -3523,9 +3548,10 @@ for s, expected in table:
     assert expected == got, (s, 'expected', expected, 'got', got)
 </t>
 <t tx="ekr.20160207164915.1"></t>
-<t tx="ekr.20160207165017.1"># Can they possibly work?</t>
-<t tx="ekr.20160207165031.1"></t>
-<t tx="ekr.20160207165240.1"></t>
+<t tx="ekr.20160207165031.1"># In reduce_types
+# Tuple[unknown] should be Tuple[Any] *not* Any.</t>
+<t tx="ekr.20160207165240.1"># Finish the work in do_Call at least.
+# This simply requires the computation of class_name.method_name.</t>
 <t tx="ekr.20160207181637.1"></t>
 <t tx="ekr.20160207181648.1"></t>
 <t tx="ekr.20160207181710.1">pylint
@@ -3554,8 +3580,12 @@ def remove_recursive_calls(self, name, raw, reduced):
             raw_result.append(raw[i])
             reduced_result.append(reduced[i])
     return raw_result, reduced_result</t>
-<t tx="ekr.20160207195116.1">
-Preliminary work on discovering recursive calls, and
-matching [Def Name Patterns in do_call.</t>
+<t tx="ekr.20160207215208.1">
+Regex patterns do work in [Def Name Patters] but are disallowed in [General Patterns]
+The reason is that regex operators do not correspond to python operators.
+
+Added pattern-matching code in do_Call that attempts to match [Def Name Patters]
+However, such patterns never match in make_stub_files.py, so it has been disabled.
+</t>
 </tnodes>
 </leo_file>
