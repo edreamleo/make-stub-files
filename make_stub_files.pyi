@@ -96,9 +96,9 @@ class AstFormatter:
     def op_name(self, node: Node, strict: bool=True) -> str: ...
         #   0: return name
         #   0: return str
-    def visit(self, node: Node) -> str: ...
+    def visit(self, node: Node) -> Any: ...
         #   0: return ','.join(self.visit(z) for z in node)
-        #   0: return str
+        # ? 0: return str.join
         #   1: return 'None'
         #   1: return str
         #   2: return s
@@ -113,16 +113,16 @@ class LeoGlobals:
         #   2: return str
         #   3: return ''
         #   3: return str
-    def callers(self, n: int=4, count: Any=0, excludeCaller: Any=True, files: Any=False) -> str: ...
+    def callers(self, n: int=4, count: Any=0, excludeCaller: Any=True, files: Any=False) -> Any: ...
         #   0: return sep.join(result)
-        #   0: return str
+        # ? 0: return sep.join
     def cls(self) -> None: ...
     def pdb(self) -> None: ...
-    def shortFileName(self, fileName: Any, n: int=None) -> str: ...
+    def shortFileName(self, fileName: Any, n: int=None) -> Any: ...
         #   0: return os.path.basename(fileName)
-        #   0: return str
+        # ? 0: return os.path.basename
         #   1: return '/'.join(fileName.replace('\\','/').split('/')[-n:])
-        #   1: return str
+        # ? 1: return str.join
     def splitLines(self, s: str) -> Any: ...
         #   0: return s.splitlines(True) if s else []
         #   0: return Any
@@ -133,9 +133,9 @@ class Pattern(object):
         #   0: return bool
         #   1: return NotImplemented
         #   1: return bool
-    def __hash__(self) -> int: ...
+    def __hash__(self) -> Any: ...
         #   0: return len(self.find_s)+len(self.repl_s)
-        #   0: return int
+        # ? 0: return len
     def __init__(self, find_s: str, repl_s: str='') -> None: ...
     def __ne__(self, obj: Any) -> bool: ...
         #   0: return  not self.__eq__(obj)
@@ -143,11 +143,11 @@ class Pattern(object):
     def __repr__(self) -> str: ...
         #   0: return 'Pattern: %s ==> %s'%(self.find_s, self.repl_s)
         #   0: return str
-    def all_matches(self, s: str) -> Any: ...
+    def all_matches(self, s: str) -> Union[List[Any],list]: ...
         #   0: return aList
         #   0: return List[Any]
         #   1: return list(self.regex.finditer(s))
-        # ? 1: return List[self.regex.finditer(str)]
+        #   1: return list
     def full_balanced_match(self, s: str, i: int) -> Optional[int]: ...
         #   0: return i if found else None
         #   0: return Optional[int]
@@ -160,7 +160,7 @@ class Pattern(object):
         #   2: return bool
     def is_regex(self) -> Any: ...
         #   0: return self.find_s.endswith('$')
-        # ? 0: return self.find_s.endswith(str)
+        # ? 0: return self.find_s.endswith
     def match(self, s: str, trace: bool=False) -> Tuple[bool,str]: ...
         #   0: return (False, s)
         #   0: return Tuple[bool, str]
@@ -170,11 +170,11 @@ class Pattern(object):
         #   2: return Tuple[bool, str]
         #   3: return (False, s)
         #   3: return Tuple[bool, str]
-    def match_balanced(self, delim: Any, s: str, i: int) -> number: ...
+    def match_balanced(self, delim: Any, s: str, i: int) -> Any: ...
         #   0: return i
         #   0: return int
         #   1: return len(s)+1
-        #   1: return number
+        # ? 1: return len+number
     def match_entire_string(self, s: str) -> Union[Any,bool]: ...
         #   0: return j is not None
         #   0: return bool
@@ -182,9 +182,9 @@ class Pattern(object):
         #   1: return Any
     def replace(self, m: Any, s: str) -> Any: ...
         #   0: return self.replace_balanced(s,start,end)
-        # ? 0: return self.replace_balanced(str, start, end)
+        # ? 0: return self.replace_balanced
         #   1: return self.replace_regex(m,s)
-        # ? 1: return self.replace_regex(m, str)
+        # ? 1: return self.replace_regex
     def replace_balanced(self, s1: str, start: Any, end: Any) -> Any: ...
         #   0: return s1[:start]+r+s1[end:]
         # ? 0: return str+r+str
@@ -235,9 +235,9 @@ class Stub(object):
         #   0: return bool
         #   1: return NotImplemented
         #   1: return bool
-    def __ge__(self, other: Any) -> bool: ...
+    def __ge__(self, other: Any) -> Any: ...
         #   0: return self.__eq__(other) or self.__gt__(other)
-        #   0: return bool
+        #   0: return Any
     def __gt__(self, obj: Any) -> bool: ...
         #   0: return self.name>obj.name
         #   0: return bool
@@ -245,13 +245,13 @@ class Stub(object):
         #   1: return bool
     def __hash__(self) -> Any: ...
         #   0: return self.parent.hash()+len(self.children)
-        # ? 0: return self.parent.hash()+int
+        # ? 0: return self.parent.hash+len
         #   1: return len(self.children)
-        #   1: return int
+        # ? 1: return len
     def __init__(self, kind: Any, name: str, parent: Any) -> None: ...
-    def __le__(self, other: Any) -> bool: ...
+    def __le__(self, other: Any) -> Any: ...
         #   0: return self.__eq__(other) or self.__lt__(other)
-        #   0: return bool
+        #   0: return Any
     def __lt__(self, other: Any) -> bool: ...
         #   0: return  not self.__eq__(other) and  not self.__gt__(other)
         #   0: return bool
@@ -293,10 +293,10 @@ class StubFormatter(AstFormatter):
         #   0: return str
 class StubTraverser(ast.NodeVisitor):
     def __init__(self, controller: StandAloneMakeStubFile) -> None: ...
-    def format_arguments(self, node: Node) -> str: ...
+    def format_arguments(self, node: Node) -> Any: ...
         #   0: return ', '.join(result)
-        #   0: return str
-    def format_return_expressions(self, raw_returns: Any, reduced_returns: Any) -> Any: ...
+        # ? 0: return str.join
+    def format_return_expressions(self, name: str, raw_returns: Any, reduced_returns: Any) -> Any: ...
         #   0: return s+': ...'+results
         # ? 0: return str+results
         #   1: return 'Any: ...'+results
@@ -308,8 +308,8 @@ class StubTraverser(ast.NodeVisitor):
         #   0: return str
         #   1: return s+': ...'
         #   1: return str
-        #   2: return self.format_return_expressions(raw,r)
-        # ? 2: return self.format_return_expressions(raw, r)
+        #   2: return self.format_return_expressions(name,raw,r)
+        # ? 2: return self.format_return_expressions
     def get_def_name(self, node: Node) -> str: ...
         #   0: return name
         #   0: return str
@@ -333,30 +333,33 @@ class StubTraverser(ast.NodeVisitor):
     def parse_stub_file(self, s: str) -> None: ...
         #   0: return None
         #   0: return None
+    def remove_recurive_calls(self, name: str, raw: Any, reduced: Any) -> Any: ...
+        #   0: return (raw_result, reduced_result)
+        # ? 0: return Tuple[raw_result, reduced_result]
     def run(self, node: Node) -> None: ...
     def update(self, fn: str) -> None: ...
     def visit_ClassDef(self, node: Node) -> None: ...
     def visit_FunctionDef(self, node: Node) -> None: ...
     def visit_Return(self, node: Node) -> None: ...
 class TestClass:
-    def parse_group(group: str) -> Tuple[int,str]: ...
+    def parse_group(group: str) -> Any: ...
         #   0: return (ndots, os.sep.join(group[::2]))
-        #   0: return Tuple[int, str]
-    def return_all(self) -> bool: ...
+        # ? 0: return Tuple[int, os.sep.join]
+    def return_all(self) -> Any: ...
         #   0: return all(is_known_type(z) for z in s3.split(','))
-        #   0: return bool
+        # ? 0: return all
     def return_array() -> Any: ...
         #   0: return f(s[1:-1])
-        # ? 0: return f(str)
+        # ? 0: return f
     def return_list(self, a: str) -> List[str]: ...
         #   0: return [a]
         #   0: return List[str]
-    def return_two_lists(s: str) -> Any: ...
+    def return_two_lists(s: str) -> Union[List[Any],list]: ...
         #   0: return aList
         #   0: return List[Any]
         #   1: return list(self.regex.finditer(s))
-        # ? 1: return List[self.regex.finditer(str)]
-def is_known_type(s: str) -> Union[Any,bool]: ...
+        #   1: return list
+def is_known_type(s: str) -> Any: ...
     #   0: return True
     #   0: return bool
     #   1: return True
@@ -370,7 +373,7 @@ def is_known_type(s: str) -> Union[Any,bool]: ...
     #   5: return True
     #   5: return bool
     #   6: return all(is_known_type(z.strip()) for z in split_types(s3))
-    #   6: return bool
+    # ? 6: return all
     #   7: return True
     #   7: return bool
     #   8: return False
@@ -378,26 +381,26 @@ def is_known_type(s: str) -> Union[Any,bool]: ...
 def main() -> None: ...
 def merge_types(a1: Any, a2: Any) -> Any: ...
     #   0: return sorted(set(r1+r2))
-    # ? 0: return sorted(Set[r1+r2])
+    # ? 0: return sorted
 def pdb(self) -> None: ...
 def reduce_numbers(aList: List[Any]) -> List[Any]: ...
     #   0: return aList
     #   0: return List[Any]
-def reduce_types(aList: List[Any], newlines: Any=False, trace: bool=False) -> Any: ...
+def reduce_types(aList: List[Any], name: str=None, newlines: Any=False, trace: bool=False) -> Any: ...
     #   0: return show('None')
-    # ? 0: return show(str)
+    # ? 0: return show
     #   1: return show('Any',known=False)
-    # ? 1: return show(str, known=bool)
+    # ? 1: return show
     #   2: return show(r[0])
-    # ? 2: return show(str)
+    # ? 2: return show
     #   3: return show('Optional[%s]'%r[0])
-    # ? 3: return show(str)
+    # ? 3: return show
     #   4: return show(r[0])
-    # ? 4: return show(str)
+    # ? 4: return show
     #   5: return show('Union[\n    %s,\n]'%',\n    '.join(sorted(r)))
-    # ? 5: return show(str)
+    # ? 5: return show
     #   6: return show('Union[%s]'%', '.join(sorted(r)))
-    # ? 6: return show(str)
+    # ? 6: return show
 def split_types(s: str) -> List[Any]: ...
     #   0: return aList
     #   0: return List[Any]

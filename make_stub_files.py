@@ -1177,7 +1177,6 @@ class StandAloneMakeStubFile:
         self.trace_matches = False
         self.trace_patterns = False
         self.trace_reduce = False
-        self.trace_visitors = False
         self.update_flag = False
         self.verbose = False # Trace config arguments.
         self.warn = False
@@ -1265,8 +1264,6 @@ class StandAloneMakeStubFile:
             help='trace pattern creation')
         add('--trace-reduce', action='store_true', default=False,
             help='trace st.reduce_types')
-        # add('--trace-visitors', action='store_true', default=False,
-            # help='trace visitor results')
         add('-u', '--update', action='store_true', default=False,
             help='update existing stub file')
         add('-v', '--verbose', action='store_true', default=False,
@@ -1281,7 +1278,6 @@ class StandAloneMakeStubFile:
         self.trace_matches = options.trace_matches
         self.trace_patterns = options.trace_patterns
         self.trace_reduce = options.trace_reduce
-        # self.trace_visitors = options.trace_visitors
         self.update_flag = options.update
         self.verbose = options.verbose
         self.warn = options.warn
@@ -1607,13 +1603,13 @@ class StubFormatter (AstFormatter):
     def __init__(self, controller):
         '''Ctor for StubFormatter class.'''
         self.controller = x = controller
+        self.def_patterns = x.def_patterns
         self.general_patterns = x.general_patterns
         self.names_dict = x.names_dict
         self.patterns_dict = x.patterns_dict
         self.trace_matches = x.trace_matches
         self.trace_patterns = x.trace_patterns
         self.trace_reduce = x.trace_reduce
-        self.trace_visitors = x.trace_visitors
         self.verbose = x.verbose
 
     matched_d = {}
@@ -1768,6 +1764,8 @@ class StubFormatter (AstFormatter):
     # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
     def do_Call(self, node):
+        '''StubFormatter.Call visitor.'''
+        trace = True or self.trace_reduce
         func = self.visit(node.func)
         args = [self.visit(z) for z in node.args]
         for z in node.keywords:
@@ -1783,6 +1781,16 @@ class StubFormatter (AstFormatter):
             s = '%s[%s]' % (func.capitalize(), ', '.join(args))
         else:
             s = '%s(%s)' % (func, ', '.join(args))
+        # First, look at the [Def Name Patterns]
+        if 0:
+            ### To do: compute class_name.method_name
+            for pattern in self.def_patterns:
+                found, s = pattern.match(func)
+                if found:
+                    if trace:
+                        g.trace('%s: %s -> %s' % (
+                            pattern.find_s, func, s))
+                    return s
         return self.match_all(node, s)
 
     # keyword = (identifier arg, expr value)
@@ -1871,7 +1879,6 @@ class StubTraverser (ast.NodeVisitor):
         self.trace_matches = x.trace_matches
         self.trace_patterns = x.trace_patterns
         self.trace_reduce = x.trace_reduce
-        self.trace_visitors = x.trace_visitors
         self.verbose = x.verbose
         self.warn = x.warn
         # Copies of controller patterns...
@@ -2085,7 +2092,9 @@ class StubTraverser (ast.NodeVisitor):
                     g.trace('*name pattern %s: %s -> %s' % (
                         pattern.find_s, name, s))
                 return s + ': ...'
-        # Step 3: Calculate return types.
+        # Step 3: remove recursive calls.
+        raw, r = self.remove_recursive_calls(name, raw, r)
+        # Step 4: Calculate return types.
         return self.format_return_expressions(name, raw, r)
 
     def format_return_expressions(self, name, raw_returns, reduced_returns):
@@ -2135,6 +2144,21 @@ class StubTraverser (ast.NodeVisitor):
         else:
             name = node.name
         return name
+
+    def remove_recursive_calls(self, name, raw, reduced):
+        '''Remove any recursive calls to name from both lists.'''
+        # At present, this works *only* if the return is nothing but the recursive call.
+        assert len(raw) == len(reduced)
+        pattern = Pattern('%s(*)' % name)
+        n = len(reduced)
+        raw_result, reduced_result = [], []
+        for i in range(n):
+            if pattern.match_entire_string(reduced[i]):
+                g.trace('****', name, pattern, reduced[i])
+            else:
+                raw_result.append(raw[i])
+                reduced_result.append(reduced[i])
+        return raw_result, reduced_result
 
     def visit_Return(self, node):
 

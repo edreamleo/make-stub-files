@@ -102,19 +102,6 @@
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
 </v>
 </v>
-<v t="ekr.20160131174909.1"><vh>** to do</vh>
-<v t="ekr.20160207165031.1"><vh>Improve reduce_types</vh>
-<v t="ekr.20160205072101.1"></v>
-</v>
-<v t="ekr.20160207165017.1"><vh>Test regex patterns</vh></v>
-<v t="ekr.20160207164915.1"><vh>Support --trace_visitors</vh>
-<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
-<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
-<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
-<v t="ekr.20160202070025.1"></v>
-<v t="ekr.20160205072101.1"></v>
-</v>
-</v>
 <v t="ekr.20160206165656.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
@@ -227,15 +214,15 @@
 <v t="ekr.20160126153212.75"><vh>msf.make_stub_file</vh></v>
 <v t="ekr.20160126153212.76"><vh>msf.run</vh></v>
 <v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
-<v t="ekr.20160126153212.77"></v>
+<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160204170921.1"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160204170443.1"></v>
+<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
 <v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
 <v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
 <v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160204113206.1"></v>
+<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
@@ -288,6 +275,7 @@
 <v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
 <v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
 <v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
+<v t="ekr.20160207190840.1"><vh>st.remove_recursive_calls</vh></v>
 </v>
 </v>
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
@@ -303,12 +291,26 @@
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
 <v t="ekr.20160205053705.1"></v>
 <v t="ekr.20160205053641.1"></v>
+<v t="ekr.20160207164915.1"><vh>--trace-*</vh>
+<v t="ekr.20160204170443.1"></v>
+<v t="ekr.20160204113206.1"></v>
+<v t="ekr.20160126153212.77"></v>
+<v t="ekr.20160202070025.1"></v>
+<v t="ekr.20160205072101.1"></v>
+</v>
+</v>
+<v t="ekr.20160131174909.1"><vh>** to do</vh>
+<v t="ekr.20160207165031.1"><vh>reduce_types: merge List &amp; Tuple types</vh>
+<v t="ekr.20160205072101.1"></v>
 </v>
 <v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
 <v t="ekr.20160126153212.90"></v>
 <v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160205103604.6"></v>
 </v>
-<v t="ekr.20160207190034.1"><vh>log</vh></v>
+</v>
+<v t="ekr.20160207165017.1"><vh>Test regex patterns</vh></v>
+<v t="ekr.20160207195116.1"><vh>checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1015,7 +1017,6 @@ def __init__ (self):
     self.trace_matches = False
     self.trace_patterns = False
     self.trace_reduce = False
-    self.trace_visitors = False
     self.update_flag = False
     self.verbose = False # Trace config arguments.
     self.warn = False
@@ -1090,8 +1091,6 @@ def scan_command_line(self):
         help='trace pattern creation')
     add('--trace-reduce', action='store_true', default=False,
         help='trace st.reduce_types')
-    # add('--trace-visitors', action='store_true', default=False,
-        # help='trace visitor results')
     add('-u', '--update', action='store_true', default=False,
         help='update existing stub file')
     add('-v', '--verbose', action='store_true', default=False,
@@ -1106,7 +1105,6 @@ def scan_command_line(self):
     self.trace_matches = options.trace_matches
     self.trace_patterns = options.trace_patterns
     self.trace_reduce = options.trace_reduce
-    # self.trace_visitors = options.trace_visitors
     self.update_flag = options.update
     self.verbose = options.verbose
     self.warn = options.warn
@@ -1279,7 +1277,6 @@ def __init__(self, controller):
     self.trace_matches = x.trace_matches
     self.trace_patterns = x.trace_patterns
     self.trace_reduce = x.trace_reduce
-    self.trace_visitors = x.trace_visitors
     self.verbose = x.verbose
     self.warn = x.warn
     # Copies of controller patterns...
@@ -1455,7 +1452,9 @@ def format_returns(self, node):
                 g.trace('*name pattern %s: %s -&gt; %s' % (
                     pattern.find_s, name, s))
             return s + ': ...'
-    # Step 3: Calculate return types.
+    # Step 3: remove recursive calls.
+    raw, r = self.remove_recursive_calls(name, raw, r)
+    # Step 4: Calculate return types.
     return self.format_return_expressions(name, raw, r)
 </t>
 <t tx="ekr.20160126153212.91">
@@ -2100,22 +2099,22 @@ def is_known_type(s):
     return False
 </t>
 <t tx="ekr.20160131174909.1">
-4. Recognize [Def Name Patterns] and recursive calls in function returns.
-
--  add trace_match helper: use a common seen_dict.
-   Keys are Node names, values are list of patterns seen for each Node name.
+@language rest
 
 - Post: not a prototype. mypy accepts syntax, 
         Rough edges re number types. I reduce_numbers correct?
-- Post: announce regex work.
+- Post: (maybe) announce regex work.
 - Post: how to run unit tests.
 
 *** --update.
+
+Later:
 - Add more binop patterns.
+-  add trace_match helper: use a common seen_dict.
+   Keys are Node names, values are list of patterns seen for each Node name.
 - Task oriented docs.  After --update.
 
-@language rest
-@wrap
+@language python
 </t>
 <t tx="ekr.20160131175042.1">
 
@@ -2252,13 +2251,13 @@ if 0:
 def __init__(self, controller):
     '''Ctor for StubFormatter class.'''
     self.controller = x = controller
+    self.def_patterns = x.def_patterns
     self.general_patterns = x.general_patterns
     self.names_dict = x.names_dict
     self.patterns_dict = x.patterns_dict
     self.trace_matches = x.trace_matches
     self.trace_patterns = x.trace_patterns
     self.trace_reduce = x.trace_reduce
-    self.trace_visitors = x.trace_visitors
     self.verbose = x.verbose
 </t>
 <t tx="ekr.20160202064553.1">
@@ -2896,6 +2895,8 @@ def do_Attribute(self, node):
 # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
 def do_Call(self, node):
+    '''StubFormatter.Call visitor.'''
+    trace = True or self.trace_reduce
     func = self.visit(node.func)
     args = [self.visit(z) for z in node.args]
     for z in node.keywords:
@@ -2911,6 +2912,16 @@ def do_Call(self, node):
         s = '%s[%s]' % (func.capitalize(), ', '.join(args))
     else:
         s = '%s(%s)' % (func, ', '.join(args))
+    # First, look at the [Def Name Patterns]
+    if 0:
+        ### To do: compute class_name.method_name
+        for pattern in self.def_patterns:
+            found, s = pattern.match(func)
+            if found:
+                if trace:
+                    g.trace('%s: %s -&gt; %s' % (
+                        pattern.find_s, func, s))
+                return s
     return self.match_all(node, s)
 </t>
 <t tx="ekr.20160205103604.7">
@@ -3326,6 +3337,13 @@ def match_entire_string(self, s):
 def splitLines(self, s):
     '''Split s into lines, preserving trailing newlines.'''
     return s.splitlines(True) if s else []
+    
+def sum(n):
+    '''An common recursive pattern.'''
+    if n == 1:
+        return 1
+    else:
+        return 1 + sum(n-1)
 </t>
 <t tx="ekr.20160206170515.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
 table = (
@@ -3505,13 +3523,12 @@ for s, expected in table:
     assert expected == got, (s, 'expected', expected, 'got', got)
 </t>
 <t tx="ekr.20160207164915.1"></t>
-<t tx="ekr.20160207165017.1"></t>
-<t tx="ekr.20160207165031.1">- Send name into reduce_types.
-- Merge List and Tuple types?</t>
-<t tx="ekr.20160207165240.1"># Recognize [Def Name Patterns] and recursive calls in function returns.</t>
+<t tx="ekr.20160207165017.1"># Can they possibly work?</t>
+<t tx="ekr.20160207165031.1"></t>
+<t tx="ekr.20160207165240.1"></t>
 <t tx="ekr.20160207181637.1"></t>
 <t tx="ekr.20160207181648.1"></t>
-<t tx="ekr.20160207181710.1">run-pylint
+<t tx="ekr.20160207181710.1">pylint
 clone-find-all-flattened
 clone-to-at-spot
 beautify-tree
@@ -3522,10 +3539,23 @@ sort-lines
 c.cloneFindAllFlattenedAtNode('@clean make_stub_files.py',top_level=True)
 </t>
 <t tx="ekr.20160207182535.1"></t>
-<t tx="ekr.20160207190034.1">
-Preparing to make interesting deductions in reduce_types:
-- Added name keyword argument.
-- Improved formatting for --trace-reduce.
-- Added several sections to theory.md.</t>
+<t tx="ekr.20160207190840.1">
+def remove_recursive_calls(self, name, raw, reduced):
+    '''Remove any recursive calls to name from both lists.'''
+    # At present, this works *only* if the return is nothing but the recursive call.
+    assert len(raw) == len(reduced)
+    pattern = Pattern('%s(*)' % name)
+    n = len(reduced)
+    raw_result, reduced_result = [], []
+    for i in range(n):
+        if pattern.match_entire_string(reduced[i]):
+            g.trace('****', name, pattern, reduced[i])
+        else:
+            raw_result.append(raw[i])
+            reduced_result.append(reduced[i])
+    return raw_result, reduced_result</t>
+<t tx="ekr.20160207195116.1">
+Preliminary work on discovering recursive calls, and
+matching [Def Name Patterns in do_call.</t>
 </tnodes>
 </leo_file>

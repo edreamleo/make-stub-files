@@ -63,3 +63,8 @@ def return_every_kind(a: Any, b: Any) -> Union[
 def splitLines(self, s: str) -> Any: ...
     #   0: return s.splitlines(True) if s else []
     #   0: return Any
+def sum(n: Any) -> Any: ...
+    #   0: return 1
+    #   0: return number
+    #   1: return 1+sum(n-1)
+    # ? 1: return number+sum(n-number)
