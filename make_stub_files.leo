@@ -10,6 +10,12 @@
 <preferences/>
 <find_panel_settings/>
 <vnodes>
+<v t="ekr.20160207181637.1"><vh>Startup</vh>
+<v t="ekr.20160207181648.1"><vh>@settings</vh>
+<v t="ekr.20160207181710.1"><vh>@data history-list</vh></v>
+<v t="ekr.20160207181843.1"><vh>@button cfa-code</vh></v>
+<v t="ekr.20160207182535.1"><vh>@bool preload-find-pattern = False</vh></v>
+</v>
 <v t="ekr.20160207105647.1"><vh>Scripts</vh>
 <v t="ekr.20160206095102.1"><vh>@button write-unit-tests</vh>
 <v t="ekr.20160206095102.2"><vh>&lt;&lt; docstring &gt;&gt; (write-unit-tests)</vh></v>
@@ -33,6 +39,7 @@
 <v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match (to be removed)</vh></v>
 </v>
+</v>
 <v t="ekr.20160128154704.1"><vh>Test files</vh>
 <v t="ekr.20160128154715.1"><vh>@clean test/test_msf.py</vh>
 <v t="ekr.20160128190252.1"><vh>setUp</vh></v>
@@ -54,8 +61,8 @@
 <v t="ekr.20160207101607.1"><vh>@edit theory.md</vh></v>
 </v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
-<v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
-<v t="ekr.20160207051316.1"><vh>merge_types (returns list)</vh></v>
+<v t="ekr.20160207051429.1"><vh>@test merge_types (not used)</vh>
+<v t="ekr.20160207051316.1"><vh>merge_types (returns list, not used)</vh></v>
 </v>
 <v t="ekr.20160206110004.1"><vh>@test Pattern class</vh>
 <v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
@@ -81,7 +88,7 @@
 </v>
 <v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
 <v t="ekr.20160128041938.1"></v>
-<v t="ekr.20160130034812.1"><vh>is_known_type</vh></v>
+<v t="ekr.20160130034812.1"><vh>is_known_type (split_types)</vh></v>
 <v t="ekr.20160207051316.1"></v>
 <v t="ekr.20160205101134.1"></v>
 <v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
@@ -90,6 +97,22 @@
 </v>
 <v t="ekr.20160207115947.1"><vh>@test truncate</vh>
 <v t="ekr.20160207115604.1"><vh>truncate</vh></v>
+</v>
+<v t="ekr.20160207162818.1"><vh>@test split_types</vh>
+<v t="ekr.20160206212123.1"><vh>split_types</vh></v>
+</v>
+</v>
+<v t="ekr.20160131174909.1"><vh>** to do</vh>
+<v t="ekr.20160207165031.1"><vh>Improve reduce_types</vh>
+<v t="ekr.20160205072101.1"></v>
+</v>
+<v t="ekr.20160207165017.1"><vh>Test regex patterns</vh></v>
+<v t="ekr.20160207164915.1"><vh>Support --trace_visitors</vh>
+<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
+<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
+<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
+<v t="ekr.20160202070025.1"></v>
+<v t="ekr.20160205072101.1"></v>
 </v>
 </v>
 <v t="ekr.20160206165656.1"></v>
@@ -102,7 +125,7 @@
 <v t="ekr.20160206120522.1"><vh>pdb</vh></v>
 <v t="ekr.20160205101134.1"></v>
 <v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160206212123.1"><vh>split_types</vh></v>
+<v t="ekr.20160206212123.1"></v>
 <v t="ekr.20160207115604.1"></v>
 </v>
 <v t="ekr.20160126153212.3"><vh> class AstFormatter</vh>
@@ -204,15 +227,15 @@
 <v t="ekr.20160126153212.75"><vh>msf.make_stub_file</vh></v>
 <v t="ekr.20160126153212.76"><vh>msf.run</vh></v>
 <v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
-<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
+<v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160204170921.1"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
+<v t="ekr.20160204170443.1"></v>
 <v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
 <v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
 <v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
+<v t="ekr.20160204113206.1"></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
@@ -228,23 +251,23 @@
 <v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
 <v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
 <v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
-<v t="ekr.20160205103604.4"><vh>sf.Attribute</vh></v>
+<v t="ekr.20160205103604.4"><vh>sf.Attribute (names_dict)</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
-<v t="ekr.20160205103604.9"><vh>sf.Dict</vh></v>
-<v t="ekr.20160206204452.1"><vh>sf.List</vh></v>
-<v t="ekr.20160204153904.1"><vh>sf.Name</vh></v>
-<v t="ekr.20160126153212.38"><vh>sf.Tuple</vh></v>
+<v t="ekr.20160205103604.9"><vh>sf.Dict ** call match_all?</vh></v>
+<v t="ekr.20160206204452.1"><vh>sf.List ** call_match_all?</vh></v>
+<v t="ekr.20160204153904.1"><vh>sf.Name (names_dict)</vh></v>
+<v t="ekr.20160126153212.38"><vh>sf.Tuple (match_all)</vh></v>
 </v>
 <v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
-<v t="ekr.20160205053641.2"><vh>sf.BinOp (Improve)</vh></v>
-<v t="ekr.20160205053641.3"><vh>sf.BoolOp (Problems)</vh></v>
-<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword</vh>
+<v t="ekr.20160205053641.2"><vh>sf.BinOp (Improve) ** should call match_all</vh></v>
+<v t="ekr.20160205053641.3"><vh>sf.BoolOp (reduce_types)</vh></v>
+<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword (match_all)</vh>
 <v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
 </v>
 <v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
 <v t="ekr.20160205053641.6"><vh>sf.IfExp</vh></v>
-<v t="ekr.20160205142626.1"><vh>sf.Subscript</vh></v>
-<v t="ekr.20160205053641.5"><vh>sf.UnaryOp</vh></v>
+<v t="ekr.20160205142626.1"><vh>sf.Subscript (match_all)</vh></v>
+<v t="ekr.20160205053641.5"><vh>sf.UnaryOp (match_all)</vh></v>
 </v>
 <v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
 </v>
@@ -280,18 +303,12 @@
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
 <v t="ekr.20160205053705.1"></v>
 <v t="ekr.20160205053641.1"></v>
-<v t="ekr.20160126153212.89"></v>
-<v t="ekr.20160130032546.1"></v>
 </v>
-<v t="ekr.20160131174909.1"><vh>** to do</vh></v>
-<v t="ekr.20160207112208.1"><vh>re: trace_* options</vh>
-<v t="ekr.20160202070025.1"></v>
-<v t="ekr.20160204170443.1"></v>
-<v t="ekr.20160204113206.1"></v>
+<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
+<v t="ekr.20160126153212.90"></v>
 <v t="ekr.20160205072101.1"></v>
 </v>
-<v t="ekr.20160205053641.6"></v>
-<v t="ekr.20160207133757.1"><vh>Log</vh></v>
+<v t="ekr.20160207190034.1"><vh>log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1073,7 +1090,6 @@ def scan_command_line(self):
         help='trace pattern creation')
     add('--trace-reduce', action='store_true', default=False,
         help='trace st.reduce_types')
-    ### To do
     # add('--trace-visitors', action='store_true', default=False,
         # help='trace visitor results')
     add('-u', '--update', action='store_true', default=False,
@@ -1090,7 +1106,7 @@ def scan_command_line(self):
     self.trace_matches = options.trace_matches
     self.trace_patterns = options.trace_patterns
     self.trace_reduce = options.trace_reduce
-    ### self.trace_visitors = options.trace_visitors
+    # self.trace_visitors = options.trace_visitors
     self.update_flag = options.update
     self.verbose = options.verbose
     self.warn = options.warn
@@ -1440,7 +1456,7 @@ def format_returns(self, node):
                     pattern.find_s, name, s))
             return s + ': ...'
     # Step 3: Calculate return types.
-    return self.format_return_expressions(raw, r)
+    return self.format_return_expressions(name, raw, r)
 </t>
 <t tx="ekr.20160126153212.91">
 def munge_arg(self, s):
@@ -1976,7 +1992,7 @@ def test_is_known_type(self):
 <t tx="ekr.20160128225533.1">*.pyc
 test/*.pyc</t>
 <t tx="ekr.20160130032546.1">
-def format_return_expressions(self, raw_returns, reduced_returns):
+def format_return_expressions(self, name, raw_returns, reduced_returns):
     '''
     aList is a list of maximally reduced return expressions.
     For each expression e in Alist:
@@ -2000,6 +2016,7 @@ def format_return_expressions(self, raw_returns, reduced_returns):
         # Put the return lines in their proper places.
         if known:
             s = reduce_types(reduced_returns,
+                             name=name,
                              newlines=True,
                              trace=self.trace_reduce)
             return s + ': ...' + results
@@ -2007,6 +2024,7 @@ def format_return_expressions(self, raw_returns, reduced_returns):
             return 'Any: ...' + results
     else:
         s = reduce_types(reduced_returns,
+                         name=name,
                          newlines=True,
                          trace=self.trace_reduce)
         return s + ': ...'
@@ -2082,27 +2100,18 @@ def is_known_type(s):
     return False
 </t>
 <t tx="ekr.20160131174909.1">
-Fix this mypy complaint:
-    def splitLines(self, s: str) -&gt; Union[List[],str]: ...
+4. Recognize [Def Name Patterns] and recursive calls in function returns.
 
-=== Improve reduce_types:
-- Send name into reduce_types.
-- Merge List and Tuple types?
+-  add trace_match helper: use a common seen_dict.
+   Keys are Node names, values are list of patterns seen for each Node name.
 
--- Support --trace-visitors
-
-* Test regex patterns.
- 
-*** Recognize [Def Name Patterns] and recursive calls in function returns.
-
-- Add more binop patterns.
-
-*** --update.
-
-- Post: announce new formatting of stub files &amp; complete handling of elementary types.
+- Post: not a prototype. mypy accepts syntax, 
+        Rough edges re number types. I reduce_numbers correct?
 - Post: announce regex work.
 - Post: how to run unit tests.
-- Post: what to do about 'number': is reduce_numbers correct?
+
+*** --update.
+- Add more binop patterns.
 - Task oriented docs.  After --update.
 
 @language rest
@@ -2813,14 +2822,16 @@ def parse_stub_file(self, s):
     return None
 </t>
 <t tx="ekr.20160205072101.1">
-def reduce_types(aList, newlines=False, trace=False):
+def reduce_types(aList, name=None, newlines=False, trace=False):
     '''
     Return a string containing the reduction of all types in aList.
     The --trace-reduce command-line option sets trace=True.
+    If present, name is the function name or class_name.method_name.
     '''
     trace = False or trace
     aList1 = aList[:]
     &lt;&lt; define show &gt;&gt;
+
     while None in aList:
         aList.remove(None)
     if not aList:
@@ -3448,7 +3459,6 @@ for a1, a2, expected in table:
         print(repr(p.b[:3]), p.h)
 print('done')
 </t>
-<t tx="ekr.20160207112208.1"></t>
 <t tx="ekr.20160207115604.1">
 def truncate(s, n):
     '''Return s truncated to n characers.'''
@@ -3465,21 +3475,57 @@ def truncate(s, n):
 for s1, s2 in table:
     got = truncate(s1, 5)
     assert s2 == got, (s1, 'expected', s2, 'got', got)</t>
-<t tx="ekr.20160207133035.1">def show(s, known=True):
+<t tx="ekr.20160207133035.1">
+def show(s, known=True):
     '''Show the result of the reduction.'''
-    s2 = s.replace('\n','').replace(' ','').strip().replace(',]',']')
+    s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
         # Undo newline option if possible.
     if trace:
         r = sorted(set([z.replace('\n',' ') for z in aList1]))
-        if True or len(r) &gt; 1:
+        if len(''.join(r)) &gt;= 35:
+            r = truncate(repr(r), 35)
+        if len(s2) &gt;= 25:
+            s2 = truncate(s2, 25)
+        if len(r) &gt; 1:
             sep = ' ' if known else '?'
             if 1:
                 caller = g.callers(2).split(',')[0]
-                g.trace('%30s %s &lt;== %-40s' % (s2, sep, r), caller)
+                g.trace('%20s %25s %s &lt;== %-35s %s' % (name or '', s2, sep, r, caller))
             else:
-                g.trace('%30s %s &lt;== %s' % (s2, sep, r))
+                g.trace('%20s %25s %s &lt;== %s' % (name or '', s2, sep, r))
     return s2 if len(s2) &lt; 25 else s</t>
-<t tx="ekr.20160207133757.1">
-Fixed a bug in sf.IfExp that was producing invalid results.</t>
+<t tx="ekr.20160207162818.1">table = (
+    ('list',                    ['list']),
+    ('List[a,b]',               ['List[a,b]']),
+    ('List[a,b], List[c,d]',    ['List[a,b]', 'List[c,d]']),
+)
+@others
+for s, expected in table:
+    got = split_types(s)
+    assert expected == got, (s, 'expected', expected, 'got', got)
+</t>
+<t tx="ekr.20160207164915.1"></t>
+<t tx="ekr.20160207165017.1"></t>
+<t tx="ekr.20160207165031.1">- Send name into reduce_types.
+- Merge List and Tuple types?</t>
+<t tx="ekr.20160207165240.1"># Recognize [Def Name Patterns] and recursive calls in function returns.</t>
+<t tx="ekr.20160207181637.1"></t>
+<t tx="ekr.20160207181648.1"></t>
+<t tx="ekr.20160207181710.1">run-pylint
+clone-find-all-flattened
+clone-to-at-spot
+beautify-tree
+sort-lines
+</t>
+<t tx="ekr.20160207181843.1">@language python
+
+c.cloneFindAllFlattenedAtNode('@clean make_stub_files.py',top_level=True)
+</t>
+<t tx="ekr.20160207182535.1"></t>
+<t tx="ekr.20160207190034.1">
+Preparing to make interesting deductions in reduce_types:
+- Added name keyword argument.
+- Improved formatting for --trace-reduce.
+- Added several sections to theory.md.</t>
 </tnodes>
 </leo_file>

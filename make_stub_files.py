@@ -152,27 +152,34 @@ def reduce_numbers(aList):
         aList.append(found)
     return aList
 
-def reduce_types(aList, newlines=False, trace=False):
+def reduce_types(aList, name=None, newlines=False, trace=False):
     '''
     Return a string containing the reduction of all types in aList.
     The --trace-reduce command-line option sets trace=True.
+    If present, name is the function name or class_name.method_name.
     '''
     trace = False or trace
     aList1 = aList[:]
+
     def show(s, known=True):
         '''Show the result of the reduction.'''
-        s2 = s.replace('\n','').replace(' ','').strip().replace(',]',']')
+        s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
             # Undo newline option if possible.
         if trace:
             r = sorted(set([z.replace('\n',' ') for z in aList1]))
-            if True or len(r) > 1:
+            if len(''.join(r)) >= 35:
+                r = truncate(repr(r), 35)
+            if len(s2) >= 25:
+                s2 = truncate(s2, 25)
+            if len(r) > 1:
                 sep = ' ' if known else '?'
                 if 1:
                     caller = g.callers(2).split(',')[0]
-                    g.trace('%30s %s <== %-40s' % (s2, sep, r), caller)
+                    g.trace('%20s %25s %s <== %-35s %s' % (name or '', s2, sep, r, caller))
                 else:
-                    g.trace('%30s %s <== %s' % (s2, sep, r))
+                    g.trace('%20s %25s %s <== %s' % (name or '', s2, sep, r))
         return s2 if len(s2) < 25 else s
+
     while None in aList:
         aList.remove(None)
     if not aList:
@@ -1258,7 +1265,6 @@ class StandAloneMakeStubFile:
             help='trace pattern creation')
         add('--trace-reduce', action='store_true', default=False,
             help='trace st.reduce_types')
-        ### To do
         # add('--trace-visitors', action='store_true', default=False,
             # help='trace visitor results')
         add('-u', '--update', action='store_true', default=False,
@@ -1275,7 +1281,7 @@ class StandAloneMakeStubFile:
         self.trace_matches = options.trace_matches
         self.trace_patterns = options.trace_patterns
         self.trace_reduce = options.trace_reduce
-        ### self.trace_visitors = options.trace_visitors
+        # self.trace_visitors = options.trace_visitors
         self.update_flag = options.update
         self.verbose = options.verbose
         self.warn = options.warn
@@ -2080,9 +2086,9 @@ class StubTraverser (ast.NodeVisitor):
                         pattern.find_s, name, s))
                 return s + ': ...'
         # Step 3: Calculate return types.
-        return self.format_return_expressions(raw, r)
+        return self.format_return_expressions(name, raw, r)
 
-    def format_return_expressions(self, raw_returns, reduced_returns):
+    def format_return_expressions(self, name, raw_returns, reduced_returns):
         '''
         aList is a list of maximally reduced return expressions.
         For each expression e in Alist:
@@ -2106,6 +2112,7 @@ class StubTraverser (ast.NodeVisitor):
             # Put the return lines in their proper places.
             if known:
                 s = reduce_types(reduced_returns,
+                                 name=name,
                                  newlines=True,
                                  trace=self.trace_reduce)
                 return s + ': ...' + results
@@ -2113,6 +2120,7 @@ class StubTraverser (ast.NodeVisitor):
                 return 'Any: ...' + results
         else:
             s = reduce_types(reduced_returns,
+                             name=name,
                              newlines=True,
                              trace=self.trace_reduce)
             return s + ': ...'

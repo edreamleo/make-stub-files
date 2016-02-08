@@ -18,4 +18,26 @@ This is the theory of operation document for the make_stub_files script.
 - Alt-4,5,6
 - write-unit-tests button.
 
-=== Bugs, problems, choices
+=== Demonstration that *nothing* remains to be removed.
+
+* This is a *very* simple program!
+
+- The key are the three calls to reduce_types in the visitors:
+do_BinOp, do_BoolOp and do_IfExp
+
+- sf.match_all called from do_Tuple, do_Call, do_Subscript, do_UnaryOp.
+  It probably should be called from do_BinOp, do_Dict, do_List.
+
+- Very simple *type-parsing methods* allows the script to
+  *use strings everywhere*:
+    - split_types
+  
+  (merge_types is elegant, but will not be used.)
+
+* reduce_type is the *key* method. This is a lucky accident!
+
+
+=== Retrospective
+- It would have been better to do more unit testing earlier.
+  It might have saved 4 to 8 hours.
+  I'm not going to be too hard on myself.
