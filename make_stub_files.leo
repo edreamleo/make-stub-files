@@ -311,7 +311,8 @@
 <v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
 <v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
 <v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
-<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
+<v t="ekr.20160209120102.1"><vh>st.scan_name</vh></v>
+<v t="ekr.20160209104843.1"><vh>st.trace_stubs &amp; trace_stub</vh></v>
 </v>
 </v>
 <v t="ekr.20160126153212.87"></v>
@@ -333,6 +334,7 @@
 </v>
 <v t="ekr.20160126153212.82"></v>
 <v t="ekr.20160126153212.85"></v>
+<v t="ekr.20160205060807.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1349,11 +1351,14 @@ def run(self, node):
         self.visit(node)
             # Creates parent_stub.out_list.
         if self.update_flag:
+            g.trace('--update not ready yet')
             self.update(fn)
                 # Modifies parent_stub.out_list.
+            ### g.trace('**** Testing: did not write', fn)
+            ### return #### Testing
         self.output_file = open(fn, 'w')
         self.output_time_stamp()
-        self.output_stubs(self.parent_stub, sort_flag=True)
+        self.output_stubs(self.parent_stub)
         self.output_file.close()
         self.output_file = None
         self.parent_stub = None
@@ -2631,7 +2636,7 @@ def __hash__(self):
     else:
         return bool(name1)</t>
 <t tx="ekr.20160203183228.1">
-def output_stubs(self, stub, sort_flag):
+def output_stubs(self, stub):
     '''Output this stub and all its descendants.'''
     for s in stub.out_list or []:
         # Indentation must be present when an item is added to stub.out_list.
@@ -2639,10 +2644,9 @@ def output_stubs(self, stub, sort_flag):
             self.output_file.write(s+'\n')
         else:
             print(s)
-    # Recursively print all children.
-    children = sorted(stub.children) if sort_flag else stub.children
-    for child in children:
-        self.output_stubs(child, sort_flag)
+    # Recursively print all children.  Never sort stubs!
+    for child in stub.children:
+        self.output_stubs(child)
 </t>
 <t tx="ekr.20160203183934.1">
 def shortFileName(self,fileName, n=None):
@@ -2777,10 +2781,13 @@ def make_op_name_dict(self):
 <t tx="ekr.20160204224242.1">
 def update(self, fn):
     '''Alter self.parent_stub so it contains only updated stubs.'''
-    # g.trace('--update not ready yet')
     s = self.get_stub_file(fn)
     if not s.strip():
         return
+    if '\t' in s:
+        # Tabs in stub files make it impossible to parse them reliably.
+        g.trace('Can not update stub files containing tabs.')
+        sys.exit(1)
     stub = self.parse_stub_file(s)
     if not stub:
         return
@@ -2898,12 +2905,35 @@ def get_stub_file(self, fn):
 <t tx="ekr.20160205060807.1">
 def parse_stub_file(self, s):
     '''
-    Parse the stub file whose contents is s into a tree of Stubs.
+    Parse s, the contents of a stub file, into a tree of Stubs.
     
     Parse the file by hand, so that --update can be run with Python 2.
     '''
-    g.trace('*********** not ready yet')
-    return None
+    assert '\t' not in s
+    indent = ''
+    stub = root = Stub('root', 'update-root', parent=None, stack=[])
+    indent_stack = [indent]
+    stub_stack = [root]
+    lines = []
+    for line in g.splitLines(s):
+        line2 = line.lstrip()
+        is_class = line2.startswith('class')
+        is_def = line2.startswith('def')
+        if is_class or is_def:
+            kind = 'class' if is_class else 'def'
+            name = self.scan_name(line)
+            lws = len(line)-len(line2)
+            # Terminate any previous lines.
+            ### stub.out_list = lines[:]
+            g.trace(lws, kind, name)
+            # stub = Stub(kind, name, parent, name_stack)
+            # if lws == indent:
+                # stub_stack.pop()
+                # stub_stack.append(stub)
+        else:
+            lines.append(line)
+    stub.lines = lines
+    return root
 </t>
 <t tx="ekr.20160205072101.1">
 def reduce_types(aList, name=None, newlines=False, trace=False):
@@ -3753,9 +3783,9 @@ Imo, this is the proper way to understand the script. It is actually *very* simp
 def trace_stubs(self, stub, level=0):
     '''Trace all stubs in the given tree.'''
     if stub.parent:
-        trace_stub(stub, level=level)
+        self.trace_stub(stub, level=level)
     for child in stub.children:
-        trace_stub(child, level=level+1)
+        self.trace_stub(child, level=level+1)
         
 def trace_stub(self, stub, level):
     '''Trace one stub at the given indentation level.'''
@@ -3764,10 +3794,25 @@ def trace_stub(self, stub, level):
 <t tx="ekr.20160209105448.1">
 def output_time_stamp(self):
     '''Put a time-stamp in the output file.'''
-    
     if self.output_file:
         self.output_file.write('# make_stub_files: %s\n' %
             time.strftime("%a %d %b %Y at %H:%M:%S"))
 </t>
+<t tx="ekr.20160209120102.1">def scan_name(self, s):
+    '''Return the class or def name in s.'''
+    s = s.strip()
+    if s.startswith('def'):
+        s = s[len('def'):]
+    elif s.startswith('class'):
+        s = s[len('class'):]
+    else:
+        assert False, s
+    s = s.strip()
+    i = 0
+    while i &lt; len(s) and s[i] == '_' or s[i].isalnum():
+        i += 1
+    name = s[:i]
+    # g.trace(repr(name), s.strip())
+    return name</t>
 </tnodes>
 </leo_file>
