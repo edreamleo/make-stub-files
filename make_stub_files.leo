@@ -1263,7 +1263,11 @@ def do_Str(self, node):
 <t tx="ekr.20160126153212.82">
 
 class StubTraverser (ast.NodeVisitor):
-    '''An ast.Node traverser class that outputs a stub for each class or def.'''
+    '''
+    An ast.Node traverser class that outputs a stub for each class or def.
+    Names of visitors must start with visit_. The order of traversal does
+    not matter, because so few visitors do anything.
+    '''
     @others
 </t>
 <t tx="ekr.20160126153212.83">
@@ -2118,8 +2122,7 @@ def is_known_type(s):
     if trace: g.trace('Fail:', s1)
     return False
 </t>
-<t tx="ekr.20160131174909.1">
-@language rest
+<t tx="ekr.20160131174909.1">@language rest
 @wrap
 
 - Update readme file with examples of return comments,
@@ -2128,6 +2131,7 @@ def is_known_type(s):
 --update.
 
 Later:
+- If you want to understand this script, study it with Leo.
 - Task oriented docs **after** --update.
 - Add use_regex switch.
 - Post: how to run unit tests.
@@ -3509,11 +3513,13 @@ for a1, a2, expected in table:
     assert expected == got, (a1, a2, 'expected:', expected, 'got', got)
 </t>
 <t tx="ekr.20160207105647.1"></t>
-<t tx="ekr.20160207105710.1">for p in c.all_unique_positions():
-    if p.h.startswith('@') or p.h.strip().startswith('&lt;&lt;'):
-        pass
-    elif p.b.strip() and not p.b.startswith('\n'):
-        print(repr(p.b[:3]), p.h)
+<t tx="ekr.20160207105710.1">for p1 in c.all_unique_positions():
+    if p1.h.startswith('@clean'):
+        for p in p1.subtree():
+            if (not p.h.strip().startswith('&lt;&lt;') and
+                p.b.strip() and not p.b.startswith('\n')
+            ):
+                print(repr(p.b[:3]), p.h)
 print('done')
 </t>
 <t tx="ekr.20160207115604.1">
@@ -3563,11 +3569,9 @@ for s, expected in table:
     assert expected == got, (s, 'expected', expected, 'got', got)
 </t>
 <t tx="ekr.20160207164915.1"></t>
-<t tx="ekr.20160207165031.1">
-# In reduce_types
+<t tx="ekr.20160207165031.1"># In reduce_types
 # Tuple[unknown] should be Tuple[Any] *not* Any.</t>
-<t tx="ekr.20160207165240.1">
-# Finish the work in do_Call at least.
+<t tx="ekr.20160207165240.1"># Finish the work in do_Call at least.
 # This simply requires the computation of class_name.method_name.</t>
 <t tx="ekr.20160207181637.1"></t>
 <t tx="ekr.20160207181648.1"></t>
@@ -3597,8 +3601,7 @@ def remove_recursive_calls(self, name, raw, reduced):
             raw_result.append(raw[i])
             reduced_result.append(reduced[i])
     return raw_result, reduced_result</t>
-<t tx="ekr.20160208060210.1">
-@language rest
+<t tx="ekr.20160208060210.1">@language rest
 @wrap
 
 The **startup code** parses the config files and creates two main dicts: the patterns_dict and the names_dict. The theory of operation will discuss the startup code in more detail.

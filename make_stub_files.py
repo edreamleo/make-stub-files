@@ -1876,7 +1876,11 @@ class StubFormatter (AstFormatter):
 
 
 class StubTraverser (ast.NodeVisitor):
-    '''An ast.Node traverser class that outputs a stub for each class or def.'''
+    '''
+    An ast.Node traverser class that outputs a stub for each class or def.
+    Names of visitors must start with visit_. The order of traversal does
+    not matter, because so few visitors do anything.
+    '''
 
     def __init__(self, controller):
         '''Ctor for StubTraverser class.'''
