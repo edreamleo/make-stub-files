@@ -60,6 +60,7 @@
 <v t="ekr.20160128105006.1"><vh>Doc files</vh>
 <v t="ekr.20160126153921.1"><vh>@edit README.md</vh></v>
 <v t="ekr.20160207101607.1"><vh>@edit theory.md</vh></v>
+<v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
 </v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types (not used)</vh>
@@ -2119,25 +2120,22 @@ def is_known_type(s):
 </t>
 <t tx="ekr.20160131174909.1">
 @language rest
-
-- Copy postings back here (with corrections)
+@wrap
 
 - Update readme file with examples of return comments,
   with and without --verbose.
 
-Urgent:
 --update.
-- Task oriented docs **after** --update.
 
 Later:
+- Task oriented docs **after** --update.
+- Add use_regex switch.
 - Post: how to run unit tests.
 - Merge Tuple and List interiors in reduce_types.
-- Post: Rough edges re number types. I reduce_numbers correct?
+- Post: Rough edges re number types. Is reduce_numbers correct?
 - Add more binop patterns.
 - (Maybe) add trace_match helper: use a common seen_dict.
    Keys are Node names, values are list of patterns seen for each Node name.
-
-@language python
 </t>
 <t tx="ekr.20160131175042.1">
 
@@ -3661,5 +3659,47 @@ def trace_visitor(self, node, op, s):
             if found:
                 if trace: g.trace('%s: %s -&gt; %s' % (pattern.find_s, name, s))
                 return s</t>
+<t tx="ekr.20160209063927.1">@language rest
+@wrap
+
+All future maintainers of this code should study this posting carefully. It contains the highest-possible view of this script, and the most practically useful view. This post will be pre-writing for part of the theory of operation.
+
+I mentioned in the previous thread that an Aha showed me that code was more complete than I had thought.  There, I described the Aha this way:
+
+    All StubTraverser visitors must return strings.  Lists are not allowed.
+    This was a true Aha, despite the fact that they have always only ever returned strings!
+
+Why is this surprising?
+
+Well, in fact, one would naively expect that the visitors for BoolOp and IfExp (ternary operator) should return lists of possible types. It seems natural to return the list [hint(a), hint(b)] in the following examples:
+
+    a and b
+    a if c else b
+   
+However, a quick look at the StubFormatter visitors (and especially the visitors of the base AstFormatter class!) shows that returning lists would be clumsy. Allowing visitors to return either lists or strings would be much worse. That would instantly ruin the code--if statements would proliferate like weeds.
+
+The reduce_types top-level function prevents this code explosion.  It takes a list of strings (type hints or python expressions of unknown type) and returns a type hint, which will be Any if any of the strings passed to it have unknown type. But this means that:
+
+    There are no real choices in the code!
+
+1. The syntax and semantics of type hints (Pep 484 and the typing module) pre-determine the output of reduce_types.
+
+2. The format of type stubs, including explanatory comments produced by --verbose, pre-determines the output of StubTraverser.visit_FunctionDef. In fact, this method ends up calling (via helpers) reduce_types for all return statements in the visited function. Again, there are no alternatives.
+
+3. Because StubFormatter visitors must return strings, all StubFormatter visitors remain quite similar to the (very simple!) visitors in the base AstFormatter class.  The only differences from the base class are additional code that:
+
+A. Apply user-defined patterns to the visitors return string:
+
+    s = self.match_all(node, s)
+
+B. Trace the results of the visitor:
+
+    self.trace_visitor(node, op, s)
+
+C. Apply hard-coded patterns. Most such patterns will be in StubFormatter.do_BinOp. Such code is easy!
+
+In retrospect, this lack of choice is what has kept the code simple, in spite of so much initial confusion. Heh, you could call it the invisible hand :-) Seriously, having no choice really does prevent bad choices.
+
+Imo, this is the proper way to understand the script. It is actually *very* simple.</t>
 </tnodes>
 </leo_file>
