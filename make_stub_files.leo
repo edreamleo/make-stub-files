@@ -2142,9 +2142,7 @@ Later:
 - Merge Tuple and List interiors in reduce_types.
 - Post: Rough edges re number types. Is reduce_numbers correct?
 - Add more binop patterns.
-- (Maybe) add trace_match helper: use a common seen_dict.
-   Keys are Node names, values are list of patterns seen for each Node name.
-</t>
+*** When complete, fold this script back into Leo.</t>
 <t tx="ekr.20160131175042.1">
 
 class TestClass:
