@@ -1544,63 +1544,38 @@ class Stub(object):
     This class is a prerequisite for -- update.
     '''
 
-    def __init__(self, kind, name, parent):
+    def __init__(self, kind, name, parent, stack):
         '''Stub ctor.'''
         self.children = []
         self.kind = kind
         self.name = name
         self.out_list = []
         self.parent = parent
+        self.stack = stack # StubTraverser.context_stack.
         if parent:
             assert isinstance(parent, Stub)
             parent.children.append(self)
 
     def __repr__(self):
         '''Stub.__repr__.'''
-        return 'Stub: %s' % self.name
+        return 'Stub: %s' % self.full_name()
         
     __str__ = __repr__
 
-    def __eq__(self, obj):
-        """Stub.__eq__. Return ordering among siblings."""
-        if isinstance(obj, Stub):
-            return self.name == obj.name
-        else:
-            return NotImplemented
-
-    def __ne__(self, obj):
-        """Stub.__ne__"""
-        return not self.__eq__(obj)
-
-    def __gt__(self, obj):
-        '''Stub.__eq__. Return ordering among siblings..'''
-        if isinstance(obj, Stub):
-            return self.name > obj.name
-        else:
-            return NotImplemented
-
-    def __lt__(self, other):
-        return not self.__eq__(other) and not self.__gt__(other)
-        
-    def __ge__(self, other):
-        return self.__eq__(other) or self.__gt__(other)
-
-    def __le__(self, other):
-        return self.__eq__(other) or self.__lt__(other)
-
-    def __hash__(self):
-        '''Stub.__hash__'''
-        if self.parent:
-            return self.parent.hash() + len(self.children)
-        else:
-            return len(self.children)
-
     def full_name(self):
-        '''Return full path to top parent.'''
-        if self.parent:
-            return '%s.%s' % (self.parent.full_name(), self.name)
+        '''
+        Return the full, unique description of this Stub.
+        This replaces the rich comparison operators.
+        '''
+        if self.stack:
+            return '%s.%s' % ('.'.join(self.stack), self.name)
         else:
             return self.name
+        ### Old code.
+        # if self.parent:
+            # return '%s.%s' % (self.parent.full_name(), self.name)
+        # else:
+            # return self.name
 
 
 class StubFormatter (AstFormatter):
@@ -1778,7 +1753,7 @@ class StubFormatter (AstFormatter):
 
     def do_BoolOp(self, node): # Python 2.x only.
         '''StubFormatter.BoolOp visitor for 'and' and 'or'.'''
-        trace = True or self.trace_reduce
+        trace = False or self.trace_reduce
         op = self.op_name(node.op)
         values = [self.visit(z).strip() for z in node.values]
         s = reduce_types(values, trace=trace)
@@ -1888,10 +1863,11 @@ class StubTraverser (ast.NodeVisitor):
             # A StandAloneMakeStubFile instance.
         # Internal state ivars...
         self.class_name_stack = []
+        self.context_stack = []
         sf = StubFormatter(controller=controller,traverser=self)
         self.format = sf.format
         self.arg_format = AstArgFormatter().format
-        self.in_function = False
+        ### self.in_function = False
         self.level = 0
         self.output_file = None
         self.parent_stub = None
@@ -1931,18 +1907,6 @@ class StubTraverser (ast.NodeVisitor):
         else:
             print(s)
 
-    def output_stubs(self, stub, sort_flag):
-        '''Output this stub and all its descendants.'''
-        for s in stub.out_list or []:
-            # Indentation must be present when an item is added to stub.out_list.
-            if self.output_file:
-                self.output_file.write(s+'\n')
-            else:
-                print(s)
-        children = sorted(stub.children) if sort_flag else stub.children
-        for child in children:
-            self.output_stubs(child, sort_flag)
-
     def run(self, node):
         '''StubTraverser.run: write the stubs in node's tree to self.output_fn.'''
         fn = self.output_fn
@@ -1952,32 +1916,55 @@ class StubTraverser (ast.NodeVisitor):
         elif not dir_ or os.path.exists(dir_):
             t1 = time.clock()
             # Delayed output allows sorting.
-            self.parent_stub = Stub('root','Root',parent=None)
+            self.parent_stub = Stub('root', 'Root', parent=None, stack=[])
             for z in self.prefix_lines or []:
                 self.parent_stub.out_list.append(z)
             self.visit(node)
+                # Creates parent_stub.out_list.
             if self.update_flag:
                 self.update(fn)
+                    # Modifies parent_stub.out_list.
             self.output_file = open(fn, 'w')
+            self.output_time_stamp()
             self.output_stubs(self.parent_stub, sort_flag=True)
             self.output_file.close()
             self.output_file = None
             self.parent_stub = None
             t2 = time.clock()
-            print('wrote: %s in %4.2f sec' % (fn, t2-t1))
+            print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
         else:
             print('output directory not not found: %s' % dir_)
 
+    def output_stubs(self, stub, sort_flag):
+        '''Output this stub and all its descendants.'''
+        for s in stub.out_list or []:
+            # Indentation must be present when an item is added to stub.out_list.
+            if self.output_file:
+                self.output_file.write(s+'\n')
+            else:
+                print(s)
+        # Recursively print all children.
+        children = sorted(stub.children) if sort_flag else stub.children
+        for child in children:
+            self.output_stubs(child, sort_flag)
+
+    def output_time_stamp(self):
+        '''Put a time-stamp in the output file.'''
+        
+        if self.output_file:
+            self.output_file.write('# make_stub_files: %s\n' %
+                time.strftime("%a %d %b %Y at %H:%M:%S"))
 
     def update(self, fn):
         '''Alter self.parent_stub so it contains only updated stubs.'''
-        g.trace('--update not ready yet')
+        # g.trace('--update not ready yet')
         s = self.get_stub_file(fn)
         if not s.strip():
             return
         stub = self.parse_stub_file(s)
         if not stub:
             return
+        self.trace_stubs(stub)
         
         # Compare the stub file with the stubs about to be written.
         
@@ -2004,14 +1991,30 @@ class StubTraverser (ast.NodeVisitor):
         
         Parse the file by hand, so that --update can be run with Python 2.
         '''
+        g.trace('*********** not ready yet')
         return None
+
+    def trace_stubs(self, stub, level=0):
+        '''Trace all stubs in the given tree.'''
+        if stub.parent:
+            trace_stub(stub, level=level)
+        for child in stub.children:
+            trace_stub(child, level=level+1)
+            
+    def trace_stub(self, stub, level):
+        '''Trace one stub at the given indentation level.'''
+        print('%s%s' % (' '*level*4, stub.description()))
 
     # ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
 
     def visit_ClassDef(self, node):
-
+        
+        # First, enter the new context.
+        self.class_name_stack.append(node.name)
+        self.context_stack.append(node.name)
         old_stub = self.parent_stub
-        self.parent_stub = Stub('class', node.name, old_stub)
+        self.parent_stub = Stub('class', node.name,old_stub, self.context_stack)
+
         # Format...
         if not node.name.startswith('_'):
             if node.bases:
@@ -2021,34 +2024,40 @@ class StubTraverser (ast.NodeVisitor):
             self.out('class %s%s:' % (node.name, s))
         # Visit...
         self.level += 1
-        old_in_function = self.in_function
-        self.in_function = False
-        self.class_name_stack.append(node.name)
+        ### old_in_function = self.in_function
+        ### self.in_function = False
+       
         for z in node.body:
             self.visit(z)
+        self.context_stack.pop()
         self.class_name_stack.pop()
         self.level -= 1
-        self.in_function = old_in_function
+        ### self.in_function = old_in_function
         self.parent_stub = old_stub
 
     # FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
 
     def visit_FunctionDef(self, node):
         
-        # Do nothing if we are already in a function.
-        # We do not generate stubs for inner defs.
-        if self.in_function: # or node.name.startswith('_'):
-            return
-        old_stub = self.parent_stub
-        self.parent_stub = Stub('def', node.name, old_stub)
+        # 2016/02/09: We now generate stubs for *all* defs.
+        #             This is important for --update.
+            ###
+            # Do nothing if we are already in a function.
+            # We do not generate stubs for inner defs.
+            # if self.in_function: # or node.name.startswith('_'):
+                # return
         # First, visit the function body.
         self.returns = []
-        self.in_function = True
+        ### self.in_function = True
         self.level += 1
+        self.context_stack.append(node.name)
+        old_stub = self.parent_stub
+        self.parent_stub = Stub('def', node.name, old_stub, self.context_stack)
         for z in node.body:
             self.visit(z)
+        self.context_stack.pop()
         self.level -= 1
-        self.in_function = False
+        ### self.in_function = False
         # Format *after* traversing
         self.out('def %s(%s) -> %s' % (
             node.name,

@@ -39,6 +39,11 @@
 <v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match (to be removed)</vh></v>
 <v t="ekr.20160208162138.1"><vh>from st.Call</vh></v>
+<v t="ekr.20160209103842.1"><vh>Unused from Stub</vh>
+<v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
+<v t="ekr.20160203134611.1"><vh>stub.__gt/lt/ge/le__</vh></v>
+<v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
+</v>
 </v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Test files</vh>
@@ -104,7 +109,63 @@
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
 </v>
 </v>
-<v t="ekr.20160206165656.1"></v>
+<v t="ekr.20160131174909.1"><vh>** to do</vh></v>
+<v t="ekr.20160205133120.1"><vh>Recent</vh>
+<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
+<v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
+<v t="ekr.20160205103604.4"><vh>sf.Attribute (names_dict)</vh></v>
+<v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
+<v t="ekr.20160205103604.9"><vh>sf.Dict ** call match_all?</vh></v>
+<v t="ekr.20160206204452.1"><vh>sf.List ** call_match_all?</vh></v>
+<v t="ekr.20160204153904.1"><vh>sf.Name (names_dict)</vh></v>
+<v t="ekr.20160126153212.38"><vh>sf.Tuple (match_all)</vh></v>
+</v>
+<v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
+<v t="ekr.20160205053641.2"><vh>sf.BinOp (reduce_types &amp; match_all)</vh></v>
+<v t="ekr.20160205053641.3"><vh>sf.BoolOp (reduce_types)</vh></v>
+<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword (match_all)</vh>
+<v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
+</v>
+<v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
+<v t="ekr.20160205053641.6"><vh>sf.IfExp (reduce_types, match_all)</vh></v>
+<v t="ekr.20160205142626.1"><vh>sf.Subscript (match_all)</vh></v>
+<v t="ekr.20160205053641.5"><vh>sf.UnaryOp (match_all)</vh></v>
+</v>
+<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
+<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
+<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
+<v t="ekr.20160207190840.1"><vh>st.remove_recursive_calls</vh></v>
+</v>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160205103604.6"></v>
+<v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
+<v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
+<v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
+</v>
+<v t="ekr.20160126153212.90"></v>
+</v>
+<v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
+</v>
+<v t="ekr.20160207164915.1"><vh>re: --trace-*</vh>
+<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
+<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
+<v t="ekr.20160126153212.77"></v>
+<v t="ekr.20160202070025.1"></v>
+<v t="ekr.20160205072101.1"></v>
+</v>
+<v t="ekr.20160207165031.1"><vh>re: merge List &amp; Tuple types</vh>
+<v t="ekr.20160205072101.1"></v>
+</v>
+<v t="ekr.20160208161113.1"><vh>main types routines...</vh>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160206212123.1"></v>
+<v t="ekr.20160208093906.1"><vh>sf.trace_visitor</vh></v>
+<v t="ekr.20160205053641.1"></v>
+</v>
+<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
+</v>
+<v t="ekr.20160209105301.1"><vh>Add time-stamp</vh></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
@@ -216,71 +277,45 @@
 <v t="ekr.20160126153212.75"><vh>msf.make_stub_file</vh></v>
 <v t="ekr.20160126153212.76"><vh>msf.run</vh></v>
 <v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
-<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
+<v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160204170921.1"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
+<v t="ekr.20160204170443.1"></v>
 <v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
 <v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
 <v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
+<v t="ekr.20160204113206.1"></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
 <v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
 <v t="ekr.20160203073713.1"><vh>stub.ctor &amp; __repr__</vh></v>
-<v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
-<v t="ekr.20160203134611.1"><vh>stub.__gt/lt/ge/le__</vh></v>
-<v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
 <v t="ekr.20160203134704.1"><vh>stub.full_name</vh></v>
 </v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
 <v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
 <v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
-<v t="ekr.20160208093906.1"><vh>sf.trace_visitor</vh></v>
-<v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
-<v t="ekr.20160205103604.4"><vh>sf.Attribute (names_dict)</vh></v>
-<v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
-<v t="ekr.20160205103604.9"><vh>sf.Dict ** call match_all?</vh></v>
-<v t="ekr.20160206204452.1"><vh>sf.List ** call_match_all?</vh></v>
-<v t="ekr.20160204153904.1"><vh>sf.Name (names_dict)</vh></v>
-<v t="ekr.20160126153212.38"><vh>sf.Tuple (match_all)</vh></v>
-</v>
-<v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
-<v t="ekr.20160205053641.2"><vh>sf.BinOp (reduce_types &amp; match_all)</vh></v>
-<v t="ekr.20160205053641.3"><vh>sf.BoolOp (reduce_types)</vh></v>
-<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword (match_all)</vh>
-<v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
-</v>
-<v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
-<v t="ekr.20160205053641.6"><vh>sf.IfExp (reduce_types, match_all)</vh></v>
-<v t="ekr.20160205142626.1"><vh>sf.Subscript (match_all)</vh></v>
-<v t="ekr.20160205053641.5"><vh>sf.UnaryOp (match_all)</vh></v>
-</v>
+<v t="ekr.20160208093906.1"></v>
+<v t="ekr.20160205053705.1"></v>
+<v t="ekr.20160205053641.1"></v>
 <v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
 <v t="ekr.20160126153212.84"><vh>st.indent &amp; out</vh></v>
+<v t="ekr.20160126153212.85"><vh>st.run (main line) &amp; helpers</vh>
 <v t="ekr.20160203183228.1"><vh>st.output_stubs</vh></v>
-<v t="ekr.20160126153212.85"><vh>st.run (main line, calls update)</vh></v>
+<v t="ekr.20160209105448.1"><vh>st.output_time_stamp</vh></v>
 <v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
 <v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
 <v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
-</v>
-<v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
-<v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
-<v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
-</v>
-<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
-<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
-<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
-<v t="ekr.20160207190840.1"><vh>st.remove_recursive_calls</vh></v>
+<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
 </v>
 </v>
+<v t="ekr.20160126153212.87"></v>
+<v t="ekr.20160126153212.88"></v>
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
 </v>
 <v t="ekr.20160131175042.1"><vh>class TestClass</vh>
@@ -291,36 +326,13 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160205133120.1"><vh>Recent</vh>
-<v t="ekr.20160126153212.77"></v>
-<v t="ekr.20160205053705.1"></v>
-<v t="ekr.20160205053641.1"></v>
-<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
-<v t="ekr.20160126153212.90"></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160205103604.6"></v>
-<v t="ekr.20160126153212.88"></v>
-<v t="ekr.20160126153212.87"></v>
+<v t="ekr.20160209102525.1"><vh>re --update</vh>
+<v t="ekr.20160126153212.82"></v>
+<v t="ekr.20160203073604.1"></v>
+<v t="ekr.20160204224242.1"></v>
 </v>
-<v t="ekr.20160207164915.1"><vh>re: --trace-*</vh>
-<v t="ekr.20160204170443.1"></v>
-<v t="ekr.20160204113206.1"></v>
-<v t="ekr.20160126153212.77"></v>
-<v t="ekr.20160202070025.1"></v>
-<v t="ekr.20160205072101.1"></v>
-</v>
-<v t="ekr.20160207165031.1"><vh>re: merge List &amp; Tuple types</vh>
-<v t="ekr.20160205072101.1"></v>
-</v>
-<v t="ekr.20160208161113.1"><vh>main types routines...</vh>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160206212123.1"></v>
-<v t="ekr.20160208093906.1"></v>
-<v t="ekr.20160205053641.1"></v>
-</v>
-<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
-</v>
-<v t="ekr.20160131174909.1"><vh>** to do</vh></v>
+<v t="ekr.20160126153212.82"></v>
+<v t="ekr.20160126153212.85"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1277,10 +1289,11 @@ def __init__(self, controller):
         # A StandAloneMakeStubFile instance.
     # Internal state ivars...
     self.class_name_stack = []
+    self.context_stack = []
     sf = StubFormatter(controller=controller,traverser=self)
     self.format = sf.format
     self.arg_format = AstArgFormatter().format
-    self.in_function = False
+    ### self.in_function = False
     self.level = 0
     self.output_file = None
     self.parent_stub = None
@@ -1330,30 +1343,36 @@ def run(self, node):
     elif not dir_ or os.path.exists(dir_):
         t1 = time.clock()
         # Delayed output allows sorting.
-        self.parent_stub = Stub('root','Root',parent=None)
+        self.parent_stub = Stub('root', 'Root', parent=None, stack=[])
         for z in self.prefix_lines or []:
             self.parent_stub.out_list.append(z)
         self.visit(node)
+            # Creates parent_stub.out_list.
         if self.update_flag:
             self.update(fn)
+                # Modifies parent_stub.out_list.
         self.output_file = open(fn, 'w')
+        self.output_time_stamp()
         self.output_stubs(self.parent_stub, sort_flag=True)
         self.output_file.close()
         self.output_file = None
         self.parent_stub = None
         t2 = time.clock()
-        print('wrote: %s in %4.2f sec' % (fn, t2-t1))
+        print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
     else:
         print('output directory not not found: %s' % dir_)
-
 </t>
 <t tx="ekr.20160126153212.87">
 # ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
 
 def visit_ClassDef(self, node):
-
+    
+    # First, enter the new context.
+    self.class_name_stack.append(node.name)
+    self.context_stack.append(node.name)
     old_stub = self.parent_stub
-    self.parent_stub = Stub('class', node.name, old_stub)
+    self.parent_stub = Stub('class', node.name,old_stub, self.context_stack)
+
     # Format...
     if not node.name.startswith('_'):
         if node.bases:
@@ -1363,14 +1382,15 @@ def visit_ClassDef(self, node):
         self.out('class %s%s:' % (node.name, s))
     # Visit...
     self.level += 1
-    old_in_function = self.in_function
-    self.in_function = False
-    self.class_name_stack.append(node.name)
+    ### old_in_function = self.in_function
+    ### self.in_function = False
+   
     for z in node.body:
         self.visit(z)
+    self.context_stack.pop()
     self.class_name_stack.pop()
     self.level -= 1
-    self.in_function = old_in_function
+    ### self.in_function = old_in_function
     self.parent_stub = old_stub
 </t>
 <t tx="ekr.20160126153212.88">
@@ -1378,20 +1398,25 @@ def visit_ClassDef(self, node):
 
 def visit_FunctionDef(self, node):
     
-    # Do nothing if we are already in a function.
-    # We do not generate stubs for inner defs.
-    if self.in_function: # or node.name.startswith('_'):
-        return
-    old_stub = self.parent_stub
-    self.parent_stub = Stub('def', node.name, old_stub)
+    # 2016/02/09: We now generate stubs for *all* defs.
+    #             This is important for --update.
+        ###
+        # Do nothing if we are already in a function.
+        # We do not generate stubs for inner defs.
+        # if self.in_function: # or node.name.startswith('_'):
+            # return
     # First, visit the function body.
     self.returns = []
-    self.in_function = True
+    ### self.in_function = True
     self.level += 1
+    self.context_stack.append(node.name)
+    old_stub = self.parent_stub
+    self.parent_stub = Stub('def', node.name, old_stub, self.context_stack)
     for z in node.body:
         self.visit(z)
+    self.context_stack.pop()
     self.level -= 1
-    self.in_function = False
+    ### self.in_function = False
     # Format *after* traversing
     self.out('def %s(%s) -&gt; %s' % (
         node.name,
@@ -2134,6 +2159,10 @@ def is_known_type(s):
 Later:
 *** Use this script on more Leo files.
 - If you want to understand this script, study it with Leo.
+    - Create alternative views:
+        - Startup code.
+        - Important operators.
+        - Type reduction.
 - Task oriented docs **after** --update.
 - 2-pass reduce_types? More tests that patterns work in expected places.
 - Add use_regex switch.
@@ -2369,20 +2398,21 @@ class Stub(object):
     '''
     @others</t>
 <t tx="ekr.20160203073713.1">
-def __init__(self, kind, name, parent):
+def __init__(self, kind, name, parent, stack):
     '''Stub ctor.'''
     self.children = []
     self.kind = kind
     self.name = name
     self.out_list = []
     self.parent = parent
+    self.stack = stack # StubTraverser.context_stack.
     if parent:
         assert isinstance(parent, Stub)
         parent.children.append(self)
 
 def __repr__(self):
     '''Stub.__repr__.'''
-    return 'Stub: %s' % self.name
+    return 'Stub: %s' % self.full_name()
     
 __str__ = __repr__</t>
 <t tx="ekr.20160203074843.1">
@@ -2569,11 +2599,19 @@ def __le__(self, other):
 </t>
 <t tx="ekr.20160203134704.1">
 def full_name(self):
-    '''Return full path to top parent.'''
-    if self.parent:
-        return '%s.%s' % (self.parent.full_name(), self.name)
+    '''
+    Return the full, unique description of this Stub.
+    This replaces the rich comparison operators.
+    '''
+    if self.stack:
+        return '%s.%s' % ('.'.join(self.stack), self.name)
     else:
         return self.name
+    ### Old code.
+    # if self.parent:
+        # return '%s.%s' % (self.parent.full_name(), self.name)
+    # else:
+        # return self.name
 </t>
 <t tx="ekr.20160203140342.1">
 def __hash__(self):
@@ -2601,6 +2639,7 @@ def output_stubs(self, stub, sort_flag):
             self.output_file.write(s+'\n')
         else:
             print(s)
+    # Recursively print all children.
     children = sorted(stub.children) if sort_flag else stub.children
     for child in children:
         self.output_stubs(child, sort_flag)
@@ -2738,13 +2777,14 @@ def make_op_name_dict(self):
 <t tx="ekr.20160204224242.1">
 def update(self, fn):
     '''Alter self.parent_stub so it contains only updated stubs.'''
-    g.trace('--update not ready yet')
+    # g.trace('--update not ready yet')
     s = self.get_stub_file(fn)
     if not s.strip():
         return
     stub = self.parse_stub_file(s)
     if not stub:
         return
+    self.trace_stubs(stub)
     
     # Compare the stub file with the stubs about to be written.
     
@@ -2791,7 +2831,7 @@ def do_BinOp(self, node):
 
 def do_BoolOp(self, node): # Python 2.x only.
     '''StubFormatter.BoolOp visitor for 'and' and 'or'.'''
-    trace = True or self.trace_reduce
+    trace = False or self.trace_reduce
     op = self.op_name(node.op)
     values = [self.visit(z).strip() for z in node.values]
     s = reduce_types(values, trace=trace)
@@ -2862,6 +2902,7 @@ def parse_stub_file(self, s):
     
     Parse the file by hand, so that --update can be run with Python 2.
     '''
+    g.trace('*********** not ready yet')
     return None
 </t>
 <t tx="ekr.20160205072101.1">
@@ -3706,5 +3747,27 @@ C. Apply hard-coded patterns. Most such patterns will be in StubFormatter.do_Bin
 In retrospect, this lack of choice is what has kept the code simple, in spite of so much initial confusion. Heh, you could call it the invisible hand :-) Seriously, having no choice really does prevent bad choices.
 
 Imo, this is the proper way to understand the script. It is actually *very* simple.</t>
+<t tx="ekr.20160209102525.1"></t>
+<t tx="ekr.20160209103842.1"></t>
+<t tx="ekr.20160209104843.1">
+def trace_stubs(self, stub, level=0):
+    '''Trace all stubs in the given tree.'''
+    if stub.parent:
+        trace_stub(stub, level=level)
+    for child in stub.children:
+        trace_stub(child, level=level+1)
+        
+def trace_stub(self, stub, level):
+    '''Trace one stub at the given indentation level.'''
+    print('%s%s' % (' '*level*4, stub.description()))</t>
+<t tx="ekr.20160209105301.1"></t>
+<t tx="ekr.20160209105448.1">
+def output_time_stamp(self):
+    '''Put a time-stamp in the output file.'''
+    
+    if self.output_file:
+        self.output_file.write('# make_stub_files: %s\n' %
+            time.strftime("%a %d %b %Y at %H:%M:%S"))
+</t>
 </tnodes>
 </leo_file>
