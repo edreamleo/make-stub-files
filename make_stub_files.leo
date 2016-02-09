@@ -2125,15 +2125,19 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- Update readme file with examples of return comments,
-  with and without --verbose.
+- Update readme file with examples of return comments.
+    - With and without --verbose.
+    - The script is useful even without patterns.
 
 --update.
 
 Later:
+*** Use this script on more Leo files.
 - If you want to understand this script, study it with Leo.
 - Task oriented docs **after** --update.
+- 2-pass reduce_types? More tests that patterns work in expected places.
 - Add use_regex switch.
+    - Warn if regex pattern used in general patterns.
 - Post: how to run unit tests.
 - Merge Tuple and List interiors in reduce_types.
 - Post: Rough edges re number types. Is reduce_numbers correct?
