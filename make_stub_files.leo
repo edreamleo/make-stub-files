@@ -2120,19 +2120,17 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">
 @language rest
 
-- Post: Announce regex work.
-        Ignored in [General Patterns] because regex ops don't
-        correspond to python ops.
+- Copy postings back here (with corrections)
 
-*** Update readme file.
-    - Examples of return comments, with and without --verbose.
+- Update readme file with examples of return comments,
+  with and without --verbose.
 
-- Post: how to run unit tests.
-
-*** --update.
-*** Task oriented docs.  After --update.
+Urgent:
+--update.
+- Task oriented docs **after** --update.
 
 Later:
+- Post: how to run unit tests.
 - Merge Tuple and List interiors in reduce_types.
 - Post: Rough edges re number types. I reduce_numbers correct?
 - Add more binop patterns.
