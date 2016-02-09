@@ -2120,12 +2120,13 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">
 @language rest
 
-*** Update readme file.
-    - update command-line options.
-    - Examples of return comments, with and without --verbose.
 - Post: Announce regex work.
         Ignored in [General Patterns] because regex ops don't
         correspond to python ops.
+
+*** Update readme file.
+    - Examples of return comments, with and without --verbose.
+
 - Post: how to run unit tests.
 
 *** --update.

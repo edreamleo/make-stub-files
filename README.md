@@ -60,13 +60,16 @@ iterative way of developing stubs."
       -h, --help          show this help message and exit
       -c FN, --config=FN  full path to configuration file
       -d DIR, --dir=DIR   full path to the output directory
-      -f, --fast          fast matching (experimental)
       -o, --overwrite     overwrite existing stub (.pyi) files
       -t, --test          run unit tests on startup
+      --trace-matches     trace Pattern.matches
+      --trace-patterns    trace pattern creation
+      --trace-reduce      trace st.reduce_types
+      --trace-visitors    trace visitor methods
       -u, --update        update existing stub file
-      -v, --verbose       trace configuration settings
+      -v, --verbose       verbose output in .pyi file
       -w, --warn          warn about unannotated args
-       
+
 *Note*: glob.glob wildcards can be used in file1, file2, ...
 
 ### The configuration file
