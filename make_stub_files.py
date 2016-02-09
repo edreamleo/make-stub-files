@@ -163,6 +163,7 @@ def reduce_types(aList, name=None, newlines=False, trace=False):
 
     def show(s, known=True):
         '''Show the result of the reduction.'''
+        s = s.strip()
         s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
             # Undo newline option if possible.
         if trace:
@@ -1177,6 +1178,7 @@ class StandAloneMakeStubFile:
         self.trace_matches = False
         self.trace_patterns = False
         self.trace_reduce = False
+        self.trace_visitors = False
         self.update_flag = False
         self.verbose = False # Trace config arguments.
         self.warn = False
@@ -1264,6 +1266,8 @@ class StandAloneMakeStubFile:
             help='trace pattern creation')
         add('--trace-reduce', action='store_true', default=False,
             help='trace st.reduce_types')
+        add('--trace-visitors', action='store_true', default=False,
+            help='trace visitor methods')
         add('-u', '--update', action='store_true', default=False,
             help='update existing stub file')
         add('-v', '--verbose', action='store_true', default=False,
@@ -1278,6 +1282,7 @@ class StandAloneMakeStubFile:
         self.trace_matches = options.trace_matches
         self.trace_patterns = options.trace_patterns
         self.trace_reduce = options.trace_reduce
+        self.trace_visitors = options.trace_visitors
         self.update_flag = options.update
         self.verbose = options.verbose
         self.warn = options.warn
@@ -1616,6 +1621,7 @@ class StubFormatter (AstFormatter):
         self.trace_matches = x.trace_matches
         self.trace_patterns = x.trace_patterns
         self.trace_reduce = x.trace_reduce
+        self.trace_visitors = x.trace_visitors
         self.verbose = x.verbose
 
     matched_d = {}
@@ -1644,6 +1650,13 @@ class StubFormatter (AstFormatter):
         # if self.verbose:
             # g.trace('%12s %s' % (node.__class__.__name__,s))
         return s
+
+    def trace_visitor(self, node, op, s):
+        '''Trace node's visitor.'''
+        if self.trace_visitors:
+            caller = g.callers(2).split(',')[1]
+            s1 = AstFormatter().format(node).strip()
+            print('%12s %6s: %s ==> %s' % (caller, op.strip(), s1, s))
 
     # StubFormatter visitors for operands...
 
@@ -1729,43 +1742,49 @@ class StubFormatter (AstFormatter):
 
     # StubFormatter visitors for operators...
 
+    # BinOp(expr left, operator op, expr right)
+
     def do_BinOp(self, node):
         '''StubFormatter.BinOp visitor.'''
-        trace = False
+        trace = False or self.trace_reduce
         numbers = ['number', 'complex', 'float', 'long', 'int',]
         op = self.op_name(node.op)
         lhs = self.visit(node.left)
         rhs = self.visit(node.right)
         if op.strip() in ('is', 'is not', 'in', 'not in'):
-            return 'bool'
+            s = 'bool'
         elif lhs == rhs:
-            return lhs ### Perhaps not always right.
+            s = lhs
+                # Perhaps not always right,
+                # but it is correct for Tuple, List, Dict.
         elif lhs in numbers and rhs in numbers:
-            return reduce_types([lhs, rhs], trace=self.trace_reduce)
-                # At present, visitors must return strings.
-                # even if Union[x,y] causes trouble later.
+            s = reduce_types([lhs, rhs], trace=trace)
                 # reduce_numbers would be wrong: it returns a list.
         elif lhs == 'str' and op in '%*':
-            return 'str'
+            s = 'str'
         else:
             if trace and lhs == 'str':
                 g.trace('***** unknown string op', lhs, op, rhs)
             # Fall back to the base-class behavior.
-            return '%s%s%s' % (
+            s = '%s%s%s' % (
                 self.visit(node.left),
-                self.op_name(node.op),
+                op,
                 self.visit(node.right))
+        s = self.match_all(node, s)
+        self.trace_visitor(node, op, s)
+        return s
+
+    # BoolOp(boolop op, expr* values)
 
     def do_BoolOp(self, node): # Python 2.x only.
-        '''
-        StubFormatter ast.BoolOp visitor for 'and' and 'or'.
-        Neither necessarily returns a Boolean.
-        '''
-        # op_name = self.op_name(node.op)
-        values = [self.visit(z) for z in node.values]
-        return reduce_types(values, trace=self.trace_reduce)
-            # At present, visitors must return strings.
-            # even if Union[x,y] causes trouble later.
+        '''StubFormatter.BoolOp visitor for 'and' and 'or'.'''
+        trace = True or self.trace_reduce
+        op = self.op_name(node.op)
+        values = [self.visit(z).strip() for z in node.values]
+        s = reduce_types(values, trace=trace)
+        s = self.match_all(node, s)
+        self.trace_visitor(node, op, s)
+        return s
 
     # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
@@ -1787,19 +1806,9 @@ class StubFormatter (AstFormatter):
             s = '%s[%s]' % (func.capitalize(), ', '.join(args))
         else:
             s = '%s(%s)' % (func, ', '.join(args))
-        # First, look at the [Def Name Patterns]
-        if 0: # This never seems to match anything.
-            stack = self.traverser.class_name_stack
-            if stack:
-                name = '%s.%s' % (stack[-1], func)
-            else:
-                name = func
-            for pattern in self.def_patterns:
-                found, s = pattern.match(name)
-                if found:
-                    if trace: g.trace('%s: %s -> %s' % (pattern.find_s, name, s))
-                    return s
-        return self.match_all(node, s)
+        s = self.match_all(node, s)
+        self.trace_visitor(node, 'call', s)
+        return s
 
     # keyword = (identifier arg, expr value)
 
@@ -1809,46 +1818,52 @@ class StubFormatter (AstFormatter):
         # This is a keyword *arg*, not a Python keyword!
         return '%s=%s' % (node.arg, value)
 
+    # Compare(expr left, cmpop* ops, expr* comparators)
+
     def do_Compare(self, node):
         '''
         StubFormatter ast.Compare visitor for these ops:
         '==', '!=', '<', '<=', '>', '>=', 'is', 'is not', 'in', 'not in',
         '''
-        return 'bool' # This *is* correct.
+        s = 'bool' # Correct regardless of arguments.
+        ops = ','.join([self.op_name(z) for z in node.ops])
+        self.trace_visitor(node, ops, s)
+        return s
+
+    # If(expr test, stmt* body, stmt* orelse)
 
     def do_IfExp(self, node):
-        '''StubFormatter ast.IfExp (ternary operator) visitor.'''
-        if 0:
-            return '%s if %s else %s ' % (
-                self.visit(node.body),
-                self.visit(node.test),
-                self.visit(node.orelse))
-        else:
-            # At present, visitors must return strings.
-            # even if Union[x,y] causes trouble later.
-            return reduce_types(
-                [self.visit(node.body), self.visit(node.orelse)],
-                trace=self.trace_reduce)
+        '''StubFormatterIfExp (ternary operator).'''
+        trace = False or self.trace_reduce
+        aList = [
+            self.match_all(node, self.visit(node.body)),
+            self.match_all(node, self.visit(node.orelse)),
+        ]
+        s = reduce_types(aList, trace=trace)
+        s = self.match_all(node, s)
+        self.trace_visitor(node, 'if', s)
+        return s
 
     # Subscript(expr value, slice slice, expr_context ctx)
 
     def do_Subscript(self, node):
         '''StubFormatter.Subscript.'''
-        value = self.visit(node.value)
-        the_slice = self.visit(node.slice)
-        s = '%s[%s]' % (value, the_slice)
-        return self.match_all(node, s)
+        s = '%s[%s]' % (
+            self.visit(node.value),
+            self.visit(node.slice))
+        s = self.match_all(node, s)
+        self.trace_visitor(node, '[]', s)
+        return s
+
+    # UnaryOp(unaryop op, expr operand)
 
     def do_UnaryOp(self, node):
-        '''StubFormatter ast.UnaryOp visitor.'''
+        '''StubFormatter.UnaryOp for unary +, -, ~ and 'not' operators.'''
         op = self.op_name(node.op)
-        if op.strip() in ('not',):
-            return 'bool'
-        else:
-            s ='%s%s' % (
-                self.op_name(node.op),
-                self.visit(node.operand))
-            return self.match_all(node, s)
+        s = 'bool' if op.strip() is 'not' else self.visit(node.operand)
+        s = self.match_all(node, s)
+        self.trace_visitor(node, op, s)
+        return s
 
     def do_Return(self, node):
         '''
@@ -1887,6 +1902,7 @@ class StubTraverser (ast.NodeVisitor):
         self.trace_matches = x.trace_matches
         self.trace_patterns = x.trace_patterns
         self.trace_reduce = x.trace_reduce
+        self.trace_visitors = x.trace_visitors
         self.verbose = x.verbose
         self.warn = x.warn
         # Copies of controller patterns...

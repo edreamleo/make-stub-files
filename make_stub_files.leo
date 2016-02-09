@@ -38,6 +38,7 @@
 <v t="ekr.20160203154154.1"><vh>from Stub.__gt__</vh></v>
 <v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match (to be removed)</vh></v>
+<v t="ekr.20160208162138.1"><vh>from st.Call</vh></v>
 </v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Test files</vh>
@@ -237,6 +238,7 @@
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
 <v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
 <v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
+<v t="ekr.20160208093906.1"><vh>sf.trace_visitor</vh></v>
 <v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
 <v t="ekr.20160205103604.4"><vh>sf.Attribute (names_dict)</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
@@ -246,13 +248,13 @@
 <v t="ekr.20160126153212.38"><vh>sf.Tuple (match_all)</vh></v>
 </v>
 <v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
-<v t="ekr.20160205053641.2"><vh>sf.BinOp (Improve) ** should call match_all</vh></v>
+<v t="ekr.20160205053641.2"><vh>sf.BinOp (reduce_types &amp; match_all)</vh></v>
 <v t="ekr.20160205053641.3"><vh>sf.BoolOp (reduce_types)</vh></v>
 <v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword (match_all)</vh>
 <v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
 </v>
 <v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
-<v t="ekr.20160205053641.6"><vh>sf.IfExp</vh></v>
+<v t="ekr.20160205053641.6"><vh>sf.IfExp (reduce_types, match_all)</vh></v>
 <v t="ekr.20160205142626.1"><vh>sf.Subscript (match_all)</vh></v>
 <v t="ekr.20160205053641.5"><vh>sf.UnaryOp (match_all)</vh></v>
 </v>
@@ -305,12 +307,20 @@
 <v t="ekr.20160202070025.1"></v>
 <v t="ekr.20160205072101.1"></v>
 </v>
-</v>
-<v t="ekr.20160131174909.1"><vh>** to do</vh></v>
 <v t="ekr.20160207165031.1"><vh>re: merge List &amp; Tuple types</vh>
 <v t="ekr.20160205072101.1"></v>
 </v>
-<v t="ekr.20160207215208.1"><vh>Checkin log</vh></v>
+<v t="ekr.20160208161113.1"><vh>main types routines...</vh>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160206212123.1"></v>
+<v t="ekr.20160208093906.1"></v>
+<v t="ekr.20160205053641.1"></v>
+</v>
+</v>
+<v t="ekr.20160131174909.1"><vh>** to do</vh>
+<v t="ekr.20160208060210.1"><vh>Theory posting</vh></v>
+</v>
+<v t="ekr.20160208161018.1"><vh>Log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1017,6 +1027,7 @@ def __init__ (self):
     self.trace_matches = False
     self.trace_patterns = False
     self.trace_reduce = False
+    self.trace_visitors = False
     self.update_flag = False
     self.verbose = False # Trace config arguments.
     self.warn = False
@@ -1091,6 +1102,8 @@ def scan_command_line(self):
         help='trace pattern creation')
     add('--trace-reduce', action='store_true', default=False,
         help='trace st.reduce_types')
+    add('--trace-visitors', action='store_true', default=False,
+        help='trace visitor methods')
     add('-u', '--update', action='store_true', default=False,
         help='update existing stub file')
     add('-v', '--verbose', action='store_true', default=False,
@@ -1105,6 +1118,7 @@ def scan_command_line(self):
     self.trace_matches = options.trace_matches
     self.trace_patterns = options.trace_patterns
     self.trace_reduce = options.trace_reduce
+    self.trace_visitors = options.trace_visitors
     self.update_flag = options.update
     self.verbose = options.verbose
     self.warn = options.warn
@@ -1277,6 +1291,7 @@ def __init__(self, controller):
     self.trace_matches = x.trace_matches
     self.trace_patterns = x.trace_patterns
     self.trace_reduce = x.trace_reduce
+    self.trace_visitors = x.trace_visitors
     self.verbose = x.verbose
     self.warn = x.warn
     # Copies of controller patterns...
@@ -1932,16 +1947,16 @@ if __name__ == '__main__':
 <t tx="ekr.20160128190112.1">
 def test_pattern_class(self):
     table = (
-        # Unused regex tests.
-        # ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
-        # ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
+        # regex tests. The pattern must end with $
+        ('[str]', r'\[str\]$', 'xxx', 'xxx'), # Guido bug.
+        ('s3', r's[1-3]?$', 'str', 'str'), # lengthening bug.
         ('s', 's', 'str', 'str'),
         ('abc', 'abc', 'ABC', 'ABC'),
         ('str(str)', 'str(*)', 'str', 'str'),
         ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
         ('(int,str)', '(*)', 'Tuple[*]', 'Tuple[int,str]'), # Guido bug 2.
         ('abcxyz', 'abc*', 'xxx', 'xxx'), # New test for trailing *.
-        ('list(self.regex.finditer(str))','list(*)','List(*)',
+        ('list(self.regex.finditer(str))','list(*)','List[*]',
          'List[self.regex.finditer(str)]'),
     )
     for s, find, repl, expected in table:
@@ -2277,6 +2292,7 @@ def __init__(self, controller, traverser):
     self.trace_matches = x.trace_matches
     self.trace_patterns = x.trace_patterns
     self.trace_reduce = x.trace_reduce
+    self.trace_visitors = x.trace_visitors
     self.verbose = x.verbose
 </t>
 <t tx="ekr.20160202064553.1">
@@ -2743,79 +2759,89 @@ def update(self, fn):
 # StubFormatter visitors for operators...
 </t>
 <t tx="ekr.20160205053641.2">
+# BinOp(expr left, operator op, expr right)
+
 def do_BinOp(self, node):
     '''StubFormatter.BinOp visitor.'''
-    trace = False
+    trace = False or self.trace_reduce
     numbers = ['number', 'complex', 'float', 'long', 'int',]
     op = self.op_name(node.op)
     lhs = self.visit(node.left)
     rhs = self.visit(node.right)
     if op.strip() in ('is', 'is not', 'in', 'not in'):
-        return 'bool'
+        s = 'bool'
     elif lhs == rhs:
-        return lhs ### Perhaps not always right.
+        s = lhs
+            # Perhaps not always right,
+            # but it is correct for Tuple, List, Dict.
     elif lhs in numbers and rhs in numbers:
-        return reduce_types([lhs, rhs], trace=self.trace_reduce)
-            # At present, visitors must return strings.
-            # even if Union[x,y] causes trouble later.
+        s = reduce_types([lhs, rhs], trace=trace)
             # reduce_numbers would be wrong: it returns a list.
     elif lhs == 'str' and op in '%*':
-        return 'str'
+        s = 'str'
     else:
         if trace and lhs == 'str':
             g.trace('***** unknown string op', lhs, op, rhs)
         # Fall back to the base-class behavior.
-        return '%s%s%s' % (
+        s = '%s%s%s' % (
             self.visit(node.left),
-            self.op_name(node.op),
+            op,
             self.visit(node.right))
+    s = self.match_all(node, s)
+    self.trace_visitor(node, op, s)
+    return s
 </t>
 <t tx="ekr.20160205053641.3">
+# BoolOp(boolop op, expr* values)
+
 def do_BoolOp(self, node): # Python 2.x only.
-    '''
-    StubFormatter ast.BoolOp visitor for 'and' and 'or'.
-    Neither necessarily returns a Boolean.
-    '''
-    # op_name = self.op_name(node.op)
-    values = [self.visit(z) for z in node.values]
-    return reduce_types(values, trace=self.trace_reduce)
-        # At present, visitors must return strings.
-        # even if Union[x,y] causes trouble later.
+    '''StubFormatter.BoolOp visitor for 'and' and 'or'.'''
+    trace = True or self.trace_reduce
+    op = self.op_name(node.op)
+    values = [self.visit(z).strip() for z in node.values]
+    s = reduce_types(values, trace=trace)
+    s = self.match_all(node, s)
+    self.trace_visitor(node, op, s)
+    return s
 </t>
 <t tx="ekr.20160205053641.4">
+# Compare(expr left, cmpop* ops, expr* comparators)
+
 def do_Compare(self, node):
     '''
     StubFormatter ast.Compare visitor for these ops:
     '==', '!=', '&lt;', '&lt;=', '&gt;', '&gt;=', 'is', 'is not', 'in', 'not in',
     '''
-    return 'bool' # This *is* correct.
+    s = 'bool' # Correct regardless of arguments.
+    ops = ','.join([self.op_name(z) for z in node.ops])
+    self.trace_visitor(node, ops, s)
+    return s
 </t>
 <t tx="ekr.20160205053641.5">
+# UnaryOp(unaryop op, expr operand)
+
 def do_UnaryOp(self, node):
-    '''StubFormatter ast.UnaryOp visitor.'''
+    '''StubFormatter.UnaryOp for unary +, -, ~ and 'not' operators.'''
     op = self.op_name(node.op)
-    if op.strip() in ('not',):
-        return 'bool'
-    else:
-        s ='%s%s' % (
-            self.op_name(node.op),
-            self.visit(node.operand))
-        return self.match_all(node, s)
+    s = 'bool' if op.strip() is 'not' else self.visit(node.operand)
+    s = self.match_all(node, s)
+    self.trace_visitor(node, op, s)
+    return s
 </t>
 <t tx="ekr.20160205053641.6">
+# If(expr test, stmt* body, stmt* orelse)
+
 def do_IfExp(self, node):
-    '''StubFormatter ast.IfExp (ternary operator) visitor.'''
-    if 0:
-        return '%s if %s else %s ' % (
-            self.visit(node.body),
-            self.visit(node.test),
-            self.visit(node.orelse))
-    else:
-        # At present, visitors must return strings.
-        # even if Union[x,y] causes trouble later.
-        return reduce_types(
-            [self.visit(node.body), self.visit(node.orelse)],
-            trace=self.trace_reduce)
+    '''StubFormatterIfExp (ternary operator).'''
+    trace = False or self.trace_reduce
+    aList = [
+        self.match_all(node, self.visit(node.body)),
+        self.match_all(node, self.visit(node.orelse)),
+    ]
+    s = reduce_types(aList, trace=trace)
+    s = self.match_all(node, s)
+    self.trace_visitor(node, 'if', s)
+    return s
 </t>
 <t tx="ekr.20160205053705.1">
 # StubFormatter visitors for operands...</t>
@@ -2935,19 +2961,9 @@ def do_Call(self, node):
         s = '%s[%s]' % (func.capitalize(), ', '.join(args))
     else:
         s = '%s(%s)' % (func, ', '.join(args))
-    # First, look at the [Def Name Patterns]
-    if 0: # This never seems to match anything.
-        stack = self.traverser.class_name_stack
-        if stack:
-            name = '%s.%s' % (stack[-1], func)
-        else:
-            name = func
-        for pattern in self.def_patterns:
-            found, s = pattern.match(name)
-            if found:
-                if trace: g.trace('%s: %s -&gt; %s' % (pattern.find_s, name, s))
-                return s
-    return self.match_all(node, s)
+    s = self.match_all(node, s)
+    self.trace_visitor(node, 'call', s)
+    return s
 </t>
 <t tx="ekr.20160205103604.7">
 # keyword = (identifier arg, expr value)
@@ -3002,10 +3018,12 @@ def match_all(self, node, s):
 
 def do_Subscript(self, node):
     '''StubFormatter.Subscript.'''
-    value = self.visit(node.value)
-    the_slice = self.visit(node.slice)
-    s = '%s[%s]' % (value, the_slice)
-    return self.match_all(node, s)
+    s = '%s[%s]' % (
+        self.visit(node.value),
+        self.visit(node.slice))
+    s = self.match_all(node, s)
+    self.trace_visitor(node, '[]', s)
+    return s
 </t>
 <t tx="ekr.20160205143923.1">
 def do_Tuple(self, node):
@@ -3349,6 +3367,13 @@ def return_every_kind(a, b):
     return list(1,2)
     return int(0.5)
     return tuple('a1', 'b1')
+    return True and False
+    return True or False
+    return 1 and 0
+    return 1 or -1
+    return not True
+    return not 1
+    return 1 if False else 2
     
 def match_entire_string(self, s):
     '''Return True if s matches self.find_s'''
@@ -3521,6 +3546,7 @@ for s1, s2 in table:
 <t tx="ekr.20160207133035.1">
 def show(s, known=True):
     '''Show the result of the reduction.'''
+    s = s.strip()
     s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
         # Undo newline option if possible.
     if trace:
@@ -3580,12 +3606,121 @@ def remove_recursive_calls(self, name, raw, reduced):
             raw_result.append(raw[i])
             reduced_result.append(reduced[i])
     return raw_result, reduced_result</t>
-<t tx="ekr.20160207215208.1">
-Regex patterns do work in [Def Name Patters] but are disallowed in [General Patterns]
-The reason is that regex operators do not correspond to python operators.
+<t tx="ekr.20160208060210.1">@language rest
+@wrap
 
-Added pattern-matching code in do_Call that attempts to match [Def Name Patters]
-However, such patterns never match in make_stub_files.py, so it has been disabled.
+An unexpected Aha yesterday allowed me to finish this script quickly. My goal was to complete the script by the end of the Super Bowl :-) That goal was met, aside from some unimportant optimizations, discussed below.
+
+Except for making --update functional, no important to-do items remain. There are no known bugs, but see below. Regex patterns are back, but won't change the world. I'll discuss them in another thread.
+
+As I worked on this post I discovered several bugs--it's amazing how trying to explain things reveals problems.  As a result, I'll split this result.
+
+Future maintainers of this script should study this post (and its continuation) carefully. This post will be pre-writing for theory.md, a complete theory of operation for this script. theory.md will cover aspects of the code base not discussed here.
+
+Aha: StubFormatter visitors must return strings, not lists
+
+After so much confusion, at last I see that the crucial StubFormatter class is identical in concept to its base class, AstFormatter. Visitors of the AstFormatter class must return strings, not lists. These strings must be syntactically correct pieces of source code. Similarly, visitors of the StubFormatter subclass must return strings, not lists. These strings must be syntactically correct Python type hints, as per Pep 484, and the typing module.
+
+Notice how many times the word "must" appears in the last paragraph. Instantly, all real choices disappear.
+
+The AstFormatter class converts an ast tree back into the source code giving rise to the tree.  This means that the output of the AstFormatter class is predetermined. Visitors of this class have no choice about what output they produce. Although it doesn't presently do so, the AstFormatter class could check that:
+
+    ast.parse(input) == ast.parse(output)
+
+Btw, Leo's token-based python-beautifier code does make exactly this check. In exactly the same way, Python's type hints predetermine what StubFormatter visitors must return.  Visitors must return a string that is valid type hint.
+
+Hmm.  I found several bugs while trying to explain how visitors produce type hints. (Another virtue of documentation).  Rather than rush through the explanation or the bug fixes, I'll stop right now.\
+
+Once the fixes are in place, we shall be in a position to understand the crucial reduce_types function. We'll also see how StubFormatter visitors apply patterns using sf.match_all.
+
+**Producing type hints**
+
+Some visitors produce a type hint directly.  For example, the 'not' operator and the comparison operators always return 'bool' (a valid type hint), regardless of their arguments:
+
+def do_Compare(self, node):
+    '''
+    StubFormatter ast.Compare visitor for these ops:
+    '==', '!=', '&lt;', '&lt;=', '&gt;', '&gt;=', 'is', 'is not', 'in', 'not in',
+    '''
+    return 'bool' # This *is* correct.
+
+
+Only one piece of the puzzle remains, namely producing valid type hints!  That's what the reduce_types function does, with the help of another function, split_types.
+
+A bit of luck
+
+
+
+Without the Aha, things would have gotten complicated in a hurry.
+
+The Aha came about as the result of a failed assertion in AstFormatter.visit.
+
+def merge_types(a1, a2):
+    '''
+    a1 and a2 may be strings or lists.
+    return a list containing both of them, flattened, without duplicates.
+    '''
+    # Not used at present, and perhaps never.
+    # Only useful if visitors could return either lists or strings.
+    assert a1 is not None
+    assert a2 is not None
+    r1 = a1 if isinstance(a1, (list, tuple)) else [a1]
+    r2 = a2 if isinstance(a2, (list, tuple)) else [a2]
+    return sorted(set(r1 + r2))
+
+
+
+Summary
+
+make_stub_files.py is a very simple script because StubFormatter visitors have essentially no choice about what the return.  Indeed, StubFormatter visitors either return a type hint string directly, or they call reduce_types to convert a list of alternative types into a single, reduced, type hint, again a string.
+
+I have spent many happy hours studying pylint, mypy and rope. These programs are much more complex than this script and each is completely different from the others.
+
+We'll soon see why having StubFormatter return strings instead of lists simplifies everything, but first, let's see the pitfall that almost destroyed the code.
+
+
+
+
+Furthermore, a big surprise yesterday (a failed assert in AstFormatter.visit) lead to an amazing Aha:
+
+    This script is as simple as the AstFormatter class
+
+The AstFormatter class converts an ast tree back into the source code giving rise to the tree.  This means that the code in AstFormatter is predetermined. In a real sense, there are no choices. Although AstFormatter does not do so, it could check that ast.parse(input_code) == ast.parse(output_code). Similarly,
+
+    Python's type hints pre-determine all tree visitors.
+
+The StubTraverser and StubFormatter classes are both tree traversers. The StubTraverser class ignores all nodes except ClassDef and FunctionDef nodes. The StubFormatter class visits Return nodes and all possible descendants, which is essentially all kinds of expression nodes.
+
+In the end, after so much confusion, I see that it was inevitable that these two classes have the form that they do and produces the results that they do. My only part in the process was not to do something truly stupid :-) In fact, the failed assert in af.visit prevented me from doing so!
+
 </t>
+<t tx="ekr.20160208093906.1">
+def trace_visitor(self, node, op, s):
+    '''Trace node's visitor.'''
+    if self.trace_visitors:
+        caller = g.callers(2).split(',')[1]
+        s1 = AstFormatter().format(node).strip()
+        print('%12s %6s: %s ==&gt; %s' % (caller, op.strip(), s1, s))
+</t>
+<t tx="ekr.20160208161018.1">
+Added --trace-visitors flag and related ivars.
+Added st.trace_visitor.
+Added BoolOp test cases to test/test.py.
+Restored previous regex test cases and fixed an existing test in test_msf.pyi.
+</t>
+<t tx="ekr.20160208161113.1"></t>
+<t tx="ekr.20160208162138.1">
+    # First, look at the [Def Name Patterns]
+    if 0: # This never seems to match anything.
+        stack = self.traverser.class_name_stack
+        if stack:
+            name = '%s.%s' % (stack[-1], func)
+        else:
+            name = func
+        for pattern in self.def_patterns:
+            found, s = pattern.match(name)
+            if found:
+                if trace: g.trace('%s: %s -&gt; %s' % (pattern.find_s, name, s))
+                return s</t>
 </tnodes>
 </leo_file>

@@ -28,6 +28,7 @@ def return_every_kind(a: Any, b: Any) -> Union[
     Dict[{}],
     List[number, number],
     Tuple[str, str],
+    bool,
     complex(number, number),
     float(number),
     int(number),
@@ -60,6 +61,20 @@ def return_every_kind(a: Any, b: Any) -> Union[
     #   11: return int(number)
     #   12: return tuple('a1','b1')
     #   12: return Tuple[str, str]
+    #   13: return True and False
+    #   13: return bool
+    #   14: return True or False
+    #   14: return bool
+    #   15: return 1 and 0
+    #   15: return number
+    #   16: return 1 or -1
+    #   16: return number
+    #   17: return  not True
+    #   17: return bool
+    #   18: return  not 1
+    #   18: return number
+    #   19: return 1 if False else 2
+    #   19: return number
 def splitLines(self, s: str) -> Any: ...
     #   0: return s.splitlines(True) if s else []
     #   0: return Any

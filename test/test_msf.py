@@ -10,16 +10,16 @@ class TestMakeStubFiles(unittest.TestCase):
 
     def test_pattern_class(self):
         table = (
-            # Unused regex tests.
-            # ('[str]', r'\[str\]', 'xxx', 'xxx'), # Guido bug.
-            # ('s3', r's[1-3]?\b', 'str', 'str'), # lengthening bug.
+            # regex tests. The pattern must end with $
+            ('[str]', r'\[str\]$', 'xxx', 'xxx'), # Guido bug.
+            ('s3', r's[1-3]?$', 'str', 'str'), # lengthening bug.
             ('s', 's', 'str', 'str'),
             ('abc', 'abc', 'ABC', 'ABC'),
             ('str(str)', 'str(*)', 'str', 'str'),
             ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
             ('(int,str)', '(*)', 'Tuple[*]', 'Tuple[int,str]'), # Guido bug 2.
             ('abcxyz', 'abc*', 'xxx', 'xxx'), # New test for trailing *.
-            ('list(self.regex.finditer(str))','list(*)','List(*)',
+            ('list(self.regex.finditer(str))','list(*)','List[*]',
              'List[self.regex.finditer(str)]'),
         )
         for s, find, repl, expected in table:

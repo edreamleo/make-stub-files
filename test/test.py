@@ -85,6 +85,13 @@ def return_every_kind(a, b):
     return list(1,2)
     return int(0.5)
     return tuple('a1', 'b1')
+    return True and False
+    return True or False
+    return 1 and 0
+    return 1 or -1
+    return not True
+    return not 1
+    return 1 if False else 2
     
 def match_entire_string(self, s):
     '''Return True if s matches self.find_s'''
