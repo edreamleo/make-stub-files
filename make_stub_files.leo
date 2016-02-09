@@ -291,6 +291,7 @@
 </v>
 </v>
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
+<v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160205053705.1"></v>
 <v t="ekr.20160205053641.1"></v>
 <v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
@@ -316,11 +317,9 @@
 <v t="ekr.20160208093906.1"></v>
 <v t="ekr.20160205053641.1"></v>
 </v>
+<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
 </v>
-<v t="ekr.20160131174909.1"><vh>** to do</vh>
-<v t="ekr.20160208060210.1"><vh>Theory posting</vh></v>
-</v>
-<v t="ekr.20160208161018.1"><vh>Log</vh></v>
+<v t="ekr.20160131174909.1"><vh>** to do</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2121,30 +2120,23 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">
 @language rest
 
-** Merge Tuple and List interiors in reduce_types.
-
-- Post: not a prototype. mypy accepts syntax.
-        ** Discuss make_stub_files.pyi.
-            - Yes, it's heavily str oriented.
-        ** Discuss material in theory.md.
-           This will be pre-writing for theory.md.
-        Rough edges re number types. I reduce_numbers correct?
-        Not so easy to use data other than return expressions,
-        but that's not too important now.
-        To do:
-            - More patterns in do_BinOp.
+*** Update readme file.
+    - update command-line options.
+    - Examples of return comments, with and without --verbose.
 - Post: Announce regex work.
         Ignored in [General Patterns] because regex ops don't
         correspond to python ops.
 - Post: how to run unit tests.
 
 *** --update.
+*** Task oriented docs.  After --update.
 
 Later:
+- Merge Tuple and List interiors in reduce_types.
+- Post: Rough edges re number types. I reduce_numbers correct?
 - Add more binop patterns.
 - (Maybe) add trace_match helper: use a common seen_dict.
    Keys are Node names, values are list of patterns seen for each Node name.
-- Task oriented docs.  After --update.
 
 @language python
 </t>
@@ -3574,9 +3566,11 @@ for s, expected in table:
     assert expected == got, (s, 'expected', expected, 'got', got)
 </t>
 <t tx="ekr.20160207164915.1"></t>
-<t tx="ekr.20160207165031.1"># In reduce_types
+<t tx="ekr.20160207165031.1">
+# In reduce_types
 # Tuple[unknown] should be Tuple[Any] *not* Any.</t>
-<t tx="ekr.20160207165240.1"># Finish the work in do_Call at least.
+<t tx="ekr.20160207165240.1">
+# Finish the work in do_Call at least.
 # This simply requires the computation of class_name.method_name.</t>
 <t tx="ekr.20160207181637.1"></t>
 <t tx="ekr.20160207181648.1"></t>
@@ -3606,93 +3600,45 @@ def remove_recursive_calls(self, name, raw, reduced):
             raw_result.append(raw[i])
             reduced_result.append(reduced[i])
     return raw_result, reduced_result</t>
-<t tx="ekr.20160208060210.1">@language rest
+<t tx="ekr.20160208060210.1">
+@language rest
 @wrap
 
-An unexpected Aha yesterday allowed me to finish this script quickly. My goal was to complete the script by the end of the Super Bowl :-) That goal was met, aside from some unimportant optimizations, discussed below.
+The **startup code** parses the config files and creates two main dicts: the patterns_dict and the names_dict. The theory of operation will discuss the startup code in more detail.
 
-Except for making --update functional, no important to-do items remain. There are no known bugs, but see below. Regex patterns are back, but won't change the world. I'll discuss them in another thread.
-
-As I worked on this post I discovered several bugs--it's amazing how trying to explain things reveals problems.  As a result, I'll split this result.
-
-Future maintainers of this script should study this post (and its continuation) carefully. This post will be pre-writing for theory.md, a complete theory of operation for this script. theory.md will cover aspects of the code base not discussed here.
-
-Aha: StubFormatter visitors must return strings, not lists
-
-After so much confusion, at last I see that the crucial StubFormatter class is identical in concept to its base class, AstFormatter. Visitors of the AstFormatter class must return strings, not lists. These strings must be syntactically correct pieces of source code. Similarly, visitors of the StubFormatter subclass must return strings, not lists. These strings must be syntactically correct Python type hints, as per Pep 484, and the typing module.
-
-Notice how many times the word "must" appears in the last paragraph. Instantly, all real choices disappear.
-
-The AstFormatter class converts an ast tree back into the source code giving rise to the tree.  This means that the output of the AstFormatter class is predetermined. Visitors of this class have no choice about what output they produce. Although it doesn't presently do so, the AstFormatter class could check that:
-
-    ast.parse(input) == ast.parse(output)
-
-Btw, Leo's token-based python-beautifier code does make exactly this check. In exactly the same way, Python's type hints predetermine what StubFormatter visitors must return.  Visitors must return a string that is valid type hint.
-
-Hmm.  I found several bugs while trying to explain how visitors produce type hints. (Another virtue of documentation).  Rather than rush through the explanation or the bug fixes, I'll stop right now.\
-
-Once the fixes are in place, we shall be in a position to understand the crucial reduce_types function. We'll also see how StubFormatter visitors apply patterns using sf.match_all.
-
-**Producing type hints**
-
-Some visitors produce a type hint directly.  For example, the 'not' operator and the comparison operators always return 'bool' (a valid type hint), regardless of their arguments:
-
-def do_Compare(self, node):
-    '''
-    StubFormatter ast.Compare visitor for these ops:
-    '==', '!=', '&lt;', '&lt;=', '&gt;', '&gt;=', 'is', 'is not', 'in', 'not in',
-    '''
-    return 'bool' # This *is* correct.
+Here, I'll focus only on the code that reduces a return expression to a valid pep 484 type hint. (The typing module is also useful). Having a clear **target language** has been a great help.
 
 
-Only one piece of the puzzle remains, namely producing valid type hints!  That's what the reduce_types function does, with the help of another function, split_types.
+So the visitors for BoolOp and IfExp *must* return strings. And here type hints come to the rescue. In the above examples, visitors should return (the string):
 
-A bit of luck
+    'Union[hint(a), hint(b)]'
+    
+if both a and b have known types. *Note* hint(a) and hint(b) merely represent the actual hints. If a and b have the same, known type, the visitor should return:
 
+    'hint(a)' # same as hint(b)
+    
+If either a or b has an unknown type, the script could return either
 
+    'Any'
+    
+or one of the following:
 
-Without the Aha, things would have gotten complicated in a hurry.
+    'Union[a, hint(b)]'
+    'Union[hint(b), a]'
+    'Union[a, b]'
+    
+In other words, we could allow expressions with unknown types to be part of the Union. In fact, iirc, unions containing unknowns become Any.
 
-The Aha came about as the result of a failed assertion in AstFormatter.visit.
-
-def merge_types(a1, a2):
-    '''
-    a1 and a2 may be strings or lists.
-    return a list containing both of them, flattened, without duplicates.
-    '''
-    # Not used at present, and perhaps never.
-    # Only useful if visitors could return either lists or strings.
-    assert a1 is not None
-    assert a2 is not None
-    r1 = a1 if isinstance(a1, (list, tuple)) else [a1]
-    r2 = a2 if isinstance(a2, (list, tuple)) else [a2]
-    return sorted(set(r1 + r2))
-
-
-
-Summary
-
-make_stub_files.py is a very simple script because StubFormatter visitors have essentially no choice about what the return.  Indeed, StubFormatter visitors either return a type hint string directly, or they call reduce_types to convert a list of alternative types into a single, reduced, type hint, again a string.
-
-I have spent many happy hours studying pylint, mypy and rope. These programs are much more complex than this script and each is completely different from the others.
-
-We'll soon see why having StubFormatter return strings instead of lists simplifies everything, but first, let's see the pitfall that almost destroyed the code.
-
-
-
-
-Furthermore, a big surprise yesterday (a failed assert in AstFormatter.visit) lead to an amazing Aha:
-
-    This script is as simple as the AstFormatter class
-
-The AstFormatter class converts an ast tree back into the source code giving rise to the tree.  This means that the code in AstFormatter is predetermined. In a real sense, there are no choices. Although AstFormatter does not do so, it could check that ast.parse(input_code) == ast.parse(output_code). Similarly,
-
-    Python's type hints pre-determine all tree visitors.
+**Discuss all traverser classes**
 
 The StubTraverser and StubFormatter classes are both tree traversers. The StubTraverser class ignores all nodes except ClassDef and FunctionDef nodes. The StubFormatter class visits Return nodes and all possible descendants, which is essentially all kinds of expression nodes.
 
-In the end, after so much confusion, I see that it was inevitable that these two classes have the form that they do and produces the results that they do. My only part in the process was not to do something truly stupid :-) In fact, the failed assert in af.visit prevented me from doing so!
 
+**Producing type hints**
+
+- Discuss do_BinOp, etc.
+
+- Dicuss reduce_types and split_types.
 </t>
 <t tx="ekr.20160208093906.1">
 def trace_visitor(self, node, op, s):
@@ -3701,12 +3647,6 @@ def trace_visitor(self, node, op, s):
         caller = g.callers(2).split(',')[1]
         s1 = AstFormatter().format(node).strip()
         print('%12s %6s: %s ==&gt; %s' % (caller, op.strip(), s1, s))
-</t>
-<t tx="ekr.20160208161018.1">
-Added --trace-visitors flag and related ivars.
-Added st.trace_visitor.
-Added BoolOp test cases to test/test.py.
-Restored previous regex test cases and fixed an existing test in test_msf.pyi.
 </t>
 <t tx="ekr.20160208161113.1"></t>
 <t tx="ekr.20160208162138.1">
