@@ -325,13 +325,8 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160126153212.82"></v>
-<v t="ekr.20160126153212.85"></v>
-<v t="ekr.20160209194832.1"></v>
-<v t="ekr.20160204224242.1"></v>
-<v t="ekr.20160205060807.1"></v>
 <v t="ekr.20160203073604.1"></v>
-<v t="ekr.20160126153212.88"></v>
+<v t="ekr.20160126153212.82"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -3035,7 +3030,6 @@ def do_Attribute(self, node):
 
 def do_Call(self, node):
     '''StubFormatter.Call visitor.'''
-    trace = True or self.trace_reduce
     func = self.visit(node.func)
     args = [self.visit(z) for z in node.args]
     for z in node.keywords:
@@ -3839,10 +3833,11 @@ def output_time_stamp(self):
 <t tx="ekr.20160209194832.1">def add_stub(self, d, stub):
     '''Add the stub to d, checking that it does not exist.'''
     trace = False
+    caller = g.callers(2).split(',')[1]
     key = stub.full_name
-    assert key
+    assert key, caller
     if key in d:
-        g.trace('Ignoring duplicate entry for %s in %s' % (stub, tag))
+        g.trace('Ignoring duplicate entry for %s in %s' % (stub, caller))
     else:
         # Append the list
         list_key = '*stub-list*'
@@ -3851,7 +3846,6 @@ def output_time_stamp(self):
         d [list_key] = aList
         d [key] = stub
         if trace:
-            caller = g.callers(2).split(',')[1]
             g.trace('%17s %s' % (caller, stub.full_name))</t>
 </tnodes>
 </leo_file>

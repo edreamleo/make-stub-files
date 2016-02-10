@@ -1750,7 +1750,6 @@ class StubFormatter (AstFormatter):
 
     def do_Call(self, node):
         '''StubFormatter.Call visitor.'''
-        trace = True or self.trace_reduce
         func = self.visit(node.func)
         args = [self.visit(z) for z in node.args]
         for z in node.keywords:
@@ -1880,10 +1879,11 @@ class StubTraverser (ast.NodeVisitor):
     def add_stub(self, d, stub):
         '''Add the stub to d, checking that it does not exist.'''
         trace = False
+        caller = g.callers(2).split(',')[1]
         key = stub.full_name
-        assert key
+        assert key, caller
         if key in d:
-            g.trace('Ignoring duplicate entry for %s in %s' % (stub, tag))
+            g.trace('Ignoring duplicate entry for %s in %s' % (stub, caller))
         else:
             # Append the list
             list_key = '*stub-list*'
@@ -1892,7 +1892,6 @@ class StubTraverser (ast.NodeVisitor):
             d [list_key] = aList
             d [key] = stub
             if trace:
-                caller = g.callers(2).split(',')[1]
                 g.trace('%17s %s' % (caller, stub.full_name))
 
     def indent(self, s):
