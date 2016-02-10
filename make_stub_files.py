@@ -19,13 +19,13 @@ import glob
 import optparse
 import os
 import re
+import sys
 import time
 try:
     import io.StringIO as StringIO # Python 3
 except ImportError:
     import StringIO
 import sys
-
 
 # Top-level functions
 
@@ -184,7 +184,8 @@ def reduce_types(aList, name=None, newlines=False, trace=False):
     def show(s, known=True):
         '''Show the result of the reduction.'''
         s = s.strip()
-        s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
+        # s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
+        s2 = s.replace('\n',' ').replace(',]',']').strip()
             # Undo newline option if possible.
         if trace:
             r = sorted(set([z.replace('\n',' ') for z in aList1]))
@@ -870,9 +871,32 @@ class AstArgFormatter (AstFormatter):
         '''This represents a string constant.'''
         return 'str' # return repr(node.s)
 
+# Used only in the LeoGlobals class.
+isPython3 = sys.version_info >= (3, 0, 0)
 
 class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
+
+    class NullObject:
+        """
+        An object that does nothing, and does it very well.
+        From the Python cookbook, recipe 5.23
+        """
+        def __init__(self, *args, **keys): pass
+        def __call__(self, *args, **keys): return self
+        # def __len__    (self): return 0 # Debatable.
+        def __repr__(self): return "NullObject"
+        def __str__(self): return "NullObject"
+        if isPython3:
+            def __bool__(self): return False
+        else:
+            def __nonzero__(self): return 0
+        def __delattr__(self, attr): return self
+        def __getattr__(self, attr): return self
+        def __setattr__(self, attr, val): return self
+
+    nullObject = NullObject
+        # For compatibility
 
     def _callerName(self, n=1, files=False):
         # print('_callerName: %s %s' % (n,files))
@@ -1599,9 +1623,11 @@ class Stub(object):
 
     def __repr__(self):
         '''Stub.__repr__.'''
-        return 'Stub: %s' % self.full_name
+        return 'Stub: %s %s' % (id(self), self.full_name)
         
-    __str__ = __repr__
+    def __str__(self):
+        '''Stub.__repr__.'''
+        return 'Stub: %s' % self.full_name
 
     def level(self):
         '''Return the number of parents.'''
@@ -2143,20 +2169,15 @@ class StubTraverser (ast.NodeVisitor):
             # Now stub must exist in the tree.
             assert self.find_stub(self, old_stubs), stub
 
-    def find_parent_stub(self, stub, stubs):
-        '''Return Stub's parent Stub in the given tree of Stubs.'''
-        if stub.parent:
-            return self.find_stub(stub.parent, stubs)
-        elif stub in stubs.children:
-            return stubs.children[stubs.children.index(stub)]
-        else:
-            return None
+    def find_parent_stub(self, stub, root):
+        '''Return stub's parent **in root's tree**.'''
+        return self.find_stub(stub.parent, root) if stub.parent else None
 
-    def find_stub(self, stub, stubs):
-        '''Return the stub in stub's tree that matches stub.'''
-        if stub.full_name == stubs.full_name:
-            return stubs
-        for child in stubs.children:
+    def find_stub(self, stub, root):
+        '''Return the stub **in root's tree** that matches stub.'''
+        if stub == root: # Must use Stub.__eq__!
+            return root # not stub!
+        for child in root.children:
             stub2 = self.find_stub(stub, child)
             if stub2: return stub2
         return None

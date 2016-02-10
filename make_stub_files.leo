@@ -93,7 +93,7 @@
 <v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
 <v t="ekr.20160205101134.1"><vh>reduce_numbers (returns list)</vh></v>
 </v>
-<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
+<v t="ekr.20160206173343.1" a="M"><vh>@test reduce_types</vh>
 <v t="ekr.20160128041938.1"></v>
 <v t="ekr.20160130034812.1"><vh>is_known_type (split_types)</vh></v>
 <v t="ekr.20160207051316.1"></v>
@@ -105,99 +105,10 @@
 <v t="ekr.20160207162818.1"><vh>@test split_types</vh>
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
 </v>
-<v t="ekr.20160210112945.1"><vh>@test Stub class</vh>
+<v t="ekr.20160210145128.1"><vh>@test st.find_stub &amp; find_parent_stub</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
-<v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
-<v t="ekr.20160203095618.2"><vh>g._callerName</vh></v>
-<v t="ekr.20160203095618.1"><vh>g.callers</vh></v>
-<v t="ekr.20160202170529.1"><vh>g.cls</vh></v>
-<v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
-<v t="ekr.20160203183934.1"><vh>g.shortFileName</vh></v>
-<v t="ekr.20160206101140.1"><vh>g.splitLines</vh></v>
-<v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
-</v>
-<v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
-<v t="ekr.20160210134702.1"><vh>stub.__ctor__</vh></v>
-<v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
-<v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
-<v t="ekr.20160210111955.1"><vh>stub.__repr__and __str__</vh></v>
-<v t="ekr.20160210132520.1"><vh>stub.parents and level</vh></v>
-</v>
-</v>
-<v t="ekr.20160207115947.1"><vh>@test truncate</vh>
-<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
-</v>
-</v>
-<v t="ekr.20160205133120.1"><vh>Recent</vh>
-<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
-<v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
-<v t="ekr.20160205103604.4"><vh>sf.Attribute (names_dict)</vh></v>
-<v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
-<v t="ekr.20160205103604.9"><vh>sf.Dict ** call match_all?</vh></v>
-<v t="ekr.20160206204452.1"><vh>sf.List ** call_match_all?</vh></v>
-<v t="ekr.20160204153904.1"><vh>sf.Name (names_dict)</vh></v>
-<v t="ekr.20160126153212.38"><vh>sf.Tuple (match_all)</vh></v>
-</v>
-<v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
-<v t="ekr.20160205053641.2"><vh>sf.BinOp (reduce_types &amp; match_all)</vh></v>
-<v t="ekr.20160205053641.3"><vh>sf.BoolOp (reduce_types)</vh></v>
-<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword (match_all)</vh>
-<v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
-</v>
-<v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
-<v t="ekr.20160205053641.6"><vh>sf.IfExp (reduce_types, match_all)</vh></v>
-<v t="ekr.20160205142626.1"><vh>sf.Subscript (match_all)</vh></v>
-<v t="ekr.20160205053641.5"><vh>sf.UnaryOp (match_all)</vh></v>
-</v>
-<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
-<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
-<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
-<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
-<v t="ekr.20160207190840.1"><vh>st.remove_recursive_calls</vh></v>
-</v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160205103604.6"></v>
-<v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
-<v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
-</v>
-<v t="ekr.20160126153212.90"></v>
-</v>
-<v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
-</v>
-<v t="ekr.20160207164915.1"><vh>re: --trace-*</vh>
-<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
-<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
-<v t="ekr.20160126153212.77"></v>
-<v t="ekr.20160202070025.1"></v>
-<v t="ekr.20160205072101.1"></v>
-</v>
-<v t="ekr.20160207165031.1"><vh>re: merge List &amp; Tuple types</vh>
-<v t="ekr.20160205072101.1"></v>
-</v>
-<v t="ekr.20160208161113.1"><vh>main types routines...</vh>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160206212123.1"></v>
-<v t="ekr.20160208093906.1"><vh>sf.trace_visitor</vh></v>
-<v t="ekr.20160205053641.1"></v>
-</v>
-<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
-</v>
-<v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
-<v t="ekr.20160203075612.1"></v>
-<v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
-<v t="ekr.20160210083825.1"><vh>dump</vh></v>
-<v t="ekr.20160210141342.1"><vh>dump_dict</vh></v>
-<v t="ekr.20160210141651.1"><vh>dump_list</vh></v>
-<v t="ekr.20160130034812.1"></v>
-<v t="ekr.20160126153212.100"><vh>main</vh></v>
-<v t="ekr.20160207051316.1"></v>
-<v t="ekr.20160206120522.1"><vh>pdb</vh></v>
-<v t="ekr.20160205101134.1"></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160206212123.1"></v>
-<v t="ekr.20160207115604.1"></v>
-</v>
+<v t="ekr.20160210164250.1"><vh>&lt;&lt; define s &gt;&gt; (@test st.find/parent_stub)</vh></v>
+<v t="ekr.20160210082857.1"><vh>base classes</vh>
 <v t="ekr.20160126153212.3"><vh> class AstFormatter</vh>
 <v t="ekr.20160126153212.4"><vh> f.Entries</vh>
 <v t="ekr.20160126153212.5"><vh>f.format</vh></v>
@@ -281,6 +192,137 @@
 <v t="ekr.20160202165117.1"><vh>class AstArgFormatter (AstFormatter)</vh>
 <v t="ekr.20160202165143.1"><vh>sf.Constants &amp; Name</vh></v>
 </v>
+<v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
+<v t="ekr.20160210143802.1"><vh>class NullObject (Python Cookbook)</vh></v>
+<v t="ekr.20160203095618.2"><vh>g._callerName</vh></v>
+<v t="ekr.20160203095618.1"><vh>g.callers</vh></v>
+<v t="ekr.20160202170529.1"><vh>g.cls</vh></v>
+<v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
+<v t="ekr.20160203183934.1"><vh>g.shortFileName</vh></v>
+<v t="ekr.20160206101140.1"><vh>g.splitLines</vh></v>
+<v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
+</v>
+<v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
+<v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
+<v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
+<v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
+<v t="ekr.20160208093906.1"><vh>sf.trace_visitor</vh></v>
+<v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
+<v t="ekr.20160205103604.4"><vh>sf.Attribute (names_dict)</vh></v>
+<v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
+<v t="ekr.20160205103604.9"><vh>sf.Dict ** call match_all?</vh></v>
+<v t="ekr.20160206204452.1"><vh>sf.List ** call_match_all?</vh></v>
+<v t="ekr.20160204153904.1"><vh>sf.Name (names_dict)</vh></v>
+<v t="ekr.20160126153212.38"><vh>sf.Tuple (match_all)</vh></v>
+</v>
+<v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
+<v t="ekr.20160205053641.2"><vh>sf.BinOp (reduce_types &amp; match_all)</vh></v>
+<v t="ekr.20160205053641.3"><vh>sf.BoolOp (reduce_types)</vh></v>
+<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword (match_all)</vh>
+<v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
+</v>
+<v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
+<v t="ekr.20160205053641.6"><vh>sf.IfExp (reduce_types, match_all)</vh></v>
+<v t="ekr.20160205142626.1"><vh>sf.Subscript (match_all)</vh></v>
+<v t="ekr.20160205053641.5"><vh>sf.UnaryOp (match_all)</vh></v>
+</v>
+<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
+</v>
+</v>
+<v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
+<v t="ekr.20160210134702.1"><vh>stub.__ctor__</vh></v>
+<v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
+<v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
+<v t="ekr.20160210111955.1"><vh>stub.__repr__and __str__</vh></v>
+<v t="ekr.20160210132520.1"><vh>stub.parents and level</vh></v>
+</v>
+<v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
+<v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
+<v t="ekr.20160209194832.1"><vh>st.add_stub</vh></v>
+<v t="ekr.20160126153212.84"><vh>st.indent &amp; out</vh></v>
+<v t="ekr.20160126153212.85"><vh>st.run (main line) &amp; helpers</vh>
+<v t="ekr.20160203183228.1"><vh>st.output_stubs</vh></v>
+<v t="ekr.20160209105448.1"><vh>st.output_time_stamp</vh></v>
+<v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
+<v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
+<v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
+<v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers (Test)</vh>
+<v t="ekr.20160210043910.1"><vh>st.find_parent_stub</vh></v>
+<v t="ekr.20160210043933.1"><vh>st.find_stub</vh></v>
+<v t="ekr.20160210043957.1"><vh>st.sort_stubs_by_hierarchy</vh></v>
+</v>
+<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
+</v>
+</v>
+<v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
+<v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
+<v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
+<v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
+</v>
+<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
+<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
+<v t="ekr.20160207190840.1"><vh>st.remove_recursive_calls</vh></v>
+</v>
+</v>
+<v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
+</v>
+</v>
+<v t="ekr.20160210112945.1"><vh>@test Stub class</vh>
+<v t="ekr.20160203075612.1"></v>
+<v t="ekr.20160131180118.1"></v>
+<v t="ekr.20160203073604.1"></v>
+</v>
+<v t="ekr.20160207115947.1"><vh>@test truncate</vh>
+<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
+</v>
+</v>
+<v t="ekr.20160205133120.1"><vh>Recent</vh>
+<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
+<v t="ekr.20160205053705.1"></v>
+<v t="ekr.20160205053641.1"></v>
+<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
+<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160205103604.6"></v>
+<v t="ekr.20160126153212.88"></v>
+<v t="ekr.20160126153212.87"></v>
+</v>
+<v t="ekr.20160207164915.1"><vh>re: --trace-*</vh>
+<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
+<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
+<v t="ekr.20160126153212.77"></v>
+<v t="ekr.20160202070025.1"></v>
+<v t="ekr.20160205072101.1"></v>
+</v>
+<v t="ekr.20160207165031.1"><vh>re: merge List &amp; Tuple types</vh>
+<v t="ekr.20160205072101.1"></v>
+</v>
+<v t="ekr.20160208161113.1"><vh>main types routines...</vh>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160206212123.1"></v>
+<v t="ekr.20160208093906.1"></v>
+<v t="ekr.20160205053641.1"></v>
+</v>
+<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
+</v>
+<v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
+<v t="ekr.20160203075612.1"></v>
+<v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
+<v t="ekr.20160210083825.1"><vh>dump</vh></v>
+<v t="ekr.20160210141342.1"><vh>dump_dict</vh></v>
+<v t="ekr.20160210141651.1"><vh>dump_list</vh></v>
+<v t="ekr.20160130034812.1"></v>
+<v t="ekr.20160126153212.100"><vh>main</vh></v>
+<v t="ekr.20160207051316.1"></v>
+<v t="ekr.20160206120522.1"><vh>pdb</vh></v>
+<v t="ekr.20160205101134.1"></v>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160206212123.1"></v>
+<v t="ekr.20160207115604.1"></v>
+</v>
+<v t="ekr.20160126153212.3"></v>
+<v t="ekr.20160202165117.1"></v>
 <v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160128041938.1"></v>
 <v t="ekr.20160126153212.73"><vh>class StandAloneMakeStubFile</vh>
@@ -302,37 +344,8 @@
 </v>
 </v>
 <v t="ekr.20160203073604.1"></v>
-<v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
-<v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
-<v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
-<v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
-<v t="ekr.20160208093906.1"></v>
-<v t="ekr.20160205053705.1"></v>
-<v t="ekr.20160205053641.1"></v>
-<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
-</v>
-<v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
-<v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
-<v t="ekr.20160209194832.1"><vh>st.add_stub</vh></v>
-<v t="ekr.20160126153212.84"><vh>st.indent &amp; out</vh></v>
-<v t="ekr.20160126153212.85"><vh>st.run (main line) &amp; helpers</vh>
-<v t="ekr.20160203183228.1"><vh>st.output_stubs</vh></v>
-<v t="ekr.20160209105448.1"><vh>st.output_time_stamp</vh></v>
-<v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
-<v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
-<v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
-<v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers</vh>
-<v t="ekr.20160210043910.1"><vh>st.find_parent_stub (Test)</vh></v>
-<v t="ekr.20160210043933.1"><vh>st.find_stub (Test)</vh></v>
-<v t="ekr.20160210043957.1"><vh>st.sort_stubs_by_hierarchy</vh></v>
-</v>
-<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
-</v>
-</v>
-<v t="ekr.20160126153212.87"></v>
-<v t="ekr.20160126153212.88"></v>
-<v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
-</v>
+<v t="ekr.20160126153212.80"></v>
+<v t="ekr.20160126153212.82"></v>
 <v t="ekr.20160131175042.1"><vh>class TestClass</vh>
 <v t="ekr.20160201125349.1"><vh>parse_group (Guido)</vh></v>
 <v t="ekr.20160131192406.1"><vh>return_all</vh></v>
@@ -346,21 +359,21 @@
 <v t="ekr.20160210112711.1"><vh>later</vh></v>
 <v t="ekr.20160210112727.1"><vh>Leo stuff</vh></v>
 </v>
-<v t="ekr.20160210043910.1"></v>
-<v t="ekr.20160210043933.1"></v>
-<v t="ekr.20160210080720.1" a="M"><vh>@test --update</vh>
+<v t="ekr.20160210041431.1"></v>
+<v t="ekr.20160210112945.1"></v>
+<v t="ekr.20160210080720.1"><vh>@test --update</vh>
 <v t="ekr.20160203075612.1"></v>
-<v t="ekr.20160210081628.1"><vh>&lt;&lt; input strings &gt;&gt;</vh></v>
+<v t="ekr.20160210081628.1"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
+<v t="ekr.20160210144515.1"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
 <v t="ekr.20160206104634.1"></v>
-<v t="ekr.20160210082857.1"><vh>base classes</vh>
-<v t="ekr.20160126153212.3"></v>
-<v t="ekr.20160202165117.1"></v>
-<v t="ekr.20160131180118.1"></v>
-<v t="ekr.20160126153212.80"></v>
-</v>
+<v t="ekr.20160210082857.1"></v>
 <v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.82"></v>
 </v>
+<v t="ekr.20160210043933.1"></v>
+<v t="ekr.20160210043910.1"></v>
+<v t="ekr.20160210145128.1"></v>
+<v t="ekr.20160206173343.1" a="M"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -374,7 +387,6 @@ For full details, see README.md.
 This file is in the public domain.
 '''
 &lt;&lt; imports &gt;&gt;
-
 @others
 g = LeoGlobals() # For ekr.
 if __name__ == "__main__":
@@ -2207,6 +2219,8 @@ class TestClass:
 def return_list(self, a):
     return [a]</t>
 <t tx="ekr.20160131180118.1">
+# Used only in the LeoGlobals class.
+isPython3 = sys.version_info &gt;= (3, 0, 0)
 
 class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
@@ -2446,6 +2460,7 @@ import glob
 import optparse
 import os
 import re
+import sys
 import time
 try:
     import io.StringIO as StringIO # Python 3
@@ -3653,7 +3668,8 @@ for s1, s2 in table:
 def show(s, known=True):
     '''Show the result of the reduction.'''
     s = s.strip()
-    s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
+    # s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
+    s2 = s.replace('\n',' ').replace(',]',']').strip()
         # Undo newline option if possible.
     if trace:
         r = sorted(set([z.replace('\n',' ') for z in aList1]))
@@ -3873,20 +3889,16 @@ def merge_stubs(self, new_stubs, old_stubs):
         assert self.find_stub(self, old_stubs), stub
 </t>
 <t tx="ekr.20160210043910.1">
-def find_parent_stub(self, stub, stubs):
-    '''Return Stub's parent Stub in the given tree of Stubs.'''
-    if stub.parent:
-        return self.find_stub(stub.parent, stubs)
-    elif stub in stubs.children:
-        return stubs.children[stubs.children.index(stub)]
-    else:
-        return None</t>
+def find_parent_stub(self, stub, root):
+    '''Return stub's parent **in root's tree**.'''
+    return self.find_stub(stub.parent, root) if stub.parent else None
+</t>
 <t tx="ekr.20160210043933.1">
-def find_stub(self, stub, stubs):
-    '''Return the stub in stub's tree that matches stub.'''
-    if stub.full_name == stubs.full_name:
-        return stubs
-    for child in stubs.children:
+def find_stub(self, stub, root):
+    '''Return the stub **in root's tree** that matches stub.'''
+    if stub == root: # Must use Stub.__eq__!
+        return root # not stub!
+    for child in root.children:
         stub2 = self.find_stub(stub, child)
         if stub2: return stub2
     return None
@@ -3914,44 +3926,49 @@ def sort_stubs_by_hierarchy(self, stubs1):
 Test framework for st.update and helpers.
 When this node is marked, you may run this script with Alt-5.
 '''
+# To do:
+# - Test between-stub lines and leading lines.
+# - Round-trip tests!
 &lt;&lt; imports &gt;&gt;
-&lt;&lt; input strings &gt;&gt;
+&lt;&lt; old_stubs &gt;&gt;
+&lt;&lt; new_stubs &gt;&gt;
 @others
 leo_g = g # needed only to adjust for Leo's indentation.
 g = LeoGlobals() # Use the g available to the script.
-g.cls()
-# g.NullObject is a proxy for StandAloneMakeStubFile, per Python Cookbook.
-st = StubTraverser(controller=leo_g.NullObject())
-i = 0
-### Test between-stub lines and leading lines.
-### Round-trip tests!
-for s in input_strings:
-    s = leo_g.adjustTripleString(s, tab_width=-4)
-    dump('input string %s' % (i), s)
-    d, stubs = st.parse_stub_file(s, root_name='&lt;test-root&gt;')
-    dump_dict(d, 'stub_d')
-    print(st.trace_stubs(stubs, header='trace_stubs'))
-    aList = st.sort_stubs_by_hierarchy(d.values())
+# g.cls()
+st = StubTraverser(controller=g.NullObject())
+old_s = leo_g.adjustTripleString(old_s, tab_width=-4)
+new_s = leo_g.adjustTripleString(new_s, tab_width=-4)
+# dump('old_s', old_s)
+# dump('new_s', new_s)
+old_d, old_stubs = st.parse_stub_file(old_s, root_name='&lt;old-root&gt;')
+new_d, new_stubs = st.parse_stub_file(new_s, root_name='&lt;new-root&gt;')
+# dump_dict(old_d, 'old_d')
+# dump_dict(new_d, 'new_d')
+# print(st.trace_stubs(old_stubs, header='trace_stubs(old_stubs)'))
+# print(st.trace_stubs(new_stubs, header='trace_stubs(new_stubs)'))
+new_stubs = new_d.values()
+if 0:
+    aList = st.sort_stubs_by_hierarchy(new_stubs)
     dump_list(aList, 'after sort_stubs_by_hierarcy')
-    i += 1
+if 0:
+    g.pdb()
+    st.merge_stubs(new_stubs, old_stubs)
 </t>
-<t tx="ekr.20160210081628.1">input_strings = [
-'''
-def is_known_type(s: str) -&gt; Union[Any,bool]: ...
+<t tx="ekr.20160210081628.1"># def is_known_type(s: str) -&gt; Union[Any,bool]: ...
+# def reduce_numbers(aList: List[Any]) -&gt; List[Any]: ...
+# def do_ClassDef(self, node: Node) -&gt; str: ...
+old_s = '''\
 def main() -&gt; None: ...
 def merge_types(a1: Any, a2: Any) -&gt; str: ...
 def pdb(self) -&gt; None: ...
-def reduce_numbers(aList: List[Any]) -&gt; List[Any]: ...
 def reduce_types(aList: List[Any], name: str=None, newlines: Any=False, trace: bool=False) -&gt; Any: ...
 
 class AstFormatter:
     def format(self, node: Node) -&gt; Union[Any,str]: ...
     def visit(self, node: Node) -&gt; str: ...
-    def do_ClassDef(self, node: Node) -&gt; str: ...
     def do_FunctionDef(self, node: Node) -&gt; str: ...
-''',
-]
-
+'''
 </t>
 <t tx="ekr.20160210082857.1"></t>
 <t tx="ekr.20160210083825.1">
@@ -3964,9 +3981,12 @@ def dump(title, s=None):
 <t tx="ekr.20160210111955.1">
 def __repr__(self):
     '''Stub.__repr__.'''
-    return 'Stub: %s' % self.full_name
+    return 'Stub: %s %s' % (id(self), self.full_name)
     
-__str__ = __repr__</t>
+def __str__(self):
+    '''Stub.__repr__.'''
+    return 'Stub: %s' % self.full_name
+</t>
 <t tx="ekr.20160210112634.1"></t>
 <t tx="ekr.20160210112711.1">Later: improve type reduction:
 - 2-pass reduce_types? More tests that patterns work in expected places.
@@ -3998,7 +4018,7 @@ Update readme file with examples of return comments.
 <t tx="ekr.20160210112945.1">&lt;&lt; imports &gt;&gt;
 @others
 g = LeoGlobals() # Use the g available to the script.
-g.cls()
+# g.cls()
 # Test equality...
 stub1 = Stub(kind='def', name='foo')
 stub2 = Stub(kind='class', name='foo')
@@ -4068,5 +4088,74 @@ def dump_list(aList, tag):
         print(z)
     print('')
 </t>
+<t tx="ekr.20160210143802.1">
+class NullObject:
+    """
+    An object that does nothing, and does it very well.
+    From the Python cookbook, recipe 5.23
+    """
+    def __init__(self, *args, **keys): pass
+    def __call__(self, *args, **keys): return self
+    # def __len__    (self): return 0 # Debatable.
+    def __repr__(self): return "NullObject"
+    def __str__(self): return "NullObject"
+    if isPython3:
+        def __bool__(self): return False
+    else:
+        def __nonzero__(self): return 0
+    def __delattr__(self, attr): return self
+    def __getattr__(self, attr): return self
+    def __setattr__(self, attr, val): return self
+
+nullObject = NullObject
+    # For compatibility
+</t>
+<t tx="ekr.20160210144515.1">new_s = '''\
+def is_known_type(s: str) -&gt; Union[Any,bool]: ...
+def main() -&gt; None: ...
+def merge_types(a1: Any, a2: Any) -&gt; str: ...
+def pdb(self) -&gt; None: ...
+def reduce_numbers(aList: List[Any]) -&gt; List[Any]: ...
+def reduce_types(aList: List[Any], name: str=None, newlines: Any=False, trace: bool=False) -&gt; Any: ...
+
+class AstFormatter:
+    def format(self, node: Node) -&gt; Union[Any,str]: ...
+    def visit(self, node: Node) -&gt; str: ...
+    def do_ClassDef(self, node: Node) -&gt; str: ...
+    def do_FunctionDef(self, node: Node) -&gt; str: ...
+'''</t>
+<t tx="ekr.20160210145128.1">&lt;&lt; imports &gt;&gt;
+&lt;&lt; define s &gt;&gt;
+@others
+leo_g = g # needed only to adjust for Leo's indentation.
+g = LeoGlobals() # Use the g available to the script.
+# g.cls()
+st = StubTraverser(controller=g.NullObject())
+s = leo_g.adjustTripleString(s, tab_width=-4)
+d, root = st.parse_stub_file(s, root_name='&lt;root&gt;')
+print(st.trace_stubs(root, header='root'))
+stub1 = Stub(kind='class', name='AstFormatter')
+stub2 = Stub(kind='def', name='format', parent=stub1, stack=['AstFormatter'])
+stub3 = Stub(kind='def', name='helper', parent = stub2, stack=['AstFormatter', 'format'])
+# stub4 = Stub(kind='def', name='main')
+for stub in (stub1, stub2, stub3,): # (stub1, stub2, stub3):
+    found = st.find_stub(stub, root)
+    id_found = found and id(found) or None
+    print('found  %s =&gt; %9s %35s ==&gt; %s' % (id(stub), id_found, stub, found))
+    found = st.find_parent_stub(stub, root)
+    id_found = found and id(found) or None
+    print('parent %s =&gt; %9s %35s ==&gt; %s' % (id(stub), id_found, stub, found))</t>
+<t tx="ekr.20160210164250.1">s = '''\
+def is_known_type(s: str) -&gt; Union[Any,bool]: ...
+def main() -&gt; None: ...
+def merge_types(a1: Any, a2: Any) -&gt; str: ...
+
+class AstFormatter:
+    def format(self, node: Node) -&gt; Union[Any,str]: ...
+        def helper(self): -&gt; None
+    def visit(self, node: Node) -&gt; str: ...
+    def do_ClassDef(self, node: Node) -&gt; str: ...
+    def do_FunctionDef(self, node: Node) -&gt; str: ...
+'''</t>
 </tnodes>
 </leo_file>
