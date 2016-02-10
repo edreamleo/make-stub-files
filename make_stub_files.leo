@@ -310,6 +310,11 @@
 <v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
 <v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
 <v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
+<v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers</vh>
+<v t="ekr.20160210043910.1"><vh>st.find_parent_stub</vh></v>
+<v t="ekr.20160210043933.1"><vh>st_find_stub</vh></v>
+<v t="ekr.20160210043957.1"><vh>st.sort_stubs_by_hierarchy</vh></v>
+</v>
 <v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
 </v>
 </v>
@@ -325,8 +330,13 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.82"></v>
+<v t="ekr.20160210033447.1"><vh>@test --update</vh>
+<v t="ekr.20160203073604.1"></v>
+<v t="ekr.20160203183228.1"></v>
+<v t="ekr.20160209105448.1"></v>
+<v t="ekr.20160204224242.1"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1338,17 +1348,13 @@ def run(self, node):
     elif not dir_ or os.path.exists(dir_):
         t1 = time.clock()
         # Delayed output allows sorting.
-        self.parent_stub = Stub('root', '&lt;root&gt;')
+        self.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
         for z in self.prefix_lines or []:
             self.parent_stub.out_list.append(z)
         self.visit(node)
             # Creates parent_stub.out_list.
         if self.update_flag:
-            g.trace('--update not ready yet')
-            self.update(fn)
-                # Modifies parent_stub.out_list.
-            ### g.trace('**** Testing: did not write', fn)
-            ### return #### Testing
+            self.parent_stub = self.update(fn, new_stubs=self.parent_stub)
         self.output_file = open(fn, 'w')
         self.output_time_stamp()
         self.output_stubs(self.parent_stub)
@@ -2153,8 +2159,6 @@ def is_known_type(s):
 @wrap
 
 -- update:
-    - use tabnanny to check incomming stub file.
-    - Simplify st.add_stub.
 
 - Update readme file with examples of return comments.
     - With and without --verbose.
@@ -2625,7 +2629,7 @@ def output_stubs(self, stub):
             self.output_file.write(s+'\n')
         else:
             print(s)
-    # Recursively print all children.  Never sort stubs!
+    # Recursively print all children.
     for child in stub.children:
         self.output_stubs(child)
 </t>
@@ -2760,30 +2764,51 @@ def make_op_name_dict(self):
     return d
 </t>
 <t tx="ekr.20160204224242.1">
-def update(self, fn):
-    '''Alter self.parent_stub so it contains only updated stubs.'''
-    trace_stubs = False
+def update(self, fn, new_stubs):
+    '''
+    Merge the new_stubs tree with the old_stubs tree.
+     
+    new_stubs is the root of the stubs tree just read from the .py file.
+    old_stubs are the stubs read here from the corresponding .pyi file.
+    
+    Return a reference to the resulting tree. This will be the stub tree
+    from the .pyi file, or new_stubs on errors.
+    
+    When merging, preserve all *old* stubs *and* existing order:
+    - Add only new stubs that do not exist in the old_stubs tree.
+    - Add stubs only at the *end* of parent.children list.
+    '''
+    trace_old_stubs = True
     trace_new_stubs = True
+    trace_update_stubs = True
     s = self.get_stub_file(fn)
-    if not s.strip():
-        return
+    if not s or not s.strip():
+        return new_stubs
     if '\t' in s:
         # Tabs in stub files make it impossible to parse them reliably.
         g.trace('Can not update stub files containing tabs.')
-        sys.exit(1)
-    d_old, stub = self.parse_stub_file(s)
-    if not stub:
-        return
-    if trace_stubs:
-        self.trace_stubs(stub)
+        return new_stubs
+    d_old, old_stubs = self.parse_stub_file(s, root_name='&lt;old-stubs&gt;')
+    if not old_stubs:
+        return new_stubs
+    print('***** updating stubs from %s *****' % fn)
+    if trace_old_stubs:
+        self.trace_stubs(old_stubs, header='old stubs')
+    if trace_new_stubs:
+        self.trace_stubs(new_stubs, header='new stubs')
     # Find new stubs that are not in the old.
     d_new = self.stubs_dict
-    new_stubs = [d_new.get(z) for z in d_new if z not in d_old]
-    if trace_new_stubs:
-        g.trace('new stubs...')
-        for z in new_stubs:
+    update_list = [d_new.get(z) for z in d_new if z not in d_old]
+    if trace_update_stubs:
+        g.trace('Adding these stubs to the old stubs...')
+        for z in update_list:
             print(z.full_name)
-    # Merge the old, unchanged, stubs with the new stubs.
+    # Merge the stubs in update_list into the old_stubs tree.
+    if 0: ### Not ready yet.
+        self.merge_stubs(update_list, old_stubs)
+        return old_stubs
+    else:
+        return new_stubs
 </t>
 <t tx="ekr.20160205053641.1">
 # StubFormatter visitors for operators...
@@ -2883,14 +2908,14 @@ def get_stub_file(self, fn):
             s = open(fn, 'r').read()
         except Exception:
             print('--update: error reading %s' % fn)
-            s = ''
+            s = None
         return s
     else:
         print('--update: not found: %s' % fn)
-        return ''
-    </t>
+        return None
+</t>
 <t tx="ekr.20160205060807.1">
-def parse_stub_file(self, s):
+def parse_stub_file(self, s, root_name):
     '''
     Parse s, the contents of a stub file, into a tree of Stubs.
     
@@ -2900,7 +2925,7 @@ def parse_stub_file(self, s):
     if trace: g.trace()
     assert '\t' not in s
     d = {}
-    root = Stub('root', '&lt;root&gt;')
+    root = Stub(kind='root', name=root_name)
     indent_stack = [-1] # To prevent the root from being popped.
     stub_stack = [root]
     lines = []
@@ -3797,14 +3822,17 @@ In retrospect, this lack of choice is what has kept the code simple, in spite of
 Imo, this is the proper way to understand the script. It is actually *very* simple.</t>
 <t tx="ekr.20160209103842.1"></t>
 <t tx="ekr.20160209104843.1">
-def trace_stubs(self, stub, level=0):
+def trace_stubs(self, stub, header=None, level=-1):
     '''Trace the given stub and all its descendants.'''
-    indent = ' '*4*level
-    print('%s%5s %s' % (indent, stub.kind, stub.name))
-    for s in stub.out_list:
+    indent = ' '*4*max(0,level)
+    if level == -1 and header:
+        print('===== %s =====' % header)
+    if level &gt; -1:
+        print('%s%s %s' % (indent, stub.kind, stub.name))
+    for s in stub.out_list[1:]:
         print('%s%s' % (indent, s.rstrip()))
     for child in stub.children:
-        self.trace_stubs(child, level+1)
+        self.trace_stubs(child, level=level+1)
 </t>
 <t tx="ekr.20160209105301.1"></t>
 <t tx="ekr.20160209105448.1">
@@ -3847,5 +3875,60 @@ def output_time_stamp(self):
         d [key] = stub
         if trace:
             g.trace('%17s %s' % (caller, stub.full_name))</t>
+<t tx="ekr.20160210033447.1"># To do:
+# Simplify st.add_stub.
+# 
+@others
+</t>
+<t tx="ekr.20160210041431.1">def merge_stubs(self, new_stubs, old_stubs):
+    '''
+    Merge the new_stubs *list* into the old_stubs *tree*.
+    - new_stubs is a list of Stubs from the .py file.
+    - old_stubs is the root of the tree of Stubs from the .pyi file.
+    '''
+    # Order the new stubs so that parents are created before children.
+    aList = self.sort_stubs_by_hierarchy(new_stubs)
+    for stub in aList:
+        # Initially, stub must not exist in the tree.
+        assert not self.find_stub(stub, old_stubs), stub
+        parent = self.find_parent_stub(stub, old_stubs)
+        assert parent, stub
+        parent.children.append(stub)
+        # Now stub must exist in the tree.
+        assert self.find_stub(self, old_stubs), stub
+</t>
+<t tx="ekr.20160210043910.1">def find_parent_stub(self, stub, stubs):
+    '''Return Stub's parent Stub in the given tree of Stubs.'''</t>
+<t tx="ekr.20160210043933.1">def find_stub(self, stub, stubs):
+    '''Return True if stub is the tree whose root is stubs.'''
+    if stub.full_name == stubs.full_name:
+        return True
+    for child in stubs.children:
+        if self.find_stub(stub, child):
+            return True
+    return False
+</t>
+<t tx="ekr.20160210043957.1">def sort_stubs_by_hierarchy(self, stubs1):
+    '''
+    Sort the list of Stubs so that parents appear before all their
+    descendants.
+    '''
+    
+    def level(stub):
+        parents = stub.full_name.split('.')
+        return len(parents) - 1
+        
+    stubs, result = stubs1[:], []
+    for i in range(50):
+        if not stubs:
+            return result
+        # Add all stubs with i parents to the results.
+        found = [z for z in stubs if level(z) == i]
+        result.extend(found)
+        for z in found:
+            stubs.remove(z)
+    g.trace('can not happen: unbounded sort')
+    return [] # Abort the merge.
+</t>
 </tnodes>
 </leo_file>
