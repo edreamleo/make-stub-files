@@ -35,6 +35,20 @@ def dump(title, s=None):
     else:
         print('===== %s...\n' % title)
 
+def dump_dict(d, tag):
+    '''Dump a dictionary with a header.'''
+    dump(tag)
+    for z in sorted(d):
+        print('%30s %s' % (z, d.get(z)))
+    print('')
+
+def dump_list(aList, tag):
+    '''Dump a list with a header.'''
+    dump(tag)
+    for z in aList:
+        print(z)
+    print('')
+
 def is_known_type(s):
     '''
     Return True if s is nothing but a single known type.
@@ -2154,14 +2168,15 @@ class StubTraverser (ast.NodeVisitor):
         '''
         stubs, result = stubs1[:], []
         for i in range(50):
-            if not stubs:
+            if stubs:
+                # Add all stubs with i parents to the results.
+                found = [z for z in stubs if z.level() == i]
+                result.extend(found)
+                for z in found:
+                    stubs.remove(z)
+            else:
                 return result
-            # Add all stubs with i parents to the results.
-            found = [z for z in stubs if z.level() == i]
-            result.extend(found)
-            for z in found:
-                stubs.remove(z)
-        g.trace('can not happen: unbounded sort')
+        g.trace('can not happen: unbounded stub levels.')
         return [] # Abort the merge.
 
     def trace_stubs(self, stub, aList=None, header=None, level=-1):

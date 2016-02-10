@@ -105,7 +105,7 @@
 <v t="ekr.20160207162818.1"><vh>@test split_types</vh>
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
 </v>
-<v t="ekr.20160210112945.1" a="M"><vh>@test Stub class</vh>
+<v t="ekr.20160210112945.1"><vh>@test Stub class</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
 <v t="ekr.20160203095618.2"><vh>g._callerName</vh></v>
@@ -187,6 +187,8 @@
 <v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
 <v t="ekr.20160210083825.1"><vh>dump</vh></v>
+<v t="ekr.20160210141342.1"><vh>dump_dict</vh></v>
+<v t="ekr.20160210141651.1"><vh>dump_list</vh></v>
 <v t="ekr.20160130034812.1"></v>
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160207051316.1"></v>
@@ -346,10 +348,10 @@
 </v>
 <v t="ekr.20160210043910.1"></v>
 <v t="ekr.20160210043933.1"></v>
-<v t="ekr.20160210080720.1"><vh>@test --update</vh>
+<v t="ekr.20160210080720.1" a="M"><vh>@test --update</vh>
 <v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160210081628.1"><vh>&lt;&lt; input strings &gt;&gt;</vh></v>
-<v t="ekr.20160210083825.1"></v>
+<v t="ekr.20160206104634.1"></v>
 <v t="ekr.20160210082857.1"><vh>base classes</vh>
 <v t="ekr.20160126153212.3"></v>
 <v t="ekr.20160202165117.1"></v>
@@ -359,8 +361,6 @@
 <v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.82"></v>
 </v>
-<v t="ekr.20160210043957.1"></v>
-<v t="ekr.20160210112945.1" a="M"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2182,7 +2182,7 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- Stub.parents() and Stub.level() methods.
+- --update should prepend a timestamp in the .pyi file.
 
 *** What to do about non-comment lines between subs??
     I fear the user will be surprised.
@@ -3899,14 +3899,15 @@ def sort_stubs_by_hierarchy(self, stubs1):
     '''
     stubs, result = stubs1[:], []
     for i in range(50):
-        if not stubs:
+        if stubs:
+            # Add all stubs with i parents to the results.
+            found = [z for z in stubs if z.level() == i]
+            result.extend(found)
+            for z in found:
+                stubs.remove(z)
+        else:
             return result
-        # Add all stubs with i parents to the results.
-        found = [z for z in stubs if z.level() == i]
-        result.extend(found)
-        for z in found:
-            stubs.remove(z)
-    g.trace('can not happen: unbounded sort')
+    g.trace('can not happen: unbounded stub levels.')
     return [] # Abort the merge.
 </t>
 <t tx="ekr.20160210080720.1">'''
@@ -3922,31 +3923,27 @@ g.cls()
 # g.NullObject is a proxy for StandAloneMakeStubFile, per Python Cookbook.
 st = StubTraverser(controller=leo_g.NullObject())
 i = 0
-################ Test between-stub lines and leading lines.
+### Test between-stub lines and leading lines.
+### Round-trip tests!
 for s in input_strings:
-    ################## To do: Round-trip tests!
     s = leo_g.adjustTripleString(s, tab_width=-4)
     dump('input string %s' % (i), s)
     d, stubs = st.parse_stub_file(s, root_name='&lt;test-root&gt;')
-    if 1:
-        dump('stub_d')
-        for z in sorted(d):
-            print('%30s %s' % (z, d.get(z)))
-        print('')
+    dump_dict(d, 'stub_d')
     print(st.trace_stubs(stubs, header='trace_stubs'))
+    aList = st.sort_stubs_by_hierarchy(d.values())
+    dump_list(aList, 'after sort_stubs_by_hierarcy')
     i += 1
 </t>
 <t tx="ekr.20160210081628.1">input_strings = [
-# '''
-# def is_known_type(s: str) -&gt; Union[Any,bool]: ...
-# def main() -&gt; None: ...
-# def merge_types(a1: Any, a2: Any) -&gt; str: ...
-# def pdb(self) -&gt; None: ...
-# def reduce_numbers(aList: List[Any]) -&gt; List[Any]: ...
-# def reduce_types(aList: List[Any], name: str=None, newlines: Any=False, trace: bool=False) -&gt; Any: ...
-# ''',
-
 '''
+def is_known_type(s: str) -&gt; Union[Any,bool]: ...
+def main() -&gt; None: ...
+def merge_types(a1: Any, a2: Any) -&gt; str: ...
+def pdb(self) -&gt; None: ...
+def reduce_numbers(aList: List[Any]) -&gt; List[Any]: ...
+def reduce_types(aList: List[Any], name: str=None, newlines: Any=False, trace: bool=False) -&gt; Any: ...
+
 class AstFormatter:
     def format(self, node: Node) -&gt; Union[Any,str]: ...
     def visit(self, node: Node) -&gt; str: ...
@@ -4055,6 +4052,21 @@ def __init__(self, kind, name, parent=None, stack=None):
     if parent:
         assert isinstance(parent, Stub)
         parent.children.append(self)
+</t>
+<t tx="ekr.20160210141342.1">
+def dump_dict(d, tag):
+    '''Dump a dictionary with a header.'''
+    dump(tag)
+    for z in sorted(d):
+        print('%30s %s' % (z, d.get(z)))
+    print('')</t>
+<t tx="ekr.20160210141651.1">
+def dump_list(aList, tag):
+    '''Dump a list with a header.'''
+    dump(tag)
+    for z in aList:
+        print(z)
+    print('')
 </t>
 </tnodes>
 </leo_file>
