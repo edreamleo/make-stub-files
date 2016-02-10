@@ -44,6 +44,7 @@
 <v t="ekr.20160203134611.1"><vh>stub.__gt/lt/ge/le__</vh></v>
 <v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
 </v>
+<v t="ekr.20160209120102.1"><vh>st.scan_name</vh></v>
 </v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Test files</vh>
@@ -289,10 +290,7 @@
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
-<v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
-<v t="ekr.20160203073713.1"><vh>stub.ctor &amp; __repr__</vh></v>
-<v t="ekr.20160203134704.1"><vh>stub.full_name</vh></v>
-</v>
+<v t="ekr.20160203073604.1"><vh>class Stub(object)</vh></v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
 <v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
@@ -304,6 +302,7 @@
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
+<v t="ekr.20160209194832.1"><vh>st.add_stub</vh></v>
 <v t="ekr.20160126153212.84"><vh>st.indent &amp; out</vh></v>
 <v t="ekr.20160126153212.85"><vh>st.run (main line) &amp; helpers</vh>
 <v t="ekr.20160203183228.1"><vh>st.output_stubs</vh></v>
@@ -311,8 +310,7 @@
 <v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
 <v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
 <v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
-<v t="ekr.20160209120102.1"><vh>st.scan_name</vh></v>
-<v t="ekr.20160209104843.1"><vh>st.trace_stubs &amp; trace_stub</vh></v>
+<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
 </v>
 </v>
 <v t="ekr.20160126153212.87"></v>
@@ -327,14 +325,13 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160209102525.1"><vh>re --update</vh>
-<v t="ekr.20160126153212.82"></v>
-<v t="ekr.20160203073604.1"></v>
-<v t="ekr.20160204224242.1"></v>
-</v>
 <v t="ekr.20160126153212.82"></v>
 <v t="ekr.20160126153212.85"></v>
+<v t="ekr.20160209194832.1"></v>
+<v t="ekr.20160204224242.1"></v>
 <v t="ekr.20160205060807.1"></v>
+<v t="ekr.20160203073604.1"></v>
+<v t="ekr.20160126153212.88"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1295,12 +1292,13 @@ def __init__(self, controller):
     sf = StubFormatter(controller=controller,traverser=self)
     self.format = sf.format
     self.arg_format = AstArgFormatter().format
-    ### self.in_function = False
     self.level = 0
     self.output_file = None
     self.parent_stub = None
     self.raw_format = AstFormatter().format
     self.returns = []
+    self.stubs_dict = {}
+        # Keys are stub.full_name's.  Values are stubs.
     self.warn_list = []
     # Copies of controller ivars...
     self.output_fn = x.output_fn
@@ -1345,7 +1343,7 @@ def run(self, node):
     elif not dir_ or os.path.exists(dir_):
         t1 = time.clock()
         # Delayed output allows sorting.
-        self.parent_stub = Stub('root', 'Root', parent=None, stack=[])
+        self.parent_stub = Stub('root', '&lt;root&gt;')
         for z in self.prefix_lines or []:
             self.parent_stub.out_list.append(z)
         self.visit(node)
@@ -1372,12 +1370,13 @@ def run(self, node):
 
 def visit_ClassDef(self, node):
     
-    # First, enter the new context.
-    self.class_name_stack.append(node.name)
-    self.context_stack.append(node.name)
+    # Create the stub in the old context.
     old_stub = self.parent_stub
     self.parent_stub = Stub('class', node.name,old_stub, self.context_stack)
-
+    self.add_stub(self.stubs_dict, self.parent_stub)
+    # Enter the new context.
+    self.class_name_stack.append(node.name)
+    self.context_stack.append(node.name)
     # Format...
     if not node.name.startswith('_'):
         if node.bases:
@@ -1387,41 +1386,30 @@ def visit_ClassDef(self, node):
         self.out('class %s%s:' % (node.name, s))
     # Visit...
     self.level += 1
-    ### old_in_function = self.in_function
-    ### self.in_function = False
-   
     for z in node.body:
         self.visit(z)
     self.context_stack.pop()
     self.class_name_stack.pop()
     self.level -= 1
-    ### self.in_function = old_in_function
     self.parent_stub = old_stub
 </t>
 <t tx="ekr.20160126153212.88">
 # FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
 
 def visit_FunctionDef(self, node):
-    
-    # 2016/02/09: We now generate stubs for *all* defs.
-    #             This is important for --update.
-        ###
-        # Do nothing if we are already in a function.
-        # We do not generate stubs for inner defs.
-        # if self.in_function: # or node.name.startswith('_'):
-            # return
-    # First, visit the function body.
-    self.returns = []
-    ### self.in_function = True
-    self.level += 1
-    self.context_stack.append(node.name)
+
+    # Create the stub in the old context.
     old_stub = self.parent_stub
     self.parent_stub = Stub('def', node.name, old_stub, self.context_stack)
+    self.add_stub(self.stubs_dict, self.parent_stub)
+    # Enter the new context.
+    self.returns = []
+    self.level += 1
+    self.context_stack.append(node.name)
     for z in node.body:
         self.visit(z)
     self.context_stack.pop()
     self.level -= 1
-    ### self.in_function = False
     # Format *after* traversing
     self.out('def %s(%s) -&gt; %s' % (
         node.name,
@@ -1525,91 +1513,105 @@ def visit_Return(self, node):
     self.returns.append(node)
         # New: return the entire node, not node.value.
 </t>
-<t tx="ekr.20160126153220.1"># An example configuration file for make_stub_files.py.
-# By default, make_stub_files.py uses ~/stubs/make_stub_files.cfg.
-# Can be changed using the --config=path command-line option.
+<t tx="ekr.20160126153220.1">@language config
+
+# A configuration file to make stubs for make_stub_files.py itself.
 
 [Global]
 
-files:
+files: make_stub_files.py
     
-    # Files to be used *only* if no files are given on the command line.
-    # glob.glob wildcards are supported.
-    
-output_directory: ~/stubs
+output_directory: .
     
 prefix_lines:
-    # Lines to be inserted at the start of each stub file.
+    from typing import Any, Dict, Optional, Sequence, Tuple, Union
+        # At present, I don't understand how to tell mypy about ast.Node
+        # import ast
+        # Node = ast.Node
+    Node = Any
 
-    from typing import TypeVar
-    T = TypeVar('T', int, float, complex)
-    
-# Notes about patterns used below:
-#
-#  **Balanced patterns** contain either (*), [*], or {*}.
-#  Unlike regular expressions, balanced patterns match only balanced brackets.
-#
-#  Both regex and balanced patterns may appear in each section.
-#  However, balanced patterns will never match argument names.
-#
-#  Patterns are matched in the order they appear in each section,
-#  but the .* pattern (if present) will match last, regardless of its
-#  position in the section.
-    
 [Def Name Patterns]
 
-# These regex patterns give the return types of functions or methods.
-#
-# Patterns for methods should match class_name.method_name.
-#
-# Patterns in this section *override* all other patterns,
-# so you should use these patterns only if:
-#
-# - No other pattern properly handles the function or method, or
-#
-# - The pattern specifies functions that should all return the same value.
-#   For example, all ast tree traversers should have the same signatures.
-#
-# It may be unwise to use .* in this section, but the choice is yours.
+# The returns are inherent in the design of make_stub_files.py:
+AstFormatter.do_*: str
+StubFormatter.do_*: str
+StubTraverser.do_*: str
 
-[Argument Patterns]
+# Test of regex pattern.
+.*__hash__$: int
 
-# The regex patterns in this section apply only when assigning types
-# to *arguments* to functions or methods. Patterns match argument names.
-# Typically, most patterns can be put [General Patterns] section instead.
+# Pattern.all_matches: Sequence
+# Pattern.full_balanced_match: Optional[int]
+# Pattern.match_balanced: int
+# Pattern.match_entire_string: bool
+# StandAloneMakeStubFile.scan_types: Dict[str, str]
+
+# StubTraverser.format_returns: str
+# StubTraverser.match_return_patterns: Tuple[bool,str]
+# StubTraverser.match_return_pattern: Optional[str]
+# StubTraverser.match_balanced: int
 
 [General Patterns]
 
-# The patterns in this section may be either regex or balanced patterns.
-# Patterns in this section are applied both to arguments and return expressions.
-# These patterns are applied *once* to argument names and *repeatedly* to
-# return types until no further matches can be made.
-
-aList[1-3]?: Sequence
+# Declarations of names...
+NotImplemented: bool
+a: str
+aList: List[Any]
+comments: str
+controller: StandAloneMakeStubFile
+find_s: str
+fn: str
+found: str
+general_patterns: List[Pattern]
+group: str
+i1: int
+i2: int
 i: int
+j1: int
+j2: int
 j: int
-k: int
-node: ast.Ast
-s[1-3]?: str
+n1: int
+n2: int
+n: int
+name: str
+ndots: int
+node: Node
+parser: optparse.OptionParser
+patterns: List
+repl_s: str
+s: str
+s1: str
+s2: str
+# s[1-2]?$: str
+strict: bool
+trace: bool
+# New known functions
+endswith(*): bool 
 
-[Return Patterns]
+# Known functions...
+os.path.basename(*): str
+os.sep.join(*): str
+sep.join(*): str
+self.__eq__(*): bool
+self.__ne__(*): bool
+self.__gt__(*): bool
+self.__lt__(*): bool
+all(*): bool
+any(*): bool
 
-# The patterns in this section may be either regex or balanced patterns.
-# Patterns in this section are applied only to return expressions.
-# These patterns are applied *repeatedly* to return expressions
-# until no further matches can be made.
-
-# Balanced patterns...
-
+int(*): int
+hash(*): int
+len(*): int
 repr(*): str
-str.join(*): str
-str.replace(*): str
+sorted(*): str
 str%(*): str
-str%str: str
-
-# Regex patterns...
-
-.*__name__: str
+str.join(*): str
+str.join(*): str
+r[*]: str
+# Put this in the code.
+str[*]: str
+###.*\.__name__$: str
+###.*\.hash()$: int
 </t>
 <t tx="ekr.20160126165907.1">
 def finalize(self, fn):
@@ -2155,13 +2157,14 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
+-- update:
+    - use tabnanny to check incomming stub file.
+    - Create dict.
+
 - Update readme file with examples of return comments.
     - With and without --verbose.
     - The script is useful even without patterns.
 
---update.
-
-Later:
 *** Use this script on more Leo files.
 - If you want to understand this script, study it with Leo.
     - Create alternative views:
@@ -2398,28 +2401,27 @@ def cls(self):
 
 class Stub(object):
     '''
-    A class representing a stub: it's name, text, parent and children.
-    This class is a prerequisite for -- update.
+    A class representing all the generated stub for a class or def.
+    stub.full_name should represent the complete context of a def.
     '''
-    @others</t>
-<t tx="ekr.20160203073713.1">
-def __init__(self, kind, name, parent, stack):
-    '''Stub ctor.'''
-    self.children = []
-    self.kind = kind
-    self.name = name
-    self.out_list = []
-    self.parent = parent
-    self.stack = stack # StubTraverser.context_stack.
-    if parent:
-        assert isinstance(parent, Stub)
-        parent.children.append(self)
-
-def __repr__(self):
-    '''Stub.__repr__.'''
-    return 'Stub: %s' % self.full_name()
+    def __init__(self, kind, name, parent=None, stack=None):
+        '''Stub ctor.'''
+        self.children = []
+        self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
+        self.kind = kind
+        self.name = name
+        self.out_list = []
+        self.parent = parent
+        self.stack = stack # StubTraverser.context_stack.
+        if parent:
+            assert isinstance(parent, Stub)
+            parent.children.append(self)
     
-__str__ = __repr__</t>
+    def __repr__(self):
+        '''Stub.__repr__.'''
+        return 'Stub: %s' % self.full_name
+        
+    __str__ = __repr__</t>
 <t tx="ekr.20160203074843.1">
 def init_parser(self, s):
     '''Add double back-slashes to all patterns starting with '['.'''
@@ -2602,22 +2604,6 @@ def __ge__(self, other):
 def __le__(self, other):
     return self.__eq__(other) or self.__lt__(other)
 </t>
-<t tx="ekr.20160203134704.1">
-def full_name(self):
-    '''
-    Return the full, unique description of this Stub.
-    This replaces the rich comparison operators.
-    '''
-    if self.stack:
-        return '%s.%s' % ('.'.join(self.stack), self.name)
-    else:
-        return self.name
-    ### Old code.
-    # if self.parent:
-        # return '%s.%s' % (self.parent.full_name(), self.name)
-    # else:
-        # return self.name
-</t>
 <t tx="ekr.20160203140342.1">
 def __hash__(self):
     '''Stub.__hash__'''
@@ -2781,6 +2767,8 @@ def make_op_name_dict(self):
 <t tx="ekr.20160204224242.1">
 def update(self, fn):
     '''Alter self.parent_stub so it contains only updated stubs.'''
+    trace_stubs = False
+    trace_new_stubs = True
     s = self.get_stub_file(fn)
     if not s.strip():
         return
@@ -2788,13 +2776,18 @@ def update(self, fn):
         # Tabs in stub files make it impossible to parse them reliably.
         g.trace('Can not update stub files containing tabs.')
         sys.exit(1)
-    stub = self.parse_stub_file(s)
+    d_old, stub = self.parse_stub_file(s)
     if not stub:
         return
-    self.trace_stubs(stub)
-    
-    # Compare the stub file with the stubs about to be written.
-    
+    if trace_stubs:
+        self.trace_stubs(stub)
+    # Find new stubs that are not in the old.
+    d_new = self.stubs_dict
+    new_stubs = [d_new.get(z) for z in d_new if z not in d_old]
+    if trace_new_stubs:
+        g.trace('new stubs...')
+        for z in new_stubs:
+            print(z.full_name)
     # Merge the old, unchanged, stubs with the new stubs.
 </t>
 <t tx="ekr.20160205053641.1">
@@ -2890,7 +2883,6 @@ def do_IfExp(self, node):
 <t tx="ekr.20160205060709.1">
 def get_stub_file(self, fn):
     '''Read the stub file into s.'''
-    g.trace(fn)
     if os.path.exists(fn):
         try:
             s = open(fn, 'r').read()
@@ -2907,33 +2899,65 @@ def parse_stub_file(self, s):
     '''
     Parse s, the contents of a stub file, into a tree of Stubs.
     
-    Parse the file by hand, so that --update can be run with Python 2.
+    Parse by hand, so that --update can be run with Python 2.
     '''
+    trace = False
+    if trace: g.trace()
     assert '\t' not in s
-    indent = ''
-    stub = root = Stub('root', 'update-root', parent=None, stack=[])
-    indent_stack = [indent]
+    d = {}
+    root = Stub('root', '&lt;root&gt;')
+    indent_stack = [-1] # To prevent the root from being popped.
     stub_stack = [root]
     lines = []
+    pat = re.compile(r'^([ ]*)(def|class)\s+([a-zA-Z_]+)(.*)')
     for line in g.splitLines(s):
-        line2 = line.lstrip()
-        is_class = line2.startswith('class')
-        is_def = line2.startswith('def')
-        if is_class or is_def:
-            kind = 'class' if is_class else 'def'
-            name = self.scan_name(line)
-            lws = len(line)-len(line2)
+        m = pat.match(line)
+        if m:
+            indent, kind, name, rest = (
+                len(m.group(1)), m.group(2), m.group(3), m.group(4))
+            old_indent = indent_stack[-1]
             # Terminate any previous lines.
-            ### stub.out_list = lines[:]
-            g.trace(lws, kind, name)
-            # stub = Stub(kind, name, parent, name_stack)
-            # if lws == indent:
-                # stub_stack.pop()
-                # stub_stack.append(stub)
-        else:
-            lines.append(line)
-    stub.lines = lines
-    return root
+            old_stub = stub_stack[-1]
+            old_stub.out_list = lines
+            if trace:
+                for s in lines:
+                    print('  '+s.rstrip())
+            lines = []
+            # Adjust the stacks.
+            if indent == old_indent:
+                stub_stack.pop()
+            elif indent &gt; old_indent:
+                indent_stack.append(indent)
+            else: # indent &lt; old_indent
+                # The indent_stack can't underflow because
+                # indent &gt;= 0 and indent_stack[0] &lt; 0
+                assert indent &gt;= 0
+                while indent &lt;= indent_stack[-1]:
+                    indent_stack.pop()
+                    old_stub = stub_stack.pop()
+                    assert old_stub != root
+                indent_stack.append(indent)
+            # Create and push the new stub *after* adjusting the stacks.
+            assert stub_stack
+            parent = stub_stack[-1]
+            stack = [z.name for z in stub_stack[1:]]
+            parent = stub_stack[-1]
+            stub = Stub(kind, name, parent, stack)
+            self.add_stub(d, stub)
+            stub_stack.append(stub)
+            if trace:
+                print('%s%5s %s %s' % (' '*indent, kind, name, rest))
+        elif not line.startswith('#'):
+            parent = stub_stack[-1]
+            if parent != root:
+                lines.append(line)
+    # Terminate the last stub.
+    old_stub = stub_stack[-1]
+    old_stub.out_list = lines
+    if trace:
+        for s in lines:
+            print('  '+s.rstrip())
+    return d, root
 </t>
 <t tx="ekr.20160205072101.1">
 def reduce_types(aList, name=None, newlines=False, trace=False):
@@ -3777,19 +3801,17 @@ C. Apply hard-coded patterns. Most such patterns will be in StubFormatter.do_Bin
 In retrospect, this lack of choice is what has kept the code simple, in spite of so much initial confusion. Heh, you could call it the invisible hand :-) Seriously, having no choice really does prevent bad choices.
 
 Imo, this is the proper way to understand the script. It is actually *very* simple.</t>
-<t tx="ekr.20160209102525.1"></t>
 <t tx="ekr.20160209103842.1"></t>
 <t tx="ekr.20160209104843.1">
 def trace_stubs(self, stub, level=0):
-    '''Trace all stubs in the given tree.'''
-    if stub.parent:
-        self.trace_stub(stub, level=level)
+    '''Trace the given stub and all its descendants.'''
+    indent = ' '*4*level
+    print('%s%5s %s' % (indent, stub.kind, stub.name))
+    for s in stub.out_list:
+        print('%s%s' % (indent, s.rstrip()))
     for child in stub.children:
-        self.trace_stub(child, level=level+1)
-        
-def trace_stub(self, stub, level):
-    '''Trace one stub at the given indentation level.'''
-    print('%s%s' % (' '*level*4, stub.description()))</t>
+        self.trace_stubs(child, level+1)
+</t>
 <t tx="ekr.20160209105301.1"></t>
 <t tx="ekr.20160209105448.1">
 def output_time_stamp(self):
@@ -3814,5 +3836,22 @@ def output_time_stamp(self):
     name = s[:i]
     # g.trace(repr(name), s.strip())
     return name</t>
+<t tx="ekr.20160209194832.1">def add_stub(self, d, stub):
+    '''Add the stub to d, checking that it does not exist.'''
+    trace = False
+    key = stub.full_name
+    assert key
+    if key in d:
+        g.trace('Ignoring duplicate entry for %s in %s' % (stub, tag))
+    else:
+        # Append the list
+        list_key = '*stub-list*'
+        aList = d.get(list_key,[])
+        aList.append(stub)
+        d [list_key] = aList
+        d [key] = stub
+        if trace:
+            caller = g.callers(2).split(',')[1]
+            g.trace('%17s %s' % (caller, stub.full_name))</t>
 </tnodes>
 </leo_file>

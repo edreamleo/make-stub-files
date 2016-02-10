@@ -1540,13 +1540,13 @@ class StandAloneMakeStubFile:
 
 class Stub(object):
     '''
-    A class representing a stub: it's name, text, parent and children.
-    This class is a prerequisite for -- update.
+    A class representing all the generated stub for a class or def.
+    stub.full_name should represent the complete context of a def.
     '''
-
-    def __init__(self, kind, name, parent, stack):
+    def __init__(self, kind, name, parent=None, stack=None):
         '''Stub ctor.'''
         self.children = []
+        self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
         self.kind = kind
         self.name = name
         self.out_list = []
@@ -1555,27 +1555,12 @@ class Stub(object):
         if parent:
             assert isinstance(parent, Stub)
             parent.children.append(self)
-
+    
     def __repr__(self):
         '''Stub.__repr__.'''
-        return 'Stub: %s' % self.full_name()
+        return 'Stub: %s' % self.full_name
         
     __str__ = __repr__
-
-    def full_name(self):
-        '''
-        Return the full, unique description of this Stub.
-        This replaces the rich comparison operators.
-        '''
-        if self.stack:
-            return '%s.%s' % ('.'.join(self.stack), self.name)
-        else:
-            return self.name
-        ### Old code.
-        # if self.parent:
-            # return '%s.%s' % (self.parent.full_name(), self.name)
-        # else:
-            # return self.name
 
 
 class StubFormatter (AstFormatter):
@@ -1867,12 +1852,13 @@ class StubTraverser (ast.NodeVisitor):
         sf = StubFormatter(controller=controller,traverser=self)
         self.format = sf.format
         self.arg_format = AstArgFormatter().format
-        ### self.in_function = False
         self.level = 0
         self.output_file = None
         self.parent_stub = None
         self.raw_format = AstFormatter().format
         self.returns = []
+        self.stubs_dict = {}
+            # Keys are stub.full_name's.  Values are stubs.
         self.warn_list = []
         # Copies of controller ivars...
         self.output_fn = x.output_fn
@@ -1891,6 +1877,23 @@ class StubTraverser (ast.NodeVisitor):
         self.general_patterns = x.general_patterns
         self.patterns_dict = x.patterns_dict
         
+    def add_stub(self, d, stub):
+        '''Add the stub to d, checking that it does not exist.'''
+        trace = False
+        key = stub.full_name
+        assert key
+        if key in d:
+            g.trace('Ignoring duplicate entry for %s in %s' % (stub, tag))
+        else:
+            # Append the list
+            list_key = '*stub-list*'
+            aList = d.get(list_key,[])
+            aList.append(stub)
+            d [list_key] = aList
+            d [key] = stub
+            if trace:
+                caller = g.callers(2).split(',')[1]
+                g.trace('%17s %s' % (caller, stub.full_name))
 
     def indent(self, s):
         '''Return s, properly indented.'''
@@ -1916,7 +1919,7 @@ class StubTraverser (ast.NodeVisitor):
         elif not dir_ or os.path.exists(dir_):
             t1 = time.clock()
             # Delayed output allows sorting.
-            self.parent_stub = Stub('root', 'Root', parent=None, stack=[])
+            self.parent_stub = Stub('root', '<root>')
             for z in self.prefix_lines or []:
                 self.parent_stub.out_list.append(z)
             self.visit(node)
@@ -1958,6 +1961,8 @@ class StubTraverser (ast.NodeVisitor):
 
     def update(self, fn):
         '''Alter self.parent_stub so it contains only updated stubs.'''
+        trace_stubs = False
+        trace_new_stubs = True
         s = self.get_stub_file(fn)
         if not s.strip():
             return
@@ -1965,18 +1970,22 @@ class StubTraverser (ast.NodeVisitor):
             # Tabs in stub files make it impossible to parse them reliably.
             g.trace('Can not update stub files containing tabs.')
             sys.exit(1)
-        stub = self.parse_stub_file(s)
+        d_old, stub = self.parse_stub_file(s)
         if not stub:
             return
-        self.trace_stubs(stub)
-        
-        # Compare the stub file with the stubs about to be written.
-        
+        if trace_stubs:
+            self.trace_stubs(stub)
+        # Find new stubs that are not in the old.
+        d_new = self.stubs_dict
+        new_stubs = [d_new.get(z) for z in d_new if z not in d_old]
+        if trace_new_stubs:
+            g.trace('new stubs...')
+            for z in new_stubs:
+                print(z.full_name)
         # Merge the old, unchanged, stubs with the new stubs.
 
     def get_stub_file(self, fn):
         '''Read the stub file into s.'''
-        g.trace(fn)
         if os.path.exists(fn):
             try:
                 s = open(fn, 'r').read()
@@ -1993,71 +2002,86 @@ class StubTraverser (ast.NodeVisitor):
         '''
         Parse s, the contents of a stub file, into a tree of Stubs.
         
-        Parse the file by hand, so that --update can be run with Python 2.
+        Parse by hand, so that --update can be run with Python 2.
         '''
+        trace = False
+        if trace: g.trace()
         assert '\t' not in s
-        indent = ''
-        stub = root = Stub('root', 'update-root', parent=None, stack=[])
-        indent_stack = [indent]
+        d = {}
+        root = Stub('root', '<root>')
+        indent_stack = [-1] # To prevent the root from being popped.
         stub_stack = [root]
         lines = []
+        pat = re.compile(r'^([ ]*)(def|class)\s+([a-zA-Z_]+)(.*)')
         for line in g.splitLines(s):
-            line2 = line.lstrip()
-            is_class = line2.startswith('class')
-            is_def = line2.startswith('def')
-            if is_class or is_def:
-                kind = 'class' if is_class else 'def'
-                name = self.scan_name(line)
-                lws = len(line)-len(line2)
+            m = pat.match(line)
+            if m:
+                indent, kind, name, rest = (
+                    len(m.group(1)), m.group(2), m.group(3), m.group(4))
+                old_indent = indent_stack[-1]
                 # Terminate any previous lines.
-                ### stub.out_list = lines[:]
-                g.trace(lws, kind, name)
-                # stub = Stub(kind, name, parent, name_stack)
-                # if lws == indent:
-                    # stub_stack.pop()
-                    # stub_stack.append(stub)
-            else:
-                lines.append(line)
-        stub.lines = lines
-        return root
-    def scan_name(self, s):
-        '''Return the class or def name in s.'''
-        s = s.strip()
-        if s.startswith('def'):
-            s = s[len('def'):]
-        elif s.startswith('class'):
-            s = s[len('class'):]
-        else:
-            assert False, s
-        s = s.strip()
-        i = 0
-        while i < len(s) and s[i] == '_' or s[i].isalnum():
-            i += 1
-        name = s[:i]
-        # g.trace(repr(name), s.strip())
-        return name
+                old_stub = stub_stack[-1]
+                old_stub.out_list = lines
+                if trace:
+                    for s in lines:
+                        print('  '+s.rstrip())
+                lines = []
+                # Adjust the stacks.
+                if indent == old_indent:
+                    stub_stack.pop()
+                elif indent > old_indent:
+                    indent_stack.append(indent)
+                else: # indent < old_indent
+                    # The indent_stack can't underflow because
+                    # indent >= 0 and indent_stack[0] < 0
+                    assert indent >= 0
+                    while indent <= indent_stack[-1]:
+                        indent_stack.pop()
+                        old_stub = stub_stack.pop()
+                        assert old_stub != root
+                    indent_stack.append(indent)
+                # Create and push the new stub *after* adjusting the stacks.
+                assert stub_stack
+                parent = stub_stack[-1]
+                stack = [z.name for z in stub_stack[1:]]
+                parent = stub_stack[-1]
+                stub = Stub(kind, name, parent, stack)
+                self.add_stub(d, stub)
+                stub_stack.append(stub)
+                if trace:
+                    print('%s%5s %s %s' % (' '*indent, kind, name, rest))
+            elif not line.startswith('#'):
+                parent = stub_stack[-1]
+                if parent != root:
+                    lines.append(line)
+        # Terminate the last stub.
+        old_stub = stub_stack[-1]
+        old_stub.out_list = lines
+        if trace:
+            for s in lines:
+                print('  '+s.rstrip())
+        return d, root
 
     def trace_stubs(self, stub, level=0):
-        '''Trace all stubs in the given tree.'''
-        if stub.parent:
-            self.trace_stub(stub, level=level)
+        '''Trace the given stub and all its descendants.'''
+        indent = ' '*4*level
+        print('%s%5s %s' % (indent, stub.kind, stub.name))
+        for s in stub.out_list:
+            print('%s%s' % (indent, s.rstrip()))
         for child in stub.children:
-            self.trace_stub(child, level=level+1)
-            
-    def trace_stub(self, stub, level):
-        '''Trace one stub at the given indentation level.'''
-        print('%s%s' % (' '*level*4, stub.description()))
+            self.trace_stubs(child, level+1)
 
     # ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
 
     def visit_ClassDef(self, node):
         
-        # First, enter the new context.
-        self.class_name_stack.append(node.name)
-        self.context_stack.append(node.name)
+        # Create the stub in the old context.
         old_stub = self.parent_stub
         self.parent_stub = Stub('class', node.name,old_stub, self.context_stack)
-
+        self.add_stub(self.stubs_dict, self.parent_stub)
+        # Enter the new context.
+        self.class_name_stack.append(node.name)
+        self.context_stack.append(node.name)
         # Format...
         if not node.name.startswith('_'):
             if node.bases:
@@ -2067,40 +2091,29 @@ class StubTraverser (ast.NodeVisitor):
             self.out('class %s%s:' % (node.name, s))
         # Visit...
         self.level += 1
-        ### old_in_function = self.in_function
-        ### self.in_function = False
-       
         for z in node.body:
             self.visit(z)
         self.context_stack.pop()
         self.class_name_stack.pop()
         self.level -= 1
-        ### self.in_function = old_in_function
         self.parent_stub = old_stub
 
     # FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
 
     def visit_FunctionDef(self, node):
-        
-        # 2016/02/09: We now generate stubs for *all* defs.
-        #             This is important for --update.
-            ###
-            # Do nothing if we are already in a function.
-            # We do not generate stubs for inner defs.
-            # if self.in_function: # or node.name.startswith('_'):
-                # return
-        # First, visit the function body.
-        self.returns = []
-        ### self.in_function = True
-        self.level += 1
-        self.context_stack.append(node.name)
+
+        # Create the stub in the old context.
         old_stub = self.parent_stub
         self.parent_stub = Stub('def', node.name, old_stub, self.context_stack)
+        self.add_stub(self.stubs_dict, self.parent_stub)
+        # Enter the new context.
+        self.returns = []
+        self.level += 1
+        self.context_stack.append(node.name)
         for z in node.body:
             self.visit(z)
         self.context_stack.pop()
         self.level -= 1
-        ### self.in_function = False
         # Format *after* traversing
         self.out('def %s(%s) -> %s' % (
             node.name,
