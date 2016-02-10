@@ -2154,7 +2154,7 @@ def is_known_type(s):
 
 -- update:
     - use tabnanny to check incomming stub file.
-    - Create dict.
+    - Simplify st.add_stub.
 
 - Update readme file with examples of return comments.
     - With and without --verbose.
