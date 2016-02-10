@@ -45,6 +45,11 @@
 <v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
 </v>
 <v t="ekr.20160209120102.1"><vh>st.scan_name</vh></v>
+<v t="ekr.20160210080150.1"><vh>Unused from st.add_stub</vh></v>
+<v t="ekr.20160210055145.1"><vh>class TestClass (not needed)</vh>
+<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
+<v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
+</v>
 </v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Test files</vh>
@@ -166,10 +171,10 @@
 </v>
 <v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
 </v>
-<v t="ekr.20160209105301.1"><vh>Add time-stamp</vh></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
+<v t="ekr.20160210083825.1"><vh>dump</vh></v>
 <v t="ekr.20160130034812.1"></v>
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
 <v t="ekr.20160207051316.1"></v>
@@ -309,13 +314,13 @@
 <v t="ekr.20160209105448.1"><vh>st.output_time_stamp</vh></v>
 <v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
 <v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
-<v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
+<v t="ekr.20160205060807.1"></v>
 <v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers</vh>
-<v t="ekr.20160210043910.1"><vh>st.find_parent_stub</vh></v>
+<v t="ekr.20160210043910.1"><vh>st.find_parent_stub (TO DO)</vh></v>
 <v t="ekr.20160210043933.1"><vh>st_find_stub</vh></v>
 <v t="ekr.20160210043957.1"><vh>st.sort_stubs_by_hierarchy</vh></v>
 </v>
-<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
+<v t="ekr.20160209104843.1"></v>
 </v>
 </v>
 <v t="ekr.20160126153212.87"></v>
@@ -330,13 +335,28 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160126153212.82"></v>
 <v t="ekr.20160210033447.1"><vh>@test --update</vh>
 <v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160203183228.1"></v>
 <v t="ekr.20160209105448.1"></v>
 <v t="ekr.20160204224242.1"></v>
 </v>
+<v t="ekr.20160205060807.1"></v>
+<v t="ekr.20160210081628.1"><vh>&lt;&lt; input strings &gt;&gt;</vh></v>
+<v t="ekr.20160210080720.1" a="M"><vh>@test st.parse_stub_file</vh>
+<v t="ekr.20160210092808.1"><vh>&lt;&lt; imports &gt;&gt;</vh></v>
+<v t="ekr.20160210081628.1"></v>
+<v t="ekr.20160210083825.1"></v>
+<v t="ekr.20160210082857.1"><vh>base classes</vh>
+<v t="ekr.20160126153212.3"></v>
+<v t="ekr.20160202165117.1"></v>
+<v t="ekr.20160126153212.80"></v>
+</v>
+<v t="ekr.20160203073604.1"></v>
+<v t="ekr.20160126153212.82"></v>
+</v>
+<v t="ekr.20160210043910.1"></v>
+<v t="ekr.20160210093137.1"><vh>checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2158,27 +2178,27 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
--- update:
+- Post: how to run unit tests.
+- Post: Rough edges re number types. Is reduce_numbers correct?
+- Post: study this script with Leo.
+        Create views for startup, operators, type reduction, --update.
 
 - Update readme file with examples of return comments.
     - With and without --verbose.
     - The script is useful even without patterns.
 
-*** Use this script on more Leo files.
-- If you want to understand this script, study it with Leo.
-    - Create alternative views:
-        - Startup code.
-        - Important operators.
-        - Type reduction.
 - Task oriented docs **after** --update.
+- Warn if regex pattern used in general patterns?
+
+Later: improve type reduction:
 - 2-pass reduce_types? More tests that patterns work in expected places.
-- Add use_regex switch.
-    - Warn if regex pattern used in general patterns.
-- Post: how to run unit tests.
 - Merge Tuple and List interiors in reduce_types.
-- Post: Rough edges re number types. Is reduce_numbers correct?
 - Add more binop patterns.
-*** When complete, fold this script back into Leo.</t>
+
+Leo stuff...
+* When complete, fold this script back into Leo.
+    Put make_stub_files.py in leo/external folder!.
+* Use this script on more Leo files.</t>
 <t tx="ekr.20160131175042.1">
 
 class TestClass:
@@ -2407,6 +2427,7 @@ class Stub(object):
         '''Stub ctor.'''
         self.children = []
         self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
+        # g.trace('===========', self.full_name)
         self.kind = kind
         self.name = name
         self.out_list = []
@@ -2764,22 +2785,24 @@ def make_op_name_dict(self):
     return d
 </t>
 <t tx="ekr.20160204224242.1">
-def update(self, fn, new_stubs):
+def update(self, fn, new_stubs, testing=True):
     '''
-    Merge the new_stubs tree with the old_stubs tree.
-     
-    new_stubs is the root of the stubs tree just read from the .py file.
-    old_stubs are the stubs read here from the corresponding .pyi file.
+    Merge the new_stubs tree with the old_stubs tree in fn (a .pyi file).
+    This code just sets up the call to merge_stubs which does the real work.
+
+    old_stubs is the stub tree (read here) from the the .pyi file.
+    new_stubs is the stub tree from the corresponding .py file.
     
-    Return a reference to the resulting tree. This will be the stub tree
-    from the .pyi file, or new_stubs on errors.
+    Return a reference to the resulting tree:
+    - **old_stubs** if all goes well.
+    - **new_stubs** on errors (or testing)
     
     When merging, preserve all *old* stubs *and* existing order:
     - Add only new stubs that do not exist in the old_stubs tree.
     - Add stubs only at the *end* of parent.children list.
     '''
-    trace_old_stubs = True
-    trace_new_stubs = True
+    trace_old_stubs = False
+    trace_new_stubs = False
     trace_update_stubs = True
     s = self.get_stub_file(fn)
     if not s or not s.strip():
@@ -2796,19 +2819,19 @@ def update(self, fn, new_stubs):
         self.trace_stubs(old_stubs, header='old stubs')
     if trace_new_stubs:
         self.trace_stubs(new_stubs, header='new stubs')
-    # Find new stubs that are not in the old.
+    # Find all new stubs that do not exist in the old stubs.
     d_new = self.stubs_dict
     update_list = [d_new.get(z) for z in d_new if z not in d_old]
     if trace_update_stubs:
-        g.trace('Adding these stubs to the old stubs...')
+        g.trace('Merging these new stubs into %s...' % fn)
         for z in update_list:
             print(z.full_name)
     # Merge the stubs in update_list into the old_stubs tree.
-    if 0: ### Not ready yet.
+    if testing:
+        return new_stubs
+    else:
         self.merge_stubs(update_list, old_stubs)
         return old_stubs
-    else:
-        return new_stubs
 </t>
 <t tx="ekr.20160205053641.1">
 # StubFormatter visitors for operators...
@@ -2922,7 +2945,6 @@ def parse_stub_file(self, s, root_name):
     Parse by hand, so that --update can be run with Python 2.
     '''
     trace = False
-    if trace: g.trace()
     assert '\t' not in s
     d = {}
     root = Stub(kind='root', name=root_name)
@@ -2941,7 +2963,7 @@ def parse_stub_file(self, s, root_name):
             old_stub.out_list = lines
             if trace:
                 for s in lines:
-                    print('  '+s.rstrip())
+                    g.trace('  '+s.rstrip())
             lines = []
             # Adjust the stacks.
             if indent == old_indent:
@@ -2966,7 +2988,7 @@ def parse_stub_file(self, s, root_name):
             self.add_stub(d, stub)
             stub_stack.append(stub)
             if trace:
-                print('%s%5s %s %s' % (' '*indent, kind, name, rest))
+                g.trace('%s%5s %s %s' % (' '*indent, kind, name, rest))
         elif not line.startswith('#'):
             parent = stub_stack[-1]
             if parent != root:
@@ -2976,7 +2998,7 @@ def parse_stub_file(self, s, root_name):
     old_stub.out_list = lines
     if trace:
         for s in lines:
-            print('  '+s.rstrip())
+            g.trace('  '+s.rstrip())
     return d, root
 </t>
 <t tx="ekr.20160205072101.1">
@@ -3822,19 +3844,20 @@ In retrospect, this lack of choice is what has kept the code simple, in spite of
 Imo, this is the proper way to understand the script. It is actually *very* simple.</t>
 <t tx="ekr.20160209103842.1"></t>
 <t tx="ekr.20160209104843.1">
-def trace_stubs(self, stub, header=None, level=-1):
-    '''Trace the given stub and all its descendants.'''
+def trace_stubs(self, stub, aList=None, header=None, level=-1):
+    '''Return a trace of the given stub and all its descendants.'''
     indent = ' '*4*max(0,level)
-    if level == -1 and header:
-        print('===== %s =====' % header)
+    if level == -1:
+        aList = ['===== %s...\n' % (header) if header else '']
     if level &gt; -1:
-        print('%s%s %s' % (indent, stub.kind, stub.name))
-    for s in stub.out_list[1:]:
-        print('%s%s' % (indent, s.rstrip()))
+        aList.append('%s%s %s' % (indent, stub.kind, stub.name))
+    for s in stub.out_list:
+        aList.append('%s%s' % (indent, s.rstrip()))
     for child in stub.children:
-        self.trace_stubs(child, level=level+1)
+        self.trace_stubs(child, level=level+1, aList=aList)
+    if level == -1:
+        return '\n'.join(aList) + '\n'
 </t>
-<t tx="ekr.20160209105301.1"></t>
 <t tx="ekr.20160209105448.1">
 def output_time_stamp(self):
     '''Put a time-stamp in the output file.'''
@@ -3858,29 +3881,29 @@ def output_time_stamp(self):
     name = s[:i]
     # g.trace(repr(name), s.strip())
     return name</t>
-<t tx="ekr.20160209194832.1">def add_stub(self, d, stub):
+<t tx="ekr.20160209194832.1">
+def add_stub(self, d, stub):
     '''Add the stub to d, checking that it does not exist.'''
-    trace = False
-    caller = g.callers(2).split(',')[1]
+    trace = False ; verbose = False
     key = stub.full_name
     assert key, caller
     if key in d:
+        caller = g.callers(2).split(',')[1]
         g.trace('Ignoring duplicate entry for %s in %s' % (stub, caller))
     else:
-        # Append the list
-        list_key = '*stub-list*'
-        aList = d.get(list_key,[])
-        aList.append(stub)
-        d [list_key] = aList
         d [key] = stub
-        if trace:
-            g.trace('%17s %s' % (caller, stub.full_name))</t>
+        if trace and verbose:
+            caller = g.callers(2).split(',')[1]
+            g.trace('%17s %s' % (caller, stub.full_name))
+        elif trace:
+            g.trace(stub.full_name)</t>
 <t tx="ekr.20160210033447.1"># To do:
 # Simplify st.add_stub.
 # 
 @others
 </t>
-<t tx="ekr.20160210041431.1">def merge_stubs(self, new_stubs, old_stubs):
+<t tx="ekr.20160210041431.1">
+def merge_stubs(self, new_stubs, old_stubs):
     '''
     Merge the new_stubs *list* into the old_stubs *tree*.
     - new_stubs is a list of Stubs from the .py file.
@@ -3897,9 +3920,12 @@ def output_time_stamp(self):
         # Now stub must exist in the tree.
         assert self.find_stub(self, old_stubs), stub
 </t>
-<t tx="ekr.20160210043910.1">def find_parent_stub(self, stub, stubs):
-    '''Return Stub's parent Stub in the given tree of Stubs.'''</t>
-<t tx="ekr.20160210043933.1">def find_stub(self, stub, stubs):
+<t tx="ekr.20160210043910.1">
+def find_parent_stub(self, stub, stubs):
+    '''Return Stub's parent Stub in the given tree of Stubs.'''
+    assert False ###</t>
+<t tx="ekr.20160210043933.1">
+def find_stub(self, stub, stubs):
     '''Return True if stub is the tree whose root is stubs.'''
     if stub.full_name == stubs.full_name:
         return True
@@ -3908,7 +3934,8 @@ def output_time_stamp(self):
             return True
     return False
 </t>
-<t tx="ekr.20160210043957.1">def sort_stubs_by_hierarchy(self, stubs1):
+<t tx="ekr.20160210043957.1">
+def sort_stubs_by_hierarchy(self, stubs1):
     '''
     Sort the list of Stubs so that parents appear before all their
     descendants.
@@ -3930,5 +3957,74 @@ def output_time_stamp(self):
     g.trace('can not happen: unbounded sort')
     return [] # Abort the merge.
 </t>
+<t tx="ekr.20160210055145.1"># Not needed: use the real StubTraverser class.
+class TestUpdate:
+    '''A faux class for stateless StubTraverser methods.'''
+    @others</t>
+<t tx="ekr.20160210080150.1">
+    # Append the list
+    list_key = '*stub-list*'
+    aList = d.get(list_key,[])
+    aList.append(stub)
+    d [list_key] = aList
+</t>
+<t tx="ekr.20160210080720.1">'''Test framework for st.update and helpers.'''
+# This is a leo script. g is the  *real* g.
+g.cls()
+&lt;&lt; imports &gt;&gt;
+&lt;&lt; input strings &gt;&gt;
+@others
+# g.NullObject is a proxy for StandAloneMakeStubFile, per Python Cookbook.
+st = StubTraverser(controller=g.NullObject())
+i = 0
+for s in input_strings:
+    # To do: Round-trip tests!
+    s = g.adjustTripleString(s, tab_width=-4)
+    dump('input string %s' % (i), s)
+    d, stubs = st.parse_stub_file(s, root_name='&lt;test-root&gt;')
+    if 1:
+        dump('stub_d')
+        for z in sorted(d):
+            print('%30s %s' % (z, d.get(z)))
+        print('')
+    print(st.trace_stubs(stubs, header='trace_stubs'))
+    i += 1
+</t>
+<t tx="ekr.20160210081628.1">input_strings = [
+# '''
+# def is_known_type(s: str) -&gt; Union[Any,bool]: ...
+# def main() -&gt; None: ...
+# def merge_types(a1: Any, a2: Any) -&gt; str: ...
+# def pdb(self) -&gt; None: ...
+# def reduce_numbers(aList: List[Any]) -&gt; List[Any]: ...
+# def reduce_types(aList: List[Any], name: str=None, newlines: Any=False, trace: bool=False) -&gt; Any: ...
+# ''',
+
+'''
+class AstFormatter:
+    def format(self, node: Node) -&gt; Union[Any,str]: ...
+    def visit(self, node: Node) -&gt; str: ...
+    def do_ClassDef(self, node: Node) -&gt; str: ...
+    def do_FunctionDef(self, node: Node) -&gt; str: ...
+''',
+]
+
+</t>
+<t tx="ekr.20160210082857.1"></t>
+<t tx="ekr.20160210083825.1">
+def dump(title, s=None):
+    if s:
+        print('===== %s...\n%s\n' % (title, s.rstrip()))
+    else:
+        print('===== %s...\n' % title)
+</t>
+<t tx="ekr.20160210092808.1">import ast
+import re</t>
+<t tx="ekr.20160210093137.1">Added @test st.parse_stub_file, a sweet test bed for recent work.
+- Added dump top-level function.
+- Improved tracing in st.add_stub.
+- Improved docstring and trancing in st.update.
+- Improved tracing in st.parse_stub_file.
+- Improved st.trace_stubs: it now returns its result rather than printing it.</t>
 </tnodes>
 </leo_file>

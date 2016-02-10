@@ -29,6 +29,12 @@ import sys
 
 # Top-level functions
 
+def dump(title, s=None):
+    if s:
+        print('===== %s...\n%s\n' % (title, s.rstrip()))
+    else:
+        print('===== %s...\n' % title)
+
 def is_known_type(s):
     '''
     Return True if s is nothing but a single known type.
@@ -1547,6 +1553,7 @@ class Stub(object):
         '''Stub ctor.'''
         self.children = []
         self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
+        # g.trace('===========', self.full_name)
         self.kind = kind
         self.name = name
         self.out_list = []
@@ -1876,23 +1883,22 @@ class StubTraverser (ast.NodeVisitor):
         self.general_patterns = x.general_patterns
         self.patterns_dict = x.patterns_dict
         
+
     def add_stub(self, d, stub):
         '''Add the stub to d, checking that it does not exist.'''
-        trace = False
-        caller = g.callers(2).split(',')[1]
+        trace = False ; verbose = False
         key = stub.full_name
         assert key, caller
         if key in d:
+            caller = g.callers(2).split(',')[1]
             g.trace('Ignoring duplicate entry for %s in %s' % (stub, caller))
         else:
-            # Append the list
-            list_key = '*stub-list*'
-            aList = d.get(list_key,[])
-            aList.append(stub)
-            d [list_key] = aList
             d [key] = stub
-            if trace:
+            if trace and verbose:
+                caller = g.callers(2).split(',')[1]
                 g.trace('%17s %s' % (caller, stub.full_name))
+            elif trace:
+                g.trace(stub.full_name)
 
     def indent(self, s):
         '''Return s, properly indented.'''
@@ -1954,22 +1960,24 @@ class StubTraverser (ast.NodeVisitor):
             self.output_file.write('# make_stub_files: %s\n' %
                 time.strftime("%a %d %b %Y at %H:%M:%S"))
 
-    def update(self, fn, new_stubs):
+    def update(self, fn, new_stubs, testing=True):
         '''
-        Merge the new_stubs tree with the old_stubs tree.
-         
-        new_stubs is the root of the stubs tree just read from the .py file.
-        old_stubs are the stubs read here from the corresponding .pyi file.
+        Merge the new_stubs tree with the old_stubs tree in fn (a .pyi file).
+        This code just sets up the call to merge_stubs which does the real work.
+
+        old_stubs is the stub tree (read here) from the the .pyi file.
+        new_stubs is the stub tree from the corresponding .py file.
         
-        Return a reference to the resulting tree. This will be the stub tree
-        from the .pyi file, or new_stubs on errors.
+        Return a reference to the resulting tree:
+        - **old_stubs** if all goes well.
+        - **new_stubs** on errors (or testing)
         
         When merging, preserve all *old* stubs *and* existing order:
         - Add only new stubs that do not exist in the old_stubs tree.
         - Add stubs only at the *end* of parent.children list.
         '''
-        trace_old_stubs = True
-        trace_new_stubs = True
+        trace_old_stubs = False
+        trace_new_stubs = False
         trace_update_stubs = True
         s = self.get_stub_file(fn)
         if not s or not s.strip():
@@ -1986,19 +1994,19 @@ class StubTraverser (ast.NodeVisitor):
             self.trace_stubs(old_stubs, header='old stubs')
         if trace_new_stubs:
             self.trace_stubs(new_stubs, header='new stubs')
-        # Find new stubs that are not in the old.
+        # Find all new stubs that do not exist in the old stubs.
         d_new = self.stubs_dict
         update_list = [d_new.get(z) for z in d_new if z not in d_old]
         if trace_update_stubs:
-            g.trace('Adding these stubs to the old stubs...')
+            g.trace('Merging these new stubs into %s...' % fn)
             for z in update_list:
                 print(z.full_name)
         # Merge the stubs in update_list into the old_stubs tree.
-        if 0: ### Not ready yet.
+        if testing:
+            return new_stubs
+        else:
             self.merge_stubs(update_list, old_stubs)
             return old_stubs
-        else:
-            return new_stubs
 
     def get_stub_file(self, fn):
         '''Read the stub file into s.'''
@@ -2020,7 +2028,6 @@ class StubTraverser (ast.NodeVisitor):
         Parse by hand, so that --update can be run with Python 2.
         '''
         trace = False
-        if trace: g.trace()
         assert '\t' not in s
         d = {}
         root = Stub(kind='root', name=root_name)
@@ -2039,7 +2046,7 @@ class StubTraverser (ast.NodeVisitor):
                 old_stub.out_list = lines
                 if trace:
                     for s in lines:
-                        print('  '+s.rstrip())
+                        g.trace('  '+s.rstrip())
                 lines = []
                 # Adjust the stacks.
                 if indent == old_indent:
@@ -2064,7 +2071,7 @@ class StubTraverser (ast.NodeVisitor):
                 self.add_stub(d, stub)
                 stub_stack.append(stub)
                 if trace:
-                    print('%s%5s %s %s' % (' '*indent, kind, name, rest))
+                    g.trace('%s%5s %s %s' % (' '*indent, kind, name, rest))
             elif not line.startswith('#'):
                 parent = stub_stack[-1]
                 if parent != root:
@@ -2074,8 +2081,9 @@ class StubTraverser (ast.NodeVisitor):
         old_stub.out_list = lines
         if trace:
             for s in lines:
-                print('  '+s.rstrip())
+                g.trace('  '+s.rstrip())
         return d, root
+
     def merge_stubs(self, new_stubs, old_stubs):
         '''
         Merge the new_stubs *list* into the old_stubs *tree*.
@@ -2092,8 +2100,11 @@ class StubTraverser (ast.NodeVisitor):
             parent.children.append(stub)
             # Now stub must exist in the tree.
             assert self.find_stub(self, old_stubs), stub
+
     def find_parent_stub(self, stub, stubs):
         '''Return Stub's parent Stub in the given tree of Stubs.'''
+        assert False ###
+
     def find_stub(self, stub, stubs):
         '''Return True if stub is the tree whose root is stubs.'''
         if stub.full_name == stubs.full_name:
@@ -2102,6 +2113,7 @@ class StubTraverser (ast.NodeVisitor):
             if self.find_stub(stub, child):
                 return True
         return False
+
     def sort_stubs_by_hierarchy(self, stubs1):
         '''
         Sort the list of Stubs so that parents appear before all their
@@ -2124,17 +2136,19 @@ class StubTraverser (ast.NodeVisitor):
         g.trace('can not happen: unbounded sort')
         return [] # Abort the merge.
 
-    def trace_stubs(self, stub, header=None, level=-1):
-        '''Trace the given stub and all its descendants.'''
+    def trace_stubs(self, stub, aList=None, header=None, level=-1):
+        '''Return a trace of the given stub and all its descendants.'''
         indent = ' '*4*max(0,level)
-        if level == -1 and header:
-            print('===== %s =====' % header)
+        if level == -1:
+            aList = ['===== %s...\n' % (header) if header else '']
         if level > -1:
-            print('%s%s %s' % (indent, stub.kind, stub.name))
-        for s in stub.out_list[1:]:
-            print('%s%s' % (indent, s.rstrip()))
+            aList.append('%s%s %s' % (indent, stub.kind, stub.name))
+        for s in stub.out_list:
+            aList.append('%s%s' % (indent, s.rstrip()))
         for child in stub.children:
-            self.trace_stubs(child, level=level+1)
+            self.trace_stubs(child, level=level+1, aList=aList)
+        if level == -1:
+            return '\n'.join(aList) + '\n'
 
     # ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
 
