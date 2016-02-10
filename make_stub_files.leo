@@ -102,11 +102,30 @@
 <v t="ekr.20160207133035.1"><vh>&lt;&lt; define show &gt;&gt;</vh></v>
 </v>
 </v>
-<v t="ekr.20160207115947.1"><vh>@test truncate</vh>
-<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
-</v>
 <v t="ekr.20160207162818.1"><vh>@test split_types</vh>
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
+</v>
+<v t="ekr.20160210112945.1" a="M"><vh>@test Stub class</vh>
+<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
+<v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
+<v t="ekr.20160203095618.2"><vh>g._callerName</vh></v>
+<v t="ekr.20160203095618.1"><vh>g.callers</vh></v>
+<v t="ekr.20160202170529.1"><vh>g.cls</vh></v>
+<v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
+<v t="ekr.20160203183934.1"><vh>g.shortFileName</vh></v>
+<v t="ekr.20160206101140.1"><vh>g.splitLines</vh></v>
+<v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
+</v>
+<v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
+<v t="ekr.20160210134702.1"><vh>stub.__ctor__</vh></v>
+<v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
+<v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
+<v t="ekr.20160210111955.1"><vh>stub.__repr__and __str__</vh></v>
+<v t="ekr.20160210132520.1"><vh>stub.parents and level</vh></v>
+</v>
+</v>
+<v t="ekr.20160207115947.1"><vh>@test truncate</vh>
+<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
 </v>
 </v>
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
@@ -165,7 +184,7 @@
 <v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
 </v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
-<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
+<v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
 <v t="ekr.20160210083825.1"><vh>dump</vh></v>
 <v t="ekr.20160130034812.1"></v>
@@ -260,15 +279,7 @@
 <v t="ekr.20160202165117.1"><vh>class AstArgFormatter (AstFormatter)</vh>
 <v t="ekr.20160202165143.1"><vh>sf.Constants &amp; Name</vh></v>
 </v>
-<v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
-<v t="ekr.20160203095618.2"><vh>g._callerName</vh></v>
-<v t="ekr.20160203095618.1"><vh>g.callers</vh></v>
-<v t="ekr.20160202170529.1"><vh>g.cls</vh></v>
-<v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
-<v t="ekr.20160203183934.1"><vh>g.shortFileName</vh></v>
-<v t="ekr.20160206101140.1"><vh>g.splitLines</vh></v>
-<v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
-</v>
+<v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160128041938.1"></v>
 <v t="ekr.20160126153212.73"><vh>class StandAloneMakeStubFile</vh>
 <v t="ekr.20160126153212.74"><vh>msf.ctor</vh></v>
@@ -288,11 +299,7 @@
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
-<v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
-<v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
-<v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
-<v t="ekr.20160210111955.1"><vh>stub.__repr__and __str__</vh></v>
-</v>
+<v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
 <v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
@@ -337,13 +344,11 @@
 <v t="ekr.20160210112711.1"><vh>later</vh></v>
 <v t="ekr.20160210112727.1"><vh>Leo stuff</vh></v>
 </v>
-<v t="ekr.20160205060807.1"></v>
-<v t="ekr.20160210081628.1"><vh>&lt;&lt; input strings &gt;&gt;</vh></v>
 <v t="ekr.20160210043910.1"></v>
 <v t="ekr.20160210043933.1"></v>
 <v t="ekr.20160210080720.1"><vh>@test --update</vh>
-<v t="ekr.20160210092808.1"><vh>&lt;&lt; imports &gt;&gt;</vh></v>
-<v t="ekr.20160210081628.1"></v>
+<v t="ekr.20160203075612.1"></v>
+<v t="ekr.20160210081628.1"><vh>&lt;&lt; input strings &gt;&gt;</vh></v>
 <v t="ekr.20160210083825.1"></v>
 <v t="ekr.20160210082857.1"><vh>base classes</vh>
 <v t="ekr.20160126153212.3"></v>
@@ -354,11 +359,8 @@
 <v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.82"></v>
 </v>
-<v t="ekr.20160210112945.1" a="M"><vh>@test Stub == and in</vh>
-<v t="ekr.20160210113722.1"><vh>&lt;&lt; imports &gt;&gt;</vh></v>
-<v t="ekr.20160131180118.1"></v>
-<v t="ekr.20160203073604.1"></v>
-</v>
+<v t="ekr.20160210043957.1"></v>
+<v t="ekr.20160210112945.1" a="M"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2180,6 +2182,8 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
+- Stub.parents() and Stub.level() methods.
+
 *** What to do about non-comment lines between subs??
     I fear the user will be surprised.
 
@@ -2410,18 +2414,7 @@ class Stub(object):
     A class representing all the generated stub for a class or def.
     stub.full_name should represent the complete context of a def.
     '''
-    def __init__(self, kind, name, parent=None, stack=None):
-        '''Stub ctor.'''
-        self.children = []
-        self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
-        self.kind = kind
-        self.name = name
-        self.out_list = []
-        self.parent = parent
-        self.stack = stack # StubTraverser.context_stack.
-        if parent:
-            assert isinstance(parent, Stub)
-            parent.children.append(self)
+    @others
 </t>
 <t tx="ekr.20160203074843.1">
 def init_parser(self, s):
@@ -2545,8 +2538,8 @@ def get_config_string(self):
 <t tx="ekr.20160203130235.1">
 def __eq__(self, obj):
     '''
-    Stub.__eq__. Return ordering among siblings.
-    Important: equality must *ignore* everythign except full_name.
+    Stub.__eq__. Return whether two stubs refer to the same method.
+    Do *not* test parent links. That would interfere with --update logic.
     '''
     if isinstance(obj, Stub):
         return self.full_name == obj.full_name and self.kind == obj.kind
@@ -2610,7 +2603,7 @@ def __le__(self, other):
 </t>
 <t tx="ekr.20160203140342.1">
 def __hash__(self):
-    '''Stub.__hash__. Equality depends *only* on full_name and kind'''
+    '''Stub.__hash__. Equality depends *only* on full_name and kind.'''
     return len(self.kind) + sum([ord(z) for z in self.full_name])</t>
 <t tx="ekr.20160203154154.1">
     name1 = self.parent.full_name() if self.parent else None
@@ -3904,17 +3897,12 @@ def sort_stubs_by_hierarchy(self, stubs1):
     Sort the list of Stubs so that parents appear before all their
     descendants.
     '''
-    
-    def level(stub):
-        parents = stub.full_name.split('.')
-        return len(parents) - 1
-        
     stubs, result = stubs1[:], []
     for i in range(50):
         if not stubs:
             return result
         # Add all stubs with i parents to the results.
-        found = [z for z in stubs if level(z) == i]
+        found = [z for z in stubs if z.level() == i]
         result.extend(found)
         for z in found:
             stubs.remove(z)
@@ -3929,13 +3917,14 @@ When this node is marked, you may run this script with Alt-5.
 &lt;&lt; input strings &gt;&gt;
 @others
 leo_g = g # needed only to adjust for Leo's indentation.
-g = LeoGlobals() # Make sure we use the correct g.
+g = LeoGlobals() # Use the g available to the script.
 g.cls()
 # g.NullObject is a proxy for StandAloneMakeStubFile, per Python Cookbook.
 st = StubTraverser(controller=leo_g.NullObject())
 i = 0
+################ Test between-stub lines and leading lines.
 for s in input_strings:
-    # To do: Round-trip tests!
+    ################## To do: Round-trip tests!
     s = leo_g.adjustTripleString(s, tab_width=-4)
     dump('input string %s' % (i), s)
     d, stubs = st.parse_stub_file(s, root_name='&lt;test-root&gt;')
@@ -3975,10 +3964,6 @@ def dump(title, s=None):
     else:
         print('===== %s...\n' % title)
 </t>
-<t tx="ekr.20160210092808.1">import ast
-import os
-import re
-import sys</t>
 <t tx="ekr.20160210111955.1">
 def __repr__(self):
     '''Stub.__repr__.'''
@@ -3995,34 +3980,81 @@ __str__ = __repr__</t>
 <t tx="ekr.20160210112727.1">* When complete, fold this script back into Leo.
     Put make_stub_files.py in leo/external folder!
 
-* Use this script on more Leo files.</t>
-<t tx="ekr.20160210112748.1">*** Task oriented docs **after** --update.
+* Use this script on more Leo files.
+
+** How to show git diffs involving Leo files?</t>
+<t tx="ekr.20160210112748.1">--update announcement: take precausions: it's more dangerous.
+
+*** Task oriented docs **after** --update.
 
 - Post: how to run unit tests.
 
 - Post: Rough edges re number types. Is reduce_numbers correct?
 
 - Post: study this script with Leo.
+
+- Post: thanks!
         
 Update readme file with examples of return comments.
 - With and without --verbose.
 - The script is useful even without patterns.</t>
 <t tx="ekr.20160210112945.1">&lt;&lt; imports &gt;&gt;
-
 @others
-leo_g = g # needed only to adjust for Leo's indentation.
-g = LeoGlobals() # Make sure we use the correct g.
+g = LeoGlobals() # Use the g available to the script.
 g.cls()
+# Test equality...
 stub1 = Stub(kind='def', name='foo')
 stub2 = Stub(kind='class', name='foo')
 stub3 = Stub(kind='def', name='bar')
+stub4 = Stub(kind='def', name='foo')
+stub4.out_list = ['xyzzy']
+    # Contents of out_list must not affect equality!
 aList = [stub1, stub3]
-assert stub1 != stub2, (stub1, stub2)
-assert stub1 != stub3, (stub1, stub3)
+assert stub1 != stub2
+assert stub1 != stub3
+assert stub1 == stub4
 assert stub1 in aList
 assert stub2 not in aList
-assert stub3 in aList</t>
-<t tx="ekr.20160210113722.1">import os
-import sys</t>
+assert stub3 in aList
+# Test __hash__
+d = {stub1: 'stub1'}
+assert stub1 in d
+assert stub2 not in d
+# Test parents and level.
+stub_1 = Stub(kind='def', name='stub_1')
+stub_2 = Stub(kind='def', name='stub_2', parent=stub_1, stack=['stub_1'])
+stub_3 = Stub(kind='def', name='stub_3', parent=stub_2, stack=['stub_1', 'stub_2'])
+assert stub_1.parents() == [], stub_1.parents()
+assert stub_2.parents() == ['stub_1'], stub_2.parents()
+assert stub_3.parents() == ['stub_1', 'stub_2'], stub_3.parents()
+assert stub_1.level() == 0
+assert stub_2.level() == 1
+assert stub_3.level() == 2
+</t>
+<t tx="ekr.20160210132520.1">
+def level(self):
+    '''Return the number of parents.'''
+    return len(self.parents())
+    
+def parents(self):
+    '''Return a list of this stub's parents.'''
+    return self.full_name.split('.')[:-1]
+</t>
+<t tx="ekr.20160210134702.1">
+def __init__(self, kind, name, parent=None, stack=None):
+    '''Stub ctor. Equality depends only on full_name and kind.'''
+    self.children = []
+    self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
+    self.kind = kind
+    self.name = name
+    self.out_list = []
+    self.parent = parent
+    self.stack = stack # StubTraverser.context_stack.
+    if stack:
+        assert stack[-1] == parent.name, (stack[-1], parent.name)
+    if parent:
+        assert isinstance(parent, Stub)
+        parent.children.append(self)
+</t>
 </tnodes>
 </leo_file>

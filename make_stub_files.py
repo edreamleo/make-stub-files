@@ -1549,8 +1549,9 @@ class Stub(object):
     A class representing all the generated stub for a class or def.
     stub.full_name should represent the complete context of a def.
     '''
+
     def __init__(self, kind, name, parent=None, stack=None):
-        '''Stub ctor.'''
+        '''Stub ctor. Equality depends only on full_name and kind.'''
         self.children = []
         self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
         self.kind = kind
@@ -1558,33 +1559,43 @@ class Stub(object):
         self.out_list = []
         self.parent = parent
         self.stack = stack # StubTraverser.context_stack.
+        if stack:
+            assert stack[-1] == parent.name, (stack[-1], parent.name)
         if parent:
             assert isinstance(parent, Stub)
             parent.children.append(self)
 
-def __eq__(self, obj):
-    '''
-    Stub.__eq__. Return ordering among siblings.
-    Important: equality must *ignore* everythign except full_name.
-    '''
-    if isinstance(obj, Stub):
-        return self.full_name == obj.full_name and self.kind == obj.kind
-    else:
-        return NotImplemented
+    def __eq__(self, obj):
+        '''
+        Stub.__eq__. Return whether two stubs refer to the same method.
+        Do *not* test parent links. That would interfere with --update logic.
+        '''
+        if isinstance(obj, Stub):
+            return self.full_name == obj.full_name and self.kind == obj.kind
+        else:
+            return NotImplemented
 
-def __ne__(self, obj):
-    """Stub.__ne__"""
-    return not self.__eq__(obj)
+    def __ne__(self, obj):
+        """Stub.__ne__"""
+        return not self.__eq__(obj)
 
-def __hash__(self):
-    '''Stub.__hash__. Equality depends *only* on full_name and kind'''
-    return len(self.kind) + sum([ord(z) for z in self.full_name])
+    def __hash__(self):
+        '''Stub.__hash__. Equality depends *only* on full_name and kind.'''
+        return len(self.kind) + sum([ord(z) for z in self.full_name])
 
-def __repr__(self):
-    '''Stub.__repr__.'''
-    return 'Stub: %s' % self.full_name
-    
-__str__ = __repr__
+    def __repr__(self):
+        '''Stub.__repr__.'''
+        return 'Stub: %s' % self.full_name
+        
+    __str__ = __repr__
+
+    def level(self):
+        '''Return the number of parents.'''
+        return len(self.parents())
+        
+    def parents(self):
+        '''Return a list of this stub's parents.'''
+        return self.full_name.split('.')[:-1]
 
 
 class StubFormatter (AstFormatter):
@@ -2141,17 +2152,12 @@ class StubTraverser (ast.NodeVisitor):
         Sort the list of Stubs so that parents appear before all their
         descendants.
         '''
-        
-        def level(stub):
-            parents = stub.full_name.split('.')
-            return len(parents) - 1
-            
         stubs, result = stubs1[:], []
         for i in range(50):
             if not stubs:
                 return result
             # Add all stubs with i parents to the results.
-            found = [z for z in stubs if level(z) == i]
+            found = [z for z in stubs if z.level() == i]
             result.extend(found)
             for z in found:
                 stubs.remove(z)
