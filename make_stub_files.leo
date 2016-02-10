@@ -35,24 +35,17 @@
 </v>
 <v t="ekr.20160126153016.3"><vh>Unused</vh>
 <v t="ekr.20160203134203.1"><vh>pattern.__gt/lt/ge/le__</vh></v>
-<v t="ekr.20160203154154.1"><vh>from Stub.__gt__</vh></v>
-<v t="ekr.20160202061118.1"><vh>sf.visit (Main Line)</vh></v>
-<v t="ekr.20160202064553.1"><vh>sf.match (to be removed)</vh></v>
-<v t="ekr.20160208162138.1"><vh>from st.Call</vh></v>
+<v t="ekr.20160202061118.1"><vh>sf.visit (attempts all matches on all nodes)</vh></v>
+<v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
+<v t="ekr.20160208162138.1"><vh>from st.Call (failed experiment)</vh></v>
 <v t="ekr.20160209103842.1"><vh>Unused from Stub</vh>
-<v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
 <v t="ekr.20160203134611.1"><vh>stub.__gt/lt/ge/le__</vh></v>
-<v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
-</v>
-<v t="ekr.20160209120102.1"><vh>st.scan_name</vh></v>
-<v t="ekr.20160210080150.1"><vh>Unused from st.add_stub</vh></v>
-<v t="ekr.20160210055145.1"><vh>class TestClass (not needed)</vh>
-<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
-<v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
+<v t="ekr.20160203154154.1"><vh>from Stub.__gt__</vh></v>
 </v>
 </v>
 </v>
-<v t="ekr.20160128154704.1"><vh>Test files</vh>
+<v t="ekr.20160128154704.1"><vh>Files</vh>
+<v t="ekr.20160210112634.1"><vh>Test files</vh>
 <v t="ekr.20160128154715.1"><vh>@clean test/test_msf.py</vh>
 <v t="ekr.20160128190252.1"><vh>setUp</vh></v>
 <v t="ekr.20160128190112.1"><vh>test_pattern_class</vh></v>
@@ -72,6 +65,7 @@
 <v t="ekr.20160126153921.1"><vh>@edit README.md</vh></v>
 <v t="ekr.20160207101607.1"><vh>@edit theory.md</vh></v>
 <v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
+</v>
 </v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types (not used)</vh>
@@ -115,7 +109,6 @@
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
 </v>
 </v>
-<v t="ekr.20160131174909.1"><vh>** to do</vh></v>
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
 <v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
@@ -295,7 +288,11 @@
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
-<v t="ekr.20160203073604.1"><vh>class Stub(object)</vh></v>
+<v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
+<v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
+<v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
+<v t="ekr.20160210111955.1"><vh>stub.__repr__and __str__</vh></v>
+</v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
 <v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
@@ -314,13 +311,13 @@
 <v t="ekr.20160209105448.1"><vh>st.output_time_stamp</vh></v>
 <v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
 <v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
-<v t="ekr.20160205060807.1"></v>
+<v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
 <v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers</vh>
 <v t="ekr.20160210043910.1"><vh>st.find_parent_stub (Test)</vh></v>
 <v t="ekr.20160210043933.1"><vh>st.find_stub (Test)</vh></v>
 <v t="ekr.20160210043957.1"><vh>st.sort_stubs_by_hierarchy</vh></v>
 </v>
-<v t="ekr.20160209104843.1"></v>
+<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
 </v>
 </v>
 <v t="ekr.20160126153212.87"></v>
@@ -335,22 +332,33 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
+<v t="ekr.20160131174909.1"><vh>** to do</vh>
+<v t="ekr.20160210112748.1"><vh>Posts &amp; docs</vh></v>
+<v t="ekr.20160210112711.1"><vh>later</vh></v>
+<v t="ekr.20160210112727.1"><vh>Leo stuff</vh></v>
+</v>
 <v t="ekr.20160205060807.1"></v>
 <v t="ekr.20160210081628.1"><vh>&lt;&lt; input strings &gt;&gt;</vh></v>
-<v t="ekr.20160210080720.1" a="M"><vh>@test st.parse_stub_file</vh>
+<v t="ekr.20160210043910.1"></v>
+<v t="ekr.20160210043933.1"></v>
+<v t="ekr.20160210080720.1"><vh>@test --update</vh>
 <v t="ekr.20160210092808.1"><vh>&lt;&lt; imports &gt;&gt;</vh></v>
 <v t="ekr.20160210081628.1"></v>
 <v t="ekr.20160210083825.1"></v>
 <v t="ekr.20160210082857.1"><vh>base classes</vh>
 <v t="ekr.20160126153212.3"></v>
 <v t="ekr.20160202165117.1"></v>
+<v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160126153212.80"></v>
 </v>
 <v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.82"></v>
 </v>
-<v t="ekr.20160210043910.1"></v>
-<v t="ekr.20160210043933.1"></v>
+<v t="ekr.20160210112945.1" a="M"><vh>@test Stub == and in</vh>
+<v t="ekr.20160210113722.1"><vh>&lt;&lt; imports &gt;&gt;</vh></v>
+<v t="ekr.20160131180118.1"></v>
+<v t="ekr.20160203073604.1"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2172,27 +2180,13 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- Post: how to run unit tests.
-- Post: Rough edges re number types. Is reduce_numbers correct?
-- Post: study this script with Leo.
-        Create views for startup, operators, type reduction, --update.
+*** What to do about non-comment lines between subs??
+    I fear the user will be surprised.
 
-- Update readme file with examples of return comments.
-    - With and without --verbose.
-    - The script is useful even without patterns.
-
-- Task oriented docs **after** --update.
 - Warn if regex pattern used in general patterns?
 
-Later: improve type reduction:
-- 2-pass reduce_types? More tests that patterns work in expected places.
-- Merge Tuple and List interiors in reduce_types.
-- Add more binop patterns.
-
-Leo stuff...
-* When complete, fold this script back into Leo.
-    Put make_stub_files.py in leo/external folder!.
-* Use this script on more Leo files.</t>
+- Create views for startup, operators, type reduction, --update.
+</t>
 <t tx="ekr.20160131175042.1">
 
 class TestClass:
@@ -2293,36 +2287,35 @@ def do_Return(self, node):
     return s[len('return'):].strip()
 </t>
 <t tx="ekr.20160202061118.1">
-if 0:
-    seen_patterns = []
-    
-    def visit(self, node):
-        '''
-        Return the formatted version of an Ast node after
-        applying all general patterns.
-        '''
-        # This is the heart of this script.
-        trace = False
-        s = AstFormatter.visit(self, node)
-        if self.fast_match:
-            # Match only the patterns associated with this node.
-            name = node.__class__.__name__
-            for pattern in self.patterns_dict.get(name, []):
-                found, s = pattern.match(s)
-                if trace and found and pattern not in self.seen_patterns:
-                    self.seen_patterns.append(pattern)
-                    g.trace('%10s %s' % (name, pattern))
-            if trace:
-                # This finds and reports all missed patterns.
-                for pattern in self.general_patterns:
-                    found, s = pattern.match(s)
-                    if True and found and pattern not in self.seen_patterns:
-                        self.seen_patterns.append(pattern)
-                        g.trace('**** %5s %s' % (name, pattern))
-        else: # Match all general patterns.
+seen_patterns = []
+
+def visit(self, node):
+    '''
+    Return the formatted version of an Ast node after
+    applying all general patterns.
+    '''
+    # This is the heart of this script.
+    trace = False
+    s = AstFormatter.visit(self, node)
+    if self.fast_match:
+        # Match only the patterns associated with this node.
+        name = node.__class__.__name__
+        for pattern in self.patterns_dict.get(name, []):
+            found, s = pattern.match(s)
+            if trace and found and pattern not in self.seen_patterns:
+                self.seen_patterns.append(pattern)
+                g.trace('%10s %s' % (name, pattern))
+        if trace:
+            # This finds and reports all missed patterns.
             for pattern in self.general_patterns:
                 found, s = pattern.match(s)
-        return s
+                if True and found and pattern not in self.seen_patterns:
+                    self.seen_patterns.append(pattern)
+                    g.trace('**** %5s %s' % (name, pattern))
+    else: # Match all general patterns.
+        for pattern in self.general_patterns:
+            found, s = pattern.match(s)
+    return s
 </t>
 <t tx="ekr.20160202061329.1">
 def __init__(self, controller, traverser):
@@ -2421,7 +2414,6 @@ class Stub(object):
         '''Stub ctor.'''
         self.children = []
         self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
-        # g.trace('===========', self.full_name)
         self.kind = kind
         self.name = name
         self.out_list = []
@@ -2430,12 +2422,7 @@ class Stub(object):
         if parent:
             assert isinstance(parent, Stub)
             parent.children.append(self)
-    
-    def __repr__(self):
-        '''Stub.__repr__.'''
-        return 'Stub: %s' % self.full_name
-        
-    __str__ = __repr__</t>
+</t>
 <t tx="ekr.20160203074843.1">
 def init_parser(self, s):
     '''Add double back-slashes to all patterns starting with '['.'''
@@ -2557,9 +2544,12 @@ def get_config_string(self):
     </t>
 <t tx="ekr.20160203130235.1">
 def __eq__(self, obj):
-    """Stub.__eq__. Return ordering among siblings."""
+    '''
+    Stub.__eq__. Return ordering among siblings.
+    Important: equality must *ignore* everythign except full_name.
+    '''
     if isinstance(obj, Stub):
-        return self.name == obj.name
+        return self.full_name == obj.full_name and self.kind == obj.kind
     else:
         return NotImplemented
 
@@ -2620,12 +2610,8 @@ def __le__(self, other):
 </t>
 <t tx="ekr.20160203140342.1">
 def __hash__(self):
-    '''Stub.__hash__'''
-    if self.parent:
-        return self.parent.hash() + len(self.children)
-    else:
-        return len(self.children)
-</t>
+    '''Stub.__hash__. Equality depends *only* on full_name and kind'''
+    return len(self.kind) + sum([ord(z) for z in self.full_name])</t>
 <t tx="ekr.20160203154154.1">
     name1 = self.parent.full_name() if self.parent else None
     name2 = obj.parent.full_name() if obj.parent else None
@@ -3859,22 +3845,6 @@ def output_time_stamp(self):
         self.output_file.write('# make_stub_files: %s\n' %
             time.strftime("%a %d %b %Y at %H:%M:%S"))
 </t>
-<t tx="ekr.20160209120102.1">def scan_name(self, s):
-    '''Return the class or def name in s.'''
-    s = s.strip()
-    if s.startswith('def'):
-        s = s[len('def'):]
-    elif s.startswith('class'):
-        s = s[len('class'):]
-    else:
-        assert False, s
-    s = s.strip()
-    i = 0
-    while i &lt; len(s) and s[i] == '_' or s[i].isalnum():
-        i += 1
-    name = s[:i]
-    # g.trace(repr(name), s.strip())
-    return name</t>
 <t tx="ekr.20160209194832.1">
 def add_stub(self, d, stub):
     '''Add the stub to d, checking that it does not exist.'''
@@ -3920,9 +3890,9 @@ def find_parent_stub(self, stub, stubs):
         return None</t>
 <t tx="ekr.20160210043933.1">
 def find_stub(self, stub, stubs):
-    '''Return True if stub is the tree whose root is stubs.'''
+    '''Return the stub in stub's tree that matches stub.'''
     if stub.full_name == stubs.full_name:
-        return stub
+        return stubs
     for child in stubs.children:
         stub2 = self.find_stub(stub, child)
         if stub2: return stub2
@@ -3951,32 +3921,22 @@ def sort_stubs_by_hierarchy(self, stubs1):
     g.trace('can not happen: unbounded sort')
     return [] # Abort the merge.
 </t>
-<t tx="ekr.20160210055145.1"># Not needed: use the real StubTraverser class.
-class TestUpdate:
-    '''A faux class for stateless StubTraverser methods.'''
-    @others</t>
-<t tx="ekr.20160210080150.1">
-    # Append the list
-    list_key = '*stub-list*'
-    aList = d.get(list_key,[])
-    aList.append(stub)
-    d [list_key] = aList
-</t>
 <t tx="ekr.20160210080720.1">'''
 Test framework for st.update and helpers.
 When this node is marked, you may run this script with Alt-5.
 '''
-# This is a leo script. g is the  *real* g.
-g.cls()
 &lt;&lt; imports &gt;&gt;
 &lt;&lt; input strings &gt;&gt;
 @others
+leo_g = g # needed only to adjust for Leo's indentation.
+g = LeoGlobals() # Make sure we use the correct g.
+g.cls()
 # g.NullObject is a proxy for StandAloneMakeStubFile, per Python Cookbook.
-st = StubTraverser(controller=g.NullObject())
+st = StubTraverser(controller=leo_g.NullObject())
 i = 0
 for s in input_strings:
     # To do: Round-trip tests!
-    s = g.adjustTripleString(s, tab_width=-4)
+    s = leo_g.adjustTripleString(s, tab_width=-4)
     dump('input string %s' % (i), s)
     d, stubs = st.parse_stub_file(s, root_name='&lt;test-root&gt;')
     if 1:
@@ -4016,6 +3976,53 @@ def dump(title, s=None):
         print('===== %s...\n' % title)
 </t>
 <t tx="ekr.20160210092808.1">import ast
-import re</t>
+import os
+import re
+import sys</t>
+<t tx="ekr.20160210111955.1">
+def __repr__(self):
+    '''Stub.__repr__.'''
+    return 'Stub: %s' % self.full_name
+    
+__str__ = __repr__</t>
+<t tx="ekr.20160210112634.1"></t>
+<t tx="ekr.20160210112711.1">Later: improve type reduction:
+- 2-pass reduce_types? More tests that patterns work in expected places.
+- Merge Tuple and List interiors in reduce_types.
+- Add more binop patterns.
+
+</t>
+<t tx="ekr.20160210112727.1">* When complete, fold this script back into Leo.
+    Put make_stub_files.py in leo/external folder!
+
+* Use this script on more Leo files.</t>
+<t tx="ekr.20160210112748.1">*** Task oriented docs **after** --update.
+
+- Post: how to run unit tests.
+
+- Post: Rough edges re number types. Is reduce_numbers correct?
+
+- Post: study this script with Leo.
+        
+Update readme file with examples of return comments.
+- With and without --verbose.
+- The script is useful even without patterns.</t>
+<t tx="ekr.20160210112945.1">&lt;&lt; imports &gt;&gt;
+
+@others
+leo_g = g # needed only to adjust for Leo's indentation.
+g = LeoGlobals() # Make sure we use the correct g.
+g.cls()
+stub1 = Stub(kind='def', name='foo')
+stub2 = Stub(kind='class', name='foo')
+stub3 = Stub(kind='def', name='bar')
+aList = [stub1, stub3]
+assert stub1 != stub2, (stub1, stub2)
+assert stub1 != stub3, (stub1, stub3)
+assert stub1 in aList
+assert stub2 not in aList
+assert stub3 in aList</t>
+<t tx="ekr.20160210113722.1">import os
+import sys</t>
 </tnodes>
 </leo_file>

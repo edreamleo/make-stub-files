@@ -1553,7 +1553,6 @@ class Stub(object):
         '''Stub ctor.'''
         self.children = []
         self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
-        # g.trace('===========', self.full_name)
         self.kind = kind
         self.name = name
         self.out_list = []
@@ -1562,12 +1561,30 @@ class Stub(object):
         if parent:
             assert isinstance(parent, Stub)
             parent.children.append(self)
+
+def __eq__(self, obj):
+    '''
+    Stub.__eq__. Return ordering among siblings.
+    Important: equality must *ignore* everythign except full_name.
+    '''
+    if isinstance(obj, Stub):
+        return self.full_name == obj.full_name and self.kind == obj.kind
+    else:
+        return NotImplemented
+
+def __ne__(self, obj):
+    """Stub.__ne__"""
+    return not self.__eq__(obj)
+
+def __hash__(self):
+    '''Stub.__hash__. Equality depends *only* on full_name and kind'''
+    return len(self.kind) + sum([ord(z) for z in self.full_name])
+
+def __repr__(self):
+    '''Stub.__repr__.'''
+    return 'Stub: %s' % self.full_name
     
-    def __repr__(self):
-        '''Stub.__repr__.'''
-        return 'Stub: %s' % self.full_name
-        
-    __str__ = __repr__
+__str__ = __repr__
 
 
 class StubFormatter (AstFormatter):
@@ -2111,9 +2128,9 @@ class StubTraverser (ast.NodeVisitor):
             return None
 
     def find_stub(self, stub, stubs):
-        '''Return True if stub is the tree whose root is stubs.'''
+        '''Return the stub in stub's tree that matches stub.'''
         if stub.full_name == stubs.full_name:
-            return stub
+            return stubs
         for child in stubs.children:
             stub2 = self.find_stub(stub, child)
             if stub2: return stub2
