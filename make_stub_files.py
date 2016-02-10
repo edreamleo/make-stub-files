@@ -1888,7 +1888,7 @@ class StubTraverser (ast.NodeVisitor):
         '''Add the stub to d, checking that it does not exist.'''
         trace = False ; verbose = False
         key = stub.full_name
-        assert key, caller
+        assert key
         if key in d:
             caller = g.callers(2).split(',')[1]
             g.trace('Ignoring duplicate entry for %s in %s' % (stub, caller))
@@ -2103,16 +2103,21 @@ class StubTraverser (ast.NodeVisitor):
 
     def find_parent_stub(self, stub, stubs):
         '''Return Stub's parent Stub in the given tree of Stubs.'''
-        assert False ###
+        if stub.parent:
+            return self.find_stub(stub.parent, stubs)
+        elif stub in stubs.children:
+            return stubs.children[stubs.children.index(stub)]
+        else:
+            return None
 
     def find_stub(self, stub, stubs):
         '''Return True if stub is the tree whose root is stubs.'''
         if stub.full_name == stubs.full_name:
-            return True
+            return stub
         for child in stubs.children:
-            if self.find_stub(stub, child):
-                return True
-        return False
+            stub2 = self.find_stub(stub, child)
+            if stub2: return stub2
+        return None
 
     def sort_stubs_by_hierarchy(self, stubs1):
         '''

@@ -316,8 +316,8 @@
 <v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
 <v t="ekr.20160205060807.1"></v>
 <v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers</vh>
-<v t="ekr.20160210043910.1"><vh>st.find_parent_stub (TO DO)</vh></v>
-<v t="ekr.20160210043933.1"><vh>st_find_stub</vh></v>
+<v t="ekr.20160210043910.1"><vh>st.find_parent_stub (Test)</vh></v>
+<v t="ekr.20160210043933.1"><vh>st.find_stub (Test)</vh></v>
 <v t="ekr.20160210043957.1"><vh>st.sort_stubs_by_hierarchy</vh></v>
 </v>
 <v t="ekr.20160209104843.1"></v>
@@ -335,12 +335,6 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160210033447.1"><vh>@test --update</vh>
-<v t="ekr.20160203073604.1"></v>
-<v t="ekr.20160203183228.1"></v>
-<v t="ekr.20160209105448.1"></v>
-<v t="ekr.20160204224242.1"></v>
-</v>
 <v t="ekr.20160205060807.1"></v>
 <v t="ekr.20160210081628.1"><vh>&lt;&lt; input strings &gt;&gt;</vh></v>
 <v t="ekr.20160210080720.1" a="M"><vh>@test st.parse_stub_file</vh>
@@ -356,7 +350,7 @@
 <v t="ekr.20160126153212.82"></v>
 </v>
 <v t="ekr.20160210043910.1"></v>
-<v t="ekr.20160210093137.1"><vh>checkin log</vh></v>
+<v t="ekr.20160210043933.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -3886,7 +3880,7 @@ def add_stub(self, d, stub):
     '''Add the stub to d, checking that it does not exist.'''
     trace = False ; verbose = False
     key = stub.full_name
-    assert key, caller
+    assert key
     if key in d:
         caller = g.callers(2).split(',')[1]
         g.trace('Ignoring duplicate entry for %s in %s' % (stub, caller))
@@ -3897,11 +3891,6 @@ def add_stub(self, d, stub):
             g.trace('%17s %s' % (caller, stub.full_name))
         elif trace:
             g.trace(stub.full_name)</t>
-<t tx="ekr.20160210033447.1"># To do:
-# Simplify st.add_stub.
-# 
-@others
-</t>
 <t tx="ekr.20160210041431.1">
 def merge_stubs(self, new_stubs, old_stubs):
     '''
@@ -3923,16 +3912,21 @@ def merge_stubs(self, new_stubs, old_stubs):
 <t tx="ekr.20160210043910.1">
 def find_parent_stub(self, stub, stubs):
     '''Return Stub's parent Stub in the given tree of Stubs.'''
-    assert False ###</t>
+    if stub.parent:
+        return self.find_stub(stub.parent, stubs)
+    elif stub in stubs.children:
+        return stubs.children[stubs.children.index(stub)]
+    else:
+        return None</t>
 <t tx="ekr.20160210043933.1">
 def find_stub(self, stub, stubs):
     '''Return True if stub is the tree whose root is stubs.'''
     if stub.full_name == stubs.full_name:
-        return True
+        return stub
     for child in stubs.children:
-        if self.find_stub(stub, child):
-            return True
-    return False
+        stub2 = self.find_stub(stub, child)
+        if stub2: return stub2
+    return None
 </t>
 <t tx="ekr.20160210043957.1">
 def sort_stubs_by_hierarchy(self, stubs1):
@@ -3968,7 +3962,10 @@ class TestUpdate:
     aList.append(stub)
     d [list_key] = aList
 </t>
-<t tx="ekr.20160210080720.1">'''Test framework for st.update and helpers.'''
+<t tx="ekr.20160210080720.1">'''
+Test framework for st.update and helpers.
+When this node is marked, you may run this script with Alt-5.
+'''
 # This is a leo script. g is the  *real* g.
 g.cls()
 &lt;&lt; imports &gt;&gt;
@@ -4020,11 +4017,5 @@ def dump(title, s=None):
 </t>
 <t tx="ekr.20160210092808.1">import ast
 import re</t>
-<t tx="ekr.20160210093137.1">Added @test st.parse_stub_file, a sweet test bed for recent work.
-- Added dump top-level function.
-- Improved tracing in st.add_stub.
-- Improved docstring and trancing in st.update.
-- Improved tracing in st.parse_stub_file.
-- Improved st.trace_stubs: it now returns its result rather than printing it.</t>
 </tnodes>
 </leo_file>
