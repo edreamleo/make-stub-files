@@ -2118,13 +2118,18 @@ class StubTraverser (ast.NodeVisitor):
                 g.trace('  '+s.rstrip())
         return d, root
 
-    def merge_stubs(self, new_stubs, old_root):
+    def merge_stubs(self, new_stubs, old_root, trace=False):
         '''
         Merge the new_stubs *list* into the old_root *tree*.
         - new_stubs is a list of Stubs from the .py file.
         - old_root is the root of the tree of Stubs from the .pyi file.
         '''
-        trace = True
+        trace = False or trace
+        # Part 1: Delete old stubs.
+        # Remove all old stubs that do *not* exist in the new tree.
+        aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
+        
+        # Part 2: Insert new stubs.
         # Remove all new stubs that exist in the old tree.
         aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
         # Order the new stubs so that parents are created before children.
@@ -2134,6 +2139,19 @@ class StubTraverser (ast.NodeVisitor):
             parent = self.find_parent_stub(stub, old_root) or old_root
             parent.children.append(stub)
             assert self.find_stub(stub, old_root), stub
+
+    def flatten_stubs(self, root):
+        '''Return a flattened list of all stubs in root's tree.'''
+        aList = [root]
+        for child in root.children:
+            self.flatten_stubs_helper(child, aList)
+        return aList
+            
+    def flatten_stubs_helper(self, root, aList):
+        '''Append all stubs in root's tree to aList.'''
+        aList.append(root)
+        for child in root.children:
+            self.flatten_stubs_helper(child, aList)
 
     def find_parent_stub(self, stub, root):
         '''Return stub's parent **in root's tree**.'''
