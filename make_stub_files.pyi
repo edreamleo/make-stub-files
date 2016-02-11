@@ -1,4 +1,4 @@
-# make_stub_files: Wed 10 Feb 2016 at 18:53:56
+# make_stub_files: Wed 10 Feb 2016 at 19:47:14
 
 from typing import Any, Dict, Optional, Sequence, Tuple, Union
 # At present, I don't understand how to tell mypy about ast.Node
@@ -240,22 +240,22 @@ class StubTraverser(ast.NodeVisitor):
     def run(self, node: Node) -> None: ...
     def output_stubs(self, stub: Any) -> None: ...
     def output_time_stamp(self) -> None: ...
-    def update(self, fn: str, new_stubs: Any, testing: Any=True) -> Any: ...
-        #   0: return new_stubs
-        # ? 0: return new_stubs
-        #   1: return new_stubs
-        # ? 1: return new_stubs
-        #   2: return new_stubs
-        # ? 2: return new_stubs
-        #   3: return new_stubs
-        # ? 3: return new_stubs
-        #   4: return old_stubs
-        # ? 4: return old_stubs
+    def update(self, fn: str, new_root: Any, testing: Any=True) -> Any: ...
+        #   0: return new_root
+        # ? 0: return new_root
+        #   1: return new_root
+        # ? 1: return new_root
+        #   2: return new_root
+        # ? 2: return new_root
+        #   3: return new_root
+        # ? 3: return new_root
+        #   4: return old_root
+        # ? 4: return old_root
     def get_stub_file(self, fn: str) -> Optional[str]: ...
     def parse_stub_file(self, s: str, root_name: Any) -> Any: ...
         #   0: return (d, root)
         # ? 0: return Tuple[d, root]
-    def merge_stubs(self, new_stubs: Any, old_stubs: Any) -> None: ...
+    def merge_stubs(self, new_stubs: Any, old_root: Any) -> None: ...
     def find_parent_stub(self, stub: Any, root: Any) -> Any: ...
     def find_stub(self, stub: Any, root: Any) -> Any: ...
         #   0: return root

@@ -1980,7 +1980,7 @@ class StubTraverser (ast.NodeVisitor):
             self.visit(node)
                 # Creates parent_stub.out_list.
             if self.update_flag:
-                self.parent_stub = self.update(fn, new_stubs=self.parent_stub)
+                self.parent_stub = self.update(fn, new_root=self.parent_stub)
             self.output_file = open(fn, 'w')
             self.output_time_stamp()
             self.output_stubs(self.parent_stub)
@@ -2010,53 +2010,35 @@ class StubTraverser (ast.NodeVisitor):
             self.output_file.write('# make_stub_files: %s\n' %
                 time.strftime("%a %d %b %Y at %H:%M:%S"))
 
-    def update(self, fn, new_stubs, testing=True):
+    def update(self, fn, new_root, testing=True):
         '''
-        Merge the new_stubs tree with the old_stubs tree in fn (a .pyi file).
-        This code just sets up the call to merge_stubs which does the real work.
+        Merge the new_root tree with the old_root tree in fn (a .pyi file).
 
-        old_stubs is the stub tree (read here) from the the .pyi file.
-        new_stubs is the stub tree from the corresponding .py file.
+        new_root is the root of the stub tree from the .py file.
+        old_root (read below) is the root of stub tree from the .pyi file.
         
-        Return a reference to the resulting tree:
-        - **old_stubs** if all goes well.
-        - **new_stubs** on errors (or testing)
-        
-        When merging, preserve all *old* stubs *and* existing order:
-        - Add only new stubs that do not exist in the old_stubs tree.
-        - Add stubs only at the *end* of parent.children list.
+        Return old_root, or new_root if there are any errors.
         '''
-        trace_old_stubs = False
-        trace_new_stubs = False
-        trace_update_stubs = True
         s = self.get_stub_file(fn)
         if not s or not s.strip():
-            return new_stubs
+            return new_root
         if '\t' in s:
             # Tabs in stub files make it impossible to parse them reliably.
             g.trace('Can not update stub files containing tabs.')
-            return new_stubs
-        d_old, old_stubs = self.parse_stub_file(s, root_name='<old-stubs>')
-        if not old_stubs:
-            return new_stubs
+            return new_root
+        # Read old_root from the .pyi file.
+        old_d, old_root = self.parse_stub_file(s, root_name='<old-stubs>')
+        if not old_root:
+            return new_root
         print('***** updating stubs from %s *****' % fn)
-        if trace_old_stubs:
-            self.trace_stubs(old_stubs, header='old stubs')
-        if trace_new_stubs:
-            self.trace_stubs(new_stubs, header='new stubs')
-        # Find all new stubs that do not exist in the old stubs.
-        d_new = self.stubs_dict
-        update_list = [d_new.get(z) for z in d_new if z not in d_old]
-        if trace_update_stubs:
-            g.trace('Merging these new stubs into %s...' % fn)
-            for z in update_list:
-                print(z.full_name)
-        # Merge the stubs in update_list into the old_stubs tree.
+        # self.trace_stubs(old_root, header='old_root')
+        # self.trace_stubs(new_root, header='new_root')
         if testing:
-            return new_stubs
-        else:
-            self.merge_stubs(update_list, old_stubs)
-            return old_stubs
+            return new_root ###
+        # Merge new stubs into the old tree.
+        self.merge_stubs(new_stubs = self.stubs_dict.values(),
+                         old_root= old_root)
+        return old_root
 
     def get_stub_file(self, fn):
         '''Read the stub file into s.'''
@@ -2134,22 +2116,21 @@ class StubTraverser (ast.NodeVisitor):
                 g.trace('  '+s.rstrip())
         return d, root
 
-    def merge_stubs(self, new_stubs, old_stubs):
+    def merge_stubs(self, new_stubs, old_root):
         '''
-        Merge the new_stubs *list* into the old_stubs *tree*.
+        Merge the new_stubs *list* into the old_root *tree*.
         - new_stubs is a list of Stubs from the .py file.
-        - old_stubs is the root of the tree of Stubs from the .pyi file.
+        - old_root is the root of the tree of Stubs from the .pyi file.
         '''
+        # Remove all new stubs that exist in the old tree.
+        aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
         # Order the new stubs so that parents are created before children.
-        aList = self.sort_stubs_by_hierarchy(new_stubs)
+        aList = self.sort_stubs_by_hierarchy(aList)
         for stub in aList:
-            # Initially, stub must not exist in the tree.
-            assert not self.find_stub(stub, old_stubs), stub
-            parent = self.find_parent_stub(stub, old_stubs)
-            assert parent, stub
+            g.trace('***** inserting', stub)
+            parent = self.find_parent_stub(stub, old_root) or old_root
             parent.children.append(stub)
-            # Now stub must exist in the tree.
-            assert self.find_stub(self, old_stubs), stub
+            assert self.find_stub(stub, old_root), stub
 
     def find_parent_stub(self, stub, root):
         '''Return stub's parent **in root's tree**.'''

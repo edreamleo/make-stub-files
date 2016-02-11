@@ -45,6 +45,7 @@
 <v t="ekr.20160210184122.1"><vh>reduce_types (OLD, splits lines)</vh>
 <v t="ekr.20160210184122.2"><vh>&lt;&lt; define show &gt;&gt;</vh></v>
 </v>
+<v t="ekr.20160210190143.1"><vh>old merge_stubs (asserts fail)</vh></v>
 </v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Files</vh>
@@ -362,10 +363,10 @@
 <v t="ekr.20160210112727.1"><vh>Leo stuff</vh></v>
 </v>
 <v t="ekr.20160210112945.1"></v>
-<v t="ekr.20160210080720.1" a="M"></v>
 <v t="ekr.20160210041431.1"></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160210185430.1"><vh>checkin log</vh></v>
+<v t="ekr.20160204224242.1"></v>
+<v t="ekr.20160210080720.1" a="M"></v>
+<v t="ekr.20160210193834.1"><vh>checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1382,7 +1383,7 @@ def run(self, node):
         self.visit(node)
             # Creates parent_stub.out_list.
         if self.update_flag:
-            self.parent_stub = self.update(fn, new_stubs=self.parent_stub)
+            self.parent_stub = self.update(fn, new_root=self.parent_stub)
         self.output_file = open(fn, 'w')
         self.output_time_stamp()
         self.output_stubs(self.parent_stub)
@@ -2761,53 +2762,35 @@ def make_op_name_dict(self):
     return d
 </t>
 <t tx="ekr.20160204224242.1">
-def update(self, fn, new_stubs, testing=True):
+def update(self, fn, new_root, testing=True):
     '''
-    Merge the new_stubs tree with the old_stubs tree in fn (a .pyi file).
-    This code just sets up the call to merge_stubs which does the real work.
+    Merge the new_root tree with the old_root tree in fn (a .pyi file).
 
-    old_stubs is the stub tree (read here) from the the .pyi file.
-    new_stubs is the stub tree from the corresponding .py file.
+    new_root is the root of the stub tree from the .py file.
+    old_root (read below) is the root of stub tree from the .pyi file.
     
-    Return a reference to the resulting tree:
-    - **old_stubs** if all goes well.
-    - **new_stubs** on errors (or testing)
-    
-    When merging, preserve all *old* stubs *and* existing order:
-    - Add only new stubs that do not exist in the old_stubs tree.
-    - Add stubs only at the *end* of parent.children list.
+    Return old_root, or new_root if there are any errors.
     '''
-    trace_old_stubs = False
-    trace_new_stubs = False
-    trace_update_stubs = True
     s = self.get_stub_file(fn)
     if not s or not s.strip():
-        return new_stubs
+        return new_root
     if '\t' in s:
         # Tabs in stub files make it impossible to parse them reliably.
         g.trace('Can not update stub files containing tabs.')
-        return new_stubs
-    d_old, old_stubs = self.parse_stub_file(s, root_name='&lt;old-stubs&gt;')
-    if not old_stubs:
-        return new_stubs
+        return new_root
+    # Read old_root from the .pyi file.
+    old_d, old_root = self.parse_stub_file(s, root_name='&lt;old-stubs&gt;')
+    if not old_root:
+        return new_root
     print('***** updating stubs from %s *****' % fn)
-    if trace_old_stubs:
-        self.trace_stubs(old_stubs, header='old stubs')
-    if trace_new_stubs:
-        self.trace_stubs(new_stubs, header='new stubs')
-    # Find all new stubs that do not exist in the old stubs.
-    d_new = self.stubs_dict
-    update_list = [d_new.get(z) for z in d_new if z not in d_old]
-    if trace_update_stubs:
-        g.trace('Merging these new stubs into %s...' % fn)
-        for z in update_list:
-            print(z.full_name)
-    # Merge the stubs in update_list into the old_stubs tree.
+    # self.trace_stubs(old_root, header='old_root')
+    # self.trace_stubs(new_root, header='new_root')
     if testing:
-        return new_stubs
-    else:
-        self.merge_stubs(update_list, old_stubs)
-        return old_stubs
+        return new_root ###
+    # Merge new stubs into the old tree.
+    self.merge_stubs(new_stubs = self.stubs_dict.values(),
+                     old_root= old_root)
+    return old_root
 </t>
 <t tx="ekr.20160205053641.1">
 # StubFormatter visitors for operators...
@@ -3850,23 +3833,21 @@ def add_stub(self, d, stub):
         elif trace:
             g.trace(stub.full_name)</t>
 <t tx="ekr.20160210041431.1">
-def merge_stubs(self, new_stubs, old_stubs):
+def merge_stubs(self, new_stubs, old_root):
     '''
-    Merge the new_stubs *list* into the old_stubs *tree*.
+    Merge the new_stubs *list* into the old_root *tree*.
     - new_stubs is a list of Stubs from the .py file.
-    - old_stubs is the root of the tree of Stubs from the .pyi file.
+    - old_root is the root of the tree of Stubs from the .pyi file.
     '''
+    # Remove all new stubs that exist in the old tree.
+    aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
     # Order the new stubs so that parents are created before children.
-    aList = self.sort_stubs_by_hierarchy(new_stubs)
+    aList = self.sort_stubs_by_hierarchy(aList)
     for stub in aList:
-        # Initially, stub must not exist in the tree.
-        assert not self.find_stub(stub, old_stubs), stub
-        parent = self.find_parent_stub(stub, old_stubs)
-        assert parent, stub
+        g.trace('***** inserting', stub)
+        parent = self.find_parent_stub(stub, old_root) or old_root
         parent.children.append(stub)
-        # Now stub must exist in the tree.
-        assert self.find_stub(self, old_stubs), stub
-</t>
+        assert self.find_stub(stub, old_root), stub</t>
 <t tx="ekr.20160210043910.1">
 def find_parent_stub(self, stub, root):
     '''Return stub's parent **in root's tree**.'''
@@ -3901,10 +3882,7 @@ def sort_stubs_by_hierarchy(self, stubs1):
     g.trace('can not happen: unbounded stub levels.')
     return [] # Abort the merge.
 </t>
-<t tx="ekr.20160210080720.1">'''
-Test framework for st.update and helpers.
-When this node is marked, you may run this script with Alt-5.
-'''
+<t tx="ekr.20160210080720.1">'''Test framework for st.update and helpers.'''
 # To do:
 # - Test between-stub lines and leading lines.
 # - Round-trip tests!
@@ -3922,32 +3900,31 @@ new_s = leo_g.adjustTripleString(new_s, tab_width=-4)
 # dump('new_s', new_s)
 old_d, old_stubs = st.parse_stub_file(old_s, root_name='&lt;old-root&gt;')
 new_d, new_stubs = st.parse_stub_file(new_s, root_name='&lt;new-root&gt;')
-if 1:
+if 0:
     dump_dict(old_d, 'old_d')
     dump_dict(new_d, 'new_d')
     print(st.trace_stubs(old_stubs, header='trace_stubs(old_stubs)'))
     print(st.trace_stubs(new_stubs, header='trace_stubs(new_stubs)'))
-new_stubs = new_d.values()
-if 1:
+if 0: # separate unit test. Passed.
     aList = st.sort_stubs_by_hierarchy(new_stubs)
     dump_list(aList, 'after sort_stubs_by_hierarcy')
+new_stubs = new_d.values()
+st.merge_stubs(new_stubs, old_stubs)
 if 0:
-    g.pdb()
-    st.merge_stubs(new_stubs, old_stubs)
+    print(st.trace_stubs(old_stubs, header='trace_stubs(old_stubs)'))
 </t>
 <t tx="ekr.20160210081628.1"># def is_known_type(s: str) -&gt; Union[Any,bool]: ...
 # def reduce_numbers(aList: List[Any]) -&gt; List[Any]: ...
-# def do_ClassDef(self, node: Node) -&gt; str: ...
+# class AstFormatter:
+    # def format(self, node: Node) -&gt; Union[Any,str]: ...
+    # def visit(self, node: Node) -&gt; str: ...
+    # def do_ClassDef(self, node: Node) -&gt; str: ...
+    # def do_FunctionDef(self, node: Node) -&gt; str: ...
 old_s = '''\
 def main() -&gt; None: ...
 def merge_types(a1: Any, a2: Any) -&gt; str: ...
 def pdb(self) -&gt; None: ...
-def reduce_types(aList: List[Any], name: str=None, newlines: Any=False, trace: bool=False) -&gt; Any: ...
-
-class AstFormatter:
-    def format(self, node: Node) -&gt; Union[Any,str]: ...
-    def visit(self, node: Node) -&gt; str: ...
-    def do_FunctionDef(self, node: Node) -&gt; str: ...
+def reduce_types(aList: List[Any], name: str=None, trace: bool=False) -&gt; Any: ...
 '''
 </t>
 <t tx="ekr.20160210082857.1"></t>
@@ -4090,7 +4067,7 @@ def main() -&gt; None: ...
 def merge_types(a1: Any, a2: Any) -&gt; str: ...
 def pdb(self) -&gt; None: ...
 def reduce_numbers(aList: List[Any]) -&gt; List[Any]: ...
-def reduce_types(aList: List[Any], name: str=None, newlines: Any=False, trace: bool=False) -&gt; Any: ...
+def reduce_types(aList: List[Any], name: str=None, trace: bool=False) -&gt; Any: ...
 
 class AstFormatter:
     def format(self, node: Node) -&gt; Union[Any,str]: ...
@@ -4185,10 +4162,23 @@ def show(s, known=True):
             else:
                 g.trace('%20s %25s %s &lt;== %s' % (name or '', s2, sep, r))
     return s2 if len(s2) &lt; 25 else s</t>
-<t tx="ekr.20160210185430.1">- reduce_types and show never split return hints.
-  In practice, this should not cause problems.
-- Removed inconvenient isPython constant by altering NullObject class.
-  This is used only for unit testing.
+<t tx="ekr.20160210190143.1">def merge_stubs(self, new_stubs, old_stubs):
+    '''
+    Merge the new_stubs *list* into the old_stubs *tree*.
+    - new_stubs is a list of Stubs from the .py file.
+    - old_stubs is the root of the tree of Stubs from the .pyi file.
+    '''
+    # Order the new stubs so that parents are created before children.
+    aList = self.sort_stubs_by_hierarchy(new_stubs)
+    for stub in aList:
+        # Initially, stub must not exist in the tree.
+        # assert not self.find_stub(stub, old_stubs), stub
+        parent = self.find_parent_stub(stub, old_stubs)
+        assert parent, stub
+        parent.children.append(stub)
+        # Now stub must exist in the tree.
+        assert self.find_stub(self, old_stubs), stub
 </t>
+<t tx="ekr.20160210193834.1"></t>
 </tnodes>
 </leo_file>
