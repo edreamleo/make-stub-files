@@ -25,7 +25,6 @@ try:
     import io.StringIO as StringIO # Python 3
 except ImportError:
     import StringIO
-import sys
 
 # Top-level functions
 
@@ -172,7 +171,7 @@ def reduce_numbers(aList):
         aList.append(found)
     return aList
 
-def reduce_types(aList, name=None, newlines=False, trace=False):
+def reduce_types(aList, name=None, trace=False):
     '''
     Return a string containing the reduction of all types in aList.
     The --trace-reduce command-line option sets trace=True.
@@ -184,24 +183,17 @@ def reduce_types(aList, name=None, newlines=False, trace=False):
     def show(s, known=True):
         '''Show the result of the reduction.'''
         s = s.strip()
-        # s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
-        s2 = s.replace('\n',' ').replace(',]',']').strip()
-            # Undo newline option if possible.
         if trace:
             r = sorted(set([z.replace('\n',' ') for z in aList1]))
             if len(''.join(r)) >= 35:
                 r = truncate(repr(r), 35)
-            if len(s2) >= 25:
-                s2 = truncate(s2, 25)
+            if len(s) >= 25:
+                s = truncate(s, 25)
             if len(r) > 1:
+                caller = g.callers(2).split(',')[0]
                 sep = ' ' if known else '?'
-                if 1:
-                    caller = g.callers(2).split(',')[0]
-                    g.trace('%20s %25s %s <== %-35s %s' % (name or '', s2, sep, r, caller))
-                else:
-                    g.trace('%20s %25s %s <== %s' % (name or '', s2, sep, r))
-        return s2 if len(s2) < 25 else s
-
+                g.trace('%20s %25s %s <== %-35s %s' % (name or '', s, sep, r, caller))
+        return s
     while None in aList:
         aList.remove(None)
     if not aList:
@@ -219,8 +211,6 @@ def reduce_types(aList, name=None, newlines=False, trace=False):
     r = reduce_numbers(r)
     if len(r) == 1:
         return show(r[0])
-    elif newlines:
-        return show('Union[\n    %s,\n]' % (',\n    '.join(sorted(r))))
     else:
         return show('Union[%s]' % (', '.join(sorted(r))))
 
@@ -871,8 +861,6 @@ class AstArgFormatter (AstFormatter):
         '''This represents a string constant.'''
         return 'str' # return repr(node.s)
 
-# Used only in the LeoGlobals class.
-isPython3 = sys.version_info >= (3, 0, 0)
 
 class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
@@ -884,19 +872,13 @@ class LeoGlobals:
         """
         def __init__(self, *args, **keys): pass
         def __call__(self, *args, **keys): return self
-        # def __len__    (self): return 0 # Debatable.
         def __repr__(self): return "NullObject"
         def __str__(self): return "NullObject"
-        if isPython3:
-            def __bool__(self): return False
-        else:
-            def __nonzero__(self): return 0
+        def __bool__(self): return False
+        def __nonzero__(self): return 0
         def __delattr__(self, attr): return self
         def __getattr__(self, attr): return self
         def __setattr__(self, attr, val): return self
-
-    nullObject = NullObject
-        # For compatibility
 
     def _callerName(self, n=1, files=False):
         # print('_callerName: %s %s' % (n,files))
@@ -2356,18 +2338,14 @@ class StubTraverser (ast.NodeVisitor):
             results = ''.join([lws + self.indent(z) for z in aList])
             # Put the return lines in their proper places.
             if known:
-                s = reduce_types(reduced_returns,
-                                 name=name,
-                                 newlines=True,
-                                 trace=self.trace_reduce)
+                s = reduce_types(reduced_returns, name, self.trace_reduce)
+                    # newlines=True,        
                 return s + ': ...' + results
             else:
                 return 'Any: ...' + results
         else:
-            s = reduce_types(reduced_returns,
-                             name=name,
-                             newlines=True,
-                             trace=self.trace_reduce)
+            s = reduce_types(reduced_returns, name, self.trace_reduce)
+                    # newlines=True,       
             return s + ': ...'
 
     def get_def_name(self, node):

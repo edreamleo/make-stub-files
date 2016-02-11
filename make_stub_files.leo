@@ -42,6 +42,9 @@
 <v t="ekr.20160203134611.1"><vh>stub.__gt/lt/ge/le__</vh></v>
 <v t="ekr.20160203154154.1"><vh>from Stub.__gt__</vh></v>
 </v>
+<v t="ekr.20160210184122.1"><vh>reduce_types (OLD, splits lines)</vh>
+<v t="ekr.20160210184122.2"><vh>&lt;&lt; define show &gt;&gt;</vh></v>
+</v>
 </v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Files</vh>
@@ -68,46 +71,25 @@
 </v>
 </v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
-<v t="ekr.20160207051429.1"><vh>@test merge_types (not used)</vh>
-<v t="ekr.20160207051316.1"><vh>merge_types (returns list, not used)</vh></v>
-</v>
-<v t="ekr.20160206110004.1"><vh>@test Pattern class</vh>
-<v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
-<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
-<v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
-<v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
-<v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
-<v t="ekr.20160206174054.1"><vh>pattern.is_regex</vh></v>
-<v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
-<v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
-<v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
-</v>
-<v t="ekr.20160202070025.1"><vh>pattern.match (trace-matches)</vh></v>
-<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
-<v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
-<v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
-<v t="ekr.20160206174547.1"><vh>pattern.replace_regex</vh></v>
-</v>
-</v>
-</v>
-<v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
-<v t="ekr.20160205101134.1"><vh>reduce_numbers (returns list)</vh></v>
-</v>
-<v t="ekr.20160206173343.1" a="M"><vh>@test reduce_types</vh>
-<v t="ekr.20160128041938.1"></v>
+<v t="ekr.20160210080720.1" a="M"><vh>@test --update</vh>
+<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
+<v t="ekr.20160210081628.1"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
+<v t="ekr.20160210144515.1"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
+<v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
+<v t="ekr.20160210083825.1"><vh>dump</vh></v>
+<v t="ekr.20160210141342.1"><vh>dump_dict</vh></v>
+<v t="ekr.20160210141651.1"><vh>dump_list</vh></v>
 <v t="ekr.20160130034812.1"><vh>is_known_type (split_types)</vh></v>
-<v t="ekr.20160207051316.1"></v>
-<v t="ekr.20160205101134.1"></v>
+<v t="ekr.20160126153212.100"><vh>main</vh></v>
+<v t="ekr.20160207051316.1"><vh>merge_types (returns list, not used)</vh></v>
+<v t="ekr.20160206120522.1"><vh>pdb</vh></v>
+<v t="ekr.20160205101134.1"><vh>reduce_numbers (returns list)</vh></v>
 <v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
 <v t="ekr.20160207133035.1"><vh>&lt;&lt; define show &gt;&gt;</vh></v>
 </v>
-</v>
-<v t="ekr.20160207162818.1"><vh>@test split_types</vh>
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
+<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
 </v>
-<v t="ekr.20160210145128.1"><vh>@test st.find_stub &amp; find_parent_stub</vh>
-<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
-<v t="ekr.20160210164250.1"><vh>&lt;&lt; define s &gt;&gt; (@test st.find/parent_stub)</vh></v>
 <v t="ekr.20160210082857.1"><vh>base classes</vh>
 <v t="ekr.20160126153212.3"><vh> class AstFormatter</vh>
 <v t="ekr.20160126153212.4"><vh> f.Entries</vh>
@@ -246,7 +228,7 @@
 <v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
 <v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
 <v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
-<v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers (Test)</vh>
+<v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers</vh>
 <v t="ekr.20160210043910.1"><vh>st.find_parent_stub</vh></v>
 <v t="ekr.20160210043933.1"><vh>st.find_stub</vh></v>
 <v t="ekr.20160210043957.1"><vh>st.sort_stubs_by_hierarchy</vh></v>
@@ -268,32 +250,64 @@
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
 </v>
 </v>
+<v t="ekr.20160207051429.1"><vh>@test merge_types (not used)</vh>
+<v t="ekr.20160207051316.1"></v>
+</v>
+<v t="ekr.20160206110004.1"><vh>@test Pattern class</vh>
+<v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
+<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
+<v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
+<v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
+<v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
+<v t="ekr.20160206174054.1"><vh>pattern.is_regex</vh></v>
+<v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
+<v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
+<v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
+</v>
+<v t="ekr.20160202070025.1"><vh>pattern.match (trace-matches)</vh></v>
+<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
+<v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
+<v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
+<v t="ekr.20160206174547.1"><vh>pattern.replace_regex</vh></v>
+</v>
+</v>
+</v>
+<v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
+<v t="ekr.20160205101134.1"></v>
+</v>
+<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
+<v t="ekr.20160128041938.1"></v>
+<v t="ekr.20160130034812.1"></v>
+<v t="ekr.20160207051316.1"></v>
+<v t="ekr.20160205101134.1"></v>
+<v t="ekr.20160205072101.1"></v>
+</v>
+<v t="ekr.20160207162818.1"><vh>@test split_types</vh>
+<v t="ekr.20160206212123.1"></v>
+</v>
+<v t="ekr.20160210145128.1"><vh>@test st.find_stub &amp; find_parent_stub</vh>
+<v t="ekr.20160203075612.1"></v>
+<v t="ekr.20160210164250.1"><vh>&lt;&lt; define s &gt;&gt; (@test st.find/parent_stub)</vh></v>
+<v t="ekr.20160210082857.1"></v>
+<v t="ekr.20160203073604.1"></v>
+<v t="ekr.20160126153212.82"></v>
+</v>
 <v t="ekr.20160210112945.1"><vh>@test Stub class</vh>
 <v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160203073604.1"></v>
 </v>
 <v t="ekr.20160207115947.1"><vh>@test truncate</vh>
-<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
+<v t="ekr.20160207115604.1"></v>
 </v>
 </v>
 <v t="ekr.20160205133120.1"><vh>Recent</vh>
-<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
-<v t="ekr.20160205053705.1"></v>
-<v t="ekr.20160205053641.1"></v>
 <v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
 <v t="ekr.20160126153212.90"></v>
 <v t="ekr.20160205072101.1"></v>
 <v t="ekr.20160205103604.6"></v>
 <v t="ekr.20160126153212.88"></v>
 <v t="ekr.20160126153212.87"></v>
-</v>
-<v t="ekr.20160207164915.1"><vh>re: --trace-*</vh>
-<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
-<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
-<v t="ekr.20160126153212.77"></v>
-<v t="ekr.20160202070025.1"></v>
-<v t="ekr.20160205072101.1"></v>
 </v>
 <v t="ekr.20160207165031.1"><vh>re: merge List &amp; Tuple types</vh>
 <v t="ekr.20160205072101.1"></v>
@@ -308,19 +322,7 @@
 </v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"></v>
-<v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
-<v t="ekr.20160210083825.1"><vh>dump</vh></v>
-<v t="ekr.20160210141342.1"><vh>dump_dict</vh></v>
-<v t="ekr.20160210141651.1"><vh>dump_list</vh></v>
-<v t="ekr.20160130034812.1"></v>
-<v t="ekr.20160126153212.100"><vh>main</vh></v>
-<v t="ekr.20160207051316.1"></v>
-<v t="ekr.20160206120522.1"><vh>pdb</vh></v>
-<v t="ekr.20160205101134.1"></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160206212123.1"></v>
-<v t="ekr.20160207115604.1"></v>
-</v>
+<v t="ekr.20160206104634.1"></v>
 <v t="ekr.20160126153212.3"></v>
 <v t="ekr.20160202165117.1"></v>
 <v t="ekr.20160131180118.1"></v>
@@ -331,15 +333,15 @@
 <v t="ekr.20160126153212.75"><vh>msf.make_stub_file</vh></v>
 <v t="ekr.20160126153212.76"><vh>msf.run</vh></v>
 <v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
-<v t="ekr.20160126153212.77"></v>
+<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160204170921.1"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160204170443.1"></v>
+<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
 <v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
 <v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
 <v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160204113206.1"></v>
+<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
@@ -359,21 +361,11 @@
 <v t="ekr.20160210112711.1"><vh>later</vh></v>
 <v t="ekr.20160210112727.1"><vh>Leo stuff</vh></v>
 </v>
-<v t="ekr.20160210041431.1"></v>
 <v t="ekr.20160210112945.1"></v>
-<v t="ekr.20160210080720.1"><vh>@test --update</vh>
-<v t="ekr.20160203075612.1"></v>
-<v t="ekr.20160210081628.1"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
-<v t="ekr.20160210144515.1"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
-<v t="ekr.20160206104634.1"></v>
-<v t="ekr.20160210082857.1"></v>
-<v t="ekr.20160203073604.1"></v>
-<v t="ekr.20160126153212.82"></v>
-</v>
-<v t="ekr.20160210043933.1"></v>
-<v t="ekr.20160210043910.1"></v>
-<v t="ekr.20160210145128.1"></v>
-<v t="ekr.20160206173343.1" a="M"></v>
+<v t="ekr.20160210080720.1" a="M"></v>
+<v t="ekr.20160210041431.1"></v>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160210185430.1"><vh>checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2107,18 +2099,14 @@ def format_return_expressions(self, name, raw_returns, reduced_returns):
         results = ''.join([lws + self.indent(z) for z in aList])
         # Put the return lines in their proper places.
         if known:
-            s = reduce_types(reduced_returns,
-                             name=name,
-                             newlines=True,
-                             trace=self.trace_reduce)
+            s = reduce_types(reduced_returns, name, self.trace_reduce)
+                # newlines=True,        
             return s + ': ...' + results
         else:
             return 'Any: ...' + results
     else:
-        s = reduce_types(reduced_returns,
-                         name=name,
-                         newlines=True,
-                         trace=self.trace_reduce)
+        s = reduce_types(reduced_returns, name, self.trace_reduce)
+                # newlines=True,       
         return s + ': ...'
 </t>
 <t tx="ekr.20160130034812.1">
@@ -2194,6 +2182,8 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
+* show is too kludgy. Probably should never split long return hints.
+
 - --update should prepend a timestamp in the .pyi file.
 
 *** What to do about non-comment lines between subs??
@@ -2219,8 +2209,6 @@ class TestClass:
 def return_list(self, a):
     return [a]</t>
 <t tx="ekr.20160131180118.1">
-# Used only in the LeoGlobals class.
-isPython3 = sys.version_info &gt;= (3, 0, 0)
 
 class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
@@ -2466,7 +2454,7 @@ try:
     import io.StringIO as StringIO # Python 3
 except ImportError:
     import StringIO
-import sys</t>
+</t>
 <t tx="ekr.20160203094439.1">
 def is_section_name(self, s):
     
@@ -2990,7 +2978,7 @@ def parse_stub_file(self, s, root_name):
     return d, root
 </t>
 <t tx="ekr.20160205072101.1">
-def reduce_types(aList, name=None, newlines=False, trace=False):
+def reduce_types(aList, name=None, trace=False):
     '''
     Return a string containing the reduction of all types in aList.
     The --trace-reduce command-line option sets trace=True.
@@ -2999,7 +2987,6 @@ def reduce_types(aList, name=None, newlines=False, trace=False):
     trace = False or trace
     aList1 = aList[:]
     &lt;&lt; define show &gt;&gt;
-
     while None in aList:
         aList.remove(None)
     if not aList:
@@ -3017,8 +3004,6 @@ def reduce_types(aList, name=None, newlines=False, trace=False):
     r = reduce_numbers(r)
     if len(r) == 1:
         return show(r[0])
-    elif newlines:
-        return show('Union[\n    %s,\n]' % (',\n    '.join(sorted(r))))
     else:
         return show('Union[%s]' % (', '.join(sorted(r))))
 </t>
@@ -3668,23 +3653,18 @@ for s1, s2 in table:
 def show(s, known=True):
     '''Show the result of the reduction.'''
     s = s.strip()
-    # s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
-    s2 = s.replace('\n',' ').replace(',]',']').strip()
-        # Undo newline option if possible.
     if trace:
         r = sorted(set([z.replace('\n',' ') for z in aList1]))
         if len(''.join(r)) &gt;= 35:
             r = truncate(repr(r), 35)
-        if len(s2) &gt;= 25:
-            s2 = truncate(s2, 25)
+        if len(s) &gt;= 25:
+            s = truncate(s, 25)
         if len(r) &gt; 1:
+            caller = g.callers(2).split(',')[0]
             sep = ' ' if known else '?'
-            if 1:
-                caller = g.callers(2).split(',')[0]
-                g.trace('%20s %25s %s &lt;== %-35s %s' % (name or '', s2, sep, r, caller))
-            else:
-                g.trace('%20s %25s %s &lt;== %s' % (name or '', s2, sep, r))
-    return s2 if len(s2) &lt; 25 else s</t>
+            g.trace('%20s %25s %s &lt;== %-35s %s' % (name or '', s, sep, r, caller))
+    return s
+</t>
 <t tx="ekr.20160207162818.1">table = (
     ('list',                    ['list']),
     ('List[a,b]',               ['List[a,b]']),
@@ -3695,7 +3675,6 @@ for s, expected in table:
     got = split_types(s)
     assert expected == got, (s, 'expected', expected, 'got', got)
 </t>
-<t tx="ekr.20160207164915.1"></t>
 <t tx="ekr.20160207165031.1"># In reduce_types
 # Tuple[unknown] should be Tuple[Any] *not* Any.</t>
 <t tx="ekr.20160207165240.1"># Finish the work in do_Call at least.
@@ -3943,12 +3922,13 @@ new_s = leo_g.adjustTripleString(new_s, tab_width=-4)
 # dump('new_s', new_s)
 old_d, old_stubs = st.parse_stub_file(old_s, root_name='&lt;old-root&gt;')
 new_d, new_stubs = st.parse_stub_file(new_s, root_name='&lt;new-root&gt;')
-# dump_dict(old_d, 'old_d')
-# dump_dict(new_d, 'new_d')
-# print(st.trace_stubs(old_stubs, header='trace_stubs(old_stubs)'))
-# print(st.trace_stubs(new_stubs, header='trace_stubs(new_stubs)'))
+if 1:
+    dump_dict(old_d, 'old_d')
+    dump_dict(new_d, 'new_d')
+    print(st.trace_stubs(old_stubs, header='trace_stubs(old_stubs)'))
+    print(st.trace_stubs(new_stubs, header='trace_stubs(new_stubs)'))
 new_stubs = new_d.values()
-if 0:
+if 1:
     aList = st.sort_stubs_by_hierarchy(new_stubs)
     dump_list(aList, 'after sort_stubs_by_hierarcy')
 if 0:
@@ -4096,19 +4076,13 @@ class NullObject:
     """
     def __init__(self, *args, **keys): pass
     def __call__(self, *args, **keys): return self
-    # def __len__    (self): return 0 # Debatable.
     def __repr__(self): return "NullObject"
     def __str__(self): return "NullObject"
-    if isPython3:
-        def __bool__(self): return False
-    else:
-        def __nonzero__(self): return 0
+    def __bool__(self): return False
+    def __nonzero__(self): return 0
     def __delattr__(self, attr): return self
     def __getattr__(self, attr): return self
     def __setattr__(self, attr, val): return self
-
-nullObject = NullObject
-    # For compatibility
 </t>
 <t tx="ekr.20160210144515.1">new_s = '''\
 def is_known_type(s: str) -&gt; Union[Any,bool]: ...
@@ -4157,5 +4131,64 @@ class AstFormatter:
     def do_ClassDef(self, node: Node) -&gt; str: ...
     def do_FunctionDef(self, node: Node) -&gt; str: ...
 '''</t>
+<t tx="ekr.20160210184122.1">
+def reduce_types(aList, name=None, newlines=False, trace=False):
+    '''
+    Return a string containing the reduction of all types in aList.
+    The --trace-reduce command-line option sets trace=True.
+    If present, name is the function name or class_name.method_name.
+    '''
+    trace = False or trace
+    aList1 = aList[:]
+    &lt;&lt; define show &gt;&gt;
+
+    while None in aList:
+        aList.remove(None)
+    if not aList:
+        return show('None')
+    r = sorted(set(aList))
+    if not all([is_known_type(z) for z in r]):
+        return show('Any', known=False)
+    elif len(r) == 1:
+        return show(r[0])
+    if 'None' in r:
+        kind = 'Optional'
+        while 'None' in r:
+            r.remove('None')
+        return show('Optional[%s]' % r[0])
+    r = reduce_numbers(r)
+    if len(r) == 1:
+        return show(r[0])
+    elif newlines:
+        return show('Union[\n    %s,\n]' % (',\n    '.join(sorted(r))))
+    else:
+        return show('Union[%s]' % (', '.join(sorted(r))))
+</t>
+<t tx="ekr.20160210184122.2">
+def show(s, known=True):
+    '''Show the result of the reduction.'''
+    s = s.strip()
+    # s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
+    s2 = s.replace('\n',' ').replace(',]',']').strip()
+        # Undo newline option if possible.
+    if trace:
+        r = sorted(set([z.replace('\n',' ') for z in aList1]))
+        if len(''.join(r)) &gt;= 35:
+            r = truncate(repr(r), 35)
+        if len(s2) &gt;= 25:
+            s2 = truncate(s2, 25)
+        if len(r) &gt; 1:
+            sep = ' ' if known else '?'
+            if 1:
+                caller = g.callers(2).split(',')[0]
+                g.trace('%20s %25s %s &lt;== %-35s %s' % (name or '', s2, sep, r, caller))
+            else:
+                g.trace('%20s %25s %s &lt;== %s' % (name or '', s2, sep, r))
+    return s2 if len(s2) &lt; 25 else s</t>
+<t tx="ekr.20160210185430.1">- reduce_types and show never split return hints.
+  In practice, this should not cause problems.
+- Removed inconvenient isPython constant by altering NullObject class.
+  This is used only for unit testing.
+</t>
 </tnodes>
 </leo_file>
