@@ -34,16 +34,16 @@ def dump(title, s=None):
     else:
         print('===== %s...\n' % title)
 
-def dump_dict(d, tag):
+def dump_dict(title, d):
     '''Dump a dictionary with a header.'''
-    dump(tag)
+    dump(title)
     for z in sorted(d):
         print('%30s %s' % (z, d.get(z)))
     print('')
 
-def dump_list(aList, tag):
+def dump_list(title, aList):
     '''Dump a list with a header.'''
-    dump(tag)
+    dump(title)
     for z in aList:
         print(z)
     print('')
@@ -2036,7 +2036,7 @@ class StubTraverser (ast.NodeVisitor):
                 print(self.trace_stubs(old_root, header='old_root'))
                 print(self.trace_stubs(new_root, header='new_root'))
             print('***** updating stubs from %s *****' % fn)
-            self.merge_stubs(self.stubs_dict.values(), old_root)
+            self.merge_stubs(self.stubs_dict.values(), old_root, new_root)
             if trace:
                 print(self.trace_stubs(old_root, header='updated_root'))
             return old_root
@@ -2118,27 +2118,68 @@ class StubTraverser (ast.NodeVisitor):
                 g.trace('  '+s.rstrip())
         return d, root
 
-    def merge_stubs(self, new_stubs, old_root, trace=False):
+    def merge_stubs(self, new_stubs, old_root, new_root, trace=False):
         '''
         Merge the new_stubs *list* into the old_root *tree*.
         - new_stubs is a list of Stubs from the .py file.
-        - old_root is the root of the tree of Stubs from the .pyi file.
+        - old_root is the root of the stubs from the .pyi file.
+        - new_root is the root of the stubs from the .py file.
         '''
-        trace = False or trace
-        # Part 1: Delete old stubs.
-        # Remove all old stubs that do *not* exist in the new tree.
-        aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
-        
-        # Part 2: Insert new stubs.
-        # Remove all new stubs that exist in the old tree.
-        aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
-        # Order the new stubs so that parents are created before children.
-        aList = self.sort_stubs_by_hierarchy(aList)
+        trace = False or trace ; verbose = False
+        # Part 1: Delete old stubs do *not* exist in the *new* tree.
+        aList = self.check_delete(new_stubs,
+                                  old_root,
+                                  new_root,
+                                  trace and verbose)
+            # Checks that all ancestors of deleted nodes will be deleted.
+        aList = list(reversed(self.sort_stubs_by_hierarchy(aList)))
+            # Sort old stubs so that children are deleted before parents.
+        if trace and verbose:
+            dump_list('ordered delete list', aList)
         for stub in aList:
-            if trace: g.trace('inserting', stub)
+            if trace: g.trace('deleting  %s' % stub)
+            parent = self.find_parent_stub(stub, old_root) or old_root
+            parent.children.remove(stub)
+            assert not self.find_stub(stub, old_root), stub
+        # Part 2: Insert new stubs that *not* exist in the *old* tree.
+        aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
+        aList = self.sort_stubs_by_hierarchy(aList)
+            # Sort new stubs so that parents are created before children.
+        for stub in aList:
+            if trace: g.trace('inserting %s' % stub)
             parent = self.find_parent_stub(stub, old_root) or old_root
             parent.children.append(stub)
             assert self.find_stub(stub, old_root), stub
+    def check_delete(self, new_stubs, old_root, new_root, trace):
+        '''Return a list of nodes that can be deleted.'''
+        old_stubs = self.flatten_stubs(old_root)
+        old_stubs.remove(old_root)
+        aList = [z for z in old_stubs if z not in new_stubs]
+        if trace:
+            dump_list('old_stubs', old_stubs)
+            dump_list('new_stubs', new_stubs)
+            dump_list('to-be-deleted stubs', aList)
+        delete_list = []
+        # Check that all parents of to-be-delete nodes will be deleted.
+        for z in aList:
+            z1 = z
+            for i in range(20):
+                z = z.parent
+                if not z:
+                    g.trace('can not append: new root not found', z)
+                    break
+                elif z == old_root:
+                    # if trace: g.trace('can delete', z1)
+                    delete_list.append(z1)
+                    break
+                elif z not in aList:
+                    g.trace("can not delete %s because of %s" % (z1, z))
+                    break
+            else:
+                g.trace('can not happen: parent loop')
+        if trace:
+            dump_list('delete_list', delete_list)
+        return delete_list
 
     def flatten_stubs(self, root):
         '''Return a flattened list of all stubs in root's tree.'''

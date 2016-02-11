@@ -251,6 +251,7 @@
 <v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
 <v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
 <v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers</vh>
+<v t="ekr.20160211060949.1"><vh>st.check_delete</vh></v>
 <v t="ekr.20160211045806.1"><vh>st.flatten_stubs</vh></v>
 <v t="ekr.20160210043910.1"><vh>st.find_parent_stub</vh></v>
 <v t="ekr.20160210043933.1"><vh>st.find_stub</vh></v>
@@ -273,7 +274,7 @@
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
 </v>
 </v>
-<v t="ekr.20160211050346.1" a="M"><vh>@test st.flatten_stubs</vh>
+<v t="ekr.20160211050346.1"><vh>@test st.flatten_stubs</vh>
 <v t="ekr.20160211050346.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160211050346.3"><vh>&lt;&lt; define s &gt;&gt; (@test st.flatten_stubs)</vh></v>
 <v t="ekr.20160211050346.4"><vh>base classes</vh>
@@ -485,6 +486,7 @@
 <v t="ekr.20160205053641.1"></v>
 </v>
 <v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
+<v t="ekr.20160126153212.85"></v>
 </v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"></v>
@@ -527,12 +529,6 @@
 <v t="ekr.20160210112711.1"><vh>later</vh></v>
 <v t="ekr.20160210112727.1"><vh>Leo stuff</vh></v>
 </v>
-<v t="ekr.20160126153212.85"></v>
-<v t="ekr.20160204224242.1"></v>
-<v t="ekr.20160210080720.1"></v>
-<v t="ekr.20160210041431.1"></v>
-<v t="ekr.20160211050346.1" a="M"></v>
-<v t="ekr.20160211045806.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2350,9 +2346,7 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
---update should prepend a timestamp in the .pyi file.
-
-*** How are non-comment lines between subs updated?
+- How are non-comment lines between subs updated?
 
 - Warn if regex pattern used in general patterns?
 
@@ -2951,7 +2945,7 @@ def update(self, fn, new_root):
             print(self.trace_stubs(old_root, header='old_root'))
             print(self.trace_stubs(new_root, header='new_root'))
         print('***** updating stubs from %s *****' % fn)
-        self.merge_stubs(self.stubs_dict.values(), old_root)
+        self.merge_stubs(self.stubs_dict.values(), old_root, new_root)
         if trace:
             print(self.trace_stubs(old_root, header='updated_root'))
         return old_root
@@ -3996,24 +3990,35 @@ def add_stub(self, d, stub):
         elif trace:
             g.trace(stub.full_name)</t>
 <t tx="ekr.20160210041431.1">
-def merge_stubs(self, new_stubs, old_root, trace=False):
+def merge_stubs(self, new_stubs, old_root, new_root, trace=False):
     '''
     Merge the new_stubs *list* into the old_root *tree*.
     - new_stubs is a list of Stubs from the .py file.
-    - old_root is the root of the tree of Stubs from the .pyi file.
+    - old_root is the root of the stubs from the .pyi file.
+    - new_root is the root of the stubs from the .py file.
     '''
-    trace = False or trace
-    # Part 1: Delete old stubs.
-    # Remove all old stubs that do *not* exist in the new tree.
-    aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
-    
-    # Part 2: Insert new stubs.
-    # Remove all new stubs that exist in the old tree.
-    aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
-    # Order the new stubs so that parents are created before children.
-    aList = self.sort_stubs_by_hierarchy(aList)
+    trace = False or trace ; verbose = False
+    # Part 1: Delete old stubs do *not* exist in the *new* tree.
+    aList = self.check_delete(new_stubs,
+                              old_root,
+                              new_root,
+                              trace and verbose)
+        # Checks that all ancestors of deleted nodes will be deleted.
+    aList = list(reversed(self.sort_stubs_by_hierarchy(aList)))
+        # Sort old stubs so that children are deleted before parents.
+    if trace and verbose:
+        dump_list('ordered delete list', aList)
     for stub in aList:
-        if trace: g.trace('inserting', stub)
+        if trace: g.trace('deleting  %s' % stub)
+        parent = self.find_parent_stub(stub, old_root) or old_root
+        parent.children.remove(stub)
+        assert not self.find_stub(stub, old_root), stub
+    # Part 2: Insert new stubs that *not* exist in the *old* tree.
+    aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
+    aList = self.sort_stubs_by_hierarchy(aList)
+        # Sort new stubs so that parents are created before children.
+    for stub in aList:
+        if trace: g.trace('inserting %s' % stub)
         parent = self.find_parent_stub(stub, old_root) or old_root
         parent.children.append(stub)
         assert self.find_stub(stub, old_root), stub</t>
@@ -4067,20 +4072,20 @@ old_s = leo_g.adjustTripleString(old_s, tab_width=-4)
 new_s = leo_g.adjustTripleString(new_s, tab_width=-4)
 # dump('old_s', old_s)
 # dump('new_s', new_s)
-old_d, old_stubs = st.parse_stub_file(old_s, root_name='&lt;old-root&gt;')
-new_d, new_stubs = st.parse_stub_file(new_s, root_name='&lt;new-root&gt;')
+old_d, old_root = st.parse_stub_file(old_s, root_name='&lt;old-root&gt;')
+new_d, new_root = st.parse_stub_file(new_s, root_name='&lt;new-root&gt;')
 if 0:
-    dump_dict(old_d, 'old_d')
-    dump_dict(new_d, 'new_d')
-    print(st.trace_stubs(old_stubs, header='trace_stubs(old_stubs)'))
-    print(st.trace_stubs(new_stubs, header='trace_stubs(new_stubs)'))
+    dump_dict('old_d', old_d)
+    dump_dict('new_d', new_d)
+    print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
+    print(st.trace_stubs(new_root, header='trace_stubs(new_root)'))
 if 0: # separate unit test. Passed.
-    aList = st.sort_stubs_by_hierarchy(new_stubs)
+    aList = st.sort_stubs_by_hierarchy(new_root)
     dump_list(aList, 'after sort_stubs_by_hierarcy')
 new_stubs = new_d.values()
-st.merge_stubs(new_stubs, old_stubs, trace=False)
+st.merge_stubs(new_stubs, old_root, new_root, trace=False)
 if 0:
-    print(st.trace_stubs(old_stubs, header='trace_stubs(old_stubs)'))
+    print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
 </t>
 <t tx="ekr.20160210081628.1"># To be INSERTED (They exist in new stubs, but not here.)
 # def is_known_type(s: str) -&gt; Union[Any,bool]: ...
@@ -4211,16 +4216,16 @@ def __init__(self, kind, name, parent=None, stack=None):
         parent.children.append(self)
 </t>
 <t tx="ekr.20160210141342.1">
-def dump_dict(d, tag):
+def dump_dict(title, d):
     '''Dump a dictionary with a header.'''
-    dump(tag)
+    dump(title)
     for z in sorted(d):
         print('%30s %s' % (z, d.get(z)))
     print('')</t>
 <t tx="ekr.20160210141651.1">
-def dump_list(aList, tag):
+def dump_list(title, aList):
     '''Dump a list with a header.'''
-    dump(tag)
+    dump(title)
     for z in aList:
         print(z)
     print('')
@@ -4252,7 +4257,6 @@ class NullObject:
     # def is_regex(self) -&gt; Any: ...
         # #   0: return self.find_s.endswith('$')
         # # ? 0: return self.find_s.endswith(str)
-
 new_s = '''\
 def is_known_type(s: str) -&gt; Union[Any,bool]: ...
 def main() -&gt; None: ...
@@ -6110,5 +6114,35 @@ def do_BinOp(self, node):
     self.trace_visitor(node, op, s)
     return s
 </t>
+<t tx="ekr.20160211060949.1">def check_delete(self, new_stubs, old_root, new_root, trace):
+    '''Return a list of nodes that can be deleted.'''
+    old_stubs = self.flatten_stubs(old_root)
+    old_stubs.remove(old_root)
+    aList = [z for z in old_stubs if z not in new_stubs]
+    if trace:
+        dump_list('old_stubs', old_stubs)
+        dump_list('new_stubs', new_stubs)
+        dump_list('to-be-deleted stubs', aList)
+    delete_list = []
+    # Check that all parents of to-be-delete nodes will be deleted.
+    for z in aList:
+        z1 = z
+        for i in range(20):
+            z = z.parent
+            if not z:
+                g.trace('can not append: new root not found', z)
+                break
+            elif z == old_root:
+                # if trace: g.trace('can delete', z1)
+                delete_list.append(z1)
+                break
+            elif z not in aList:
+                g.trace("can not delete %s because of %s" % (z1, z))
+                break
+        else:
+            g.trace('can not happen: parent loop')
+    if trace:
+        dump_list('delete_list', delete_list)
+    return delete_list</t>
 </tnodes>
 </leo_file>
