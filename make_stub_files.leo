@@ -362,11 +362,8 @@
 <v t="ekr.20160210112711.1"><vh>later</vh></v>
 <v t="ekr.20160210112727.1"><vh>Leo stuff</vh></v>
 </v>
-<v t="ekr.20160210112945.1"></v>
-<v t="ekr.20160210041431.1"></v>
-<v t="ekr.20160204224242.1"></v>
 <v t="ekr.20160210080720.1" a="M"></v>
-<v t="ekr.20160210193834.1"><vh>checkin log</vh></v>
+<v t="ekr.20160204224242.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2183,12 +2180,9 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-* show is too kludgy. Probably should never split long return hints.
+--update should prepend a timestamp in the .pyi file.
 
-- --update should prepend a timestamp in the .pyi file.
-
-*** What to do about non-comment lines between subs??
-    I fear the user will be surprised.
+*** How are non-comment lines between subs updated?
 
 - Warn if regex pattern used in general patterns?
 
@@ -2762,7 +2756,7 @@ def make_op_name_dict(self):
     return d
 </t>
 <t tx="ekr.20160204224242.1">
-def update(self, fn, new_root, testing=True):
+def update(self, fn, new_root):
     '''
     Merge the new_root tree with the old_root tree in fn (a .pyi file).
 
@@ -2771,6 +2765,7 @@ def update(self, fn, new_root, testing=True):
     
     Return old_root, or new_root if there are any errors.
     '''
+    trace = True
     s = self.get_stub_file(fn)
     if not s or not s.strip():
         return new_root
@@ -2780,17 +2775,18 @@ def update(self, fn, new_root, testing=True):
         return new_root
     # Read old_root from the .pyi file.
     old_d, old_root = self.parse_stub_file(s, root_name='&lt;old-stubs&gt;')
-    if not old_root:
+    if old_root:
+        # Merge new stubs into the old tree.
+        if trace:
+            self.trace_stubs(old_root, header='old_root')
+            self.trace_stubs(new_root, header='new_root')
+        print('***** updating stubs from %s *****' % fn)
+        self.merge_stubs(self.stubs_dict.values(), old_root)
+        if trace:
+            self.trace_stubs(old_root, header='updated_root')
+        return old_root
+    else:
         return new_root
-    print('***** updating stubs from %s *****' % fn)
-    # self.trace_stubs(old_root, header='old_root')
-    # self.trace_stubs(new_root, header='new_root')
-    if testing:
-        return new_root ###
-    # Merge new stubs into the old tree.
-    self.merge_stubs(new_stubs = self.stubs_dict.values(),
-                     old_root= old_root)
-    return old_root
 </t>
 <t tx="ekr.20160205053641.1">
 # StubFormatter visitors for operators...
@@ -3839,12 +3835,13 @@ def merge_stubs(self, new_stubs, old_root):
     - new_stubs is a list of Stubs from the .py file.
     - old_root is the root of the tree of Stubs from the .pyi file.
     '''
+    trace = True
     # Remove all new stubs that exist in the old tree.
     aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
     # Order the new stubs so that parents are created before children.
     aList = self.sort_stubs_by_hierarchy(aList)
     for stub in aList:
-        g.trace('***** inserting', stub)
+        if trace: g.trace('***** inserting', stub)
         parent = self.find_parent_stub(stub, old_root) or old_root
         parent.children.append(stub)
         assert self.find_stub(stub, old_root), stub</t>
@@ -4179,6 +4176,5 @@ def show(s, known=True):
         # Now stub must exist in the tree.
         assert self.find_stub(self, old_stubs), stub
 </t>
-<t tx="ekr.20160210193834.1"></t>
 </tnodes>
 </leo_file>
