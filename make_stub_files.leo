@@ -365,9 +365,7 @@
 <v t="ekr.20160210080720.1" a="M"></v>
 <v t="ekr.20160204224242.1"></v>
 <v t="ekr.20160126153212.85"></v>
-<v t="ekr.20160209104843.1"></v>
 <v t="ekr.20160205060807.1"></v>
-<v t="ekr.20160210201448.1"><vh>checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1385,7 +1383,7 @@ def run(self, node):
             # Creates parent_stub.out_list.
         if self.update_flag:
             self.parent_stub = self.update(fn, new_root=self.parent_stub)
-        else: ### update doesn't yet handle prefix lines.
+        if 1:
             self.output_file = open(fn, 'w')
             self.output_time_stamp()
             self.output_stubs(self.parent_stub)
@@ -2920,7 +2918,7 @@ def parse_stub_file(self, s, root_name):
             old_indent = indent_stack[-1]
             # Terminate any previous lines.
             old_stub = stub_stack[-1]
-            old_stub.out_list = lines
+            old_stub.out_list.extend(lines)
             if trace:
                 for s in lines:
                     g.trace('  '+s.rstrip())
@@ -2949,13 +2947,12 @@ def parse_stub_file(self, s, root_name):
             stub_stack.append(stub)
             if trace:
                 g.trace('%s%5s %s %s' % (' '*indent, kind, name, rest))
-        elif not line.startswith('#'):
+        else:
             parent = stub_stack[-1]
-            if parent != root:
-                lines.append(line)
+            lines.append(line)
     # Terminate the last stub.
     old_stub = stub_stack[-1]
-    old_stub.out_list = lines
+    old_stub.out_list.extend(lines)
     if trace:
         for s in lines:
             g.trace('  '+s.rstrip())
@@ -3844,7 +3841,7 @@ def merge_stubs(self, new_stubs, old_root):
     # Order the new stubs so that parents are created before children.
     aList = self.sort_stubs_by_hierarchy(aList)
     for stub in aList:
-        if trace: g.trace('***** inserting', stub)
+        if trace: g.trace('inserting', stub)
         parent = self.find_parent_stub(stub, old_root) or old_root
         parent.children.append(stub)
         assert self.find_stub(stub, old_root), stub</t>
@@ -4179,8 +4176,5 @@ def show(s, known=True):
         # Now stub must exist in the tree.
         assert self.find_stub(self, old_stubs), stub
 </t>
-<t tx="ekr.20160210201448.1">--update works except for leading lines. The code is still disabled.
-parse_stub_file now properly puts the class or def line into the out_list.
-As a result, trace_stubs no longer needs to compensate.</t>
 </tnodes>
 </leo_file>

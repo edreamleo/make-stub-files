@@ -1981,7 +1981,7 @@ class StubTraverser (ast.NodeVisitor):
                 # Creates parent_stub.out_list.
             if self.update_flag:
                 self.parent_stub = self.update(fn, new_root=self.parent_stub)
-            else: ### update doesn't yet handle prefix lines.
+            if 1:
                 self.output_file = open(fn, 'w')
                 self.output_time_stamp()
                 self.output_stubs(self.parent_stub)
@@ -2078,7 +2078,7 @@ class StubTraverser (ast.NodeVisitor):
                 old_indent = indent_stack[-1]
                 # Terminate any previous lines.
                 old_stub = stub_stack[-1]
-                old_stub.out_list = lines
+                old_stub.out_list.extend(lines)
                 if trace:
                     for s in lines:
                         g.trace('  '+s.rstrip())
@@ -2107,13 +2107,12 @@ class StubTraverser (ast.NodeVisitor):
                 stub_stack.append(stub)
                 if trace:
                     g.trace('%s%5s %s %s' % (' '*indent, kind, name, rest))
-            elif not line.startswith('#'):
+            else:
                 parent = stub_stack[-1]
-                if parent != root:
-                    lines.append(line)
+                lines.append(line)
         # Terminate the last stub.
         old_stub = stub_stack[-1]
-        old_stub.out_list = lines
+        old_stub.out_list.extend(lines)
         if trace:
             for s in lines:
                 g.trace('  '+s.rstrip())
@@ -2131,7 +2130,7 @@ class StubTraverser (ast.NodeVisitor):
         # Order the new stubs so that parents are created before children.
         aList = self.sort_stubs_by_hierarchy(aList)
         for stub in aList:
-            if trace: g.trace('***** inserting', stub)
+            if trace: g.trace('inserting', stub)
             parent = self.find_parent_stub(stub, old_root) or old_root
             parent.children.append(stub)
             assert self.find_stub(stub, old_root), stub
