@@ -1295,7 +1295,7 @@ class StandAloneMakeStubFile:
         add('--trace-visitors', action='store_true', default=False,
             help='trace visitor methods')
         add('-u', '--update', action='store_true', default=False,
-            help='update existing stub file')
+            help='update stubs in existing stub file')
         add('-v', '--verbose', action='store_true', default=False,
             help='verbose output in .pyi file')
         add('-w', '--warn', action='store_true', default=False,

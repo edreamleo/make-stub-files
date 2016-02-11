@@ -36,7 +36,6 @@ do_BinOp, do_BoolOp and do_IfExp
 
 * reduce_type is the *key* method. This is a lucky accident!
 
-
 === Retrospective
 - It would have been better to do more unit testing earlier.
   It might have saved 4 to 8 hours.

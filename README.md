@@ -1,11 +1,12 @@
 
-This is the readme file for the make-stub-files script explaining what it
-does, how it works and why it is important.
+This is the readme file for `make_stub_files.py`. This file explains
+what the script does, how it works and why it is important. After a brief
+overview, a step-by-step section will get you started
 
-The github repository for this script is at:
-https://github.com/edreamleo/make-stub-files
-
+Full source code for the script is in its [github repository]
+(https://github.com/edreamleo/make-stub-files).
 This script is in the public domain.
+
 
 ### Overview
 
@@ -14,6 +15,12 @@ This script makes a stub (.pyi) file in the **output directory** for each
 supported). This script never creates directories automatically, nor does
 it overwrite stub files unless the --overwrite command-line option is in
 effect.
+
+GvR says,
+> We actually do have a [stub generator](https://github.com/JukkaL/mypy/blob/master/mypy/stubgen.py)
+> as part of mypy now (it has a few options) but yours has the advantage of
+> providing a way to tune the generated signatures...This allows for a nice
+> iterative way of developing stubs.
 
 The script does no type inference. Instead, the user supplies **patterns**
 in a configuration file. The script matches these patterns to:
@@ -42,15 +49,46 @@ the script produces the stub:
 
     def foo(i: int, s: str) --> str: ...
 
-The make_stub_files script eliminates much of the drudgery of creating
+The `make_stub_files` script eliminates much of the drudgery of creating
 [python stub (.pyi) files]
 (https://www.python.org/dev/peps/pep-0484/#stub-files)
 from python source files. This script should encourage more people to use mypy. Stub files can be used by people who use Python 2.x code bases.
 
-GvR says, "We actually do have a [stub generator](https://github.com/JukkaL/mypy/blob/master/mypy/stubgen.py)
-as part of mypy now (it has a few options) but yours has the advantage of
-providing a way to tune the generated signatures... This allows for a nice
-iterative way of developing stubs."
+
+### Quick Start
+
+1. Put `make_stub_files.py` on your path.
+
+2. Enter a directory containing .py files:
+
+        cd myDirectory
+    
+3. Generate stubs for foo.py in foo.pyi:
+
+        make_stub_files foo.py
+
+4. Look at foo.pyi to see the generated stubs.
+
+5. Regenerate foo.pyi with more verbose output:
+
+        make_stub_files foo.py -o -v
+
+   The -o (--overwrite) option allows the script to overwrite foo.pyi.
+   The -v (--verbose) options generates return comments for all stubs in foo.pyi.
+   
+6. Update foo.pyi:
+
+        make_stub_files -o -u
+        
+   The -u (--update) options updates foo.pyi as follows:
+   
+   - adds stubs to foo.pyi for classes and defs that are new in foo.py.
+   - deletes stubs in foo.pyi for classes and defs that no longer exist in foo.py.
+   - leaves all other stubs in foo.pyi unchanged.
+   
+7. Specify a configuration file containing patterns:
+
+        make_stub_files -c myConfigFile.cfg -0
 
 ### Command-line arguments
 
@@ -66,7 +104,7 @@ iterative way of developing stubs."
       --trace-patterns    trace pattern creation
       --trace-reduce      trace st.reduce_types
       --trace-visitors    trace visitor methods
-      -u, --update        update existing stub file
+      -u, --update        update stubs in existing stub file
       -v, --verbose       verbose output in .pyi file
       -w, --warn          warn about unannotated args
 
@@ -80,6 +118,7 @@ configuration file.
 The configuration file uses the .ini format. It has several
 configuration sections, all optional.
 
+
 #### Patterns
 
 The [Def Name Patterns] and [General Patterns] configuration sections
@@ -89,16 +128,16 @@ specify patterns. All patterns have the form:
     
 Colons are not allowed in the find-string. This is a limitation of .ini files.
 
-There are two kinds of patterns: plain patterns and balanced patterns.
+There are three kinds of patterns: balanced patterns, regex and plain.
 
-**Balanced patterns** are patterns that:
+**Balanced patterns** are patterns whose find string that:
 
-A: contain either `(*)`, `[*]`, or `{*}` in the find-string or,
+A: contain either `(*)`, `[*]`, or `{*}` or
 
-B: end with '*'.
+B: ends with `*`.
 
 Unlike regular expressions, `(*)`, `[*]`, or `{*}` match only
-balanced brackets. A trailing `*` matches the rest of the find-string.
+balanced brackets. A trailing `*` matches the rest of the string.
 
 Examples:
 
@@ -112,16 +151,22 @@ Balanced patterns such as:
 work as expected. The script replaces the `*` in replacement-strings with
 whatever matched `*` in the find-string.
 
-**Note**: Blanced patterns will never match argument names.
+**Regex patterns** (regular expression patterns) are denoted by a
+find-string that ends with `$`. The trailing `$` does not become part of
+the find-string. For example:
 
-A pattern is a **plain pattern** if it is not a balanced pattern.
+    ab(.*)de$: de\1\1ab
 
-The script matches patterns to *all parts* of return expressions. The
-script matches patterns in the order they appear in each section, but
-in practice the order doesn't matter.
+A pattern is a **plain pattern** if it is neither a balanced nor a regex
+pattern.
 
-.. **Note**: Preceed patterns starting with `[` by `\\` (two back slashes)
-.. so that the configParser does not think that the `[` starts a section name.
+The script matches patterns to *all parts* of return expressions.
+
+*Important*: The script applies patterns *separately* to each return
+expression. Comments never appear in return expressions, and all strings in
+return values appear as str. As a result, there is no context to worry
+about context in which patterns are matched. Very short patterns suffice.
+
 
 #### [Global]
 
@@ -176,7 +221,7 @@ Example 3:
     MyClass.do_*: str
     
 All methods of the MyClass class whose names start with "do_" return str.
-        
+
 #### [General Patterns]
 
 For each function or method, the script matches the patterns in this
@@ -215,11 +260,6 @@ The comments preserve maximal information about return types, which should
 help the user to supply a more specific return type. The user can do this
 in two ways by altering the stub files by hand or by adding new patterns to
 the config file.
-
-*Important*: The script applies the patterns *separately* to each return
-expression. Comments never appear in return expressions, and all strings in
-return values appear as str. As a result, there is no context to worry
-about context in which patterns are matched. Very short patterns suffice.
 
 ### Why this script is important
 
