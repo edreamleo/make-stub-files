@@ -2150,6 +2150,7 @@ class StubTraverser (ast.NodeVisitor):
             parent = self.find_parent_stub(stub, old_root) or old_root
             parent.children.append(stub)
             assert self.find_stub(stub, old_root), stub
+
     def check_delete(self, new_stubs, old_root, new_root, trace):
         '''Return a list of nodes that can be deleted.'''
         old_stubs = self.flatten_stubs(old_root)

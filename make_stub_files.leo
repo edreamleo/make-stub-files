@@ -48,6 +48,12 @@
 <v t="ekr.20160210190143.1"><vh>old merge_stubs (asserts fail)</vh></v>
 </v>
 </v>
+<v t="ekr.20160128105006.1"><vh>Documentation</vh>
+<v t="ekr.20160126153921.1"><vh>@edit README.md</vh></v>
+<v t="ekr.20160207101607.1"><vh>@edit theory.md</vh></v>
+<v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
+<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
+</v>
 <v t="ekr.20160128154704.1"><vh>Files</vh>
 <v t="ekr.20160210112634.1"><vh>Test files</vh>
 <v t="ekr.20160128154715.1"><vh>@clean test/test_msf.py</vh>
@@ -65,12 +71,8 @@
 <v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
 <v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
 </v>
-<v t="ekr.20160128105006.1"><vh>Doc files</vh>
-<v t="ekr.20160126153921.1"><vh>@edit README.md</vh></v>
-<v t="ekr.20160207101607.1"><vh>@edit theory.md</vh></v>
-<v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
 </v>
-</v>
+<v t="ekr.20160131174909.1"><vh>To do</vh></v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
 <v t="ekr.20160207051316.1"><vh>merge_types (returns list, not used)</vh></v>
@@ -234,7 +236,7 @@
 </v>
 </v>
 <v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
-<v t="ekr.20160210134702.1"><vh>stub.__ctor__</vh></v>
+<v t="ekr.20160210134702.1"><vh>stub.ctor</vh></v>
 <v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
 <v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
 <v t="ekr.20160210111955.1"><vh>stub.__repr__and __str__</vh></v>
@@ -468,39 +470,15 @@
 <v t="ekr.20160207115604.1"></v>
 </v>
 </v>
-<v t="ekr.20160205133120.1"><vh>Recent</vh>
-<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
-<v t="ekr.20160126153212.90"></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160205103604.6"></v>
-<v t="ekr.20160126153212.88"></v>
-<v t="ekr.20160126153212.87"></v>
-</v>
-<v t="ekr.20160207165031.1"><vh>re: merge List &amp; Tuple types</vh>
-<v t="ekr.20160205072101.1"></v>
-</v>
-<v t="ekr.20160208161113.1"><vh>main types routines...</vh>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160206212123.1"></v>
-<v t="ekr.20160208093906.1"></v>
-<v t="ekr.20160205053641.1"></v>
-</v>
-<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
-<v t="ekr.20160126153212.85"></v>
-</v>
-<v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
-<v t="ekr.20160203075612.1"></v>
-<v t="ekr.20160206104634.1"></v>
-<v t="ekr.20160126153212.3"></v>
-<v t="ekr.20160202165117.1"></v>
-<v t="ekr.20160131180118.1"></v>
-<v t="ekr.20160128041938.1"></v>
-<v t="ekr.20160126153212.73"><vh>class StandAloneMakeStubFile</vh>
+<v t="ekr.20160211063121.1"><vh>Views for study</vh>
+<v t="ekr.20160211074825.1"><vh>1. ctors</vh>
 <v t="ekr.20160126153212.74"><vh>msf.ctor</vh></v>
-<v t="ekr.20160126165907.1"><vh>msf.finalize</vh></v>
-<v t="ekr.20160126153212.75"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160126153212.76"><vh>msf.run</vh></v>
-<v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
+<v t="ekr.20160128113859.1"></v>
+<v t="ekr.20160202061329.1"></v>
+<v t="ekr.20160126153212.83"></v>
+<v t="ekr.20160210134702.1"></v>
+</v>
+<v t="ekr.20160211063226.1"><vh>2. Startup code</vh>
 <v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160204170921.1"><vh>msf.make_op_name_dict</vh></v>
@@ -513,6 +491,42 @@
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
+<v t="ekr.20160211063252.1"><vh>3. Type-related ast.Node visitors</vh>
+<v t="ekr.20160205053705.1"></v>
+<v t="ekr.20160205053641.1"></v>
+<v t="ekr.20160201194801.1"></v>
+</v>
+<v t="ekr.20160211063238.1"><vh>4. Comments for return expressions</vh>
+<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160205072101.1"></v>
+</v>
+<v t="ekr.20160211074737.1"><vh>5. --update</vh>
+<v t="ekr.20160126153212.85"></v>
+</v>
+<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
+<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160205103604.6"></v>
+<v t="ekr.20160126153212.88"></v>
+<v t="ekr.20160126153212.87"></v>
+</v>
+</v>
+<v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
+<v t="ekr.20160203075612.1"></v>
+<v t="ekr.20160206104634.1"></v>
+<v t="ekr.20160126153212.3"></v>
+<v t="ekr.20160202165117.1"></v>
+<v t="ekr.20160131180118.1"></v>
+<v t="ekr.20160128041938.1"></v>
+<v t="ekr.20160126153212.73"><vh>class StandAloneMakeStubFile</vh>
+<v t="ekr.20160126153212.74"></v>
+<v t="ekr.20160126165907.1"><vh>msf.finalize</vh></v>
+<v t="ekr.20160126153212.75"><vh>msf.make_stub_file</vh></v>
+<v t="ekr.20160126153212.76"><vh>msf.run</vh></v>
+<v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
+<v t="ekr.20160126153212.77"></v>
+<v t="ekr.20160126153212.78"></v>
+</v>
 <v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.80"></v>
 <v t="ekr.20160126153212.82"></v>
@@ -523,11 +537,6 @@
 <v t="ekr.20160131175118.1"><vh>return_list</vh></v>
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
-</v>
-<v t="ekr.20160131174909.1"><vh>** to do</vh>
-<v t="ekr.20160210112748.1"><vh>Posts &amp; docs</vh></v>
-<v t="ekr.20160210112711.1"><vh>later</vh></v>
-<v t="ekr.20160210112727.1"><vh>Leo stuff</vh></v>
 </v>
 </vnodes>
 <tnodes>
@@ -2346,11 +2355,21 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- How are non-comment lines between subs updated?
+Update readme file and theory of operation.
+- Task oriented docs.
+- Examples of return comments, with and without --verbose.
+- The script is useful even without patterns.
 
+Later: improve type reduction:
+- 2-pass reduce_types? More tests that patterns work in expected places.
+- Merge Tuple and List interiors in reduce_types.
+- Add more binop patterns.
+
+Minor:
+- How are non-comment lines between subs updated?
 - Warn if regex pattern used in general patterns?
 
-- Create views for startup, operators, type reduction, --update.
+
 </t>
 <t tx="ekr.20160131175042.1">
 
@@ -3258,7 +3277,6 @@ def match_all(self, node, s):
                     g.trace('%46s %s' % (name, pattern))
             break
     return s</t>
-<t tx="ekr.20160205133120.1"></t>
 <t tx="ekr.20160205142626.1">
 # Subscript(expr value, slice slice, expr_context ctx)
 
@@ -3654,7 +3672,24 @@ for aList, expected in table:
     got = reduce_numbers(aList)
     assert expected == got,  (aList, 'expected:', expected, 'got', got)
 </t>
-<t tx="ekr.20160206171945.1"></t>
+<t tx="ekr.20160206171945.1">@language rest
+
+http://leoeditor.com/unitTesting.html discusses unit testing in Leo.
+
+http://leoeditor.com/tutorial-scripting.html discusses basic Leo programming,
+including the the predefined vars c, g and p.
+
+*How to run unit tests from this file*:
+
+    Alt-6 runs *all* @test nodes.
+    Alt-5 runs all *marked* @test nodes.
+    Alt-4 runs the selected @test node.
+
+I typically use Alt-5 when working a long time on a particular test.
+Marking just that @test node allows me to run the test from any node.
+
+@language python
+</t>
 <t tx="ekr.20160206173343.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
 none = 'None'
 table = (
@@ -3817,10 +3852,7 @@ for s, expected in table:
     got = split_types(s)
     assert expected == got, (s, 'expected', expected, 'got', got)
 </t>
-<t tx="ekr.20160207165031.1"># In reduce_types
-# Tuple[unknown] should be Tuple[Any] *not* Any.</t>
-<t tx="ekr.20160207165240.1"># Finish the work in do_Call at least.
-# This simply requires the computation of class_name.method_name.</t>
+<t tx="ekr.20160207165240.1"></t>
 <t tx="ekr.20160207181637.1"></t>
 <t tx="ekr.20160207181648.1"></t>
 <t tx="ekr.20160207181710.1">pylint
@@ -3896,7 +3928,6 @@ def trace_visitor(self, node, op, s):
         s1 = AstFormatter().format(node).strip()
         print('%12s %6s: %s ==&gt; %s' % (caller, op.strip(), s1, s))
 </t>
-<t tx="ekr.20160208161113.1"></t>
 <t tx="ekr.20160208162138.1">
     # First, look at the [Def Name Patterns]
     if 0: # This never seems to match anything.
@@ -4130,33 +4161,6 @@ def __str__(self):
     return 'Stub: %s' % self.full_name
 </t>
 <t tx="ekr.20160210112634.1"></t>
-<t tx="ekr.20160210112711.1">Later: improve type reduction:
-- 2-pass reduce_types? More tests that patterns work in expected places.
-- Merge Tuple and List interiors in reduce_types.
-- Add more binop patterns.
-
-</t>
-<t tx="ekr.20160210112727.1">* When complete, fold this script back into Leo.
-    Put make_stub_files.py in leo/external folder!
-
-* Use this script on more Leo files.
-
-** How to show git diffs involving Leo files?</t>
-<t tx="ekr.20160210112748.1">--update announcement: take precausions: it's more dangerous.
-
-*** Task oriented docs **after** --update.
-
-- Post: how to run unit tests.
-
-- Post: Rough edges re number types. Is reduce_numbers correct?
-
-- Post: study this script with Leo.
-
-- Post: thanks!
-        
-Update readme file with examples of return comments.
-- With and without --verbose.
-- The script is useful even without patterns.</t>
 <t tx="ekr.20160210112945.1">&lt;&lt; imports &gt;&gt;
 @others
 g = LeoGlobals() # Use the g available to the script.
@@ -6114,7 +6118,8 @@ def do_BinOp(self, node):
     self.trace_visitor(node, op, s)
     return s
 </t>
-<t tx="ekr.20160211060949.1">def check_delete(self, new_stubs, old_root, new_root, trace):
+<t tx="ekr.20160211060949.1">
+def check_delete(self, new_stubs, old_root, new_root, trace):
     '''Return a list of nodes that can be deleted.'''
     old_stubs = self.flatten_stubs(old_root)
     old_stubs.remove(old_root)
@@ -6144,5 +6149,29 @@ def do_BinOp(self, node):
     if trace:
         dump_list('delete_list', delete_list)
     return delete_list</t>
+<t tx="ekr.20160211063121.1">@language rest
+
+Views contain clones of nodes related to a particular topic.
+
+*Important*: often a single node and its children contains all the code
+             relevenat to a particular subject. Of particular note:
+    
+    - st.run and its helpers handles all aspects of --update.
+    - The children of sf.Operands and sf.Operators form the base of type computations.
+    - st.format_returns &amp; helpers produce comments for return expressions.
+
+*Note*: The numbered children of this node are arranged in approximate execution order.
+
+*Note*: Headlines do not appear in make_stub_files.py.
+        As a result, they are a good place for side comments.
+
+@language python
+</t>
+<t tx="ekr.20160211063226.1"># Much of the StandAloneMakeStubFile class deals with startup.</t>
+<t tx="ekr.20160211063238.1"></t>
+<t tx="ekr.20160211063252.1"># Much of the StubFormatter class handles type computations,
+# especially the sf.Operators visitors.</t>
+<t tx="ekr.20160211074737.1"></t>
+<t tx="ekr.20160211074825.1"></t>
 </tnodes>
 </leo_file>
