@@ -6564,7 +6564,7 @@ the config file.
    
 7. Specify a configuration file containing patterns:
 
-        make_stub_files -c myConfigFile.cfg -0
+        make_stub_files -c myConfigFile.cfg -o
 </t>
 </tnodes>
 </leo_file>

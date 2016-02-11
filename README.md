@@ -88,7 +88,7 @@ from python source files. This script should encourage more people to use mypy. 
    
 7. Specify a configuration file containing patterns:
 
-        make_stub_files -c myConfigFile.cfg -0
+        make_stub_files -c myConfigFile.cfg -o
 
 ### Command-line arguments
 
