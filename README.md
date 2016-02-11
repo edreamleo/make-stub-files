@@ -73,7 +73,7 @@ from python source files. This script should encourage more people to use mypy. 
 
         make_stub_files foo.py -o -v
 
-   The -o (--overwrite) option allows the script to overwrite foo.pyi.
+   The -o (--overwrite) option allows the script to overwrite foo.pyi.  
    The -v (--verbose) options generates return comments for all stubs in foo.pyi.
    
 6. Update foo.pyi:
@@ -113,10 +113,8 @@ from python source files. This script should encourage more people to use mypy. 
 ### The configuration file
 
 The --config command-line option specifies the full path to the optional
-configuration file.
-
-The configuration file uses the .ini format. It has several
-configuration sections, all optional.
+configuration file. The configuration file uses the .ini format. It has
+several configuration sections, all optional.
 
 
 #### Patterns
@@ -308,4 +306,4 @@ function annotations into source files using stub files as data. The
 "reverse" script should be more straightforward than this script.
 
 Edward K. Ream
-January, February 2016
+January 25 to February 11, 2016
