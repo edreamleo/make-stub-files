@@ -6246,13 +6246,12 @@ Views contain clones of nodes related to a particular topic.
 - Use @rst in docs?</t>
 <t tx="ekr.20160211110739.1">@language rest
 
-This is the readme file for `make_stub_files.py`. This file explains
-what the script does, how it works and why it is important. After a brief
-overview, a step-by-step section will get you started
-
-Full source code for the script is in its [github repository]
-(https://github.com/edreamleo/make-stub-files).
-This script is in the public domain.
+This is the readme file for `make_stub_files.py`. This file explains what
+the script does, how it works and why it is important. After a brief
+overview, a step-by-step section will get you started. Full source code for
+the script is in its [github repository]
+(https://github.com/edreamleo/make-stub-files). This script is in the
+public domain.
 
 @others
 </t>
@@ -6381,7 +6380,7 @@ One could imagine a similar insert_annotations script that would inject
 function annotations into source files using stub files as data. The
 "reverse" script should be more straightforward than this script.
 
-Edward K. Ream
+Edward K. Ream  
 January 25 to February 11, 2016
 </t>
 <t tx="ekr.20160211111807.1">
