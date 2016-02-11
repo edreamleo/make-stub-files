@@ -364,6 +364,10 @@
 </v>
 <v t="ekr.20160210080720.1" a="M"></v>
 <v t="ekr.20160204224242.1"></v>
+<v t="ekr.20160126153212.85"></v>
+<v t="ekr.20160209104843.1"></v>
+<v t="ekr.20160205060807.1"></v>
+<v t="ekr.20160210201448.1"><vh>checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1381,12 +1385,13 @@ def run(self, node):
             # Creates parent_stub.out_list.
         if self.update_flag:
             self.parent_stub = self.update(fn, new_root=self.parent_stub)
-        self.output_file = open(fn, 'w')
-        self.output_time_stamp()
-        self.output_stubs(self.parent_stub)
-        self.output_file.close()
-        self.output_file = None
-        self.parent_stub = None
+        else: ### update doesn't yet handle prefix lines.
+            self.output_file = open(fn, 'w')
+            self.output_time_stamp()
+            self.output_stubs(self.parent_stub)
+            self.output_file.close()
+            self.output_file = None
+            self.parent_stub = None
         t2 = time.clock()
         print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
     else:
@@ -2618,7 +2623,7 @@ def output_stubs(self, stub):
     for s in stub.out_list or []:
         # Indentation must be present when an item is added to stub.out_list.
         if self.output_file:
-            self.output_file.write(s+'\n')
+            self.output_file.write(s.rstrip()+'\n')
         else:
             print(s)
     # Recursively print all children.
@@ -2765,7 +2770,7 @@ def update(self, fn, new_root):
     
     Return old_root, or new_root if there are any errors.
     '''
-    trace = True
+    trace = False ; verbose = False
     s = self.get_stub_file(fn)
     if not s or not s.strip():
         return new_root
@@ -2777,13 +2782,13 @@ def update(self, fn, new_root):
     old_d, old_root = self.parse_stub_file(s, root_name='&lt;old-stubs&gt;')
     if old_root:
         # Merge new stubs into the old tree.
-        if trace:
-            self.trace_stubs(old_root, header='old_root')
-            self.trace_stubs(new_root, header='new_root')
+        if trace and verbose:
+            print(self.trace_stubs(old_root, header='old_root'))
+            print(self.trace_stubs(new_root, header='new_root'))
         print('***** updating stubs from %s *****' % fn)
         self.merge_stubs(self.stubs_dict.values(), old_root)
         if trace:
-            self.trace_stubs(old_root, header='updated_root')
+            print(self.trace_stubs(old_root, header='updated_root'))
         return old_root
     else:
         return new_root
@@ -2919,7 +2924,7 @@ def parse_stub_file(self, s, root_name):
             if trace:
                 for s in lines:
                     g.trace('  '+s.rstrip())
-            lines = []
+            lines = [line]
             # Adjust the stacks.
             if indent == old_indent:
                 stub_stack.pop()
@@ -3796,8 +3801,6 @@ def trace_stubs(self, stub, aList=None, header=None, level=-1):
     indent = ' '*4*max(0,level)
     if level == -1:
         aList = ['===== %s...\n' % (header) if header else '']
-    if level &gt; -1:
-        aList.append('%s%s %s' % (indent, stub.kind, stub.name))
     for s in stub.out_list:
         aList.append('%s%s' % (indent, s.rstrip()))
     for child in stub.children:
@@ -4176,5 +4179,8 @@ def show(s, known=True):
         # Now stub must exist in the tree.
         assert self.find_stub(self, old_stubs), stub
 </t>
+<t tx="ekr.20160210201448.1">--update works except for leading lines. The code is still disabled.
+parse_stub_file now properly puts the class or def line into the out_list.
+As a result, trace_stubs no longer needs to compensate.</t>
 </tnodes>
 </leo_file>

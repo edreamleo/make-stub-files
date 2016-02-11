@@ -1981,12 +1981,13 @@ class StubTraverser (ast.NodeVisitor):
                 # Creates parent_stub.out_list.
             if self.update_flag:
                 self.parent_stub = self.update(fn, new_root=self.parent_stub)
-            self.output_file = open(fn, 'w')
-            self.output_time_stamp()
-            self.output_stubs(self.parent_stub)
-            self.output_file.close()
-            self.output_file = None
-            self.parent_stub = None
+            else: ### update doesn't yet handle prefix lines.
+                self.output_file = open(fn, 'w')
+                self.output_time_stamp()
+                self.output_stubs(self.parent_stub)
+                self.output_file.close()
+                self.output_file = None
+                self.parent_stub = None
             t2 = time.clock()
             print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
         else:
@@ -1997,7 +1998,7 @@ class StubTraverser (ast.NodeVisitor):
         for s in stub.out_list or []:
             # Indentation must be present when an item is added to stub.out_list.
             if self.output_file:
-                self.output_file.write(s+'\n')
+                self.output_file.write(s.rstrip()+'\n')
             else:
                 print(s)
         # Recursively print all children.
@@ -2019,7 +2020,7 @@ class StubTraverser (ast.NodeVisitor):
         
         Return old_root, or new_root if there are any errors.
         '''
-        trace = True
+        trace = False ; verbose = False
         s = self.get_stub_file(fn)
         if not s or not s.strip():
             return new_root
@@ -2031,13 +2032,13 @@ class StubTraverser (ast.NodeVisitor):
         old_d, old_root = self.parse_stub_file(s, root_name='<old-stubs>')
         if old_root:
             # Merge new stubs into the old tree.
-            if trace:
-                self.trace_stubs(old_root, header='old_root')
-                self.trace_stubs(new_root, header='new_root')
+            if trace and verbose:
+                print(self.trace_stubs(old_root, header='old_root'))
+                print(self.trace_stubs(new_root, header='new_root'))
             print('***** updating stubs from %s *****' % fn)
             self.merge_stubs(self.stubs_dict.values(), old_root)
             if trace:
-                self.trace_stubs(old_root, header='updated_root')
+                print(self.trace_stubs(old_root, header='updated_root'))
             return old_root
         else:
             return new_root
@@ -2081,7 +2082,7 @@ class StubTraverser (ast.NodeVisitor):
                 if trace:
                     for s in lines:
                         g.trace('  '+s.rstrip())
-                lines = []
+                lines = [line]
                 # Adjust the stacks.
                 if indent == old_indent:
                     stub_stack.pop()
@@ -2171,8 +2172,6 @@ class StubTraverser (ast.NodeVisitor):
         indent = ' '*4*max(0,level)
         if level == -1:
             aList = ['===== %s...\n' % (header) if header else '']
-        if level > -1:
-            aList.append('%s%s %s' % (indent, stub.kind, stub.name))
         for s in stub.out_list:
             aList.append('%s%s' % (indent, s.rstrip()))
         for child in stub.children:
