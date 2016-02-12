@@ -34,19 +34,10 @@
 <v t="ekr.20160207105710.1"><vh>@button check-leading-lines</vh></v>
 </v>
 <v t="ekr.20160126153016.3"><vh>Unused</vh>
-<v t="ekr.20160203134203.1"><vh>pattern.__gt/lt/ge/le__</vh></v>
-<v t="ekr.20160202061118.1"><vh>sf.visit (attempts all matches on all nodes)</vh></v>
-<v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
+<v t="ekr.20160206104033.1"><vh>@@test run all msf unit tests</vh></v>
 <v t="ekr.20160208162138.1"><vh>from st.Call (failed experiment)</vh></v>
-<v t="ekr.20160209103842.1"><vh>Unused from Stub</vh>
-<v t="ekr.20160203134611.1"><vh>stub.__gt/lt/ge/le__</vh></v>
-<v t="ekr.20160203154154.1"><vh>from Stub.__gt__</vh></v>
-</v>
-<v t="ekr.20160210184122.1"><vh>reduce_types (OLD, splits lines)</vh>
-<v t="ekr.20160210184122.2"><vh>&lt;&lt; define show &gt;&gt;</vh></v>
-</v>
-<v t="ekr.20160210190143.1"><vh>old merge_stubs (asserts fail)</vh></v>
-<v t="ekr.20160212091656.1"><vh>&lt;&lt; define show &gt;&gt; (old, buggy)</vh></v>
+<v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
+<v t="ekr.20160202061118.1"><vh>sf.visit (attempts all matches on all nodes)</vh></v>
 </v>
 </v>
 <v t="ekr.20160128105006.1"><vh>Documentation</vh>
@@ -72,7 +63,6 @@
 <v t="ekr.20160128190112.1"><vh>test_pattern_class</vh></v>
 <v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
 </v>
-<v t="ekr.20160206104033.1"><vh>@@test run all msf unit tests</vh></v>
 <v t="ekr.20160206165656.1"><vh>@clean test/test.py</vh></v>
 </v>
 <v t="ekr.20160128104714.1"><vh>Config files</vh>
@@ -565,9 +555,10 @@
 <v t="ekr.20160126153212.89"></v>
 <v t="ekr.20160126153212.89"></v>
 </v>
+<v t="ekr.20160128154243.1"></v>
 </v>
-<v t="ekr.20160212104708.1"><vh>*** Next</vh></v>
 <v t="ekr.20160212060436.1"><vh>Post: Theory of operation</vh>
+<v t="ekr.20160212144226.1"><vh>To do</vh></v>
 <v t="ekr.20160212090139.1"><vh>trace headers</vh></v>
 <v t="ekr.20160211092715.1"><vh>theory notes</vh>
 <v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
@@ -2210,13 +2201,13 @@ def get_def_name(self, node):
 </t>
 <t tx="ekr.20160128154243.1">
 def run_all_unit_tests(self):
-    
-    # pylint: disable=relative-import
-    from test import test_msf
+    '''Run all unit tests in the make_stub_files/test directory.'''
     import unittest
     loader = unittest.TestLoader()
-    suite = loader.loadTestsFromTestCase(test_msf.TestMakeStubFiles)
-    unittest.TextTestRunner(verbosity=2).run(suite)
+    suite = loader.discover(os.path.abspath('.'),
+                            pattern='test*.py',
+                            top_level_dir=None)
+    unittest.TextTestRunner(verbosity=1).run(suite)
 </t>
 <t tx="ekr.20160128154704.1"></t>
 <t tx="ekr.20160128154715.1">import pdb
@@ -2796,55 +2787,10 @@ def __ne__(self, obj):
 def __hash__(self):
     '''Pattern.__hash__'''
     return len(self.find_s) + len(self.repl_s)</t>
-<t tx="ekr.20160203134203.1">
-# Ordering among Patterns is not important.
-
-# def __gt__(self, obj):
-    # '''Return True if self appears after other in outline order.'''
-    # if isinstance(obj, Pattern):
-        # return self.find_s &gt; self.obj_s:
-    # else:
-        # return NotImplemented
-
-# def __lt__(self, other):
-    # return not self.__eq__(other) and not self.__gt__(other)
-    
-# def __ge__(self, other):
-    # return self.__eq__(other) or self.__gt__(other)
-
-# def __le__(self, other):
-    # return self.__eq__(other) or self.__lt__(other)
-</t>
-<t tx="ekr.20160203134611.1">
-def __gt__(self, obj):
-    '''Stub.__eq__. Return ordering among siblings..'''
-    if isinstance(obj, Stub):
-        return self.name &gt; obj.name
-    else:
-        return NotImplemented
-
-def __lt__(self, other):
-    return not self.__eq__(other) and not self.__gt__(other)
-    
-def __ge__(self, other):
-    return self.__eq__(other) or self.__gt__(other)
-
-def __le__(self, other):
-    return self.__eq__(other) or self.__lt__(other)
-</t>
 <t tx="ekr.20160203140342.1">
 def __hash__(self):
     '''Stub.__hash__. Equality depends *only* on full_name and kind.'''
     return len(self.kind) + sum([ord(z) for z in self.full_name])</t>
-<t tx="ekr.20160203154154.1">
-    name1 = self.parent.full_name() if self.parent else None
-    name2 = obj.parent.full_name() if obj.parent else None
-    if name1 == name2:
-        return self.name &gt; obj.name
-    elif name1 and name2:
-        return name1 &gt; name2
-    else:
-        return bool(name1)</t>
 <t tx="ekr.20160203183228.1">
 def output_stubs(self, stub):
     '''Output this stub and all its descendants.'''
@@ -4085,7 +4031,6 @@ C. Apply hard-coded patterns. Most such patterns will be in StubFormatter.do_Bin
 In retrospect, this lack of choice is what has kept the code simple, in spite of so much initial confusion. Heh, you could call it the invisible hand :-) Seriously, having no choice really does prevent bad choices.
 
 Imo, this is the proper way to understand the script. It is actually *very* simple.</t>
-<t tx="ekr.20160209103842.1"></t>
 <t tx="ekr.20160209104843.1">
 def trace_stubs(self, stub, aList=None, header=None, level=-1):
     '''Return a trace of the given stub and all its descendants.'''
@@ -4414,77 +4359,6 @@ class AstFormatter:
     def do_ClassDef(self, node: Node) -&gt; str: ...
     def do_FunctionDef(self, node: Node) -&gt; str: ...
 '''</t>
-<t tx="ekr.20160210184122.1">
-def reduce_types(aList, name=None, newlines=False, trace=False):
-    '''
-    Return a string containing the reduction of all types in aList.
-    The --trace-reduce command-line option sets trace=True.
-    If present, name is the function name or class_name.method_name.
-    '''
-    trace = False or trace
-    aList1 = aList[:]
-    &lt;&lt; define show &gt;&gt;
-
-    while None in aList:
-        aList.remove(None)
-    if not aList:
-        return show('None')
-    r = sorted(set(aList))
-    if not all([is_known_type(z) for z in r]):
-        return show('Any', known=False)
-    elif len(r) == 1:
-        return show(r[0])
-    if 'None' in r:
-        kind = 'Optional'
-        while 'None' in r:
-            r.remove('None')
-        return show('Optional[%s]' % r[0])
-    r = reduce_numbers(r)
-    if len(r) == 1:
-        return show(r[0])
-    elif newlines:
-        return show('Union[\n    %s,\n]' % (',\n    '.join(sorted(r))))
-    else:
-        return show('Union[%s]' % (', '.join(sorted(r))))
-</t>
-<t tx="ekr.20160210184122.2">
-def show(s, known=True):
-    '''Show the result of the reduction.'''
-    s = s.strip()
-    # s2 = s.replace('\n','').replace(' ','').replace(',]',']').strip()
-    s2 = s.replace('\n',' ').replace(',]',']').strip()
-        # Undo newline option if possible.
-    if trace:
-        r = sorted(set([z.replace('\n',' ') for z in aList1]))
-        if len(''.join(r)) &gt;= 35:
-            r = truncate(repr(r), 35)
-        if len(s2) &gt;= 25:
-            s2 = truncate(s2, 25)
-        if len(r) &gt; 1:
-            sep = ' ' if known else '?'
-            if 1:
-                caller = g.callers(2).split(',')[0]
-                g.trace('%20s %25s %s &lt;== %-35s %s' % (name or '', s2, sep, r, caller))
-            else:
-                g.trace('%20s %25s %s &lt;== %s' % (name or '', s2, sep, r))
-    return s2 if len(s2) &lt; 25 else s</t>
-<t tx="ekr.20160210190143.1">def merge_stubs(self, new_stubs, old_stubs):
-    '''
-    Merge the new_stubs *list* into the old_stubs *tree*.
-    - new_stubs is a list of Stubs from the .py file.
-    - old_stubs is the root of the tree of Stubs from the .pyi file.
-    '''
-    # Order the new stubs so that parents are created before children.
-    aList = self.sort_stubs_by_hierarchy(new_stubs)
-    for stub in aList:
-        # Initially, stub must not exist in the tree.
-        # assert not self.find_stub(stub, old_stubs), stub
-        parent = self.find_parent_stub(stub, old_stubs)
-        assert parent, stub
-        parent.children.append(stub)
-        # Now stub must exist in the tree.
-        assert self.find_stub(self, old_stubs), stub
-</t>
 <t tx="ekr.20160211045806.1">
 def flatten_stubs(self, root):
     '''Return a flattened list of all stubs in root's tree.'''
@@ -6692,36 +6566,18 @@ match_all      do_Call            os.sep.join(*): str                         os
     callers                     pattern               original string, truncated to len(40)        result
 ====================== =============================  ========================================     ======
 </t>
-<t tx="ekr.20160212091656.1">
-def show(s, known=True):
-    '''Show the result of the reduction.'''
-    s = s.strip()
-    if trace:
-        r = sorted(set([z.replace('\n',' ') for z in aList1]))
-        if len(''.join(r)) &gt;= 35:
-            r = truncate(repr(r), 35)
-        if len(s) &gt;= 25:
-            s = truncate(s, 25)
-        if len(r) &gt; 1:
-            caller = g.callers(2).split(',')[0]
-            sep = ' ' if known else '?'
-            g.trace('%20s %25s %s &lt;== %-35s %s' % (name or '', s, sep, r, caller))
-    return s
-</t>
 <t tx="ekr.20160212100819.1"></t>
-<t tx="ekr.20160212104708.1">@language rest
-@wrap
-
-*** Use proper leoGlobals dump methods.
-
-*** Fix unit testing.
-
-- explain g.trace and trace pattern.
+<t tx="ekr.20160212133742.1"></t>
+<t tx="ekr.20160212133839.1"></t>
+<t tx="ekr.20160212144226.1">- explain g.trace and trace pattern.
 
 - Examples of return comments, with and without --verbose.
 - The script is useful even without patterns.
-</t>
-<t tx="ekr.20160212133742.1"></t>
-<t tx="ekr.20160212133839.1"></t>
+
+### unit testing
+
+This works from make_stub_files directory:
+
+    python -m unittest discover -s test</t>
 </tnodes>
 </leo_file>

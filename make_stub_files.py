@@ -1277,13 +1277,13 @@ class StandAloneMakeStubFile:
             print('no input files')
 
     def run_all_unit_tests(self):
-        
-        # pylint: disable=relative-import
-        from test import test_msf
+        '''Run all unit tests in the make_stub_files/test directory.'''
         import unittest
         loader = unittest.TestLoader()
-        suite = loader.loadTestsFromTestCase(test_msf.TestMakeStubFiles)
-        unittest.TextTestRunner(verbosity=2).run(suite)
+        suite = loader.discover(os.path.abspath('.'),
+                                pattern='test*.py',
+                                top_level_dir=None)
+        unittest.TextTestRunner(verbosity=1).run(suite)
 
     def scan_command_line(self):
         '''Set ivars from command-line arguments.'''
