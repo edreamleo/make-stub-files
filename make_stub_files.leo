@@ -89,6 +89,21 @@
 <v t="ekr.20160207051316.1"><vh>merge_types (returns list, not used)</vh></v>
 </v>
 <v t="ekr.20160206110004.1"><vh>@test Pattern class</vh>
+<v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
+<v t="ekr.20160210083825.1"><vh>dump</vh></v>
+<v t="ekr.20160210141342.1"><vh>dump_dict</vh></v>
+<v t="ekr.20160210141651.1"><vh>dump_list</vh></v>
+<v t="ekr.20160130034812.1"><vh>is_known_type (split_types)</vh></v>
+<v t="ekr.20160126153212.100"><vh>main</vh></v>
+<v t="ekr.20160207051316.1"></v>
+<v t="ekr.20160206120522.1"><vh>pdb</vh></v>
+<v t="ekr.20160205101134.1"><vh>reduce_numbers (returns list)</vh></v>
+<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
+<v t="ekr.20160207133035.1"><vh>show_helper</vh></v>
+</v>
+<v t="ekr.20160206212123.1"><vh>split_types</vh></v>
+<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
+</v>
 <v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
 <v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
 <v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
@@ -108,16 +123,14 @@
 </v>
 </v>
 <v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
-<v t="ekr.20160205101134.1"><vh>reduce_numbers (returns list)</vh></v>
-</v>
-<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
-<v t="ekr.20160128041938.1"></v>
-<v t="ekr.20160130034812.1"><vh>is_known_type (split_types)</vh></v>
-<v t="ekr.20160207051316.1"></v>
 <v t="ekr.20160205101134.1"></v>
 </v>
+<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
+<v t="ekr.20160206104634.1"></v>
+<v t="ekr.20160128041938.1"></v>
+</v>
 <v t="ekr.20160207162818.1"><vh>@test split_types</vh>
-<v t="ekr.20160206212123.1"><vh>split_types</vh></v>
+<v t="ekr.20160206212123.1"></v>
 </v>
 <v t="ekr.20160210145128.1"><vh>@test st.find_stub &amp; find_parent_stub</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
@@ -452,21 +465,7 @@
 <v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160210081628.1"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
 <v t="ekr.20160210144515.1"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
-<v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
-<v t="ekr.20160210083825.1"><vh>dump</vh></v>
-<v t="ekr.20160210141342.1"><vh>dump_dict</vh></v>
-<v t="ekr.20160210141651.1"><vh>dump_list</vh></v>
-<v t="ekr.20160130034812.1"></v>
-<v t="ekr.20160126153212.100"><vh>main</vh></v>
-<v t="ekr.20160207051316.1"></v>
-<v t="ekr.20160206120522.1"><vh>pdb</vh></v>
-<v t="ekr.20160205101134.1"></v>
-<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
-<v t="ekr.20160207133035.1"><vh>show_helper</vh></v>
-</v>
-<v t="ekr.20160206212123.1"></v>
-<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
-</v>
+<v t="ekr.20160206104634.1"></v>
 <v t="ekr.20160210082857.1"></v>
 <v t="ekr.20160203073604.1"></v>
 <v t="ekr.20160126153212.82"></v>
@@ -550,14 +549,6 @@
 </v>
 </v>
 <v t="ekr.20160212133839.1"><vh>Recent</vh>
-<v t="ekr.20160212104708.1"><vh>*** Next</vh></v>
-<v t="ekr.20160212060436.1"><vh>Post: Theory of operation</vh>
-<v t="ekr.20160212090139.1"><vh>trace headers</vh></v>
-<v t="ekr.20160211092715.1"><vh>theory notes</vh>
-<v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
-<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
-</v>
-</v>
 <v t="ekr.20160212100819.1"><vh>re traces:</vh>
 <v t="ekr.20160202070025.1"></v>
 <v t="ekr.20160205072101.1"></v>
@@ -573,6 +564,14 @@
 <v t="ekr.20160203074843.1"></v>
 <v t="ekr.20160126153212.89"></v>
 <v t="ekr.20160126153212.89"></v>
+</v>
+</v>
+<v t="ekr.20160212104708.1"><vh>*** Next</vh></v>
+<v t="ekr.20160212060436.1"><vh>Post: Theory of operation</vh>
+<v t="ekr.20160212090139.1"><vh>trace headers</vh></v>
+<v t="ekr.20160211092715.1"><vh>theory notes</vh>
+<v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
+<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
 </v>
 </v>
 </vnodes>
@@ -6713,13 +6712,9 @@ def show(s, known=True):
 <t tx="ekr.20160212104708.1">@language rest
 @wrap
 
-*** Align match_all trace with reduce_types trace.
-
 *** Use proper leoGlobals dump methods.
 
 *** Fix unit testing.
-
-- Test with python3: make sure ast works on 2 and 3.
 
 - explain g.trace and trace pattern.
 
