@@ -521,6 +521,7 @@
 <v t="ekr.20160126153212.87"></v>
 </v>
 </v>
+<v t="ekr.20160207101607.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160206104634.1"></v>
@@ -548,7 +549,6 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160207101607.1"></v>
 <v t="ekr.20160212133839.1"><vh>Recent</vh>
 <v t="ekr.20160212104708.1"><vh>*** Next</vh></v>
 <v t="ekr.20160212060436.1"><vh>Post: Theory of operation</vh>
@@ -560,6 +560,7 @@
 </v>
 <v t="ekr.20160212100819.1"><vh>re traces:</vh>
 <v t="ekr.20160202070025.1"></v>
+<v t="ekr.20160205072101.1"></v>
 <v t="ekr.20160205131910.1"></v>
 <v t="ekr.20160130032546.1"></v>
 <v t="ekr.20160126153212.87"></v>
@@ -567,15 +568,13 @@
 </v>
 <v t="ekr.20160212133742.1"><vh>re: python 3 compatibility</vh>
 <v t="ekr.20160203075612.1"></v>
-<v t="ekr.20160126153212.89"></v>
 <v t="ekr.20160126153212.20"></v>
-<v t="ekr.20160203074843.1"></v>
 <v t="ekr.20160126153212.32"></v>
-</v>
-<v t="ekr.20160205072101.1"></v>
-</v>
+<v t="ekr.20160203074843.1"></v>
 <v t="ekr.20160126153212.89"></v>
-<v t="ekr.20160212133732.1"><vh>Checkin log</vh></v>
+<v t="ekr.20160126153212.89"></v>
+</v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2593,14 +2592,14 @@ def match(self, s, trace=False):
             start, end = 0, len(s)
             s = self.replace_balanced(s, start, end)
             if trace:
-                g.trace('%16s %30s %40s ==&gt; %s' % (caller, self, s1, s))
+                g.trace('%-16s %30s %40s ==&gt; %s' % (caller, self, s1, s))
             return True, s
     else:
         m = self.regex.match(s)
         if m and m.group(0) == s:
             s = self.replace_regex(m, s)
             if trace:
-                g.trace('%16s %30s %30s ==&gt; %s' % (caller, self, s1, s))
+                g.trace('%-16s %30s %30s ==&gt; %s' % (caller, self, s1, s))
             return True, s
         else:
             return False, s
@@ -3332,7 +3331,7 @@ def match_all(self, node, s):
                 if pattern not in aList:
                     aList.append(pattern)
                     d [name] = aList
-                    g.trace('%12s %30s %40s ==&gt; %s' % (caller, pattern, s1, s))
+                    print('match_all:    %-12s %26s %40s ==&gt; %s' % (caller, pattern, s1, s))
             break
     return s</t>
 <t tx="ekr.20160205142626.1">
@@ -3944,7 +3943,6 @@ def show_helper(aList, known, name, s, trace):
         pattern = '[%s]' % truncate(', '.join(pattern), 53-2)
         print('reduce_types: %-26s %53s ==&gt; %s%s' % (context, pattern, known, s))
             # widths above match the corresponding indents in match_all and match.
-        # if name: print('')
     return s
 </t>
 <t tx="ekr.20160207162818.1">table = (
@@ -6728,22 +6726,6 @@ def show(s, known=True):
 - Examples of return comments, with and without --verbose.
 - The script is useful even without patterns.
 </t>
-<t tx="ekr.20160212133732.1">@language rest
-@wrap
-
-The script now runs with Python 2 or 3. And other improvements.
-
-- Corrected import for StringIO.
-- Added AstFormatter.do_NameConstant.
-- Added code to st.format_arguments for Python 3.
-    - Corrected AstFormatter.do_arg.
-- Removed a duplicate entry in msf.cfg.
-  Apparently configParser is more picky in Python 3.
-- Improved several traces.
-    - Created show_helper().
-    - show() now just binds the args to show_helper().
-- Experimenatl: "self" is now considered a known type.
-  </t>
 <t tx="ekr.20160212133742.1"></t>
 <t tx="ekr.20160212133839.1"></t>
 </tnodes>

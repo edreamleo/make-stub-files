@@ -221,7 +221,6 @@ def show_helper(aList, known, name, s, trace):
         pattern = '[%s]' % truncate(', '.join(pattern), 53-2)
         print('reduce_types: %-26s %53s ==> %s%s' % (context, pattern, known, s))
             # widths above match the corresponding indents in match_all and match.
-        # if name: print('')
     return s
 
 def split_types(s):
@@ -1125,14 +1124,14 @@ class Pattern(object):
                 start, end = 0, len(s)
                 s = self.replace_balanced(s, start, end)
                 if trace:
-                    g.trace('%16s %30s %40s ==> %s' % (caller, self, s1, s))
+                    g.trace('%-16s %30s %40s ==> %s' % (caller, self, s1, s))
                 return True, s
         else:
             m = self.regex.match(s)
             if m and m.group(0) == s:
                 s = self.replace_regex(m, s)
                 if trace:
-                    g.trace('%16s %30s %30s ==> %s' % (caller, self, s1, s))
+                    g.trace('%-16s %30s %30s ==> %s' % (caller, self, s1, s))
                 return True, s
             else:
                 return False, s
@@ -1673,7 +1672,7 @@ class StubFormatter (AstFormatter):
                     if pattern not in aList:
                         aList.append(pattern)
                         d [name] = aList
-                        g.trace('%12s %30s %40s ==> %s' % (caller, pattern, s1, s))
+                        print('match_all:    %-12s %26s %40s ==> %s' % (caller, pattern, s1, s))
                 break
         return s
 
