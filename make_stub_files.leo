@@ -156,7 +156,7 @@
 <v t="ekr.20160126153212.29"><vh>f.Index</vh></v>
 <v t="ekr.20160126153212.30"><vh>f.List</vh></v>
 <v t="ekr.20160126153212.31"><vh>f.ListComp</vh></v>
-<v t="ekr.20160126153212.32"><vh>f.Name</vh></v>
+<v t="ekr.20160126153212.32"><vh>f.Name &amp; f.NameConstant</vh></v>
 <v t="ekr.20160126153212.33"><vh>f.Num</vh></v>
 <v t="ekr.20160126153212.34"><vh>f.Repr</vh></v>
 <v t="ekr.20160126153212.35"><vh>f.Slice</vh></v>
@@ -462,7 +462,7 @@
 <v t="ekr.20160206120522.1"><vh>pdb</vh></v>
 <v t="ekr.20160205101134.1"></v>
 <v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
-<v t="ekr.20160207133035.1"><vh>&lt;&lt; define show &gt;&gt;</vh></v>
+<v t="ekr.20160207133035.1"><vh>show_helper</vh></v>
 </v>
 <v t="ekr.20160206212123.1"></v>
 <v t="ekr.20160207115604.1"><vh>truncate</vh></v>
@@ -521,11 +521,6 @@
 <v t="ekr.20160126153212.87"></v>
 </v>
 </v>
-<v t="ekr.20160207101607.1"></v>
-<v t="ekr.20160211092715.1"><vh>theory notes</vh>
-<v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
-<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
-</v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160206104634.1"></v>
@@ -553,14 +548,34 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
+<v t="ekr.20160207101607.1"></v>
+<v t="ekr.20160212133839.1"><vh>Recent</vh>
+<v t="ekr.20160212104708.1"><vh>*** Next</vh></v>
+<v t="ekr.20160212060436.1"><vh>Post: Theory of operation</vh>
+<v t="ekr.20160212090139.1"><vh>trace headers</vh></v>
+<v t="ekr.20160211092715.1"><vh>theory notes</vh>
+<v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
+<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
+</v>
+</v>
 <v t="ekr.20160212100819.1"><vh>re traces:</vh>
-<v t="ekr.20160130032546.1"></v>
 <v t="ekr.20160202070025.1"></v>
 <v t="ekr.20160205131910.1"></v>
+<v t="ekr.20160130032546.1"></v>
+<v t="ekr.20160126153212.87"></v>
+<v t="ekr.20160126153212.88"></v>
+</v>
+<v t="ekr.20160212133742.1"><vh>re: python 3 compatibility</vh>
+<v t="ekr.20160203075612.1"></v>
+<v t="ekr.20160126153212.89"></v>
+<v t="ekr.20160126153212.20"></v>
+<v t="ekr.20160203074843.1"></v>
+<v t="ekr.20160126153212.32"></v>
+</v>
 <v t="ekr.20160205072101.1"></v>
 </v>
-<v t="ekr.20160212060436.1"><vh>Post: Theory of operation</vh></v>
-<v t="ekr.20160212090139.1"><vh>trace headers</vh></v>
+<v t="ekr.20160126153212.89"></v>
+<v t="ekr.20160212133732.1"><vh>Checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -677,10 +692,7 @@ def do_arguments(self, node):
 # arg = (identifier arg, expr? annotation)
 
 def do_arg(self, node):
-    if node.annotation:
-        return self.visit(node.annotation)
-    else:
-        return ''
+    return node.arg
 </t>
 <t tx="ekr.20160126153212.21">
 # Attribute(expr value, identifier attr, expr_context ctx)
@@ -791,6 +803,10 @@ def do_ListComp(self, node):
 <t tx="ekr.20160126153212.32">
 def do_Name(self, node):
     return node.id
+
+def do_NameConstant(self, node): # Python 3 only.
+    s = repr(node.value)
+    return 'bool' if s in ('True', 'False') else s
 </t>
 <t tx="ekr.20160126153212.33">
 def do_Num(self, node):
@@ -1053,7 +1069,7 @@ def visit(self, node):
         method = getattr(self, method_name)
         s = method(node)
         # pylint: disable=unidiomatic-typecheck
-        assert type(s) == type('abc'), type(s)
+        assert type(s) == type('abc'), (node, type(s))
         return s
 </t>
 <t tx="ekr.20160126153212.60">
@@ -1602,6 +1618,8 @@ def visit_ClassDef(self, node):
     # Enter the new context.
     self.class_name_stack.append(node.name)
     self.context_stack.append(node.name)
+    if self.trace_matches or self.trace_reduce:
+        print('\nclass %s\n' % node.name)
     # Format...
     if not node.name.startswith('_'):
         if node.bases:
@@ -1636,6 +1654,9 @@ def visit_FunctionDef(self, node):
     self.context_stack.pop()
     self.level -= 1
     # Format *after* traversing
+    # if self.trace_matches or self.trace_reduce:
+        # if not self.class_name_stack:
+            # print('def %s\n' % node.name)
     self.out('def %s(%s) -&gt; %s' % (
         node.name,
         self.format_arguments(node.args),
@@ -1665,9 +1686,15 @@ def format_arguments(self, node):
             result.append('%s=%s' % (s, defaults[i - n_plain]))
     # Now add the vararg and kwarg args.
     name = getattr(node, 'vararg', None)
-    if name: result.append('*' + name)
+    if name:
+        if hasattr(ast, 'arg'): # python 3:
+            name = self.raw_format(name)
+        result.append('*' + name)
     name = getattr(node, 'kwarg', None)
-    if name: result.append('**' + name)
+    if name:
+        if hasattr(ast, 'arg'): # python 3:
+            name = self.raw_format(name)
+        result.append('**' + name)
     return ', '.join(result)
 </t>
 <t tx="ekr.20160126153212.9">
@@ -2127,7 +2154,6 @@ repr(*): str
 sorted(*): str
 str%(*): str
 str.join(*): str
-str.join(*): str
 r[*]: str
 # Put this in the code.
 str[*]: str
@@ -2295,12 +2321,16 @@ def format_return_expressions(self, name, raw_returns, reduced_returns):
         results = ''.join([lws + self.indent(z) for z in aList])
         # Put the return lines in their proper places.
         if known:
-            s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
+            s = reduce_types(reduced_returns,
+                             name=name,
+                             trace=self.trace_reduce)
             return s + ': ...' + results
         else:
             return 'Any: ...' + results
     else:
-        s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce) 
+        s = reduce_types(reduced_returns,
+                         name=name,
+                         trace=self.trace_reduce) 
         return s + ': ...'
 </t>
 <t tx="ekr.20160130034812.1">
@@ -2376,10 +2406,6 @@ def is_known_type(s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-Update readme file and theory of operation.
-- Task oriented docs.
-- Examples of return comments, with and without --verbose.
-- The script is useful even without patterns.
 - Rough edges re number types. Is reduce_numbers correct?
 
 Later: improve type reduction:
@@ -2637,7 +2663,7 @@ def init_parser(self, s):
             aList.append(s)
     s = '\n'.join(aList)+'\n'
     if trace: g.trace(s)
-    file_object = StringIO.StringIO(s)
+    file_object = io.StringIO(s)
     self.parser.readfp(file_object)</t>
 <t tx="ekr.20160203075612.1">import ast
 from collections import OrderedDict
@@ -2654,9 +2680,10 @@ import re
 import sys
 import time
 try:
-    import io.StringIO as StringIO # Python 3
+    import StringIO as io # Python 2
 except ImportError:
-    import StringIO
+    import io # Python 3
+
 </t>
 <t tx="ekr.20160203094439.1">
 def is_section_name(self, s):
@@ -3172,8 +3199,11 @@ def reduce_types(aList, name=None, trace=False):
     If present, name is the function name or class_name.method_name.
     '''
     trace = False or trace
-    aList1 = aList[:]
-    &lt;&lt; define show &gt;&gt;
+    
+    def show(s, known=True):
+        '''Bind the arguments to show_helper.'''
+        return show_helper(aList[:], known, name, s, trace)
+
     while None in aList:
         aList.remove(None)
     if not aList:
@@ -3586,6 +3616,7 @@ def is_known_type(s):
     s = s.strip()
     table = (
         # None,
+        'self', # Experimental.
         'None', 
         'complex', 'float', 'int', 'long', 'number',
         'dict', 'list', 'tuple',
@@ -3896,16 +3927,24 @@ for s1, s2 in table:
     got = truncate(s1, 5)
     assert s2 == got, (s1, 'expected', s2, 'got', got)</t>
 <t tx="ekr.20160207133035.1">
-def show(s, known=True):
+def show_helper(aList, known, name, s, trace):
     '''Show the result of the reduction.'''
     s = s.strip()
     if trace and (not known or len(aList) &gt; 1):
-        caller = truncate(g.callers(2).split(',')[0].strip(), 16)
+        if name:
+            if name.find('.') &gt; -1:
+                context = ''.join(name.split('.')[1:])
+            else:
+                context = name
+        else:
+            context = g.callers(3).split(',')[0].strip()
+        context = truncate(context, 26)
         known = '' if known else '? '
-        pattern = sorted(set([z.replace('\n',' ') for z in aList1]))
-        pattern = '[%s]' % truncate(', '.join(pattern), 63-2)
-        print('reduce_types: %-16s %63s ==&gt; %s%s' % (caller, pattern, known, s))
+        pattern = sorted(set([z.replace('\n',' ') for z in aList]))
+        pattern = '[%s]' % truncate(', '.join(pattern), 53-2)
+        print('reduce_types: %-26s %53s ==&gt; %s%s' % (context, pattern, known, s))
             # widths above match the corresponding indents in match_all and match.
+        # if name: print('')
     return s
 </t>
 <t tx="ekr.20160207162818.1">table = (
@@ -6578,6 +6617,13 @@ This document intends to be maximally helpful to future maintainers, while avoid
 
 The solution to these problems is simple. Please feel free to ask questions. Ask me anything about design, code detail, whatever. This will help me improve this document.
 
+### What you do, and don't, need to know:
+
+- ast class
+- pep 484 and typing module.
+- Don't need to know the theory behind Henly-Milner, mypy, pysonar, rope or pylint.
+- Don't even need to know how to run mypy.
+
 ### Higest level description
 
 This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. Just as the AstFormatter class does, this script traverses the incoming ast tree from the top down, generating results from the bottom up.
@@ -6666,5 +6712,39 @@ def show(s, known=True):
     return s
 </t>
 <t tx="ekr.20160212100819.1"></t>
+<t tx="ekr.20160212104708.1">@language rest
+@wrap
+
+*** Align match_all trace with reduce_types trace.
+
+*** Use proper leoGlobals dump methods.
+
+*** Fix unit testing.
+
+- Test with python3: make sure ast works on 2 and 3.
+
+- explain g.trace and trace pattern.
+
+- Examples of return comments, with and without --verbose.
+- The script is useful even without patterns.
+</t>
+<t tx="ekr.20160212133732.1">@language rest
+@wrap
+
+The script now runs with Python 2 or 3. And other improvements.
+
+- Corrected import for StringIO.
+- Added AstFormatter.do_NameConstant.
+- Added code to st.format_arguments for Python 3.
+    - Corrected AstFormatter.do_arg.
+- Removed a duplicate entry in msf.cfg.
+  Apparently configParser is more picky in Python 3.
+- Improved several traces.
+    - Created show_helper().
+    - show() now just binds the args to show_helper().
+- Experimenatl: "self" is now considered a known type.
+  </t>
+<t tx="ekr.20160212133742.1"></t>
+<t tx="ekr.20160212133839.1"></t>
 </tnodes>
 </leo_file>

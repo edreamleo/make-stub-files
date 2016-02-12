@@ -10,6 +10,7 @@ def is_known_type(s):
     s = s.strip()
     table = (
         # None,
+        'self', # Experimental.
         'None', 
         'complex', 'float', 'int', 'long', 'number',
         'dict', 'list', 'tuple',

@@ -22,9 +22,10 @@ import re
 import sys
 import time
 try:
-    import io.StringIO as StringIO # Python 3
+    import StringIO as io # Python 2
 except ImportError:
-    import StringIO
+    import io # Python 3
+
 
 # Top-level functions
 
@@ -178,19 +179,11 @@ def reduce_types(aList, name=None, trace=False):
     If present, name is the function name or class_name.method_name.
     '''
     trace = False or trace
-    aList1 = aList[:]
-
+    
     def show(s, known=True):
-        '''Show the result of the reduction.'''
-        s = s.strip()
-        if trace and (not known or len(aList) > 1):
-            caller = truncate(g.callers(2).split(',')[0].strip(), 16)
-            known = '' if known else '? '
-            pattern = sorted(set([z.replace('\n',' ') for z in aList1]))
-            pattern = '[%s]' % truncate(', '.join(pattern), 63-2)
-            print('reduce_types: %-16s %63s ==> %s%s' % (caller, pattern, known, s))
-                # widths above match the corresponding indents in match_all and match.
-        return s
+        '''Bind the arguments to show_helper.'''
+        return show_helper(aList[:], known, name, s, trace)
+
     while None in aList:
         aList.remove(None)
     if not aList:
@@ -210,6 +203,26 @@ def reduce_types(aList, name=None, trace=False):
         return show(r[0])
     else:
         return show('Union[%s]' % (', '.join(sorted(r))))
+
+def show_helper(aList, known, name, s, trace):
+    '''Show the result of the reduction.'''
+    s = s.strip()
+    if trace and (not known or len(aList) > 1):
+        if name:
+            if name.find('.') > -1:
+                context = ''.join(name.split('.')[1:])
+            else:
+                context = name
+        else:
+            context = g.callers(3).split(',')[0].strip()
+        context = truncate(context, 26)
+        known = '' if known else '? '
+        pattern = sorted(set([z.replace('\n',' ') for z in aList]))
+        pattern = '[%s]' % truncate(', '.join(pattern), 53-2)
+        print('reduce_types: %-26s %53s ==> %s%s' % (context, pattern, known, s))
+            # widths above match the corresponding indents in match_all and match.
+        # if name: print('')
+    return s
 
 def split_types(s):
     '''Split types on *outer level* commas.'''
@@ -258,7 +271,7 @@ class AstFormatter:
             method = getattr(self, method_name)
             s = method(node)
             # pylint: disable=unidiomatic-typecheck
-            assert type(s) == type('abc'), type(s)
+            assert type(s) == type('abc'), (node, type(s))
             return s
 
     # Contexts...
@@ -370,10 +383,7 @@ class AstFormatter:
     # arg = (identifier arg, expr? annotation)
 
     def do_arg(self, node):
-        if node.annotation:
-            return self.visit(node.annotation)
-        else:
-            return ''
+        return node.arg
 
     # Attribute(expr value, identifier attr, expr_context ctx)
 
@@ -461,6 +471,10 @@ class AstFormatter:
 
     def do_Name(self, node):
         return node.id
+
+    def do_NameConstant(self, node): # Python 3 only.
+        s = repr(node.value)
+        return 'bool' if s in ('True', 'False') else s
 
     def do_Num(self, node):
         return repr(node.n)
@@ -1480,7 +1494,7 @@ class StandAloneMakeStubFile:
                 aList.append(s)
         s = '\n'.join(aList)+'\n'
         if trace: g.trace(s)
-        file_object = StringIO.StringIO(s)
+        file_object = io.StringIO(s)
         self.parser.readfp(file_object)
 
     def is_section_name(self, s):
@@ -2252,6 +2266,8 @@ class StubTraverser (ast.NodeVisitor):
         # Enter the new context.
         self.class_name_stack.append(node.name)
         self.context_stack.append(node.name)
+        if self.trace_matches or self.trace_reduce:
+            print('\nclass %s\n' % node.name)
         # Format...
         if not node.name.startswith('_'):
             if node.bases:
@@ -2285,6 +2301,9 @@ class StubTraverser (ast.NodeVisitor):
         self.context_stack.pop()
         self.level -= 1
         # Format *after* traversing
+        # if self.trace_matches or self.trace_reduce:
+            # if not self.class_name_stack:
+                # print('def %s\n' % node.name)
         self.out('def %s(%s) -> %s' % (
             node.name,
             self.format_arguments(node.args),
@@ -2313,9 +2332,15 @@ class StubTraverser (ast.NodeVisitor):
                 result.append('%s=%s' % (s, defaults[i - n_plain]))
         # Now add the vararg and kwarg args.
         name = getattr(node, 'vararg', None)
-        if name: result.append('*' + name)
+        if name:
+            if hasattr(ast, 'arg'): # python 3:
+                name = self.raw_format(name)
+            result.append('*' + name)
         name = getattr(node, 'kwarg', None)
-        if name: result.append('**' + name)
+        if name:
+            if hasattr(ast, 'arg'): # python 3:
+                name = self.raw_format(name)
+            result.append('**' + name)
         return ', '.join(result)
 
     def munge_arg(self, s):
@@ -2383,12 +2408,16 @@ class StubTraverser (ast.NodeVisitor):
             results = ''.join([lws + self.indent(z) for z in aList])
             # Put the return lines in their proper places.
             if known:
-                s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
+                s = reduce_types(reduced_returns,
+                                 name=name,
+                                 trace=self.trace_reduce)
                 return s + ': ...' + results
             else:
                 return 'Any: ...' + results
         else:
-            s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce) 
+            s = reduce_types(reduced_returns,
+                             name=name,
+                             trace=self.trace_reduce) 
             return s + ': ...'
 
     def get_def_name(self, node):
