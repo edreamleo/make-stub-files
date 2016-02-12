@@ -94,6 +94,16 @@
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
 <v t="ekr.20160207115604.1"><vh>truncate</vh></v>
 </v>
+<v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
+<v t="ekr.20160210143802.1"><vh>class NullObject (Python Cookbook)</vh></v>
+<v t="ekr.20160203095618.2"><vh>g._callerName</vh></v>
+<v t="ekr.20160203095618.1"><vh>g.callers</vh></v>
+<v t="ekr.20160202170529.1"><vh>g.cls</vh></v>
+<v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
+<v t="ekr.20160203183934.1"><vh>g.shortFileName</vh></v>
+<v t="ekr.20160206101140.1"><vh>g.splitLines</vh></v>
+<v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
+</v>
 <v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
 <v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
 <v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
@@ -209,16 +219,7 @@
 <v t="ekr.20160202165117.1"><vh>class AstArgFormatter (AstFormatter)</vh>
 <v t="ekr.20160202165143.1"><vh>sf.Constants &amp; Name</vh></v>
 </v>
-<v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
-<v t="ekr.20160210143802.1"><vh>class NullObject (Python Cookbook)</vh></v>
-<v t="ekr.20160203095618.2"><vh>g._callerName</vh></v>
-<v t="ekr.20160203095618.1"><vh>g.callers</vh></v>
-<v t="ekr.20160202170529.1"><vh>g.cls</vh></v>
-<v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
-<v t="ekr.20160203183934.1"><vh>g.shortFileName</vh></v>
-<v t="ekr.20160206101140.1"><vh>g.splitLines</vh></v>
-<v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
-</v>
+<v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
 <v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
@@ -3417,14 +3418,16 @@ def clean(self,s):
     for ch in s.strip():
         if ch.isalnum():
             result.append(ch)
-        elif ch.isspace():
+        else:
             result.append('_')
+        # elif ch.isspace():
+            # result.append('_')
     s = ''.join(result)
     if s.endswith('.py'):
         s = s[:-3]
     if not s.startswith('test'):
         s = 'test_' + s
-    return s.strip()
+    return s.replace('__','_').strip()
 </t>
 <t tx="ekr.20160206101802.8">
 def get_body(self,p):
@@ -3480,7 +3483,7 @@ unittest.TextTestRunner(verbosity=0).run(suite)
 # Top-level functions</t>
 <t tx="ekr.20160206110004.1">@others
 import re
-    
+g = LeoGlobals() # Use the g available to the script.
 table = (
     # s,  Pattern.find_s, Pattern.repl_s, expected
     # Passed...
@@ -4142,12 +4145,9 @@ def sort_stubs_by_hierarchy(self, stubs1):
 &lt;&lt; old_stubs &gt;&gt;
 &lt;&lt; new_stubs &gt;&gt;
 @others
-leo_g = g # needed only to adjust for Leo's indentation.
 g = LeoGlobals() # Use the g available to the script.
 # g.cls()
 st = StubTraverser(controller=g.NullObject())
-old_s = leo_g.adjustTripleString(old_s, tab_width=-4)
-new_s = leo_g.adjustTripleString(new_s, tab_width=-4)
 # dump('old_s', old_s)
 # dump('new_s', new_s)
 old_d, old_root = st.parse_stub_file(old_s, root_name='&lt;old-root&gt;')
@@ -4325,11 +4325,8 @@ class AstFormatter:
 <t tx="ekr.20160210145128.1">&lt;&lt; imports &gt;&gt;
 &lt;&lt; define s &gt;&gt;
 @others
-leo_g = g # needed only to adjust for Leo's indentation.
 g = LeoGlobals() # Use the g available to the script.
-# g.cls()
 st = StubTraverser(controller=g.NullObject())
-s = leo_g.adjustTripleString(s, tab_width=-4)
 d, root = st.parse_stub_file(s, root_name='&lt;root&gt;')
     # Root *is* used below.
 if 0:
@@ -4376,11 +4373,8 @@ def flatten_stubs_helper(self, root, aList):
 <t tx="ekr.20160211050346.1">&lt;&lt; imports &gt;&gt;
 &lt;&lt; define s &gt;&gt;
 @others
-leo_g = g # needed only to adjust for Leo's indentation.
 g = LeoGlobals() # Use the g available to the script.
-# g.cls()
 st = StubTraverser(controller=g.NullObject())
-s = leo_g.adjustTripleString(s, tab_width=-4)
 d, root = st.parse_stub_file(s, root_name='&lt;root&gt;')
 if 0:
     print(st.trace_stubs(root, header='root'))
