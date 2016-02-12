@@ -183,16 +183,13 @@ def reduce_types(aList, name=None, trace=False):
     def show(s, known=True):
         '''Show the result of the reduction.'''
         s = s.strip()
-        if trace:
-            r = sorted(set([z.replace('\n',' ') for z in aList1]))
-            if len(''.join(r)) >= 35:
-                r = truncate(repr(r), 35)
-            if len(s) >= 25:
-                s = truncate(s, 25)
-            if len(r) > 1:
-                caller = g.callers(2).split(',')[0]
-                sep = ' ' if known else '?'
-                g.trace('%20s %25s %s <== %-35s %s' % (name or '', s, sep, r, caller))
+        if trace and (not known or len(aList) > 1):
+            caller = truncate(g.callers(2).split(',')[0].strip(), 16)
+            known = '' if known else '? '
+            pattern = sorted(set([z.replace('\n',' ') for z in aList1]))
+            pattern = '[%s]' % truncate(', '.join(pattern), 63-2)
+            print('reduce_types: %-16s %63s ==> %s%s' % (caller, pattern, known, s))
+                # widths above match the corresponding indents in match_all and match.
         return s
     while None in aList:
         aList.remove(None)
@@ -1000,7 +997,7 @@ class Pattern(object):
 
     def __repr__(self):
         '''Pattern.__repr__'''
-        return 'Pattern: %s ==> %s' % (self.find_s, self.repl_s)
+        return '%s: %s' % (self.find_s, self.repl_s)
         
     __str__ = __repr__
 
@@ -1103,22 +1100,25 @@ class Pattern(object):
         Return (found, new s)
         '''
         trace = False or trace
+        caller = g.callers(2).split(',')[0].strip()
+            # The caller of match_all.
+        s1 = truncate(s,40)
         if self.is_balanced():
             j = self.full_balanced_match(s, 0)
             if j is None:
                 return False, s
             else:
-                s1 = s
                 start, end = 0, len(s)
                 s = self.replace_balanced(s, start, end)
-                if trace: g.trace('%50s' % (truncate(s1,50)), self)
+                if trace:
+                    g.trace('%16s %30s %40s ==> %s' % (caller, self, s1, s))
                 return True, s
         else:
             m = self.regex.match(s)
             if m and m.group(0) == s:
-                s1 = s
                 s = self.replace_regex(m, s)
-                if trace: g.trace('%50s' % (truncate(s1,50)), self)
+                if trace:
+                    g.trace('%16s %30s %30s ==> %s' % (caller, self, s1, s))
                 return True, s
             else:
                 return False, s
@@ -1270,7 +1270,7 @@ class StandAloneMakeStubFile:
         import unittest
         loader = unittest.TestLoader()
         suite = loader.loadTestsFromTestCase(test_msf.TestMakeStubFiles)
-        unittest.TextTestRunner(verbosity=0).run(suite)
+        unittest.TextTestRunner(verbosity=2).run(suite)
 
     def scan_command_line(self):
         '''Set ivars from command-line arguments.'''
@@ -1648,16 +1648,18 @@ class StubFormatter (AstFormatter):
         trace = False or self.trace_matches
         d = self.matched_d
         name = node.__class__.__name__
+        s1 = truncate(s, 40)
+        caller = g.callers(2).split(',')[1].strip()
+            # The direct caller of match_all.
         for pattern in self.patterns_dict.get(name, []):
-            s1 = s
-            found, s = pattern.match(s,trace=trace)
+            found, s = pattern.match(s,trace=False)
             if found:
                 if trace:
                     aList = d.get(name, [])
                     if pattern not in aList:
                         aList.append(pattern)
                         d [name] = aList
-                        g.trace('%46s %s' % (name, pattern))
+                        g.trace('%12s %30s %40s ==> %s' % (caller, pattern, s1, s))
                 break
         return s
 
@@ -1763,7 +1765,7 @@ class StubFormatter (AstFormatter):
 
     def do_BinOp(self, node):
         '''StubFormatter.BinOp visitor.'''
-        trace = False or self.trace_reduce
+        trace = False or self.trace_reduce ; verbose = False
         numbers = ['number', 'complex', 'float', 'long', 'int',]
         op = self.op_name(node.op)
         lhs = self.visit(node.left)
@@ -1777,10 +1779,11 @@ class StubFormatter (AstFormatter):
         elif lhs in numbers and rhs in numbers:
             s = reduce_types([lhs, rhs], trace=trace)
                 # reduce_numbers would be wrong: it returns a list.
-        elif lhs == 'str' and op in '%*':
+        elif lhs == 'str' and op in '%+*':
+            # str + any implies any is a string.
             s = 'str'
         else:
-            if trace and lhs == 'str':
+            if trace and verbose and lhs == 'str':
                 g.trace('***** unknown string op', lhs, op, rhs)
             # Fall back to the base-class behavior.
             s = '%s%s%s' % (
@@ -2380,14 +2383,12 @@ class StubTraverser (ast.NodeVisitor):
             results = ''.join([lws + self.indent(z) for z in aList])
             # Put the return lines in their proper places.
             if known:
-                s = reduce_types(reduced_returns, name, self.trace_reduce)
-                    # newlines=True,        
+                s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
                 return s + ': ...' + results
             else:
                 return 'Any: ...' + results
         else:
-            s = reduce_types(reduced_returns, name, self.trace_reduce)
-                    # newlines=True,       
+            s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce) 
             return s + ': ...'
 
     def get_def_name(self, node):

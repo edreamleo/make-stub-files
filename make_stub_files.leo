@@ -46,6 +46,7 @@
 <v t="ekr.20160210184122.2"><vh>&lt;&lt; define show &gt;&gt;</vh></v>
 </v>
 <v t="ekr.20160210190143.1"><vh>old merge_stubs (asserts fail)</vh></v>
+<v t="ekr.20160212091656.1"><vh>&lt;&lt; define show &gt;&gt; (old, buggy)</vh></v>
 </v>
 </v>
 <v t="ekr.20160128105006.1"><vh>Documentation</vh>
@@ -114,9 +115,6 @@
 <v t="ekr.20160130034812.1"><vh>is_known_type (split_types)</vh></v>
 <v t="ekr.20160207051316.1"></v>
 <v t="ekr.20160205101134.1"></v>
-<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
-<v t="ekr.20160207133035.1"><vh>&lt;&lt; define show &gt;&gt;</vh></v>
-</v>
 </v>
 <v t="ekr.20160207162818.1"><vh>@test split_types</vh>
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
@@ -463,7 +461,9 @@
 <v t="ekr.20160207051316.1"></v>
 <v t="ekr.20160206120522.1"><vh>pdb</vh></v>
 <v t="ekr.20160205101134.1"></v>
-<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
+<v t="ekr.20160207133035.1"><vh>&lt;&lt; define show &gt;&gt;</vh></v>
+</v>
 <v t="ekr.20160206212123.1"></v>
 <v t="ekr.20160207115604.1"><vh>truncate</vh></v>
 </v>
@@ -521,6 +521,11 @@
 <v t="ekr.20160126153212.87"></v>
 </v>
 </v>
+<v t="ekr.20160207101607.1"></v>
+<v t="ekr.20160211092715.1"><vh>theory notes</vh>
+<v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
+<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
+</v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160206104634.1"></v>
@@ -548,12 +553,14 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160207101607.1"></v>
-<v t="ekr.20160211092715.1"><vh>theory notes</vh>
-<v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
-<v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
+<v t="ekr.20160212100819.1"><vh>re traces:</vh>
+<v t="ekr.20160130032546.1"></v>
+<v t="ekr.20160202070025.1"></v>
+<v t="ekr.20160205131910.1"></v>
+<v t="ekr.20160205072101.1"></v>
 </v>
-<v t="ekr.20160211110739.1"></v>
+<v t="ekr.20160212060436.1"><vh>Post: Theory of operation</vh></v>
+<v t="ekr.20160212090139.1"><vh>trace headers</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2151,7 +2158,7 @@ def __init__ (self, find_s, repl_s=''):
 <t tx="ekr.20160128113914.1">
 def __repr__(self):
     '''Pattern.__repr__'''
-    return 'Pattern: %s ==&gt; %s' % (self.find_s, self.repl_s)
+    return '%s: %s' % (self.find_s, self.repl_s)
     
 __str__ = __repr__
 </t>
@@ -2185,7 +2192,7 @@ def run_all_unit_tests(self):
     import unittest
     loader = unittest.TestLoader()
     suite = loader.loadTestsFromTestCase(test_msf.TestMakeStubFiles)
-    unittest.TextTestRunner(verbosity=0).run(suite)
+    unittest.TextTestRunner(verbosity=2).run(suite)
 </t>
 <t tx="ekr.20160128154704.1"></t>
 <t tx="ekr.20160128154715.1">import pdb
@@ -2288,14 +2295,12 @@ def format_return_expressions(self, name, raw_returns, reduced_returns):
         results = ''.join([lws + self.indent(z) for z in aList])
         # Put the return lines in their proper places.
         if known:
-            s = reduce_types(reduced_returns, name, self.trace_reduce)
-                # newlines=True,        
+            s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
             return s + ': ...' + results
         else:
             return 'Any: ...' + results
     else:
-        s = reduce_types(reduced_returns, name, self.trace_reduce)
-                # newlines=True,       
+        s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce) 
         return s + ': ...'
 </t>
 <t tx="ekr.20160130034812.1">
@@ -2551,22 +2556,25 @@ def match(self, s, trace=False):
     Return (found, new s)
     '''
     trace = False or trace
+    caller = g.callers(2).split(',')[0].strip()
+        # The caller of match_all.
+    s1 = truncate(s,40)
     if self.is_balanced():
         j = self.full_balanced_match(s, 0)
         if j is None:
             return False, s
         else:
-            s1 = s
             start, end = 0, len(s)
             s = self.replace_balanced(s, start, end)
-            if trace: g.trace('%50s' % (truncate(s1,50)), self)
+            if trace:
+                g.trace('%16s %30s %40s ==&gt; %s' % (caller, self, s1, s))
             return True, s
     else:
         m = self.regex.match(s)
         if m and m.group(0) == s:
-            s1 = s
             s = self.replace_regex(m, s)
-            if trace: g.trace('%50s' % (truncate(s1,50)), self)
+            if trace:
+                g.trace('%16s %30s %30s ==&gt; %s' % (caller, self, s1, s))
             return True, s
         else:
             return False, s
@@ -2996,7 +3004,7 @@ def update(self, fn, new_root):
 
 def do_BinOp(self, node):
     '''StubFormatter.BinOp visitor.'''
-    trace = False or self.trace_reduce
+    trace = False or self.trace_reduce ; verbose = False
     numbers = ['number', 'complex', 'float', 'long', 'int',]
     op = self.op_name(node.op)
     lhs = self.visit(node.left)
@@ -3010,10 +3018,11 @@ def do_BinOp(self, node):
     elif lhs in numbers and rhs in numbers:
         s = reduce_types([lhs, rhs], trace=trace)
             # reduce_numbers would be wrong: it returns a list.
-    elif lhs == 'str' and op in '%*':
+    elif lhs == 'str' and op in '%+*':
+        # str + any implies any is a string.
         s = 'str'
     else:
-        if trace and lhs == 'str':
+        if trace and verbose and lhs == 'str':
             g.trace('***** unknown string op', lhs, op, rhs)
         # Fall back to the base-class behavior.
         s = '%s%s%s' % (
@@ -3282,16 +3291,18 @@ def match_all(self, node, s):
     trace = False or self.trace_matches
     d = self.matched_d
     name = node.__class__.__name__
+    s1 = truncate(s, 40)
+    caller = g.callers(2).split(',')[1].strip()
+        # The direct caller of match_all.
     for pattern in self.patterns_dict.get(name, []):
-        s1 = s
-        found, s = pattern.match(s,trace=trace)
+        found, s = pattern.match(s,trace=False)
         if found:
             if trace:
                 aList = d.get(name, [])
                 if pattern not in aList:
                     aList.append(pattern)
                     d [name] = aList
-                    g.trace('%46s %s' % (name, pattern))
+                    g.trace('%12s %30s %40s ==&gt; %s' % (caller, pattern, s1, s))
             break
     return s</t>
 <t tx="ekr.20160205142626.1">
@@ -3437,6 +3448,8 @@ def clean(self,s):
     s = ''.join(result)
     if s.endswith('.py'):
         s = s[:-3]
+    if not s.startswith('test'):
+        s = 'test_' + s
     return s.strip()
 </t>
 <t tx="ekr.20160206101802.8">
@@ -3855,11 +3868,7 @@ do_BinOp, do_BoolOp and do_IfExp
   (merge_types is elegant, but will not be used.)
 
 * reduce_type is the *key* method. This is a lucky accident!
-
-=== Retrospective
-- It would have been better to do more unit testing earlier.
-  It might have saved 4 to 8 hours.
-  I'm not going to be too hard on myself.</t>
+</t>
 <t tx="ekr.20160207105647.1"></t>
 <t tx="ekr.20160207105710.1">for p1 in c.all_unique_positions():
     if p1.h.startswith('@clean'):
@@ -3890,16 +3899,13 @@ for s1, s2 in table:
 def show(s, known=True):
     '''Show the result of the reduction.'''
     s = s.strip()
-    if trace:
-        r = sorted(set([z.replace('\n',' ') for z in aList1]))
-        if len(''.join(r)) &gt;= 35:
-            r = truncate(repr(r), 35)
-        if len(s) &gt;= 25:
-            s = truncate(s, 25)
-        if len(r) &gt; 1:
-            caller = g.callers(2).split(',')[0]
-            sep = ' ' if known else '?'
-            g.trace('%20s %25s %s &lt;== %-35s %s' % (name or '', s, sep, r, caller))
+    if trace and (not known or len(aList) &gt; 1):
+        caller = truncate(g.callers(2).split(',')[0].strip(), 16)
+        known = '' if known else '? '
+        pattern = sorted(set([z.replace('\n',' ') for z in aList1]))
+        pattern = '[%s]' % truncate(', '.join(pattern), 63-2)
+        print('reduce_types: %-16s %63s ==&gt; %s%s' % (caller, pattern, known, s))
+            # widths above match the corresponding indents in match_all and match.
     return s
 </t>
 <t tx="ekr.20160207162818.1">table = (
@@ -6237,13 +6243,11 @@ Views contain clones of nodes related to a particular topic.
 @wrap
 
 - Use Leo to work on this script: how to run unit tests.
-- Python rocks
 
 * Explicitly show outline relationships for those not using Leo.
 
 - Using clones in unit tests.
-
-- Use @rst in docs?</t>
+</t>
 <t tx="ekr.20160211110739.1">@language rest
 
 This is the readme file for `make_stub_files.py`. This file explains what
@@ -6565,5 +6569,102 @@ the config file.
 
         make_stub_files -c myConfigFile.cfg -o
 </t>
+<t tx="ekr.20160212060436.1">@language rest
+@wrap
+
+This post is pre-writing for theory.md, this theory-of-operation document for the make_stub_files script.
+
+This document intends to be maximally helpful to future maintainers, while avoiding stupifying detail. Alas, I know too much to see what actually needs explaining. Furthermore, reading the sources with Leo will clarify the code's overall structure, but this document can't assume that you have Leo at hand.
+
+The solution to these problems is simple. Please feel free to ask questions. Ask me anything about design, code detail, whatever. This will help me improve this document.
+
+### Higest level description
+
+This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. Just as the AstFormatter class does, this script traverses the incoming ast tree from the top down, generating results from the bottom up.
+
+=== Example of a stub and the traversals.
+
+Original:
+
+    def truncate(s, n):
+        '''Return s truncated to n characers.'''
+        return s if len(s) &lt;= n else s[:n-3] + '...'
+        
+Resulting stub:
+
+    def truncate(s: str, n: int) -&gt; str: ...
+        #   0: return s if len(s)&lt;=n else s[:n-3]+'...'
+        #   0: return str
+
+1. The script only formats class, def and return statements.
+2. The script converts constants to corresponding type hints, per Pep 484 and Python's typing module:
+
+    constant    hint
+    1.0         number
+    "abc"       str
+    []          List
+    ["abc"]     List[str]
+    
+etc.
+
+3. The script uses user-defined patterns to assign type hints to names.
+4. 
+
+### Pattern matching
+
+callers
+-------
+match_all do_Subscript                    str[*]: str                             str[:number] ==&gt; str
+
+match_all      do_Call                   all(*): bool all(is_known_type(z.strip()) for z in... ==&gt; bool
+match_all      do_Call                 sorted(*): str                       sorted(Set[r1+r2]) ==&gt; str
+match_all do_Subscript                      r[*]: str                                r[number] ==&gt; str
+match_all      do_Call               str.join(*): str                            str.join(str) ==&gt; str
+match_all do_Subscript                    str[*]: str                             str[:number] ==&gt; str
+match_all      do_Call                   repr(*): str                             repr(Node.n) ==&gt; str
+match_all      do_Call               sep.join(*): str                         sep.join(result) ==&gt; str
+match_all      do_Call       os.path.basename(*): str               os.path.basename(fileName) ==&gt; str
+match_all      do_Call           self.__eq__(*): bool                         self.__eq__(obj) ==&gt; bool
+match_all      do_Call                    len(*): int                         len(self.find_s) ==&gt; int
+match_all      do_Call            os.sep.join(*): str                         os.sep.join(str) ==&gt; str
+
+
+- One traversal in concept, four traversal classes
+
+- Packaging.  Get this right before writing the theory of operation!
+
+- "Views for study" isn't really about study, it's for experts!
+
+- Possible code improvements;
+
+    - Get rid of top-level functions:
+        - Move dump functions into LeoGlobals class.
+        - Update leoGlobals.py accordingly.
+        - Put the reduction code somewhere.
+            - Separate Reducer class?
+            - Put self.reduce_types = Reducer().reduce_types in traversers
+            </t>
+<t tx="ekr.20160212090139.1">@nowrap
+
+    callers                     pattern               original string, truncated to len(40)        result
+====================== =============================  ========================================     ======
+</t>
+<t tx="ekr.20160212091656.1">
+def show(s, known=True):
+    '''Show the result of the reduction.'''
+    s = s.strip()
+    if trace:
+        r = sorted(set([z.replace('\n',' ') for z in aList1]))
+        if len(''.join(r)) &gt;= 35:
+            r = truncate(repr(r), 35)
+        if len(s) &gt;= 25:
+            s = truncate(s, 25)
+        if len(r) &gt; 1:
+            caller = g.callers(2).split(',')[0]
+            sep = ' ' if known else '?'
+            g.trace('%20s %25s %s &lt;== %-35s %s' % (name or '', s, sep, r, caller))
+    return s
+</t>
+<t tx="ekr.20160212100819.1"></t>
 </tnodes>
 </leo_file>
