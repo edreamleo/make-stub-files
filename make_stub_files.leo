@@ -73,6 +73,36 @@
 <v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
 </v>
 </v>
+<v t="ekr.20160212133839.1"><vh>Recent</vh>
+<v t="ekr.20160212100819.1"><vh>re traces:</vh>
+<v t="ekr.20160202070025.1"><vh>pattern.match (trace-matches)</vh></v>
+<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
+<v t="ekr.20160207133035.1"><vh>show_helper</vh></v>
+</v>
+<v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
+<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
+<v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
+<v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
+<v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
+<v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
+</v>
+<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160130032546.1"></v>
+<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
+<v t="ekr.20160207190840.1"><vh>st.remove_recursive_calls</vh></v>
+</v>
+</v>
+</v>
+<v t="ekr.20160212133742.1"><vh>re: python 3 compatibility</vh>
+<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
+<v t="ekr.20160126153212.20"><vh>f.arg (Python3 only)</vh></v>
+<v t="ekr.20160126153212.32"><vh>f.Name &amp; f.NameConstant</vh></v>
+<v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
+<v t="ekr.20160126153212.89"></v>
+<v t="ekr.20160126153212.89"></v>
+</v>
+<v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
+</v>
 <v t="ekr.20160131174909.1"><vh>To do</vh></v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
@@ -88,9 +118,7 @@
 <v t="ekr.20160207051316.1"></v>
 <v t="ekr.20160206120522.1"><vh>pdb</vh></v>
 <v t="ekr.20160205101134.1"><vh>reduce_numbers (returns list)</vh></v>
-<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
-<v t="ekr.20160207133035.1"><vh>show_helper</vh></v>
-</v>
+<v t="ekr.20160205072101.1"></v>
 <v t="ekr.20160206212123.1"><vh>split_types</vh></v>
 <v t="ekr.20160207115604.1"><vh>truncate</vh></v>
 </v>
@@ -114,7 +142,7 @@
 <v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
 <v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
 </v>
-<v t="ekr.20160202070025.1"><vh>pattern.match (trace-matches)</vh></v>
+<v t="ekr.20160202070025.1"></v>
 <v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
 <v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
 <v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
@@ -133,7 +161,7 @@
 <v t="ekr.20160206212123.1"></v>
 </v>
 <v t="ekr.20160210145128.1"><vh>@test st.find_stub &amp; find_parent_stub</vh>
-<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
+<v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160210164250.1"><vh>&lt;&lt; define s &gt;&gt; (@test st.find/parent_stub)</vh></v>
 <v t="ekr.20160210082857.1"><vh>base classes</vh>
 <v t="ekr.20160126153212.3"><vh> class AstFormatter</vh>
@@ -156,7 +184,7 @@
 </v>
 <v t="ekr.20160126153212.18"><vh>f.Operands</vh>
 <v t="ekr.20160126153212.19"><vh>f.arguments</vh></v>
-<v t="ekr.20160126153212.20"><vh>f.arg (Python3 only)</vh></v>
+<v t="ekr.20160126153212.20"></v>
 <v t="ekr.20160126153212.21"><vh>f.Attribute</vh></v>
 <v t="ekr.20160126153212.22"><vh>f.Bytes</vh></v>
 <v t="ekr.20160126153212.23"><vh>f.Call &amp; f.keyword</vh>
@@ -169,7 +197,7 @@
 <v t="ekr.20160126153212.29"><vh>f.Index</vh></v>
 <v t="ekr.20160126153212.30"><vh>f.List</vh></v>
 <v t="ekr.20160126153212.31"><vh>f.ListComp</vh></v>
-<v t="ekr.20160126153212.32"><vh>f.Name &amp; f.NameConstant</vh></v>
+<v t="ekr.20160126153212.32"></v>
 <v t="ekr.20160126153212.33"><vh>f.Num</vh></v>
 <v t="ekr.20160126153212.34"><vh>f.Repr</vh></v>
 <v t="ekr.20160126153212.35"><vh>f.Slice</vh></v>
@@ -222,7 +250,7 @@
 <v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
-<v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
+<v t="ekr.20160205131910.1"></v>
 <v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
 <v t="ekr.20160208093906.1"><vh>sf.trace_visitor</vh></v>
 <v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
@@ -274,17 +302,8 @@
 <v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
 </v>
 </v>
-<v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
-<v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
-<v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
-</v>
-<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
-<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
-<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
-<v t="ekr.20160207190840.1"><vh>st.remove_recursive_calls</vh></v>
-</v>
-</v>
+<v t="ekr.20160126153212.87"></v>
+<v t="ekr.20160126153212.88"></v>
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
 </v>
 </v>
@@ -485,7 +504,7 @@
 <v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
 <v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
 <v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
-<v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
+<v t="ekr.20160203074843.1"></v>
 <v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
 <v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
@@ -524,7 +543,7 @@
 <v t="ekr.20160126165907.1"><vh>msf.finalize</vh></v>
 <v t="ekr.20160126153212.75"><vh>msf.make_stub_file</vh></v>
 <v t="ekr.20160126153212.76"><vh>msf.run</vh></v>
-<v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
+<v t="ekr.20160128154243.1"></v>
 <v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160126153212.78"></v>
 </v>
@@ -539,33 +558,11 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160212133839.1"><vh>Recent</vh>
-<v t="ekr.20160212100819.1"><vh>re traces:</vh>
-<v t="ekr.20160202070025.1"></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160205131910.1"></v>
-<v t="ekr.20160130032546.1"></v>
-<v t="ekr.20160126153212.87"></v>
-<v t="ekr.20160126153212.88"></v>
-</v>
-<v t="ekr.20160212133742.1"><vh>re: python 3 compatibility</vh>
-<v t="ekr.20160203075612.1"></v>
-<v t="ekr.20160126153212.20"></v>
-<v t="ekr.20160126153212.32"></v>
-<v t="ekr.20160203074843.1"></v>
-<v t="ekr.20160126153212.89"></v>
-<v t="ekr.20160126153212.89"></v>
-</v>
-<v t="ekr.20160128154243.1"></v>
-</v>
 <v t="ekr.20160212060436.1"><vh>Post: Theory of operation</vh>
-<v t="ekr.20160212144226.1"><vh>To do</vh></v>
-<v t="ekr.20160212090139.1"><vh>trace headers</vh></v>
-<v t="ekr.20160211092715.1"><vh>theory notes</vh>
 <v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
 <v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
 </v>
-</v>
+<v t="ekr.20160212165859.1"><vh>checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -3810,42 +3807,127 @@ for a1, a2, expected in table:
 </t>
 <t tx="ekr.20160207101607.1">@language md
 
-This is the theory of operation document for the make_stub_files script.
+This post is pre-writing for theory.md, this theory-of-operation document for the `make_stub_files` script. This post is intentionally brief.  Please ask question if anything is unclear.
 
-=== Patterns
-- Distributing patterns to visitors.
-- trace-patterns, trace-matches, trace-visitors
-- Are user patterns recognized everywhere?
-  Explain the code and the issues.
+### Prerequisites
 
-=== Reducing types
-- List vs. strings.
-- I'll use lists only if strings simply can't do the job.  That's unlikely.
-- An assert in AstFormatter.visit will fail if a visitor mistakenly returns a list.
-- Visitors can create Tuple[...] types by calling reduce_types(aList)
-- Top-level call to reduce_types merges Tuples.
+Maintainers should be familiar with the following:
 
-=== Unit testing
-- Alt-4,5,6
-- write-unit-tests button.
-
-=== Demonstration that *nothing* remains to be removed.
-
-* This is a *very* simple program!
-
-- The key are the three calls to reduce_types in the visitors:
-do_BinOp, do_BoolOp and do_IfExp
-
-- sf.match_all called from do_Tuple, do_Call, do_Subscript, do_UnaryOp.
-  It probably should be called from do_BinOp, do_Dict, do_List.
-
-- Very simple *type-parsing methods* allows the script to
-  *use strings everywhere*:
-    - split_types
+- The [Python 3 ast class](https://docs.python.org/3/library/ast.html).
+  You should know what a tree traversal is.
+- [Pep 484](https://www.python.org/dev/peps/pep-0484/) and
+  [Python's typing module](https://docs.python.org/3/library/typing.html).
+  Having a clear **target language** greatly simplifies this project.
   
-  (merge_types is elegant, but will not be used.)
+That's all.  You don't need to know anything about type inference!
 
-* reduce_type is the *key* method. This is a lucky accident!
+### High level description
+
+This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of for traversal classes:
+the AstFormatter, AstArgFormatter, StubFormatter and StubTraverser classes. Each class produces the results needed at a particular point of the traversal.
+
+This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**.  Pep 484 and the typing module define the known types.  The `is_known_type` function embodies that knowledge. 
+
+The StubFormatter visitors do most of the work of type reduction. They are simple because they delegate type reduction to the following helpers:
+
+1. **reduce_types(aList) ** (a top-level function) reduces a *list* of 0 or more types to a *string* representing a type hint. It returns 'Any' for unknown types. At the top of the traversal, StubTraverser.do_FunctionDef also calls reduce_types (via helpers) on the list of all return expressions.
+
+2. **sf.match_all(node, s)** applies all user-patterns to s and returns the result.
+
+And that's it! Visitors are hardly more complex than the corresponding AstFormatter methods.
+
+**Notes**:
+
+- The `sf.do_Attribute` and `sf.do_Name` visitors look up names in `sf.names_dict`. This is much faster than matching patterns.
+
+- `sf.match_all` is very fast because it only applies patterns that *could possibly* match at the node being visited. Those patterns are:
+
+        self.patterns_dict.get(node.__class__.__name__, [])
+
+- The startup code create the `names_dict` and the `patterns_dict`.  That's  all you have to know about the startup code.
+
+- The Pattern class handles almost all details of pattern matching. This shields the rest of the code from knowledge of patterns. In particular, `sf.match_all` knows nothing about patterns.
+
+=== Examples
+
+The previous section is really you should need to know about this program.  However, a few examples may make this script's operation clearer. The --trace-matches and --trace-reduce switches turn on detailed traces that show exactly when and where reductions happen, and what the resulting type hints are. These traces are the truth.  Believe them, not words here.
+
+Given the file truncate.py:
+
+    def truncate(s, n):
+        '''Return s truncated to n characters.'''
+        return s if len(s) &lt;= n else s[:n-3] + '...'
+        
+The script produces this output with the --verbose option in effect:
+
+    def truncate(s: str, n: int) -&gt; str: ...
+        #   0: return s if len(s)&lt;=n else s[:n-3]+'...'
+        #   0: return str
+        
+Here is the output with --trace-reduce --trace-matches in effect:
+
+    make_stub_files.py -c msf.cfg truncate.py -v -o --trace-reduce --trace-matches
+    
+    callers                     pattern                types ==&gt; hint    
+    =======                     =======         ========================
+    reduce_types: do_BinOp                      [int, number] ==&gt; number
+    match_all:    do_Subscript  str[*]: str      str[:number] ==&gt; str
+    reduce_types: do_IfExp                               str] ==&gt; str
+
+Finally, here is *part* of the result of tracing make_stub_files.py itself:
+
+          context                   pattern                                                          types ==&gt; hint    
+    =============================== ================ =========================================================================
+    reduce_types: do_IfExp                                                    [bool, is_known_type(inner)] ==&gt; ? Any
+    reduce_types: do_IfExp                                                    [bool, is_known_type(inner)] ==&gt; ? Any
+    match_all:    do_Call           all(*): bool                  all(is_known_type(z.strip()) for z in... ==&gt; bool
+    reduce_types: is_known_type                                                                [Any, bool] ==&gt; Union[Any, bool]
+    match_all:    do_Call           sorted(*): str                                      sorted(Set[r1+r2]) ==&gt; str
+    reduce_types: show                                  [show_helper(List[Any][:], known, str, str, bool)] ==&gt; ? Any
+    match_all:    do_Subscript      r[*]: str                                                    r[number] ==&gt; str
+    match_all:    do_Call           str.join(*): str                                         str.join(str) ==&gt; str
+    reduce_types: reduce_types                       [show(str), show(str, known=bool), show_helper(Li...] ==&gt; ? Any
+    reduce_types: do_BinOp                                                                   [int, number] ==&gt; number
+    match_all:    do_Subscript      str[*]: str                                               str[:number] ==&gt; str
+    reduce_types: do_IfExp                                                                           [str] ==&gt; str
+    
+    class AstFormatter
+    
+    reduce_types: do_BoolOp                                                              [val, val.strip()] ==&gt; ? Any
+    reduce_types: do_BoolOp                                                                      [Any, str] ==&gt; Union[Any, str]
+    reduce_types: visit                                                                               [str] ==&gt; str
+    reduce_types: do_IfExp                                                                            [str] ==&gt; str
+    match_all:    do_Call           repr(*): str                                               repr(Node.n) ==&gt; str
+    reduce_types: get_import_names                                                                 [result] ==&gt; ? Any
+    reduce_types: kind                                                            [Node.__class__.__name__] ==&gt; ? Any
+    
+This trace contains pretty much everything you need to know about pattern matching and type reduction.
+Enable tracing in various visitors if you need more data. 
+
+### Unit testing
+
+The easy way to do unit testing is from within Leo:
+
+- Alt-6 runs all unit tests in @test nodes.
+- Alt-5 runs all *marked* @test nodes. Super convenient while developing code.
+
+The @button write-unit-test script writes all @test nodes to make_stub_files/test.
+
+The --test option runs all test files in make_stub_files/test.
+
+The following also runs all test files in make_stub_files/test:
+
+    cd make_stub_files
+    python -m unittest discover -s test
+
+### Summary
+
+This script is a straightforward tree traversal. Or so it seems to me.
+Please feel free to ask questions.
+
+Edward K. Ream  
+edreamleo@gmail.com  
+(608) 886-5730
 </t>
 <t tx="ekr.20160207105647.1"></t>
 <t tx="ekr.20160207105710.1">for p1 in c.all_unique_positions():
@@ -3859,7 +3941,7 @@ print('done')
 </t>
 <t tx="ekr.20160207115604.1">
 def truncate(s, n):
-    '''Return s truncated to n characers.'''
+    '''Return s truncated to n characters.'''
     return s if len(s) &lt;= n else s[:n-3] + '...'
 </t>
 <t tx="ekr.20160207115947.1">table = (
@@ -3935,11 +4017,6 @@ def remove_recursive_calls(self, name, raw, reduced):
 <t tx="ekr.20160208060210.1">@language rest
 @wrap
 
-The **startup code** parses the config files and creates two main dicts: the patterns_dict and the names_dict. The theory of operation will discuss the startup code in more detail.
-
-Here, I'll focus only on the code that reduces a return expression to a valid pep 484 type hint. (The typing module is also useful). Having a clear **target language** has been a great help.
-
-
 So the visitors for BoolOp and IfExp *must* return strings. And here type hints come to the rescue. In the above examples, visitors should return (the string):
 
     'Union[hint(a), hint(b)]'
@@ -3959,17 +4036,6 @@ or one of the following:
     'Union[a, b]'
     
 In other words, we could allow expressions with unknown types to be part of the Union. In fact, iirc, unions containing unknowns become Any.
-
-**Discuss all traverser classes**
-
-The StubTraverser and StubFormatter classes are both tree traversers. The StubTraverser class ignores all nodes except ClassDef and FunctionDef nodes. The StubFormatter class visits Return nodes and all possible descendants, which is essentially all kinds of expression nodes.
-
-
-**Producing type hints**
-
-- Discuss do_BinOp, etc.
-
-- Dicuss reduce_types and split_types.
 </t>
 <t tx="ekr.20160208093906.1">
 def trace_visitor(self, node, op, s):
@@ -6143,15 +6209,6 @@ Views contain clones of nodes related to a particular topic.
 # especially the sf.Operators visitors.</t>
 <t tx="ekr.20160211074737.1"></t>
 <t tx="ekr.20160211074825.1"></t>
-<t tx="ekr.20160211092715.1">@language rest
-@wrap
-
-- Use Leo to work on this script: how to run unit tests.
-
-* Explicitly show outline relationships for those not using Leo.
-
-- Using clones in unit tests.
-</t>
 <t tx="ekr.20160211110739.1">@language rest
 
 This is the readme file for `make_stub_files.py`. This file explains what
@@ -6476,102 +6533,131 @@ the config file.
 <t tx="ekr.20160212060436.1">@language rest
 @wrap
 
-This post is pre-writing for theory.md, this theory-of-operation document for the make_stub_files script.
+This post is pre-writing for theory.md, this theory-of-operation document for the `make_stub_files` script. This post is intentionally brief.  Please ask question if anything is unclear.
 
-This document intends to be maximally helpful to future maintainers, while avoiding stupifying detail. Alas, I know too much to see what actually needs explaining. Furthermore, reading the sources with Leo will clarify the code's overall structure, but this document can't assume that you have Leo at hand.
+### Prerequisites
 
-The solution to these problems is simple. Please feel free to ask questions. Ask me anything about design, code detail, whatever. This will help me improve this document.
+Maintainers should be familiar with the following:
 
-### What you do, and don't, need to know:
+- The [Python 3 ast class](https://docs.python.org/3/library/ast.html).
+  You should know what a tree traversal is.
+- [Pep 484](https://www.python.org/dev/peps/pep-0484/) and
+  [Python's typing module](https://docs.python.org/3/library/typing.html).
+  Having a clear **target language** greatly simplifies this project.
+  
+That's all.  You don't need to know anything about type inference!
 
-- ast class
-- pep 484 and typing module.
-- Don't need to know the theory behind Henly-Milner, mypy, pysonar, rope or pylint.
-- Don't even need to know how to run mypy.
+### High level description
 
-### Higest level description
+This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of for traversal classes:
+the AstFormatter, AstArgFormatter, StubFormatter and StubTraverser classes. Each class produces the results needed at a particular point of the traversal.
 
-This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. Just as the AstFormatter class does, this script traverses the incoming ast tree from the top down, generating results from the bottom up.
+This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**.  Pep 484 and the typing module define the known types.  The `is_known_type` function embodies that knowledge. 
 
-=== Example of a stub and the traversals.
+The StubFormatter visitors do most of the work of type reduction. They are simple because they delegate type reduction to the following helpers:
 
-Original:
+1. **reduce_types(aList) ** (a top-level function) reduces a *list* of 0 or more types to a *string* representing a type hint. It returns 'Any' for unknown types. At the top of the traversal, StubTraverser.do_FunctionDef also calls reduce_types (via helpers) on the list of all return expressions.
+
+2. **sf.match_all(node, s)** applies all user-patterns to s and returns the result.
+
+And that's it! Visitors are hardly more complex than the corresponding AstFormatter methods.
+
+**Notes**:
+
+- The `sf.do_Attribute` and `sf.do_Name` visitors look up names in `sf.names_dict`. This is much faster than matching patterns.
+
+- `sf.match_all` is very fast because it only applies patterns that *could possibly* match at the node being visited. Those patterns are:
+
+        self.patterns_dict.get(node.__class__.__name__, [])
+
+- The startup code create the `names_dict` and the `patterns_dict`.  That's  all you have to know about the startup code.
+
+- The Pattern class handles almost all details of pattern matching. This shields the rest of the code from knowledge of patterns. In particular, `sf.match_all` knows nothing about patterns.
+
+=== Examples
+
+The previous section is really you should need to know about this program.  However, a few examples may make this script's operation clearer. The --trace-matches and --trace-reduce switches turn on detailed traces that show exactly when and where reductions happen, and what the resulting type hints are. These traces are the truth.  Believe them, not words here.
+
+Given the file truncate.py:
 
     def truncate(s, n):
-        '''Return s truncated to n characers.'''
+        '''Return s truncated to n characters.'''
         return s if len(s) &lt;= n else s[:n-3] + '...'
         
-Resulting stub:
+The script produces this output with the --verbose option in effect:
 
     def truncate(s: str, n: int) -&gt; str: ...
         #   0: return s if len(s)&lt;=n else s[:n-3]+'...'
         #   0: return str
+        
+Here is the output with --trace-reduce --trace-matches in effect:
 
-1. The script only formats class, def and return statements.
-2. The script converts constants to corresponding type hints, per Pep 484 and Python's typing module:
-
-    constant    hint
-    1.0         number
-    "abc"       str
-    []          List
-    ["abc"]     List[str]
+    make_stub_files.py -c msf.cfg truncate.py -v -o --trace-reduce --trace-matches
     
-etc.
+    callers                     pattern                types ==&gt; hint    
+    =======                     =======         ========================
+    reduce_types: do_BinOp                      [int, number] ==&gt; number
+    match_all:    do_Subscript  str[*]: str      str[:number] ==&gt; str
+    reduce_types: do_IfExp                               str] ==&gt; str
 
-3. The script uses user-defined patterns to assign type hints to names.
-4. 
+Finally, here is *part* of the result of tracing make_stub_files.py itself:
 
-### Pattern matching
+          context                   pattern                                                          types ==&gt; hint    
+    =============================== ================ =========================================================================
+    reduce_types: do_IfExp                                                    [bool, is_known_type(inner)] ==&gt; ? Any
+    reduce_types: do_IfExp                                                    [bool, is_known_type(inner)] ==&gt; ? Any
+    match_all:    do_Call           all(*): bool                  all(is_known_type(z.strip()) for z in... ==&gt; bool
+    reduce_types: is_known_type                                                                [Any, bool] ==&gt; Union[Any, bool]
+    match_all:    do_Call           sorted(*): str                                      sorted(Set[r1+r2]) ==&gt; str
+    reduce_types: show                                  [show_helper(List[Any][:], known, str, str, bool)] ==&gt; ? Any
+    match_all:    do_Subscript      r[*]: str                                                    r[number] ==&gt; str
+    match_all:    do_Call           str.join(*): str                                         str.join(str) ==&gt; str
+    reduce_types: reduce_types                       [show(str), show(str, known=bool), show_helper(Li...] ==&gt; ? Any
+    reduce_types: do_BinOp                                                                   [int, number] ==&gt; number
+    match_all:    do_Subscript      str[*]: str                                               str[:number] ==&gt; str
+    reduce_types: do_IfExp                                                                           [str] ==&gt; str
+    
+    class AstFormatter
+    
+    reduce_types: do_BoolOp                                                              [val, val.strip()] ==&gt; ? Any
+    reduce_types: do_BoolOp                                                                      [Any, str] ==&gt; Union[Any, str]
+    reduce_types: visit                                                                               [str] ==&gt; str
+    reduce_types: do_IfExp                                                                            [str] ==&gt; str
+    match_all:    do_Call           repr(*): str                                               repr(Node.n) ==&gt; str
+    reduce_types: get_import_names                                                                 [result] ==&gt; ? Any
+    reduce_types: kind                                                            [Node.__class__.__name__] ==&gt; ? Any
+    
+This trace contains pretty much everything you need to know about pattern matching and type reduction.
+Enable tracing in various visitors if you need more data. 
 
-callers
--------
-match_all do_Subscript                    str[*]: str                             str[:number] ==&gt; str
+### Unit testing
 
-match_all      do_Call                   all(*): bool all(is_known_type(z.strip()) for z in... ==&gt; bool
-match_all      do_Call                 sorted(*): str                       sorted(Set[r1+r2]) ==&gt; str
-match_all do_Subscript                      r[*]: str                                r[number] ==&gt; str
-match_all      do_Call               str.join(*): str                            str.join(str) ==&gt; str
-match_all do_Subscript                    str[*]: str                             str[:number] ==&gt; str
-match_all      do_Call                   repr(*): str                             repr(Node.n) ==&gt; str
-match_all      do_Call               sep.join(*): str                         sep.join(result) ==&gt; str
-match_all      do_Call       os.path.basename(*): str               os.path.basename(fileName) ==&gt; str
-match_all      do_Call           self.__eq__(*): bool                         self.__eq__(obj) ==&gt; bool
-match_all      do_Call                    len(*): int                         len(self.find_s) ==&gt; int
-match_all      do_Call            os.sep.join(*): str                         os.sep.join(str) ==&gt; str
+The easy way to do unit testing is from within Leo:
 
+- Alt-6 runs all unit tests in @test nodes.
+- Alt-5 runs all *marked* @test nodes. Super convenient while developing code.
 
-- One traversal in concept, four traversal classes
+The @button write-unit-test script writes all @test nodes to make_stub_files/test.
 
-- Packaging.  Get this right before writing the theory of operation!
+The --test option runs all test files in make_stub_files/test.
 
-- "Views for study" isn't really about study, it's for experts!
+The following also runs all test files in make_stub_files/test:
 
-- Possible code improvements;
+    cd make_stub_files
+    python -m unittest discover -s test
 
-    - Get rid of top-level functions:
-        - Move dump functions into LeoGlobals class.
-        - Update leoGlobals.py accordingly.
-        - Put the reduction code somewhere.
-            - Separate Reducer class?
-            - Put self.reduce_types = Reducer().reduce_types in traversers
-            </t>
-<t tx="ekr.20160212090139.1">@nowrap
+### Summary
 
-    callers                     pattern               original string, truncated to len(40)        result
-====================== =============================  ========================================     ======
+This script is a straightforward tree traversal. Or so it seems to me.
+Please feel free to ask questions.
+
+Edward K. Ream  
+edreamleo@gmail.com  
+(608) 886-5730
 </t>
 <t tx="ekr.20160212100819.1"></t>
 <t tx="ekr.20160212133742.1"></t>
 <t tx="ekr.20160212133839.1"></t>
-<t tx="ekr.20160212144226.1">- explain g.trace and trace pattern.
-
-- Examples of return comments, with and without --verbose.
-- The script is useful even without patterns.
-
-### unit testing
-
-This works from make_stub_files directory:
-
-    python -m unittest discover -s test</t>
+<t tx="ekr.20160212165859.1">Completed the first draft of the theory of operation post.</t>
 </tnodes>
 </leo_file>

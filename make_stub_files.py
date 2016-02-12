@@ -238,7 +238,7 @@ def split_types(s):
     return aList
 
 def truncate(s, n):
-    '''Return s truncated to n characers.'''
+    '''Return s truncated to n characters.'''
     return s if len(s) <= n else s[:n-3] + '...'
 
 
