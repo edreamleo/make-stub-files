@@ -56,6 +56,90 @@
 </v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 <v t="ekr.20160208060210.1"><vh>About type hints</vh></v>
+<v t="ekr.20160211063121.1"><vh>Views for study</vh>
+<v t="ekr.20160211074825.1"><vh>1. ctors</vh>
+<v t="ekr.20160126153212.74"><vh>msf.ctor</vh></v>
+<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
+<v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
+<v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
+<v t="ekr.20160210134702.1"><vh>stub.ctor</vh></v>
+</v>
+<v t="ekr.20160211063226.1"><vh>2. Startup code</vh>
+<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
+<v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
+<v t="ekr.20160204170921.1"><vh>msf.make_op_name_dict</vh></v>
+<v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
+<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
+<v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
+<v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
+<v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
+<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
+<v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
+</v>
+</v>
+<v t="ekr.20160211063252.1"><vh>3. Type-related ast.Node visitors</vh>
+<v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
+<v t="ekr.20160205103604.4"><vh>sf.Attribute (names_dict)</vh></v>
+<v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
+<v t="ekr.20160205103604.9"><vh>sf.Dict ** call match_all?</vh></v>
+<v t="ekr.20160206204452.1"><vh>sf.List ** call_match_all?</vh></v>
+<v t="ekr.20160204153904.1"><vh>sf.Name (names_dict)</vh></v>
+<v t="ekr.20160126153212.38"><vh>sf.Tuple (match_all)</vh></v>
+</v>
+<v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
+<v t="ekr.20160205053641.2"><vh>sf.BinOp (reduce_types &amp; match_all)</vh></v>
+<v t="ekr.20160205053641.3"><vh>sf.BoolOp (reduce_types)</vh></v>
+<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword (match_all)</vh>
+<v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
+</v>
+<v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
+<v t="ekr.20160205053641.6"><vh>sf.IfExp (reduce_types, match_all)</vh></v>
+<v t="ekr.20160205142626.1"><vh>sf.Subscript (match_all)</vh></v>
+<v t="ekr.20160205053641.5"><vh>sf.UnaryOp (match_all)</vh></v>
+</v>
+<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
+</v>
+<v t="ekr.20160211063238.1"><vh>4. Comments for return expressions</vh>
+<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
+<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
+<v t="ekr.20160207190840.1"><vh>st.remove_recursive_calls</vh></v>
+</v>
+<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
+<v t="ekr.20160207133035.1"><vh>show_helper</vh></v>
+</v>
+</v>
+<v t="ekr.20160211074737.1"><vh>5. --update</vh>
+<v t="ekr.20160126153212.85"><vh>st.run (main line) &amp; helpers</vh>
+<v t="ekr.20160203183228.1"><vh>st.output_stubs</vh></v>
+<v t="ekr.20160209105448.1"><vh>st.output_time_stamp</vh></v>
+<v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
+<v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
+<v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
+<v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers</vh>
+<v t="ekr.20160211060949.1"><vh>st.check_delete</vh></v>
+<v t="ekr.20160211045806.1"><vh>st.flatten_stubs</vh></v>
+<v t="ekr.20160210043910.1"><vh>st.find_parent_stub</vh></v>
+<v t="ekr.20160210043933.1"><vh>st.find_stub</vh></v>
+<v t="ekr.20160210043957.1"><vh>st.sort_stubs_by_hierarchy</vh></v>
+</v>
+<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
+</v>
+</v>
+</v>
+<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
+<v t="ekr.20160126153212.90"></v>
+<v t="ekr.20160205072101.1"></v>
+<v t="ekr.20160205103604.6"></v>
+<v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
+<v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
+<v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
+</v>
+<v t="ekr.20160126153212.90"></v>
+</v>
+<v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
+</v>
+</v>
 </v>
 <v t="ekr.20160128154704.1"><vh>Files</vh>
 <v t="ekr.20160210112634.1"><vh>Test files</vh>
@@ -73,36 +157,6 @@
 <v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
 <v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
 </v>
-</v>
-<v t="ekr.20160212133839.1"><vh>Recent</vh>
-<v t="ekr.20160212100819.1"><vh>re traces:</vh>
-<v t="ekr.20160202070025.1"><vh>pattern.match (trace-matches)</vh></v>
-<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
-<v t="ekr.20160207133035.1"><vh>show_helper</vh></v>
-</v>
-<v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
-<v t="ekr.20160130032546.1"><vh>st.format_return_expressions</vh></v>
-<v t="ekr.20160126153212.87"><vh>st.visit_ClassDef</vh></v>
-<v t="ekr.20160126153212.88"><vh>st.visit_FunctionDef &amp; helpers</vh>
-<v t="ekr.20160126153212.89"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160126153212.91"><vh>st.munge_arg</vh></v>
-</v>
-<v t="ekr.20160126153212.90"><vh>st.format_returns &amp; helpers</vh>
-<v t="ekr.20160130032546.1"></v>
-<v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
-<v t="ekr.20160207190840.1"><vh>st.remove_recursive_calls</vh></v>
-</v>
-</v>
-</v>
-<v t="ekr.20160212133742.1"><vh>re: python 3 compatibility</vh>
-<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
-<v t="ekr.20160126153212.20"><vh>f.arg (Python3 only)</vh></v>
-<v t="ekr.20160126153212.32"><vh>f.Name &amp; f.NameConstant</vh></v>
-<v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
-<v t="ekr.20160126153212.89"></v>
-<v t="ekr.20160126153212.89"></v>
-</v>
-<v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
 </v>
 <v t="ekr.20160131174909.1"><vh>To do</vh></v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
@@ -134,7 +188,7 @@
 <v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
 </v>
 <v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
-<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
+<v t="ekr.20160128113859.1"></v>
 <v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
 <v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
 <v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
@@ -143,7 +197,7 @@
 <v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
 <v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
 </v>
-<v t="ekr.20160202070025.1"></v>
+<v t="ekr.20160202070025.1"><vh>pattern.match (trace-matches)</vh></v>
 <v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
 <v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
 <v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
@@ -162,7 +216,7 @@
 <v t="ekr.20160206212123.1"></v>
 </v>
 <v t="ekr.20160210145128.1"><vh>@test st.find_stub &amp; find_parent_stub</vh>
-<v t="ekr.20160203075612.1"></v>
+<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160210164250.1"><vh>&lt;&lt; define s &gt;&gt; (@test st.find/parent_stub)</vh></v>
 <v t="ekr.20160210082857.1"><vh>base classes</vh>
 <v t="ekr.20160126153212.3"><vh> class AstFormatter</vh>
@@ -185,7 +239,7 @@
 </v>
 <v t="ekr.20160126153212.18"><vh>f.Operands</vh>
 <v t="ekr.20160126153212.19"><vh>f.arguments</vh></v>
-<v t="ekr.20160126153212.20"></v>
+<v t="ekr.20160126153212.20"><vh>f.arg (Python3 only)</vh></v>
 <v t="ekr.20160126153212.21"><vh>f.Attribute</vh></v>
 <v t="ekr.20160126153212.22"><vh>f.Bytes</vh></v>
 <v t="ekr.20160126153212.23"><vh>f.Call &amp; f.keyword</vh>
@@ -198,7 +252,7 @@
 <v t="ekr.20160126153212.29"><vh>f.Index</vh></v>
 <v t="ekr.20160126153212.30"><vh>f.List</vh></v>
 <v t="ekr.20160126153212.31"><vh>f.ListComp</vh></v>
-<v t="ekr.20160126153212.32"></v>
+<v t="ekr.20160126153212.32"><vh>f.Name &amp; f.NameConstant</vh></v>
 <v t="ekr.20160126153212.33"><vh>f.Num</vh></v>
 <v t="ekr.20160126153212.34"><vh>f.Repr</vh></v>
 <v t="ekr.20160126153212.35"><vh>f.Slice</vh></v>
@@ -250,59 +304,27 @@
 </v>
 <v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
-<v t="ekr.20160202061329.1"><vh>sf.ctor</vh></v>
-<v t="ekr.20160205131910.1"></v>
+<v t="ekr.20160202061329.1"></v>
+<v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
 <v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
 <v t="ekr.20160208093906.1"><vh>sf.trace_visitor</vh></v>
-<v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
-<v t="ekr.20160205103604.4"><vh>sf.Attribute (names_dict)</vh></v>
-<v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
-<v t="ekr.20160205103604.9"><vh>sf.Dict ** call match_all?</vh></v>
-<v t="ekr.20160206204452.1"><vh>sf.List ** call_match_all?</vh></v>
-<v t="ekr.20160204153904.1"><vh>sf.Name (names_dict)</vh></v>
-<v t="ekr.20160126153212.38"><vh>sf.Tuple (match_all)</vh></v>
-</v>
-<v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
-<v t="ekr.20160205053641.2"><vh>sf.BinOp (reduce_types &amp; match_all)</vh></v>
-<v t="ekr.20160205053641.3"><vh>sf.BoolOp (reduce_types)</vh></v>
-<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword (match_all)</vh>
-<v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
-</v>
-<v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
-<v t="ekr.20160205053641.6"><vh>sf.IfExp (reduce_types, match_all)</vh></v>
-<v t="ekr.20160205142626.1"><vh>sf.Subscript (match_all)</vh></v>
-<v t="ekr.20160205053641.5"><vh>sf.UnaryOp (match_all)</vh></v>
-</v>
-<v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
+<v t="ekr.20160205053705.1"></v>
+<v t="ekr.20160205053641.1"></v>
+<v t="ekr.20160201194801.1"></v>
 </v>
 </v>
 <v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
-<v t="ekr.20160210134702.1"><vh>stub.ctor</vh></v>
+<v t="ekr.20160210134702.1"></v>
 <v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
 <v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
 <v t="ekr.20160210111955.1"><vh>stub.__repr__and __str__</vh></v>
 <v t="ekr.20160210132520.1"><vh>stub.parents and level</vh></v>
 </v>
 <v t="ekr.20160126153212.82"><vh>class StubTraverser (ast.NodeVisitor)</vh>
-<v t="ekr.20160126153212.83"><vh>st.ctor</vh></v>
+<v t="ekr.20160126153212.83"></v>
 <v t="ekr.20160209194832.1"><vh>st.add_stub</vh></v>
 <v t="ekr.20160126153212.84"><vh>st.indent &amp; out</vh></v>
-<v t="ekr.20160126153212.85"><vh>st.run (main line) &amp; helpers</vh>
-<v t="ekr.20160203183228.1"><vh>st.output_stubs</vh></v>
-<v t="ekr.20160209105448.1"><vh>st.output_time_stamp</vh></v>
-<v t="ekr.20160204224242.1"><vh>st.update &amp; helpers</vh>
-<v t="ekr.20160205060709.1"><vh>st.get_stub_file</vh></v>
-<v t="ekr.20160205060807.1"><vh>st.parse_stub_file</vh></v>
-<v t="ekr.20160210041431.1"><vh>st.merge_stubs &amp; helpers</vh>
-<v t="ekr.20160211060949.1"><vh>st.check_delete</vh></v>
-<v t="ekr.20160211045806.1"><vh>st.flatten_stubs</vh></v>
-<v t="ekr.20160210043910.1"><vh>st.find_parent_stub</vh></v>
-<v t="ekr.20160210043933.1"><vh>st.find_stub</vh></v>
-<v t="ekr.20160210043957.1"><vh>st.sort_stubs_by_hierarchy</vh></v>
-</v>
-<v t="ekr.20160209104843.1"><vh>st.trace_stubs</vh></v>
-</v>
-</v>
+<v t="ekr.20160126153212.85"></v>
 <v t="ekr.20160126153212.87"></v>
 <v t="ekr.20160126153212.88"></v>
 <v t="ekr.20160126153212.99"><vh>st.visit_Return</vh></v>
@@ -490,48 +512,6 @@
 <v t="ekr.20160207115604.1"></v>
 </v>
 </v>
-<v t="ekr.20160211063121.1"><vh>Views for study</vh>
-<v t="ekr.20160211074825.1"><vh>1. ctors</vh>
-<v t="ekr.20160126153212.74"><vh>msf.ctor</vh></v>
-<v t="ekr.20160128113859.1"></v>
-<v t="ekr.20160202061329.1"></v>
-<v t="ekr.20160126153212.83"></v>
-<v t="ekr.20160210134702.1"></v>
-</v>
-<v t="ekr.20160211063226.1"><vh>2. Startup code</vh>
-<v t="ekr.20160126153212.77"><vh>msf.scan_command_line</vh></v>
-<v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
-<v t="ekr.20160204170921.1"><vh>msf.make_op_name_dict</vh></v>
-<v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
-<v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
-<v t="ekr.20160203074843.1"></v>
-<v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
-<v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
-</v>
-</v>
-<v t="ekr.20160211063252.1"><vh>3. Type-related ast.Node visitors</vh>
-<v t="ekr.20160205053705.1"></v>
-<v t="ekr.20160205053641.1"></v>
-<v t="ekr.20160201194801.1"></v>
-</v>
-<v t="ekr.20160211063238.1"><vh>4. Comments for return expressions</vh>
-<v t="ekr.20160126153212.90"></v>
-<v t="ekr.20160205072101.1"></v>
-</v>
-<v t="ekr.20160211074737.1"><vh>5. --update</vh>
-<v t="ekr.20160126153212.85"></v>
-</v>
-<v t="ekr.20160207165240.1"><vh>re: Improve inferences</vh>
-<v t="ekr.20160126153212.90"></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160205103604.6"></v>
-<v t="ekr.20160126153212.88"></v>
-<v t="ekr.20160126153212.87"></v>
-</v>
-</v>
-<v t="ekr.20160207101607.1"></v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160206104634.1"></v>
@@ -544,7 +524,7 @@
 <v t="ekr.20160126165907.1"><vh>msf.finalize</vh></v>
 <v t="ekr.20160126153212.75"><vh>msf.make_stub_file</vh></v>
 <v t="ekr.20160126153212.76"><vh>msf.run</vh></v>
-<v t="ekr.20160128154243.1"></v>
+<v t="ekr.20160128154243.1"><vh>msf.run_all_unit_tests</vh></v>
 <v t="ekr.20160126153212.77"></v>
 <v t="ekr.20160126153212.78"></v>
 </v>
@@ -6495,8 +6475,5 @@ the config file.
 
         make_stub_files -c myConfigFile.cfg -o
 </t>
-<t tx="ekr.20160212100819.1"></t>
-<t tx="ekr.20160212133742.1"></t>
-<t tx="ekr.20160212133839.1"></t>
 </tnodes>
 </leo_file>
