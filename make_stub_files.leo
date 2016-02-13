@@ -3815,7 +3815,7 @@ This traversal produces a stub for every class and def line. To do this, it **re
 
 The StubFormatter visitors do most of the work of type reduction. They are simple because they delegate type reduction to the following helpers:
 
-1. **reduce_types(aList) ** (a top-level function) reduces a *list* of 0 or more types to a *string* representing a type hint. It returns 'Any' for unknown types. At the top of the traversal, StubTraverser.do_FunctionDef also calls reduce_types (via helpers) on the list of all return expressions.
+1. **reduce_types(aList)** (a top-level function) reduces a *list* of 0 or more types to a *string* representing a type hint. It returns 'Any' for unknown types. At the top of the traversal, StubTraverser.do_FunctionDef also calls reduce_types (via helpers) on the list of all return expressions.
 
 2. **sf.match_all(node, s)** applies all user-patterns to s and returns the result.
 
