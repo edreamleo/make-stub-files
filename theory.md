@@ -1,5 +1,6 @@
 
-This post is pre-writing for theory.md, this theory-of-operation document for the `make_stub_files` script. This post is intentionally brief.  Please ask question if anything is unclear.
+This is the theory-of-operation document for the `make_stub_files` script.
+It is intentionally brief. Please ask question if anything is unclear.
 
 ### Prerequisites
 
@@ -11,7 +12,7 @@ Maintainers should be familiar with the following:
   [Python's typing module](https://docs.python.org/3/library/typing.html).
   Having a clear **target language** greatly simplifies this project.
   
-That's all.  You don't need to know anything about type inference!
+You don't need to know anything about type inference.
 
 ### High level description
 
@@ -26,7 +27,7 @@ The StubFormatter visitors do most of the work of type reduction. They are simpl
 
 2. **sf.match_all(node, s)** applies all user-patterns to s and returns the result.
 
-And that's it! Visitors are hardly more complex than the corresponding AstFormatter methods.
+In short, visitors are hardly more complex than the corresponding AstFormatter methods.
 
 **Notes**:
 
@@ -94,6 +95,7 @@ Finally, here is *part* of the result of tracing make_stub_files.py itself:
     reduce_types: kind                                                            [Node.__class__.__name__] ==> ? Any
     
 This trace contains pretty much everything you need to know about pattern matching and type reduction.
+
 Enable tracing in various visitors if you need more data. 
 
 ### Unit testing
@@ -120,3 +122,4 @@ Please feel free to ask questions.
 Edward K. Ream  
 edreamleo@gmail.com  
 (608) 886-5730
+

@@ -106,7 +106,6 @@ def is_known_type(s):
         pattern = Pattern(s2+'[*]', s)
         if pattern.match_entire_string(s):
             # Look inside the square brackets.
-            # if s.startswith('Dict[List'): g.pdb()
             brackets = s[len(s2):]
             assert brackets and brackets[0] == '[' and brackets[-1] == ']'
             s3 = brackets[1:-1]
