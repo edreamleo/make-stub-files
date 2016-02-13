@@ -41,7 +41,7 @@ In short, visitors are hardly more complex than the corresponding AstFormatter m
 
 - The Pattern class handles almost all details of pattern matching. This shields the rest of the code from knowledge of patterns. In particular, `sf.match_all` knows nothing about patterns.
 
-=== Examples
+### Examples
 
 The previous section is really you should need to know about this program.  However, a few examples may make this script's operation clearer. The --trace-matches and --trace-reduce switches turn on detailed traces that show exactly when and where reductions happen, and what the resulting type hints are. These traces are the truth.  Believe them, not words here.
 
