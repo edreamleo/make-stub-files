@@ -562,7 +562,6 @@
 <v t="ekr.20160209063927.1"><vh>Must read Aha: the code is pre-determined!</vh></v>
 <v t="ekr.20160208060210.1"><vh>Notes for theory.md</vh></v>
 </v>
-<v t="ekr.20160212165859.1"><vh>checkin log</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -3305,6 +3304,7 @@ def return_two_lists(s):
 # **Note**: this is a Leo script.
 # It **does** have access to c, g and p.
 import os
+import re
 @others
 test_dir = os.path.dirname(c.fileName())+os.sep+'test'
 assert os.path.exists(test_dir), test_dir
@@ -3368,9 +3368,11 @@ def write_file(self,fn):
     fn = g.os_path_finalize_join(self.path,fn)
     f = open(fn,'w')
     f.write(self.file_template)
+    # g.trace(''.join([z.h for z in self.nodes]))
     for p in self.nodes:
         f.write(self.test_template % (self.clean(p.h),self.get_body(p)))
     f.close()
+    g.trace('wrote', fn)
 </t>
 <t tx="ekr.20160206101802.3">
 
@@ -3385,6 +3387,7 @@ class TestWriter:
 
 file_template = '''\
 import unittest
+from make_stub_files import *
 '''
 
 file_template = g.adjustTripleString(file_template,c.tab_width)
@@ -3427,15 +3430,20 @@ def clean(self,s):
     return s.replace('__','_').strip()
 </t>
 <t tx="ekr.20160206101802.8">
-def get_body(self,p):
+def get_body(self, p):
     '''Convert p.b to a valid script.'''
-    s = g.getScript(c,p,
+    s_old = p.b
+    # Suppress @others but not section references.
+    p.b = p.b.replace('@others', '')
+    assert p.b.find('@others') == -1
+    s = g.getScript(c, p,
                     useSelectedText=False,
                     forcePythonSentinels=True,
                     useSentinels=False)
+    p.b = s_old
     s = ''.join([' '*8+z for z in g.splitLines(s) if z.strip()])
-        # Add leading indentation needed by test_template.
-    return s.rstrip()
+            # Add leading indentation needed by test_template.
+    return s.rstrip()+'\n'
 </t>
 <t tx="ekr.20160206101802.9">
 def run(self,fn=None):
@@ -6545,11 +6553,11 @@ Maintainers should be familiar with the following:
   [Python's typing module](https://docs.python.org/3/library/typing.html).
   Having a clear **target language** greatly simplifies this project.
   
-That's all.  You don't need to know anything about type inference!
+You don't need to know anything about type inference!
 
 ### High level description
 
-This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of for traversal classes:
+This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes:
 the AstFormatter, AstArgFormatter, StubFormatter and StubTraverser classes. Each class produces the results needed at a particular point of the traversal.
 
 This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**.  Pep 484 and the typing module define the known types.  The `is_known_type` function embodies that knowledge. 
@@ -6560,7 +6568,7 @@ The StubFormatter visitors do most of the work of type reduction. They are simpl
 
 2. **sf.match_all(node, s)** applies all user-patterns to s and returns the result.
 
-And that's it! Visitors are hardly more complex than the corresponding AstFormatter methods.
+That's it! Visitors are hardly more complex than the corresponding AstFormatter methods.
 
 **Notes**:
 
@@ -6576,7 +6584,7 @@ And that's it! Visitors are hardly more complex than the corresponding AstFormat
 
 === Examples
 
-The previous section is really you should need to know about this program.  However, a few examples may make this script's operation clearer. The --trace-matches and --trace-reduce switches turn on detailed traces that show exactly when and where reductions happen, and what the resulting type hints are. These traces are the truth.  Believe them, not words here.
+The previous section contains all you should need to know about this program. However, a few examples may make this script's operation clearer. The --trace-matches and --trace-reduce switches turn on detailed traces that show exactly when and where reductions happen, and what the resulting type hints are. These traces are the truth.  Believe them, not words here.
 
 Given the file truncate.py:
 
@@ -6658,6 +6666,5 @@ edreamleo@gmail.com
 <t tx="ekr.20160212100819.1"></t>
 <t tx="ekr.20160212133742.1"></t>
 <t tx="ekr.20160212133839.1"></t>
-<t tx="ekr.20160212165859.1">Completed the first draft of the theory of operation post.</t>
 </tnodes>
 </leo_file>
