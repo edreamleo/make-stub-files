@@ -6,6 +6,8 @@ source file listed on the command line (wildcard file names are supported).
 For full details, see README.md.
 
 This file is in the public domain.
+
+Written by Edward K. Ream.
 '''
 import ast
 from collections import OrderedDict
@@ -1687,7 +1689,7 @@ class StubFormatter (AstFormatter):
         if self.trace_visitors:
             caller = g.callers(2).split(',')[1]
             s1 = AstFormatter().format(node).strip()
-            print('%12s %6s: %s ==> %s' % (caller, op.strip(), s1, s))
+            print('%12s op %-6s: %s ==> %s' % (caller, op.strip(), s1, s))
 
     # StubFormatter visitors for operands...
 

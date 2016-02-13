@@ -550,6 +550,8 @@ source file listed on the command line (wildcard file names are supported).
 For full details, see README.md.
 
 This file is in the public domain.
+
+Written by Edward K. Ream.
 '''
 &lt;&lt; imports &gt;&gt;
 @others
@@ -2370,7 +2372,7 @@ def is_known_type(s):
 
 - Rough edges re number types. Is reduce_numbers correct?
 
-Later: improve type reduction:
+Improve type reduction:
 - 2-pass reduce_types? More tests that patterns work in expected places.
 - Merge Tuple and List interiors in reduce_types.
 - Add more binop patterns.
@@ -2378,7 +2380,6 @@ Later: improve type reduction:
 Minor:
 - How are non-comment lines between subs updated?
 - Warn if regex pattern used in general patterns?
-
 
 </t>
 <t tx="ekr.20160131175042.1">
@@ -4030,7 +4031,7 @@ def trace_visitor(self, node, op, s):
     if self.trace_visitors:
         caller = g.callers(2).split(',')[1]
         s1 = AstFormatter().format(node).strip()
-        print('%12s %6s: %s ==&gt; %s' % (caller, op.strip(), s1, s))
+        print('%12s op %-6s: %s ==&gt; %s' % (caller, op.strip(), s1, s))
 </t>
 <t tx="ekr.20160208162138.1">
     # First, look at the [Def Name Patterns]
