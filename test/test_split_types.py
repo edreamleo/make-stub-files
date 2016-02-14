@@ -9,6 +9,6 @@ class test_split_types (unittest.TestCase):
             ('List[a,b], List[c,d]',    ['List[a,b]', 'List[c,d]']),
         )
         for s, expected in table:
-            got = split_types(s)
+            got = ReduceTypes().split_types(s)
             assert expected == got, (s, 'expected', expected, 'got', got)
 

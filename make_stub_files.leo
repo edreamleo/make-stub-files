@@ -38,6 +38,8 @@
 <v t="ekr.20160208162138.1"><vh>from st.Call (failed experiment)</vh></v>
 <v t="ekr.20160202064553.1"><vh>sf.match</vh></v>
 <v t="ekr.20160202061118.1"><vh>sf.visit (attempts all matches on all nodes)</vh></v>
+<v t="ekr.20160214042945.1"><vh>old reduce_types</vh></v>
+<v t="ekr.20160207133035.1"><vh>old show_helper</vh></v>
 </v>
 </v>
 <v t="ekr.20160128105006.1"><vh>Documentation</vh>
@@ -105,9 +107,7 @@
 <v t="ekr.20160128122410.1"><vh>st.get_def_name</vh></v>
 <v t="ekr.20160207190840.1"><vh>st.remove_recursive_calls</vh></v>
 </v>
-<v t="ekr.20160205072101.1"><vh>reduce_types (--trace-reduce, returns string)</vh>
-<v t="ekr.20160207133035.1"><vh>show_helper</vh></v>
-</v>
+<v t="ekr.20160205072101.1"><vh>reduce_types</vh></v>
 </v>
 <v t="ekr.20160211074737.1"><vh>5. --update</vh>
 <v t="ekr.20160126153212.85"><vh>st.run (main line) &amp; helpers</vh>
@@ -161,20 +161,15 @@
 <v t="ekr.20160131174909.1"><vh>To do</vh></v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
-<v t="ekr.20160207051316.1"><vh>merge_types (returns list, not used)</vh></v>
+<v t="ekr.20160207051316.1"><vh>merge_types (not used)</vh></v>
 </v>
 <v t="ekr.20160206110004.1"><vh>@test Pattern class</vh>
-<v t="ekr.20160206104634.1"><vh>  top-level functions</vh>
+<v t="ekr.20160206104634.1"><vh>  utility functions</vh>
 <v t="ekr.20160210083825.1"><vh>dump</vh></v>
 <v t="ekr.20160210141342.1"><vh>dump_dict</vh></v>
 <v t="ekr.20160210141651.1"><vh>dump_list</vh></v>
-<v t="ekr.20160130034812.1"><vh>is_known_type (split_types)</vh></v>
 <v t="ekr.20160126153212.100"><vh>main</vh></v>
-<v t="ekr.20160207051316.1"></v>
 <v t="ekr.20160206120522.1"><vh>pdb</vh></v>
-<v t="ekr.20160205101134.1"><vh>reduce_numbers (returns list)</vh></v>
-<v t="ekr.20160205072101.1"></v>
-<v t="ekr.20160206212123.1"><vh>split_types</vh></v>
 <v t="ekr.20160207115604.1"><vh>truncate</vh></v>
 </v>
 <v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
@@ -206,14 +201,24 @@
 </v>
 </v>
 <v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
-<v t="ekr.20160205101134.1"></v>
+<v t="ekr.20160214044429.1"><vh>class ReduceTypes</vh>
+<v t="ekr.20160214044444.1"><vh>rt.ctor</vh></v>
+<v t="ekr.20160130034812.1"><vh>rt.is_known_type</vh></v>
+<v t="ekr.20160214043351.1"><vh>rt.make_optional</vh></v>
+<v t="ekr.20160214051730.1"><vh>rt.merge_collection (To do)</vh></v>
+<v t="ekr.20160214051515.1"><vh>rt.merge_dicts/lists/unions</vh></v>
+<v t="ekr.20160205101134.1"><vh>rt.reduce_numbers</vh></v>
+<v t="ekr.20160214044515.1"><vh>rt.reduce_types</vh></v>
+<v t="ekr.20160214044536.1"><vh>rt.show</vh></v>
+<v t="ekr.20160206212123.1"><vh>rt.split_types</vh></v>
+</v>
 </v>
 <v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
-<v t="ekr.20160206104634.1"></v>
 <v t="ekr.20160128041938.1"></v>
+<v t="ekr.20160214044429.1"></v>
 </v>
 <v t="ekr.20160207162818.1"><vh>@test split_types</vh>
-<v t="ekr.20160206212123.1"></v>
+<v t="ekr.20160214044429.1"></v>
 </v>
 <v t="ekr.20160210145128.1"><vh>@test st.find_stub &amp; find_parent_stub</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
@@ -514,11 +519,17 @@
 </v>
 <v t="ekr.20160126153212.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160203075612.1"></v>
+<v t="ekr.20160214050801.1"><vh>  type functions</vh>
+<v t="ekr.20160214050501.1"><vh>is_known_type</vh></v>
+<v t="ekr.20160207051316.1"></v>
+<v t="ekr.20160205072101.1"></v>
+</v>
 <v t="ekr.20160206104634.1"></v>
 <v t="ekr.20160126153212.3"></v>
 <v t="ekr.20160202165117.1"></v>
 <v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160128041938.1"></v>
+<v t="ekr.20160214044429.1"></v>
 <v t="ekr.20160126153212.73"><vh>class StandAloneMakeStubFile</vh>
 <v t="ekr.20160126153212.74"></v>
 <v t="ekr.20160126165907.1"><vh>msf.finalize</vh></v>
@@ -539,6 +550,7 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
+<v t="ekr.20160214044429.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2299,7 +2311,7 @@ def format_return_expressions(self, name, raw_returns, reduced_returns):
         return s + ': ...'
 </t>
 <t tx="ekr.20160130034812.1">
-def is_known_type(s):
+def is_known_type(self, s):
     '''
     Return True if s is nothing but a single known type.
     Recursively test inner types in square brackets.
@@ -2321,14 +2333,14 @@ def is_known_type(s):
             return True
     if s.startswith('[') and s.endswith(']'):
         inner = s[1:-1]
-        return is_known_type(inner) if inner else True
+        return self.is_known_type(inner) if inner else True
     elif s.startswith('(') and s.endswith(')'):
         inner = s[1:-1]
-        return is_known_type(inner) if inner else True
+        return self.is_known_type(inner) if inner else True
     elif s.startswith('{') and s.endswith('}'):
         return True ### Not yet.
         # inner = s[1:-1]
-        # return is_known_type(inner) if inner else True
+        # return self.is_known_type(inner) if inner else True
     table = (
         # Pep 484: https://www.python.org/dev/peps/pep-0484/
         # typing module: https://docs.python.org/3/library/typing.html
@@ -2360,8 +2372,8 @@ def is_known_type(s):
             assert brackets and brackets[0] == '[' and brackets[-1] == ']'
             s3 = brackets[1:-1]
             if s3:
-                return all([is_known_type(z.strip())
-                    for z in split_types(s3)])
+                return all([self.is_known_type(z.strip())
+                    for z in self.split_types(s3)])
             else:
                 return True
     if trace: g.trace('Fail:', s1)
@@ -3116,34 +3128,10 @@ def reduce_types(aList, name=None, trace=False):
     The --trace-reduce command-line option sets trace=True.
     If present, name is the function name or class_name.method_name.
     '''
-    trace = False or trace
-    
-    def show(s, known=True):
-        '''Bind the arguments to show_helper.'''
-        return show_helper(aList[:], known, name, s, trace)
-
-    while None in aList:
-        aList.remove(None)
-    if not aList:
-        return show('None')
-    r = sorted(set(aList))
-    if not all([is_known_type(z) for z in r]):
-        return show('Any', known=False)
-    elif len(r) == 1:
-        return show(r[0])
-    if 'None' in r:
-        kind = 'Optional'
-        while 'None' in r:
-            r.remove('None')
-        return show('Optional[%s]' % r[0])
-    r = reduce_numbers(r)
-    if len(r) == 1:
-        return show(r[0])
-    else:
-        return show('Union[%s]' % (', '.join(sorted(r))))
+    return ReduceTypes(aList, name, trace).reduce_types()
 </t>
 <t tx="ekr.20160205101134.1">
-def reduce_numbers(aList):
+def reduce_numbers(self, aList):
     '''
     Return aList with all number types in aList replaced by the most
     general numeric type in aList.
@@ -3659,7 +3647,7 @@ table = (
 )
 @others
 for aList, expected in table:
-    got = reduce_numbers(aList)
+    got = ReduceTypes().reduce_numbers(aList)
     assert expected == got,  (aList, 'expected:', expected, 'got', got)
 </t>
 <t tx="ekr.20160206171945.1">@language rest
@@ -3695,7 +3683,7 @@ table = (
 )
 @others
 for aList, expected in table:
-    got = reduce_types(aList)
+    got = ReduceTypes(aList).reduce_types()
     assert expected == got, (aList, 'expected:', expected, 'got', got)
 </t>
 <t tx="ekr.20160206174054.1">
@@ -3742,7 +3730,7 @@ def do_List(self, node):
     return 'List[%s]' % ', '.join(elts)
 </t>
 <t tx="ekr.20160206212123.1">
-def split_types(s):
+def split_types(self, s):
     '''Split types on *outer level* commas.'''
     aList, i1, level = [], 0, 0
     for i, ch in enumerate(s):
@@ -3761,7 +3749,6 @@ def merge_types(a1, a2):
     a1 and a2 may be strings or lists.
     return a list containing both of them, flattened, without duplicates.
     '''
-    # Not used at present, and perhaps never.
     # Only useful if visitors could return either lists or strings.
     assert a1 is not None
     assert a2 is not None
@@ -3970,7 +3957,7 @@ def show_helper(aList, known, name, s, trace):
 )
 @others
 for s, expected in table:
-    got = split_types(s)
+    got = ReduceTypes().split_types(s)
     assert expected == got, (s, 'expected', expected, 'got', got)
 </t>
 <t tx="ekr.20160207165240.1"></t>
@@ -6475,6 +6462,135 @@ the config file.
 7. Specify a configuration file containing patterns:
 
         make_stub_files -c myConfigFile.cfg -o
+</t>
+<t tx="ekr.20160214042945.1">def reduce_types(aList, name=None, trace=False):
+    '''
+    Return a string containing the reduction of all types in aList.
+    The --trace-reduce command-line option sets trace=True.
+    If present, name is the function name or class_name.method_name.
+    '''
+    trace = False or trace
+    
+    def show(s, known=True):
+        '''Bind the arguments to show_helper.'''
+        return show_helper(aList[:], known, name, s, trace)
+
+    while None in aList:
+        aList.remove(None)
+    if not aList:
+        return show('None')
+    r = sorted(set(aList))
+    if not all([is_known_type(z) for z in r]):
+        return show('Any', known=False)
+    elif len(r) == 1:
+        return show(r[0])
+    if 'None' in r:
+        kind = 'Optional'
+        while 'None' in r:
+            r.remove('None')
+        return show('Optional[%s]' % r[0])
+    r = reduce_numbers(r)
+    if len(r) == 1:
+        return show(r[0])
+    else:
+        return show('Union[%s]' % (', '.join(sorted(r))))
+</t>
+<t tx="ekr.20160214043351.1">
+def make_optional(self,r):
+    
+    if 'None' in r:
+        while 'None' in r:
+            r.remove('None')
+        r = self.show('Optional[%s]' % r[0])
+    return r</t>
+<t tx="ekr.20160214044429.1">class ReduceTypes:
+    '''A helper class for the top-level reduce_types function.'''
+    @others
+</t>
+<t tx="ekr.20160214044444.1">
+def __init__(self, aList=None, name=None, trace=False):
+    '''Ctor for ReduceTypes class.'''
+    self.aList = aList
+    self.name = name
+    self.trace = trace
+</t>
+<t tx="ekr.20160214044515.1">  
+def reduce_types(self):
+    ''' 
+    Return a string containing the reduction of all types in self.aList.
+    The --trace-reduce command-line option sets self.trace=True.
+    If present, self.name is the function name or class_name.method_name.
+    '''
+    aList = self.aList
+    while None in aList:
+        aList.remove(None)
+    if not aList:
+        return self.show('None')
+    r = sorted(set(aList))
+    if not all([self.is_known_type(z) for z in r]):
+        return self.show('Any', known=False)
+    table = (
+        self.reduce_numbers,
+        self.merge_unions,
+        self.merge_dicts,
+        self.merge_lists,
+        self.make_optional,
+    )
+    # Apply all reductions even on lists of length one.
+    for f in table:
+        r = f(r)
+    if len(r) == 1:
+        return self.show(r[0])
+    else:
+        return self.show('Union[%s]' % (', '.join(sorted(r))))
+</t>
+<t tx="ekr.20160214044536.1">
+def show(self, s, known=True):
+    '''Show the result of reduce_types.'''
+    aList, name = self.aList, self.name
+    trace = False or self.trace
+    s = s.strip()
+    if trace and (not known or len(aList) &gt; 1):
+        if name:
+            if name.find('.') &gt; -1:
+                context = ''.join(name.split('.')[1:])
+            else:
+                context = name
+        else:
+            context = g.callers(3).split(',')[0].strip()
+        context = truncate(context, 26)
+        known = '' if known else '? '
+        pattern = sorted(set([z.replace('\n',' ') for z in aList]))
+        pattern = '[%s]' % truncate(', '.join(pattern), 53-2)
+        print('reduce_types: %-26s %53s ==&gt; %s%s' % (context, pattern, known, s))
+            # widths above match the corresponding indents in match_all and match.
+    return s
+</t>
+<t tx="ekr.20160214050501.1">def is_known_type(s):
+    '''
+    Return True if s is nothing but a single known type.
+    Recursively test inner types in square brackets.
+    '''
+    return ReduceTypes().is_known_type(s)
+</t>
+<t tx="ekr.20160214050801.1"></t>
+<t tx="ekr.20160214051515.1">
+def merge_dicts(self, aList):
+    '''Merge all Dict elements in aList into a single, reduced Dict.'''
+    return self.merge_collection(aList, 'Dict')
+    
+def merge_lists(self, aList):
+    '''Merge all List elements in aList into a single, reduced List.'''
+    return self.merge_collection(aList, 'List')
+    
+def merge_unions(self, aList):
+    '''Merge all Union elements in aList into a single, reduced Union.'''
+    return self.merge_collection(aList, 'Union')
+</t>
+<t tx="ekr.20160214051730.1">
+def merge_collection(self, aList, kind):
+    '''Merge all collections of the given kind into a single collection.'''
+    return aList ###
 </t>
 </tnodes>
 </leo_file>

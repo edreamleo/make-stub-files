@@ -12,6 +12,6 @@ class test_reduce_numbers (unittest.TestCase):
             ([l, a],    [a, l]),
         )
         for aList, expected in table:
-            got = reduce_numbers(aList)
+            got = ReduceTypes().reduce_numbers(aList)
             assert expected == got,  (aList, 'expected:', expected, 'got', got)
 

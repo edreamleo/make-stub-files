@@ -28,6 +28,32 @@ try:
 except ImportError:
     import io # Python 3
 
+def is_known_type(s):
+    '''
+    Return True if s is nothing but a single known type.
+    Recursively test inner types in square brackets.
+    '''
+    return ReduceTypes().is_known_type(s)
+
+def merge_types(a1, a2):
+    '''
+    a1 and a2 may be strings or lists.
+    return a list containing both of them, flattened, without duplicates.
+    '''
+    # Only useful if visitors could return either lists or strings.
+    assert a1 is not None
+    assert a2 is not None
+    r1 = a1 if isinstance(a1, (list, tuple)) else [a1]
+    r2 = a2 if isinstance(a2, (list, tuple)) else [a2]
+    return sorted(set(r1 + r2))
+
+def reduce_types(aList, name=None, trace=False):
+    '''
+    Return a string containing the reduction of all types in aList.
+    The --trace-reduce command-line option sets trace=True.
+    If present, name is the function name or class_name.method_name.
+    '''
+    return ReduceTypes(aList, name, trace).reduce_types()
 
 # Top-level functions
 
@@ -51,74 +77,6 @@ def dump_list(title, aList):
         print(z)
     print('')
 
-def is_known_type(s):
-    '''
-    Return True if s is nothing but a single known type.
-    Recursively test inner types in square brackets.
-    '''
-    trace = False
-    s1 = s
-    s = s.strip()
-    table = (
-        # None,
-        'None', 
-        'complex', 'float', 'int', 'long', 'number',
-        'dict', 'list', 'tuple',
-        'bool', 'bytes', 'str', 'unicode',
-    )
-    for s2 in table:
-        if s2 == s:
-            return True
-        elif Pattern(s2+'(*)', s).match_entire_string(s):
-            return True
-    if s.startswith('[') and s.endswith(']'):
-        inner = s[1:-1]
-        return is_known_type(inner) if inner else True
-    elif s.startswith('(') and s.endswith(')'):
-        inner = s[1:-1]
-        return is_known_type(inner) if inner else True
-    elif s.startswith('{') and s.endswith('}'):
-        return True ### Not yet.
-        # inner = s[1:-1]
-        # return is_known_type(inner) if inner else True
-    table = (
-        # Pep 484: https://www.python.org/dev/peps/pep-0484/
-        # typing module: https://docs.python.org/3/library/typing.html
-        'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
-        'BinaryIO', 'ByteString',
-        'Callable', 'CallableMeta', 'Container',
-        'Dict', 'Final', 'Generic', 'GenericMeta', 'Hashable',
-        'IO', 'ItemsView', 'Iterable', 'Iterator',
-        'KT', 'KeysView', 'List',
-        'Mapping', 'MappingView', 'Match',
-        'MutableMapping', 'MutableSequence', 'MutableSet',
-        'NamedTuple', 'Optional', 'OptionalMeta',
-        # 'POSIX', 'PY2', 'PY3',
-        'Pattern', 'Reversible',
-        'Sequence', 'Set', 'Sized',
-        'SupportsAbs', 'SupportsFloat', 'SupportsInt', 'SupportsRound',
-        'T', 'TextIO', 'Tuple', 'TupleMeta',
-        'TypeVar', 'TypingMeta',
-        'Undefined', 'Union', 'UnionMeta',
-        'VT', 'ValuesView', 'VarBinding',
-    )
-    for s2 in table:
-        if s2 == s:
-            return True
-        pattern = Pattern(s2+'[*]', s)
-        if pattern.match_entire_string(s):
-            # Look inside the square brackets.
-            brackets = s[len(s2):]
-            assert brackets and brackets[0] == '[' and brackets[-1] == ']'
-            s3 = brackets[1:-1]
-            if s3:
-                return all([is_known_type(z.strip())
-                    for z in split_types(s3)])
-            else:
-                return True
-    if trace: g.trace('Fail:', s1)
-    return False
-
 def main():
     '''
     The driver for the stand-alone version of make-stub-files.
@@ -131,19 +89,6 @@ def main():
     controller.run()
     print('done')
 
-def merge_types(a1, a2):
-    '''
-    a1 and a2 may be strings or lists.
-    return a list containing both of them, flattened, without duplicates.
-    '''
-    # Not used at present, and perhaps never.
-    # Only useful if visitors could return either lists or strings.
-    assert a1 is not None
-    assert a2 is not None
-    r1 = a1 if isinstance(a1, (list, tuple)) else [a1]
-    r2 = a2 if isinstance(a2, (list, tuple)) else [a2]
-    return sorted(set(r1 + r2))
-
 def pdb(self):
     '''Invoke a debugger during unit testing.'''
     try:
@@ -152,91 +97,6 @@ def pdb(self):
     except ImportError:
         import pdb
         pdb.set_trace()
-
-def reduce_numbers(aList):
-    '''
-    Return aList with all number types in aList replaced by the most
-    general numeric type in aList.
-    '''
-    found = None
-    numbers = ('number', 'complex', 'float', 'long', 'int')
-    for kind in numbers:
-        for z in aList:
-            if z == kind:
-                found = kind
-                break
-        if found:
-            break
-    if found:
-        assert found in numbers, found
-        aList = [z for z in aList if z not in numbers]
-        aList.append(found)
-    return aList
-
-def reduce_types(aList, name=None, trace=False):
-    '''
-    Return a string containing the reduction of all types in aList.
-    The --trace-reduce command-line option sets trace=True.
-    If present, name is the function name or class_name.method_name.
-    '''
-    trace = False or trace
-    
-    def show(s, known=True):
-        '''Bind the arguments to show_helper.'''
-        return show_helper(aList[:], known, name, s, trace)
-
-    while None in aList:
-        aList.remove(None)
-    if not aList:
-        return show('None')
-    r = sorted(set(aList))
-    if not all([is_known_type(z) for z in r]):
-        return show('Any', known=False)
-    elif len(r) == 1:
-        return show(r[0])
-    if 'None' in r:
-        kind = 'Optional'
-        while 'None' in r:
-            r.remove('None')
-        return show('Optional[%s]' % r[0])
-    r = reduce_numbers(r)
-    if len(r) == 1:
-        return show(r[0])
-    else:
-        return show('Union[%s]' % (', '.join(sorted(r))))
-
-def show_helper(aList, known, name, s, trace):
-    '''Show the result of the reduction.'''
-    s = s.strip()
-    if trace and (not known or len(aList) > 1):
-        if name:
-            if name.find('.') > -1:
-                context = ''.join(name.split('.')[1:])
-            else:
-                context = name
-        else:
-            context = g.callers(3).split(',')[0].strip()
-        context = truncate(context, 26)
-        known = '' if known else '? '
-        pattern = sorted(set([z.replace('\n',' ') for z in aList]))
-        pattern = '[%s]' % truncate(', '.join(pattern), 53-2)
-        print('reduce_types: %-26s %53s ==> %s%s' % (context, pattern, known, s))
-            # widths above match the corresponding indents in match_all and match.
-    return s
-
-def split_types(s):
-    '''Split types on *outer level* commas.'''
-    aList, i1, level = [], 0, 0
-    for i, ch in enumerate(s):
-        if ch == '[':
-            level += 1
-        elif ch == ']':
-            level -= 1
-        elif ch == ',' and level == 0:
-            aList.append(s[i1:i])
-            i1 = i+1
-    aList.append(s[i1:].strip())
-    return aList
 
 def truncate(s, n):
     '''Return s truncated to n characters.'''
@@ -1192,6 +1052,190 @@ class Pattern(object):
                 # g.trace(i, m.group(i))
                 s = s.replace(group, m.group(i))
         return s
+class ReduceTypes:
+    '''A helper class for the top-level reduce_types function.'''
+
+    def __init__(self, aList=None, name=None, trace=False):
+        '''Ctor for ReduceTypes class.'''
+        self.aList = aList
+        self.name = name
+        self.trace = trace
+
+    def is_known_type(self, s):
+        '''
+        Return True if s is nothing but a single known type.
+        Recursively test inner types in square brackets.
+        '''
+        trace = False
+        s1 = s
+        s = s.strip()
+        table = (
+            # None,
+            'None', 
+            'complex', 'float', 'int', 'long', 'number',
+            'dict', 'list', 'tuple',
+            'bool', 'bytes', 'str', 'unicode',
+        )
+        for s2 in table:
+            if s2 == s:
+                return True
+            elif Pattern(s2+'(*)', s).match_entire_string(s):
+                return True
+        if s.startswith('[') and s.endswith(']'):
+            inner = s[1:-1]
+            return self.is_known_type(inner) if inner else True
+        elif s.startswith('(') and s.endswith(')'):
+            inner = s[1:-1]
+            return self.is_known_type(inner) if inner else True
+        elif s.startswith('{') and s.endswith('}'):
+            return True ### Not yet.
+            # inner = s[1:-1]
+            # return self.is_known_type(inner) if inner else True
+        table = (
+            # Pep 484: https://www.python.org/dev/peps/pep-0484/
+            # typing module: https://docs.python.org/3/library/typing.html
+            'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
+            'BinaryIO', 'ByteString',
+            'Callable', 'CallableMeta', 'Container',
+            'Dict', 'Final', 'Generic', 'GenericMeta', 'Hashable',
+            'IO', 'ItemsView', 'Iterable', 'Iterator',
+            'KT', 'KeysView', 'List',
+            'Mapping', 'MappingView', 'Match',
+            'MutableMapping', 'MutableSequence', 'MutableSet',
+            'NamedTuple', 'Optional', 'OptionalMeta',
+            # 'POSIX', 'PY2', 'PY3',
+            'Pattern', 'Reversible',
+            'Sequence', 'Set', 'Sized',
+            'SupportsAbs', 'SupportsFloat', 'SupportsInt', 'SupportsRound',
+            'T', 'TextIO', 'Tuple', 'TupleMeta',
+            'TypeVar', 'TypingMeta',
+            'Undefined', 'Union', 'UnionMeta',
+            'VT', 'ValuesView', 'VarBinding',
+        )
+        for s2 in table:
+            if s2 == s:
+                return True
+            pattern = Pattern(s2+'[*]', s)
+            if pattern.match_entire_string(s):
+                # Look inside the square brackets.
+                brackets = s[len(s2):]
+                assert brackets and brackets[0] == '[' and brackets[-1] == ']'
+                s3 = brackets[1:-1]
+                if s3:
+                    return all([self.is_known_type(z.strip())
+                        for z in self.split_types(s3)])
+                else:
+                    return True
+        if trace: g.trace('Fail:', s1)
+        return False
+
+    def make_optional(self,r):
+        
+        if 'None' in r:
+            while 'None' in r:
+                r.remove('None')
+            r = self.show('Optional[%s]' % r[0])
+        return r
+
+    def merge_collection(self, aList, kind):
+        '''Merge all collections of the given kind into a single collection.'''
+        return aList ###
+
+    def merge_dicts(self, aList):
+        '''Merge all Dict elements in aList into a single, reduced Dict.'''
+        return self.merge_collection(aList, 'Dict')
+        
+    def merge_lists(self, aList):
+        '''Merge all List elements in aList into a single, reduced List.'''
+        return self.merge_collection(aList, 'List')
+        
+    def merge_unions(self, aList):
+        '''Merge all Union elements in aList into a single, reduced Union.'''
+        return self.merge_collection(aList, 'Union')
+
+    def reduce_numbers(self, aList):
+        '''
+        Return aList with all number types in aList replaced by the most
+        general numeric type in aList.
+        '''
+        found = None
+        numbers = ('number', 'complex', 'float', 'long', 'int')
+        for kind in numbers:
+            for z in aList:
+                if z == kind:
+                    found = kind
+                    break
+            if found:
+                break
+        if found:
+            assert found in numbers, found
+            aList = [z for z in aList if z not in numbers]
+            aList.append(found)
+        return aList
+      
+    def reduce_types(self):
+        ''' 
+        Return a string containing the reduction of all types in self.aList.
+        The --trace-reduce command-line option sets self.trace=True.
+        If present, self.name is the function name or class_name.method_name.
+        '''
+        aList = self.aList
+        while None in aList:
+            aList.remove(None)
+        if not aList:
+            return self.show('None')
+        r = sorted(set(aList))
+        if not all([self.is_known_type(z) for z in r]):
+            return self.show('Any', known=False)
+        table = (
+            self.reduce_numbers,
+            self.merge_unions,
+            self.merge_dicts,
+            self.merge_lists,
+            self.make_optional,
+        )
+        # Apply all reductions even on lists of length one.
+        for f in table:
+            r = f(r)
+        if len(r) == 1:
+            return self.show(r[0])
+        else:
+            return self.show('Union[%s]' % (', '.join(sorted(r))))
+
+    def show(self, s, known=True):
+        '''Show the result of reduce_types.'''
+        aList, name = self.aList, self.name
+        trace = False or self.trace
+        s = s.strip()
+        if trace and (not known or len(aList) > 1):
+            if name:
+                if name.find('.') > -1:
+                    context = ''.join(name.split('.')[1:])
+                else:
+                    context = name
+            else:
+                context = g.callers(3).split(',')[0].strip()
+            context = truncate(context, 26)
+            known = '' if known else '? '
+            pattern = sorted(set([z.replace('\n',' ') for z in aList]))
+            pattern = '[%s]' % truncate(', '.join(pattern), 53-2)
+            print('reduce_types: %-26s %53s ==> %s%s' % (context, pattern, known, s))
+                # widths above match the corresponding indents in match_all and match.
+        return s
+
+    def split_types(self, s):
+        '''Split types on *outer level* commas.'''
+        aList, i1, level = [], 0, 0
+        for i, ch in enumerate(s):
+            if ch == '[':
+                level += 1
+            elif ch == ']':
+                level -= 1
+            elif ch == ',' and level == 0:
+                aList.append(s[i1:i])
+                i1 = i+1
+        aList.append(s[i1:].strip())
+        return aList
 
 
 class StandAloneMakeStubFile:

@@ -17,6 +17,6 @@ class test_reduce_types (unittest.TestCase):
             ([None, a, c],  'Union[Any, complex]'),
         )
         for aList, expected in table:
-            got = reduce_types(aList)
+            got = ReduceTypes(aList).reduce_types()
             assert expected == got, (aList, 'expected:', expected, 'got', got)
 
