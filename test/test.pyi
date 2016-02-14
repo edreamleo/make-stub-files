@@ -1,4 +1,4 @@
-# make_stub_files: Sun 14 Feb 2016 at 10:20:09
+# make_stub_files: Sun 14 Feb 2016 at 11:34:34
 def is_known_type(s: str) -> bool: ...
     #   0: return True
     #   0: return bool
@@ -75,3 +75,13 @@ def sum_test(n: Any) -> number: ...
 def not_test(a: Any) -> bool: ...
     #   0: return not a
     #   0: return bool
+def optional_any(a: Any) -> Optional[Any]: ...
+    #   0: return a
+    #   0: return Any
+    #   1: return None
+    #   1: return None
+def optional_any2(a: Any) -> Optional[Any]: ...
+    #   0: return a
+    #   0: return Any
+    #   1: return
+    # ? 1: return

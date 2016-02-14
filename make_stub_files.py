@@ -1163,9 +1163,19 @@ class ReduceTypes:
                     # Maximally informative.
                 # others = ['Any']
                     # Correct, but uninformative.
-        s = '%s[%s]' % (kind, ', '.join(sorted(list(set(others)))))
-        if trace: g.trace(aList, '==>',s)
-        return [s]
+        aList = sorted(list(set(others)))
+        if len(aList) < 2:
+            result = aList
+        elif 'None' in aList:
+            aList = [z for z in aList if z != 'None']
+            if len(aList) == 1:
+                result = ['Optional[%s]' % ', '.join(aList)]
+            else:
+                result = ['Optional[Union[%s]]' % ', '.join(aList)]
+        else:
+            result = ['%s[%s]' % (kind, ', '.join(aList))]
+        if trace: g.trace(aList, '==>', ', '.result)
+        return result
        
 
     def merge_dicts(self, aList):
@@ -1206,14 +1216,12 @@ class ReduceTypes:
         The --trace-reduce command-line option sets self.trace=True.
         If present, self.name is the function name or class_name.method_name.
         '''
+        trace = False
         aList = self.aList
-        while None in aList:
-            aList.remove(None)
+        aList = ['None' if z in ('', None) else z for z in aList]
         if not aList:
             return self.show('None')
         r = sorted(set(aList))
-        # if not all([self.is_known_type(z) for z in r]):
-            # return self.show('Any', known=False)
         table = (
             self.reduce_unknowns,
             self.reduce_numbers,
@@ -1224,13 +1232,20 @@ class ReduceTypes:
         )
         # Apply all reductions even on lists of length one.
         for f in table:
+            r = f(r)
             if len(r) < 2:
                 break
-            r = f(r)
+        if trace: g.trace(r)
         if not r:
             return 'None'
         elif len(r) == 1:
             return self.show(r[0])
+        elif 'None' in r:
+            r = [z for z in aList if z != 'None']
+            if len(r) == 1:
+                return self.show('Optional[%s]' % r[0])
+            else:
+                return self.show('Optional[Union[%s]]' % (', '.join(sorted(r))))
         else:
             return self.show('Union[%s]' % (', '.join(sorted(r))))
     def reduce_unknowns(self, aList):
@@ -2484,6 +2499,7 @@ class StubTraverser (ast.NodeVisitor):
         lws =  '\n' + ' '*4
         n = len(raw_returns)
         known = all([is_known_type(e) for e in reduced_returns])
+        # g.trace(reduced_returns)
         if not known or self.verbose:
             # First, generate the return lines.
             aList = []

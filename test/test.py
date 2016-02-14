@@ -116,3 +116,15 @@ def sum_test(n):
         
 def not_test(a):
     return not a
+    
+def optional_any(a):
+    if a:
+        return a
+    else:
+        return None
+        
+def optional_any2(a):
+    if a:
+        return a
+    else:
+        return

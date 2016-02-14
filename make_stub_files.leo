@@ -158,6 +158,55 @@
 <v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
 </v>
 </v>
+<v t="ekr.20160214113557.1"><vh>Recent</vh>
+<v t="ekr.20160214093616.1"><vh>recent pattern-matching stuff</vh>
+<v t="ekr.20160205053641.3"></v>
+<v t="ekr.20160205053641.5"></v>
+<v t="ekr.20160204153904.1"></v>
+<v t="ekr.20160205131910.1"><vh>sf.match_all</vh></v>
+<v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
+<v t="ekr.20160205103604.6"></v>
+<v t="ekr.20160204170443.1"></v>
+<v t="ekr.20160204170921.1"></v>
+<v t="ekr.20160204113206.1"></v>
+</v>
+<v t="ekr.20160214103050.1"><vh>recent collection-matching stuff</vh>
+<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
+<v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
+<v t="ekr.20160128113859.1"></v>
+<v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
+<v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
+<v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
+<v t="ekr.20160206174054.1"><vh>pattern.is_regex</vh></v>
+<v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
+<v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
+<v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
+</v>
+<v t="ekr.20160202070025.1"><vh>pattern.match (trace-matches)</vh></v>
+<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
+<v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
+<v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
+<v t="ekr.20160206174547.1"><vh>pattern.replace_regex</vh></v>
+</v>
+</v>
+<v t="ekr.20160214044429.1"><vh>class ReduceTypes</vh>
+<v t="ekr.20160214044444.1"><vh>rt.ctor</vh></v>
+<v t="ekr.20160130034812.1"><vh>rt.is_known_type</vh></v>
+<v t="ekr.20160214043351.1"><vh>rt.make_optional</vh></v>
+<v t="ekr.20160214051730.1"><vh>rt.merge_collection</vh></v>
+<v t="ekr.20160214051515.1"><vh>rt.merge_dicts/lists/unions</vh></v>
+<v t="ekr.20160205101134.1"><vh>rt.reduce_numbers</vh></v>
+<v t="ekr.20160214044515.1"><vh>rt.reduce_types</vh></v>
+<v t="ekr.20160214094129.1"><vh>rt.reduce_unknowns</vh></v>
+<v t="ekr.20160214044536.1"><vh>rt.show</vh></v>
+<v t="ekr.20160206212123.1"><vh>rt.split_types</vh></v>
+</v>
+</v>
+<v t="ekr.20160214094129.1"></v>
+<v t="ekr.20160214044515.1"></v>
+<v t="ekr.20160214051730.1"></v>
+</v>
+</v>
 <v t="ekr.20160131174909.1"><vh>To do</vh></v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
@@ -182,42 +231,12 @@
 <v t="ekr.20160206101140.1"><vh>g.splitLines</vh></v>
 <v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
 </v>
-<v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
-<v t="ekr.20160128113859.1"></v>
-<v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
-<v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
-<v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
-<v t="ekr.20160206174054.1"><vh>pattern.is_regex</vh></v>
-<v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
-<v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
-<v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
-</v>
-<v t="ekr.20160202070025.1"><vh>pattern.match (trace-matches)</vh></v>
-<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
-<v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
-<v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
-<v t="ekr.20160206174547.1"><vh>pattern.replace_regex</vh></v>
-</v>
-</v>
+<v t="ekr.20160128041938.1"></v>
 </v>
 <v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
-<v t="ekr.20160214044429.1"><vh>class ReduceTypes</vh>
-<v t="ekr.20160214044444.1"><vh>rt.ctor</vh></v>
-<v t="ekr.20160130034812.1"><vh>rt.is_known_type</vh></v>
-<v t="ekr.20160214043351.1"><vh>rt.make_optional</vh></v>
-<v t="ekr.20160214051730.1"><vh>rt.merge_collection</vh></v>
-<v t="ekr.20160214051515.1"><vh>rt.merge_dicts/lists/unions</vh></v>
-<v t="ekr.20160205101134.1"><vh>rt.reduce_numbers</vh></v>
-<v t="ekr.20160214044515.1"><vh>rt.reduce_types</vh></v>
-<v t="ekr.20160214094129.1"><vh>rt.reduce_unknowns</vh></v>
-<v t="ekr.20160214044536.1"><vh>rt.show</vh></v>
-<v t="ekr.20160206212123.1"><vh>rt.split_types</vh></v>
-</v>
-</v>
-<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
-<v t="ekr.20160128041938.1"></v>
 <v t="ekr.20160214044429.1"></v>
 </v>
+<v t="ekr.20160206173343.1"></v>
 <v t="ekr.20160207162818.1"><vh>@test split_types</vh>
 <v t="ekr.20160214044429.1"></v>
 </v>
@@ -311,8 +330,8 @@
 <v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"></v>
-<v t="ekr.20160205131910.1"><vh>sf.match_all</vh></v>
-<v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
+<v t="ekr.20160205131910.1"></v>
+<v t="ekr.20160206203133.1"></v>
 <v t="ekr.20160208093906.1"><vh>sf.trace_visitor</vh></v>
 <v t="ekr.20160205053705.1"></v>
 <v t="ekr.20160205053641.1"></v>
@@ -550,22 +569,6 @@
 <v t="ekr.20160131175118.1"><vh>return_list</vh></v>
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
-</v>
-<v t="ekr.20160214093616.1"><vh>recent pattern-matching stuff</vh>
-<v t="ekr.20160205053641.3"></v>
-<v t="ekr.20160205053641.5"></v>
-<v t="ekr.20160204153904.1"></v>
-<v t="ekr.20160205131910.1"></v>
-<v t="ekr.20160206203133.1"></v>
-<v t="ekr.20160205103604.6"></v>
-<v t="ekr.20160204170443.1"></v>
-<v t="ekr.20160204170921.1"></v>
-<v t="ekr.20160204113206.1"></v>
-</v>
-<v t="ekr.20160214103050.1"><vh>recent collection-matching stuff</vh>
-<v t="ekr.20160214094129.1"></v>
-<v t="ekr.20160214044515.1"></v>
-<v t="ekr.20160214051730.1"></v>
 </v>
 </vnodes>
 <tnodes>
@@ -2303,6 +2306,7 @@ def format_return_expressions(self, name, raw_returns, reduced_returns):
     lws =  '\n' + ' '*4
     n = len(raw_returns)
     known = all([is_known_type(e) for e in reduced_returns])
+    # g.trace(reduced_returns)
     if not known or self.verbose:
         # First, generate the return lines.
         aList = []
@@ -2401,11 +2405,6 @@ def is_known_type(self, s):
 </t>
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
-
-Improve reduce_types:
-- trace--unknown.
-- List[unknown] should be List[Any], not Any
-- [None, unknown] should be Optional[Any], not Any
 
 Later or never:
 - Add more hard-coded patterns, especially binop patterns.
@@ -3715,9 +3714,13 @@ table = (
     # Handle None
     ([None],        none),
     ([None, None],  none),
-    ([None, a, c],  'Union[Any, complex]'),
-    # Handle unknown types.
+    ([None, a, c],  'Optional[Union[Any, complex]]'),
+    # Handle unknown types, and special cases
     ([i, x],        'Union[Any, int]'),
+    ([None, x],     'Optional[Any]'),
+    ([none, x],     'Optional[Any]'),
+    (['', x],       'Optional[Any]'),
+    ([none, x, c],  'Optional[Union[Any, complex]]'),
     # Collection merging...
     (['Dict[int, str]', 'Dict[Any, str]'], 'Union[Dict[Any, str], Dict[int, str]]'),
     (['List[int, str]', 'List[Any, str]'], 'Union[List[Any, str], List[int, str]]'),
@@ -6565,14 +6568,12 @@ def reduce_types(self):
     The --trace-reduce command-line option sets self.trace=True.
     If present, self.name is the function name or class_name.method_name.
     '''
+    trace = False
     aList = self.aList
-    while None in aList:
-        aList.remove(None)
+    aList = ['None' if z in ('', None) else z for z in aList]
     if not aList:
         return self.show('None')
     r = sorted(set(aList))
-    # if not all([self.is_known_type(z) for z in r]):
-        # return self.show('Any', known=False)
     table = (
         self.reduce_unknowns,
         self.reduce_numbers,
@@ -6583,13 +6584,20 @@ def reduce_types(self):
     )
     # Apply all reductions even on lists of length one.
     for f in table:
+        r = f(r)
         if len(r) &lt; 2:
             break
-        r = f(r)
+    if trace: g.trace(r)
     if not r:
         return 'None'
     elif len(r) == 1:
         return self.show(r[0])
+    elif 'None' in r:
+        r = [z for z in aList if z != 'None']
+        if len(r) == 1:
+            return self.show('Optional[%s]' % r[0])
+        else:
+            return self.show('Optional[Union[%s]]' % (', '.join(sorted(r))))
     else:
         return self.show('Union[%s]' % (', '.join(sorted(r))))
 </t>
@@ -6659,9 +6667,19 @@ def merge_collection(self, aList, kind):
                 # Maximally informative.
             # others = ['Any']
                 # Correct, but uninformative.
-    s = '%s[%s]' % (kind, ', '.join(sorted(list(set(others)))))
-    if trace: g.trace(aList, '==&gt;',s)
-    return [s]
+    aList = sorted(list(set(others)))
+    if len(aList) &lt; 2:
+        result = aList
+    elif 'None' in aList:
+        aList = [z for z in aList if z != 'None']
+        if len(aList) == 1:
+            result = ['Optional[%s]' % ', '.join(aList)]
+        else:
+            result = ['Optional[Union[%s]]' % ', '.join(aList)]
+    else:
+        result = ['%s[%s]' % (kind, ', '.join(aList))]
+    if trace: g.trace(aList, '==&gt;', ', '.result)
+    return result
    </t>
 <t tx="ekr.20160214093616.1"></t>
 <t tx="ekr.20160214094129.1">def reduce_unknowns(self, aList):
@@ -6669,5 +6687,6 @@ def merge_collection(self, aList, kind):
     return [z if self.is_known_type(z) else 'Any' for z in aList]
 </t>
 <t tx="ekr.20160214103050.1"></t>
+<t tx="ekr.20160214113557.1"></t>
 </tnodes>
 </leo_file>
