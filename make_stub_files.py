@@ -571,7 +571,7 @@ class AstFormatter:
     def do_Return(self, node):
         if node.value:
             return self.indent('return %s\n' % (
-                self.visit(node.value)))
+                self.visit(node.value).strip()))
         else:
             return self.indent('return\n')
 
@@ -1143,6 +1143,7 @@ class ReduceTypes:
 
     def merge_collection(self, aList, kind):
         '''Merge all collections of the given kind into a single collection.'''
+        trace = False
         assert isinstance(aList, list)
         contents, others, pattern = set(), [], Pattern('%s[*]' % kind)
         for s in aList:
@@ -1153,8 +1154,18 @@ class ReduceTypes:
             else:
                 others.append(s)
         if contents:
-            others.append('%s[%s]' % (kind, ', '.join(sorted(list(contents)))))
-        return others
+            known = all([self.is_known_type(z) for z in contents])
+            if known:
+                others.extend(sorted(list(contents)))
+                    # This flattens the collection.
+            else:
+                others.append('Any')
+                    # Maximally informative.
+                # others = ['Any']
+                    # Correct, but uninformative.
+        s = '%s[%s]' % (kind, ', '.join(sorted(list(set(others)))))
+        if trace: g.trace(aList, '==>',s)
+        return [s]
        
 
     def merge_dicts(self, aList):
@@ -1201,9 +1212,10 @@ class ReduceTypes:
         if not aList:
             return self.show('None')
         r = sorted(set(aList))
-        if not all([self.is_known_type(z) for z in r]):
-            return self.show('Any', known=False)
+        # if not all([self.is_known_type(z) for z in r]):
+            # return self.show('Any', known=False)
         table = (
+            self.reduce_unknowns,
             self.reduce_numbers,
             self.merge_unions,
             self.merge_dicts,
@@ -1221,6 +1233,9 @@ class ReduceTypes:
             return self.show(r[0])
         else:
             return self.show('Union[%s]' % (', '.join(sorted(r))))
+    def reduce_unknowns(self, aList):
+        '''Replace all unknown types in aList with Any.'''
+        return [z if self.is_known_type(z) else 'Any' for z in aList]
 
     def show(self, s, known=True):
         '''Show the result of reduce_types.'''
@@ -1524,7 +1539,6 @@ class StandAloneMakeStubFile:
             if s.find(target) > -1:
                 ops.append(op)
                 break # Only one match allowed.
-                
         if trace and ops: g.trace(s1, ops)
         return ops
 
@@ -1713,6 +1727,7 @@ class StubFormatter (AstFormatter):
         self.general_patterns = x.general_patterns
         self.names_dict = x.names_dict
         self.patterns_dict = x.patterns_dict
+        self.raw_format = AstFormatter().format
         self.trace_matches = x.trace_matches
         self.trace_patterns = x.trace_patterns
         self.trace_reduce = x.trace_reduce
@@ -1721,14 +1736,18 @@ class StubFormatter (AstFormatter):
 
     matched_d = {}
 
-    def match_all(self, node, s):
+    def match_all(self, node, s, trace=False):
         '''Match all the patterns for the given node.'''
-        trace = False or self.trace_matches
+        trace = False or trace or self.trace_matches
+        # verbose = True
         d = self.matched_d
         name = node.__class__.__name__
         s1 = truncate(s, 40)
         caller = g.callers(2).split(',')[1].strip()
             # The direct caller of match_all.
+        # if trace and verbose:
+            # g.trace(s)
+            # g.trace(self.patterns_dict.get(name, []))
         for pattern in self.patterns_dict.get(name, []):
             found, s = pattern.match(s,trace=False)
             if found:
@@ -1744,8 +1763,7 @@ class StubFormatter (AstFormatter):
     def visit(self, node):
         '''StubFormatter.visit: supports --verbose tracing.'''
         s = AstFormatter.visit(self, node)
-        # if self.verbose:
-            # g.trace('%12s %s' % (node.__class__.__name__,s))
+        # g.trace('%12s %s' % (node.__class__.__name__,s))
         return s
 
     def trace_visitor(self, node, op, s):
@@ -1888,6 +1906,7 @@ class StubFormatter (AstFormatter):
 
     def do_Call(self, node):
         '''StubFormatter.Call visitor.'''
+        trace = False
         func = self.visit(node.func)
         args = [self.visit(z) for z in node.args]
         for z in node.keywords:
@@ -1903,7 +1922,7 @@ class StubFormatter (AstFormatter):
             s = '%s[%s]' % (func.capitalize(), ', '.join(args))
         else:
             s = '%s(%s)' % (func, ', '.join(args))
-        s = self.match_all(node, s)
+        s = self.match_all(node, s, trace=trace)
         self.trace_visitor(node, 'call', s)
         return s
 
@@ -1957,10 +1976,14 @@ class StubFormatter (AstFormatter):
     def do_UnaryOp(self, node):
         '''StubFormatter.UnaryOp for unary +, -, ~ and 'not' operators.'''
         op = self.op_name(node.op)
-        s = 'bool' if op.strip() is 'not' else self.visit(node.operand)
-        s = self.match_all(node, s)
-        self.trace_visitor(node, op, s)
-        return s
+        # g.trace(op.strip(), self.raw_format(node.operand))
+        if op.strip() == 'not':
+            return 'bool'
+        else:
+            s = self.visit(node.operand)
+            s = self.match_all(node, s)
+            self.trace_visitor(node, op, s)
+            return s
 
     def do_Return(self, node):
         '''

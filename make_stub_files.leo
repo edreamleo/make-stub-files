@@ -71,33 +71,33 @@
 <v t="ekr.20160126153212.78"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160204170921.1"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160203105356.1"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops (--trace-patterns)</vh></v>
+<v t="ekr.20160204170443.1"><vh>msf.find_pattern_ops</vh></v>
 <v t="ekr.20160203105721.1"><vh>msf.get_config_string</vh></v>
 <v t="ekr.20160203074843.1"><vh>msf.init_parser</vh></v>
 <v t="ekr.20160203094439.1"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict (--trace-patterns)</vh></v>
+<v t="ekr.20160204113206.1"><vh>msf.make_patterns_dict</vh></v>
 <v t="ekr.20160126153212.79"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
 <v t="ekr.20160211063252.1"><vh>3. Type-related ast.Node visitors</vh>
 <v t="ekr.20160205053705.1"><vh>sf.Operands</vh>
-<v t="ekr.20160205103604.4"><vh>sf.Attribute (names_dict)</vh></v>
+<v t="ekr.20160205103604.4"><vh>sf.Attribute</vh></v>
 <v t="ekr.20160126153212.81"><vh>sf.Constants: Bytes, Num, Str</vh></v>
-<v t="ekr.20160205103604.9"><vh>sf.Dict ** call match_all?</vh></v>
-<v t="ekr.20160206204452.1"><vh>sf.List ** call_match_all?</vh></v>
-<v t="ekr.20160204153904.1"><vh>sf.Name (names_dict)</vh></v>
-<v t="ekr.20160126153212.38"><vh>sf.Tuple (match_all)</vh></v>
+<v t="ekr.20160205103604.9"><vh>sf.Dict</vh></v>
+<v t="ekr.20160206204452.1"><vh>sf.List</vh></v>
+<v t="ekr.20160204153904.1"><vh>sf.Name</vh></v>
+<v t="ekr.20160126153212.38"><vh>sf.Tuple</vh></v>
 </v>
 <v t="ekr.20160205053641.1"><vh>sf.Operators</vh>
-<v t="ekr.20160205053641.2"><vh>sf.BinOp (reduce_types &amp; match_all)</vh></v>
-<v t="ekr.20160205053641.3"><vh>sf.BoolOp (reduce_types)</vh></v>
-<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword (match_all)</vh>
+<v t="ekr.20160205053641.2"><vh>sf.BinOp</vh></v>
+<v t="ekr.20160205053641.3"><vh>sf.BoolOp</vh></v>
+<v t="ekr.20160205103604.6"><vh>sf.Call &amp; sf.keyword</vh>
 <v t="ekr.20160205103604.7"><vh>sf.keyword</vh></v>
 </v>
 <v t="ekr.20160205053641.4"><vh>sf.Compare</vh></v>
-<v t="ekr.20160205053641.6"><vh>sf.IfExp (reduce_types, match_all)</vh></v>
-<v t="ekr.20160205142626.1"><vh>sf.Subscript (match_all)</vh></v>
-<v t="ekr.20160205053641.5"><vh>sf.UnaryOp (match_all)</vh></v>
+<v t="ekr.20160205053641.6"><vh>sf.IfExp</vh></v>
+<v t="ekr.20160205142626.1"><vh>sf.Subscript</vh></v>
+<v t="ekr.20160205053641.5"><vh>sf.UnaryOp</vh></v>
 </v>
 <v t="ekr.20160201194801.1"><vh>sf.Return</vh></v>
 </v>
@@ -209,6 +209,7 @@
 <v t="ekr.20160214051515.1"><vh>rt.merge_dicts/lists/unions</vh></v>
 <v t="ekr.20160205101134.1"><vh>rt.reduce_numbers</vh></v>
 <v t="ekr.20160214044515.1"><vh>rt.reduce_types</vh></v>
+<v t="ekr.20160214094129.1"><vh>rt.reduce_unknowns</vh></v>
 <v t="ekr.20160214044536.1"><vh>rt.show</vh></v>
 <v t="ekr.20160206212123.1"><vh>rt.split_types</vh></v>
 </v>
@@ -310,7 +311,7 @@
 <v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"></v>
-<v t="ekr.20160205131910.1"><vh>sf.match_all (trace-matches)</vh></v>
+<v t="ekr.20160205131910.1"><vh>sf.match_all</vh></v>
 <v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
 <v t="ekr.20160208093906.1"><vh>sf.trace_visitor</vh></v>
 <v t="ekr.20160205053705.1"></v>
@@ -549,6 +550,22 @@
 <v t="ekr.20160131175118.1"><vh>return_list</vh></v>
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
+</v>
+<v t="ekr.20160214093616.1"><vh>recent pattern-matching stuff</vh>
+<v t="ekr.20160205053641.3"></v>
+<v t="ekr.20160205053641.5"></v>
+<v t="ekr.20160204153904.1"></v>
+<v t="ekr.20160205131910.1"></v>
+<v t="ekr.20160206203133.1"></v>
+<v t="ekr.20160205103604.6"></v>
+<v t="ekr.20160204170443.1"></v>
+<v t="ekr.20160204170921.1"></v>
+<v t="ekr.20160204113206.1"></v>
+</v>
+<v t="ekr.20160214103050.1"><vh>recent collection-matching stuff</vh>
+<v t="ekr.20160214094129.1"></v>
+<v t="ekr.20160214044515.1"></v>
+<v t="ekr.20160214051730.1"></v>
 </v>
 </vnodes>
 <tnodes>
@@ -1082,7 +1099,7 @@ def do_Raise(self, node):
 def do_Return(self, node):
     if node.value:
         return self.indent('return %s\n' % (
-            self.visit(node.value)))
+            self.visit(node.value).strip()))
     else:
         return self.indent('return\n')
 </t>
@@ -2386,9 +2403,9 @@ def is_known_type(self, s):
 @wrap
 
 Improve reduce_types:
+- trace--unknown.
 - List[unknown] should be List[Any], not Any
 - [None, unknown] should be Optional[Any], not Any
-- not ok should be a known type
 
 Later or never:
 - Add more hard-coded patterns, especially binop patterns.
@@ -2538,6 +2555,7 @@ def __init__(self, controller, traverser):
     self.general_patterns = x.general_patterns
     self.names_dict = x.names_dict
     self.patterns_dict = x.patterns_dict
+    self.raw_format = AstFormatter().format
     self.trace_matches = x.trace_matches
     self.trace_patterns = x.trace_patterns
     self.trace_reduce = x.trace_reduce
@@ -2894,7 +2912,6 @@ def find_pattern_ops(self, pattern):
         if s.find(target) &gt; -1:
             ops.append(op)
             break # Only one match allowed.
-            
     if trace and ops: g.trace(s1, ops)
     return ops
 </t>
@@ -3026,10 +3043,14 @@ def do_Compare(self, node):
 def do_UnaryOp(self, node):
     '''StubFormatter.UnaryOp for unary +, -, ~ and 'not' operators.'''
     op = self.op_name(node.op)
-    s = 'bool' if op.strip() is 'not' else self.visit(node.operand)
-    s = self.match_all(node, s)
-    self.trace_visitor(node, op, s)
-    return s
+    # g.trace(op.strip(), self.raw_format(node.operand))
+    if op.strip() == 'not':
+        return 'bool'
+    else:
+        s = self.visit(node.operand)
+        s = self.match_all(node, s)
+        self.trace_visitor(node, op, s)
+        return s
 </t>
 <t tx="ekr.20160205053641.6">
 # If(expr test, stmt* body, stmt* orelse)
@@ -3177,6 +3198,7 @@ def do_Attribute(self, node):
 
 def do_Call(self, node):
     '''StubFormatter.Call visitor.'''
+    trace = False
     func = self.visit(node.func)
     args = [self.visit(z) for z in node.args]
     for z in node.keywords:
@@ -3192,7 +3214,7 @@ def do_Call(self, node):
         s = '%s[%s]' % (func.capitalize(), ', '.join(args))
     else:
         s = '%s(%s)' % (func, ', '.join(args))
-    s = self.match_all(node, s)
+    s = self.match_all(node, s, trace=trace)
     self.trace_visitor(node, 'call', s)
     return s
 </t>
@@ -3226,14 +3248,18 @@ def do_Dict(self, node):
 <t tx="ekr.20160205131910.1">
 matched_d = {}
 
-def match_all(self, node, s):
+def match_all(self, node, s, trace=False):
     '''Match all the patterns for the given node.'''
-    trace = False or self.trace_matches
+    trace = False or trace or self.trace_matches
+    # verbose = True
     d = self.matched_d
     name = node.__class__.__name__
     s1 = truncate(s, 40)
     caller = g.callers(2).split(',')[1].strip()
         # The direct caller of match_all.
+    # if trace and verbose:
+        # g.trace(s)
+        # g.trace(self.patterns_dict.get(name, []))
     for pattern in self.patterns_dict.get(name, []):
         found, s = pattern.match(s,trace=False)
         if found:
@@ -3636,12 +3662,15 @@ def splitLines(self, s):
     '''Split s into lines, preserving trailing newlines.'''
     return s.splitlines(True) if s else []
     
-def sum(n):
+def sum_test(n):
     '''An common recursive pattern.'''
     if n == 1:
         return 1
     else:
         return 1 + sum(n-1)
+        
+def not_test(a):
+    return not a
 </t>
 <t tx="ekr.20160206170515.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
 table = (
@@ -3676,6 +3705,7 @@ Marking just that @test node allows me to run the test from any node.
 </t>
 <t tx="ekr.20160206173343.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
 none = 'None'
+x = 'xyzzy'
 table = (
     ([i,i],     i),
     ([i],       i),
@@ -3686,11 +3716,13 @@ table = (
     ([None],        none),
     ([None, None],  none),
     ([None, a, c],  'Union[Any, complex]'),
-    # Tuple merging
-    (['Dict[int, str]', 'Dict[Any, str]'], 'Dict[Any, int, str]'),
-    (['List[int, str]', 'List[Any, str]'], 'List[Any, int, str]'),
+    # Handle unknown types.
+    ([i, x],        'Union[Any, int]'),
+    # Collection merging...
+    (['Dict[int, str]', 'Dict[Any, str]'], 'Union[Dict[Any, str], Dict[int, str]]'),
+    (['List[int, str]', 'List[Any, str]'], 'Union[List[Any, str], List[int, str]]'),
     (['Union[int, str]', 'Union[Any, str]'], 'Union[Any, int, str]'),
-    (['Union[int, str]', 'int', 'Union[Any, str]'], 'Union[Union[Any, int, str], int]'),
+    (['Union[int, str]', 'int', 'Union[Any, str]'], 'Union[Any, int, str]'),
 )
 @others
 for aList, expected in table:
@@ -3729,8 +3761,7 @@ def replace(self, m, s):
 def visit(self, node):
     '''StubFormatter.visit: supports --verbose tracing.'''
     s = AstFormatter.visit(self, node)
-    # if self.verbose:
-        # g.trace('%12s %s' % (node.__class__.__name__,s))
+    # g.trace('%12s %s' % (node.__class__.__name__,s))
     return s</t>
 <t tx="ekr.20160206204452.1">
 def do_List(self, node):
@@ -6540,9 +6571,10 @@ def reduce_types(self):
     if not aList:
         return self.show('None')
     r = sorted(set(aList))
-    if not all([self.is_known_type(z) for z in r]):
-        return self.show('Any', known=False)
+    # if not all([self.is_known_type(z) for z in r]):
+        # return self.show('Any', known=False)
     table = (
+        self.reduce_unknowns,
         self.reduce_numbers,
         self.merge_unions,
         self.merge_dicts,
@@ -6607,6 +6639,7 @@ def merge_unions(self, aList):
 <t tx="ekr.20160214051730.1">
 def merge_collection(self, aList, kind):
     '''Merge all collections of the given kind into a single collection.'''
+    trace = False
     assert isinstance(aList, list)
     contents, others, pattern = set(), [], Pattern('%s[*]' % kind)
     for s in aList:
@@ -6617,8 +6650,24 @@ def merge_collection(self, aList, kind):
         else:
             others.append(s)
     if contents:
-        others.append('%s[%s]' % (kind, ', '.join(sorted(list(contents)))))
-    return others
+        known = all([self.is_known_type(z) for z in contents])
+        if known:
+            others.extend(sorted(list(contents)))
+                # This flattens the collection.
+        else:
+            others.append('Any')
+                # Maximally informative.
+            # others = ['Any']
+                # Correct, but uninformative.
+    s = '%s[%s]' % (kind, ', '.join(sorted(list(set(others)))))
+    if trace: g.trace(aList, '==&gt;',s)
+    return [s]
    </t>
+<t tx="ekr.20160214093616.1"></t>
+<t tx="ekr.20160214094129.1">def reduce_unknowns(self, aList):
+    '''Replace all unknown types in aList with Any.'''
+    return [z if self.is_known_type(z) else 'Any' for z in aList]
+</t>
+<t tx="ekr.20160214103050.1"></t>
 </tnodes>
 </leo_file>

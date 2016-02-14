@@ -5,6 +5,7 @@ class test_reduce_types (unittest.TestCase):
     def runTest(self):
         a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
         none = 'None'
+        x = 'xyzzy'
         table = (
             ([i,i],     i),
             ([i],       i),
@@ -15,11 +16,13 @@ class test_reduce_types (unittest.TestCase):
             ([None],        none),
             ([None, None],  none),
             ([None, a, c],  'Union[Any, complex]'),
-            # Tuple merging
-            (['Dict[int, str]', 'Dict[Any, str]'], 'Dict[Any, int, str]'),
-            (['List[int, str]', 'List[Any, str]'], 'List[Any, int, str]'),
+            # Handle unknown types.
+            ([i, x],        'Union[Any, int]'),
+            # Collection merging...
+            (['Dict[int, str]', 'Dict[Any, str]'], 'Union[Dict[Any, str], Dict[int, str]]'),
+            (['List[int, str]', 'List[Any, str]'], 'Union[List[Any, str], List[int, str]]'),
             (['Union[int, str]', 'Union[Any, str]'], 'Union[Any, int, str]'),
-            (['Union[int, str]', 'int', 'Union[Any, str]'], 'Union[Union[Any, int, str], int]'),
+            (['Union[int, str]', 'int', 'Union[Any, str]'], 'Union[Any, int, str]'),
         )
         for aList, expected in table:
             got = ReduceTypes(aList).reduce_types()

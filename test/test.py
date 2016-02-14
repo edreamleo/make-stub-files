@@ -107,9 +107,12 @@ def splitLines(self, s):
     '''Split s into lines, preserving trailing newlines.'''
     return s.splitlines(True) if s else []
     
-def sum(n):
+def sum_test(n):
     '''An common recursive pattern.'''
     if n == 1:
         return 1
     else:
         return 1 + sum(n-1)
+        
+def not_test(a):
+    return not a
