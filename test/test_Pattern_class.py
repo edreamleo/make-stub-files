@@ -42,4 +42,6 @@ class test_Pattern_class (unittest.TestCase):
         assert p3 not in aSet
         assert list(aSet) == [p1] == [p2]
         aSet.add(p3)
+        assert p1.match_entire_string('abc')
+        assert not p1.match_entire_string('abcx')
 

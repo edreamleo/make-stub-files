@@ -965,7 +965,7 @@ class Pattern(object):
                     return i
             assert progress < i
         # Unmatched: a syntax error.
-        print('***** unmatched %s in %s' % (delim, s))
+        g.trace('unmatched %s in %s' % (delim, s), g.callers(4))
         return len(s) + 1
 
     def match(self, s, trace=False):
@@ -1001,7 +1001,7 @@ class Pattern(object):
         '''Return True if s matches self.find_s'''
         if self.is_balanced():
             j = self.full_balanced_match(s, 0)
-            return j is not None
+            return j == len(s)
         else:
             m = self.regex.match(s)
             return m and m.group(0) == s
@@ -1119,13 +1119,17 @@ class ReduceTypes:
             if pattern.match_entire_string(s):
                 # Look inside the square brackets.
                 brackets = s[len(s2):]
-                assert brackets and brackets[0] == '[' and brackets[-1] == ']'
-                s3 = brackets[1:-1]
-                if s3:
-                    return all([self.is_known_type(z.strip())
-                        for z in self.split_types(s3)])
+                if brackets and brackets[0] == '[' and brackets[-1] == ']':
+                    s3 = brackets[1:-1]
+                    if s3:
+                        return all([self.is_known_type(z.strip())
+                            for z in self.split_types(s3)])
+                    else:
+                        return True
                 else:
-                    return True
+                    s3 = brackets[1:-1]
+                    g.trace('can not happen:\ns2: %s\ns3: %s\npattern: %s' % (
+                        ' '*5+s2, ' '*5+s3, pattern))
         if trace: g.trace('Fail:', s1)
         return False
 
@@ -2494,13 +2498,15 @@ class StubTraverser (ast.NodeVisitor):
     def remove_recursive_calls(self, name, raw, reduced):
         '''Remove any recursive calls to name from both lists.'''
         # At present, this works *only* if the return is nothing but the recursive call.
+        trace = False
         assert len(raw) == len(reduced)
         pattern = Pattern('%s(*)' % name)
         n = len(reduced)
         raw_result, reduced_result = [], []
         for i in range(n):
             if pattern.match_entire_string(reduced[i]):
-                g.trace('****', name, pattern, reduced[i])
+                if trace:
+                    g.trace('****', name, pattern, reduced[i])
             else:
                 raw_result.append(raw[i])
                 reduced_result.append(reduced[i])
