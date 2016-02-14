@@ -1059,6 +1059,7 @@ class ReduceTypes:
         '''Ctor for ReduceTypes class.'''
         self.aList = aList
         self.name = name
+        self.optional = False
         self.trace = trace
 
     def is_known_type(self, s):
@@ -1070,8 +1071,7 @@ class ReduceTypes:
         s1 = s
         s = s.strip()
         table = (
-            # None,
-            'None', 
+            '', 'None', # Tricky.
             'complex', 'float', 'int', 'long', 'number',
             'dict', 'list', 'tuple',
             'bool', 'bytes', 'str', 'unicode',
@@ -1088,7 +1088,7 @@ class ReduceTypes:
             inner = s[1:-1]
             return self.is_known_type(inner) if inner else True
         elif s.startswith('{') and s.endswith('}'):
-            return True ### Not yet.
+            return True # Not yet.
             # inner = s[1:-1]
             # return self.is_known_type(inner) if inner else True
         table = (
@@ -1096,8 +1096,8 @@ class ReduceTypes:
             # typing module: https://docs.python.org/3/library/typing.html
             'AbstractSet', 'Any', 'AnyMeta', 'AnyStr',
             'BinaryIO', 'ByteString',
-            'Callable', 'CallableMeta', 'Container',
-            'Dict', 'Final', 'Generic', 'GenericMeta', 'Hashable',
+            'Callable', 'CallableMeta', 'Container', 'Dict',
+            'Final', 'Generic', 'GenericMeta', 'Hashable',
             'IO', 'ItemsView', 'Iterable', 'Iterator',
             'KT', 'KeysView', 'List',
             'Mapping', 'MappingView', 'Match',
@@ -1107,94 +1107,63 @@ class ReduceTypes:
             'Pattern', 'Reversible',
             'Sequence', 'Set', 'Sized',
             'SupportsAbs', 'SupportsFloat', 'SupportsInt', 'SupportsRound',
-            'T', 'TextIO', 'Tuple', 'TupleMeta',
-            'TypeVar', 'TypingMeta',
+            'T', 'TextIO', 'Tuple', 'TupleMeta', 'TypeVar', 'TypingMeta',
             'Undefined', 'Union', 'UnionMeta',
             'VT', 'ValuesView', 'VarBinding',
         )
         for s2 in table:
             if s2 == s:
                 return True
-            pattern = Pattern(s2+'[*]', s)
-            if pattern.match_entire_string(s):
-                # Look inside the square brackets.
-                brackets = s[len(s2):]
-                if brackets and brackets[0] == '[' and brackets[-1] == ']':
-                    s3 = brackets[1:-1]
-                    if s3:
-                        return all([self.is_known_type(z.strip())
-                            for z in self.split_types(s3)])
-                    else:
-                        return True
-                else:
-                    s3 = brackets[1:-1]
-                    g.trace('can not happen:\ns2: %s\ns3: %s\npattern: %s' % (
-                        ' '*5+s2, ' '*5+s3, pattern))
+            else:
+                # Don't look inside bracketss.
+                pattern = Pattern(s2+'[*]', s)
+                if pattern.match_entire_string(s):
+                    return True
         if trace: g.trace('Fail:', s1)
         return False
 
     def make_optional(self,r):
         
         if r and 'None' in r:
-            while 'None' in r:
-                r.remove('None')
-            r = self.show('Optional[%s]' % r[0])
+            r = [z for z in r if z != 'None']
+            r = self.show('Optional[%s]' % r[0]) if r else self.show('None')
         return r
 
     def merge_collection(self, aList, kind):
         '''Merge all collections of the given kind into a single collection.'''
         trace = False
+        if trace: g.trace(kind, aList)
         assert isinstance(aList, list)
-        contents, others, pattern = set(), [], Pattern('%s[*]' % kind)
-        for s in aList:
+        assert None not in aList, aList
+        pattern = Pattern('%s[*]' % kind)
+        others, r1, r2 = [], [], []
+        for s in sorted(set(aList)):
             if pattern.match_entire_string(s):
-                s2 = s[len(kind)+1:-1]
-                for s3 in s2.split(','):
-                    contents.add(s3.strip())
+                r1.append(s)
             else:
                 others.append(s)
-        if contents:
-            known = all([self.is_known_type(z) for z in contents])
-            if known:
-                others.extend(sorted(list(contents)))
-                    # This flattens the collection.
-            else:
-                others.append('Any')
-                    # Maximally informative.
-                # others = ['Any']
-                    # Correct, but uninformative.
-        aList = sorted(list(set(others)))
-        if len(aList) < 2:
-            result = aList
-        elif 'None' in aList:
-            aList = [z for z in aList if z != 'None']
-            if len(aList) == 1:
-                result = ['Optional[%s]' % ', '.join(aList)]
-            else:
-                result = ['Optional[Union[%s]]' % ', '.join(aList)]
-        else:
-            result = ['%s[%s]' % (kind, ', '.join(aList))]
-        if trace: g.trace(aList, '==>', ', '.join(result))
+        if trace: g.trace('1', others, r1)
+        for s in sorted(set(r1)):
+            parts = []
+            s2 = s[len(kind)+1:-1]
+            for s3 in s2.split(','):
+                s3 = s3.strip()
+                if trace: g.trace('*', self.is_known_type(s3), s3)
+                parts.append(s3 if self.is_known_type(s3) else 'Any')
+            r2.append('%s[%s]' % (kind, ', '.join(parts)))
+        if trace: g.trace('2', r2)
+        result = others
+        result.extend(r2)
+        result = sorted(set(result))
+        if trace: g.trace('3', result)
         return result
-       
-
-    def merge_dicts(self, aList):
-        '''Merge all Dict elements in aList into a single, reduced Dict.'''
-        return self.merge_collection(aList, 'Dict')
-        
-    def merge_lists(self, aList):
-        '''Merge all List elements in aList into a single, reduced List.'''
-        return self.merge_collection(aList, 'List')
-        
-    def merge_unions(self, aList):
-        '''Merge all Union elements in aList into a single, reduced Union.'''
-        return self.merge_collection(aList, 'Union')
 
     def reduce_numbers(self, aList):
         '''
         Return aList with all number types in aList replaced by the most
         general numeric type in aList.
         '''
+        trace = False
         found = None
         numbers = ('number', 'complex', 'float', 'long', 'int')
         for kind in numbers:
@@ -1208,44 +1177,37 @@ class ReduceTypes:
             assert found in numbers, found
             aList = [z for z in aList if z not in numbers]
             aList.append(found)
+        if trace: g.trace(aList)
         return aList
       
     def reduce_types(self):
-        ''' 
-        Return a string containing the reduction of all types in self.aList.
-        The --trace-reduce command-line option sets self.trace=True.
-        If present, self.name is the function name or class_name.method_name.
+        '''
+        self.aList consists of arbitrarily many types because this method is
+        called from format_return_expressions. Return a string containing the
+        reduction of all types in this list.
         '''
         trace = False
-        aList = self.aList
-        aList = ['None' if z in ('', None) else z for z in aList]
-        if not aList:
-            return self.show('None')
-        r = sorted(set(aList))
-        table = (
-            self.reduce_unknowns,
-            self.reduce_numbers,
-            self.merge_unions,
-            self.merge_dicts,
-            self.merge_lists,
-            self.make_optional,
-        )
-        # Apply all reductions even on lists of length one.
-        for f in table:
-            r = f(r)
-            if len(r) < 2:
-                break
-        if trace: g.trace(r)
+        if trace: g.trace('=====', self.aList)
+        r = [('None' if z in ('', None) else z) for z in self.aList]
+        assert None not in r
+        self.optional = 'None' in r
+            # self.show adds Optional if this flag is set.
+        r = [z for z in r if z != 'None']
         if not r:
-            return 'None'
-        elif len(r) == 1:
+            self.optional = False
+            return self.show('None')
+        r = sorted(set(r))
+        assert r, '1'
+        assert None not in r
+        r = self.reduce_numbers(r)
+        for kind in ('Dict', 'List', 'Tuple',):
+            r = self.merge_collection(r, kind)
+        r = self.reduce_unknowns(r)
+        r = sorted(set(r))
+        assert r
+        assert 'None' not in r
+        if len(r) == 1:
             return self.show(r[0])
-        elif 'None' in r:
-            r = [z for z in aList if z != 'None']
-            if len(r) == 1:
-                return self.show('Optional[%s]' % r[0])
-            else:
-                return self.show('Optional[Union[%s]]' % (', '.join(sorted(r))))
         else:
             return self.show('Union[%s]' % (', '.join(sorted(r))))
     def reduce_unknowns(self, aList):
@@ -1257,6 +1219,8 @@ class ReduceTypes:
         aList, name = self.aList, self.name
         trace = False or self.trace
         s = s.strip()
+        if self.optional:
+            s = 'Optional[%s]' % s
         if trace and (not known or len(aList) > 1):
             if name:
                 if name.find('.') > -1:
