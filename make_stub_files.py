@@ -1174,7 +1174,7 @@ class ReduceTypes:
                 result = ['Optional[Union[%s]]' % ', '.join(aList)]
         else:
             result = ['%s[%s]' % (kind, ', '.join(aList))]
-        if trace: g.trace(aList, '==>', ', '.result)
+        if trace: g.trace(aList, '==>', ', '.join(result))
         return result
        
 

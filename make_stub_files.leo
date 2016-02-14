@@ -6678,7 +6678,7 @@ def merge_collection(self, aList, kind):
             result = ['Optional[Union[%s]]' % ', '.join(aList)]
     else:
         result = ['%s[%s]' % (kind, ', '.join(aList))]
-    if trace: g.trace(aList, '==&gt;', ', '.result)
+    if trace: g.trace(aList, '==&gt;', ', '.join(result))
     return result
    </t>
 <t tx="ekr.20160214093616.1"></t>
