@@ -205,7 +205,7 @@
 <v t="ekr.20160214044444.1"><vh>rt.ctor</vh></v>
 <v t="ekr.20160130034812.1"><vh>rt.is_known_type</vh></v>
 <v t="ekr.20160214043351.1"><vh>rt.make_optional</vh></v>
-<v t="ekr.20160214051730.1"><vh>rt.merge_collection (To do)</vh></v>
+<v t="ekr.20160214051730.1"><vh>rt.merge_collection</vh></v>
 <v t="ekr.20160214051515.1"><vh>rt.merge_dicts/lists/unions</vh></v>
 <v t="ekr.20160205101134.1"><vh>rt.reduce_numbers</vh></v>
 <v t="ekr.20160214044515.1"><vh>rt.reduce_types</vh></v>
@@ -550,7 +550,6 @@
 <v t="ekr.20160205161341.1"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20160214044429.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -3680,6 +3679,11 @@ table = (
     ([None],        none),
     ([None, None],  none),
     ([None, a, c],  'Union[Any, complex]'),
+    # Tuple merging
+    (['Dict[int, str]', 'Dict[Any, str]'], 'Dict[Any, int, str]'),
+    (['List[int, str]', 'List[Any, str]'], 'List[Any, int, str]'),
+    (['Union[int, str]', 'Union[Any, str]'], 'Union[Any, int, str]'),
+    (['Union[int, str]', 'int', 'Union[Any, str]'], 'Union[Union[Any, int, str], int]'),
 )
 @others
 for aList, expected in table:
@@ -6498,7 +6502,7 @@ the config file.
 <t tx="ekr.20160214043351.1">
 def make_optional(self,r):
     
-    if 'None' in r:
+    if r and 'None' in r:
         while 'None' in r:
             r.remove('None')
         r = self.show('Optional[%s]' % r[0])
@@ -6538,8 +6542,12 @@ def reduce_types(self):
     )
     # Apply all reductions even on lists of length one.
     for f in table:
+        if len(r) &lt; 2:
+            break
         r = f(r)
-    if len(r) == 1:
+    if not r:
+        return 'None'
+    elif len(r) == 1:
         return self.show(r[0])
     else:
         return self.show('Union[%s]' % (', '.join(sorted(r))))
@@ -6590,7 +6598,18 @@ def merge_unions(self, aList):
 <t tx="ekr.20160214051730.1">
 def merge_collection(self, aList, kind):
     '''Merge all collections of the given kind into a single collection.'''
-    return aList ###
-</t>
+    assert isinstance(aList, list)
+    contents, others, pattern = set(), [], Pattern('%s[*]' % kind)
+    for s in aList:
+        if pattern.match_entire_string(s):
+            s2 = s[len(kind)+1:-1]
+            for s3 in s2.split(','):
+                contents.add(s3.strip())
+        else:
+            others.append(s)
+    if contents:
+        others.append('%s[%s]' % (kind, ', '.join(sorted(list(contents)))))
+    return others
+   </t>
 </tnodes>
 </leo_file>

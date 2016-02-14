@@ -1,4 +1,4 @@
-# make_stub_files: Sun 14 Feb 2016 at 05:23:34
+# make_stub_files: Sun 14 Feb 2016 at 06:15:37
 
 from typing import Any, Dict, Optional, Sequence, Tuple, Union
 # At present, I don't understand how to tell mypy about ast.Node
@@ -156,7 +156,9 @@ class ReduceTypes:
     def make_optional(self, r: Any) -> Any: ...
         #   0: return r
         # ? 0: return r
-    def merge_collection(self, aList: List[Any], kind: Any) -> List[Any]: ...
+    def merge_collection(self, aList: List[Any], kind: Any) -> Any: ...
+        #   0: return others
+        # ? 0: return others
     def merge_dicts(self, aList: List[Any]) -> Any: ...
         #   0: return self.merge_collection(aList,'Dict')
         # ? 0: return self.merge_collection(List[Any], str)
@@ -172,10 +174,12 @@ class ReduceTypes:
         # ? 0: return self.show(str)
         #   1: return self.show('Any',known=False)
         # ? 1: return self.show(str, known=bool)
-        #   2: return self.show(r[0])
-        # ? 2: return self.show(str)
-        #   3: return self.show('Union[%s]'%', '.join(sorted(r)))
+        #   2: return 'None'
+        #   2: return str
+        #   3: return self.show(r[0])
         # ? 3: return self.show(str)
+        #   4: return self.show('Union[%s]'%', '.join(sorted(r)))
+        # ? 4: return self.show(str)
     def show(self, s: str, known: Any=True) -> str: ...
     def split_types(self, s: str) -> List[Any]: ...
 class StandAloneMakeStubFile:

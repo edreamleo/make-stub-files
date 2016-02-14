@@ -1131,7 +1131,7 @@ class ReduceTypes:
 
     def make_optional(self,r):
         
-        if 'None' in r:
+        if r and 'None' in r:
             while 'None' in r:
                 r.remove('None')
             r = self.show('Optional[%s]' % r[0])
@@ -1139,7 +1139,19 @@ class ReduceTypes:
 
     def merge_collection(self, aList, kind):
         '''Merge all collections of the given kind into a single collection.'''
-        return aList ###
+        assert isinstance(aList, list)
+        contents, others, pattern = set(), [], Pattern('%s[*]' % kind)
+        for s in aList:
+            if pattern.match_entire_string(s):
+                s2 = s[len(kind)+1:-1]
+                for s3 in s2.split(','):
+                    contents.add(s3.strip())
+            else:
+                others.append(s)
+        if contents:
+            others.append('%s[%s]' % (kind, ', '.join(sorted(list(contents)))))
+        return others
+       
 
     def merge_dicts(self, aList):
         '''Merge all Dict elements in aList into a single, reduced Dict.'''
@@ -1196,8 +1208,12 @@ class ReduceTypes:
         )
         # Apply all reductions even on lists of length one.
         for f in table:
+            if len(r) < 2:
+                break
             r = f(r)
-        if len(r) == 1:
+        if not r:
+            return 'None'
+        elif len(r) == 1:
             return self.show(r[0])
         else:
             return self.show('Union[%s]' % (', '.join(sorted(r))))
