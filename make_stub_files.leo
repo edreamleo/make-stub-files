@@ -2381,17 +2381,12 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-- Rough edges re number types. Is reduce_numbers correct?
-
-Improve type reduction:
-- 2-pass reduce_types? More tests that patterns work in expected places.
-- Merge Tuple and List interiors in reduce_types.
-- Add more binop patterns.
+- Add more hard-coded patterns, especially binop patterns.
 
 Minor:
+- Rough edges re number types. Is reduce_numbers correct?
 - How are non-comment lines between subs updated?
 - Warn if regex pattern used in general patterns?
-
 </t>
 <t tx="ekr.20160131175042.1">
 
