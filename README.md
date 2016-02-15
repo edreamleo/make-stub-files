@@ -125,7 +125,7 @@ specify patterns. All patterns have the form:
     
 Colons are not allowed in the find-string. This is a limitation of .ini files.
 
-There are three kinds of patterns: balanced patterns, regex and plain.
+There are three kinds of patterns: balanced, regex and plain.
 
 **Balanced patterns** are patterns whose find string that:
 
@@ -305,4 +305,4 @@ function annotations into source files using stub files as data. The
 "reverse" script should be more straightforward than this script.
 
 Edward K. Ream  
-January 25 to February 13, 2016
+January 25 to February 15, 2016

@@ -35,9 +35,11 @@ In short, visitors are hardly more complex than the corresponding AstFormatter m
 
 - `sf.match_all` is very fast because it only applies patterns that *could possibly* match at the node being visited. Those patterns are:
 
-        self.patterns_dict.get(node.__class__.__name__, [])
+        self.patterns_dict.get(node.__class__.__name__, []) + self.regex_patterns
+        
+  That is, all regex patterns are applied "everywhere" in return expressions.
 
-- The startup code create the `names_dict` and the `patterns_dict`.  That's  all you have to know about the startup code.
+- The startup code create `names_dict`, `patterns_dict` and `regex_patterns` data structures. That's all you have to know about the startup code.
 
 - The Pattern class handles almost all details of pattern matching. This shields the rest of the code from knowledge of patterns. In particular, `sf.match_all` knows nothing about patterns.
 
@@ -122,4 +124,3 @@ Please feel free to ask questions.
 Edward K. Ream  
 edreamleo@gmail.com  
 (608) 886-5730
-
