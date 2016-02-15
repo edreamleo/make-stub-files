@@ -28,6 +28,7 @@ try:
 except ImportError:
     import io # Python 3
 
+
 def is_known_type(s):
     '''
     Return True if s is nothing but a single known type.
@@ -1052,6 +1053,8 @@ class Pattern(object):
                 # g.trace(i, m.group(i))
                 s = s.replace(group, m.group(i))
         return s
+
+
 class ReduceTypes:
     '''A helper class for the top-level reduce_types function.'''
 
@@ -1179,7 +1182,7 @@ class ReduceTypes:
             aList.append(found)
         if trace: g.trace(aList)
         return aList
-      
+
     def reduce_types(self):
         '''
         self.aList consists of arbitrarily many types because this method is
@@ -1210,6 +1213,7 @@ class ReduceTypes:
             return self.show(r[0])
         else:
             return self.show('Union[%s]' % (', '.join(sorted(r))))
+
     def reduce_unknowns(self, aList):
         '''Replace all unknown types in aList with Any.'''
         return [z if self.is_known_type(z) else 'Any' for z in aList]
@@ -1288,6 +1292,7 @@ class StandAloneMakeStubFile:
         self.names_dict = {}
         self.op_name_dict = self.make_op_name_dict()
         self.patterns_dict = {}
+        self.regex_patterns = []
 
     def finalize(self, fn):
         '''Finalize and regularize a filename.'''
@@ -1486,9 +1491,10 @@ class StandAloneMakeStubFile:
         '''Return a list of operators in pattern.find_s.'''
         trace = False or self.trace_patterns
         if pattern.is_regex():
+            # Add the pattern to the regex patterns list.
+            g.trace(pattern)
+            self.regex_patterns.append(pattern)
             return []
-                # The special characters in the regex
-                # do not correspond to Python operators!
         d = self.op_name_dict
         keys1, keys2, keys3, keys9 = [], [], [], []
         for op in d:
@@ -1707,6 +1713,7 @@ class StubFormatter (AstFormatter):
         self.names_dict = x.names_dict
         self.patterns_dict = x.patterns_dict
         self.raw_format = AstFormatter().format
+        self.regex_patterns = x.regex_patterns
         self.trace_matches = x.trace_matches
         self.trace_patterns = x.trace_patterns
         self.trace_reduce = x.trace_reduce
@@ -1724,10 +1731,8 @@ class StubFormatter (AstFormatter):
         s1 = truncate(s, 40)
         caller = g.callers(2).split(',')[1].strip()
             # The direct caller of match_all.
-        # if trace and verbose:
-            # g.trace(s)
-            # g.trace(self.patterns_dict.get(name, []))
-        for pattern in self.patterns_dict.get(name, []):
+        patterns = self.patterns_dict.get(name, []) + self.regex_patterns
+        for pattern in patterns:
             found, s = pattern.match(s,trace=False)
             if found:
                 if trace:
@@ -2003,6 +2008,7 @@ class StubTraverser (ast.NodeVisitor):
         self.output_fn = x.output_fn
         self.overwrite = x.overwrite
         self.prefix_lines = x.prefix_lines
+        self.regex_patterns = x.regex_patterns
         self.update_flag = x.update_flag
         self.trace_matches = x.trace_matches
         self.trace_patterns = x.trace_patterns

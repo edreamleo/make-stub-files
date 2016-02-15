@@ -162,19 +162,6 @@
 <v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
 </v>
 </v>
-<v t="ekr.20160214113557.1"><vh>Recent</vh>
-<v t="ekr.20160214093616.1"><vh>recent pattern-matching stuff</vh>
-<v t="ekr.20160205053641.3"></v>
-<v t="ekr.20160205053641.5"></v>
-<v t="ekr.20160204153904.1"></v>
-<v t="ekr.20160205131910.1"><vh>sf.match_all</vh></v>
-<v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
-<v t="ekr.20160205103604.6"></v>
-<v t="ekr.20160204170443.1"></v>
-<v t="ekr.20160204170921.1"></v>
-<v t="ekr.20160204113206.1"></v>
-</v>
-</v>
 <v t="ekr.20160131174909.1"><vh>To do</vh></v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
@@ -327,8 +314,8 @@
 <v t="ekr.20160131180118.1"></v>
 <v t="ekr.20160126153212.80"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160202061329.1"></v>
-<v t="ekr.20160205131910.1"></v>
-<v t="ekr.20160206203133.1"></v>
+<v t="ekr.20160205131910.1"><vh>sf.match_all</vh></v>
+<v t="ekr.20160206203133.1"><vh>sf.visit</vh></v>
 <v t="ekr.20160208093906.1"><vh>sf.trace_visitor</vh></v>
 <v t="ekr.20160205053705.1"></v>
 <v t="ekr.20160205053641.1"></v>
@@ -1287,6 +1274,7 @@ def __init__ (self):
     self.names_dict = {}
     self.op_name_dict = self.make_op_name_dict()
     self.patterns_dict = {}
+    self.regex_patterns = []
 </t>
 <t tx="ekr.20160126153212.75">
 def make_stub_file(self, fn):
@@ -1541,6 +1529,7 @@ def __init__(self, controller):
     self.output_fn = x.output_fn
     self.overwrite = x.overwrite
     self.prefix_lines = x.prefix_lines
+    self.regex_patterns = x.regex_patterns
     self.update_flag = x.update_flag
     self.trace_matches = x.trace_matches
     self.trace_patterns = x.trace_patterns
@@ -2391,13 +2380,12 @@ def is_known_type(self, s):
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
-Later or never:
-- Add more hard-coded patterns, especially binop patterns.
+None of the following are very important because the user can always add
+more patterns.
 
-Minor:
+- Add more hard-coded patterns, especially binop patterns.
 - Rough edges re number types. Is reduce_numbers correct?
 - How are non-comment lines between subs updated?
-- Warn if regex pattern used in general patterns?
 </t>
 <t tx="ekr.20160131175042.1">
 
@@ -2540,6 +2528,7 @@ def __init__(self, controller, traverser):
     self.names_dict = x.names_dict
     self.patterns_dict = x.patterns_dict
     self.raw_format = AstFormatter().format
+    self.regex_patterns = x.regex_patterns
     self.trace_matches = x.trace_matches
     self.trace_patterns = x.trace_patterns
     self.trace_reduce = x.trace_reduce
@@ -2864,9 +2853,10 @@ def find_pattern_ops(self, pattern):
     '''Return a list of operators in pattern.find_s.'''
     trace = False or self.trace_patterns
     if pattern.is_regex():
+        # Add the pattern to the regex patterns list.
+        g.trace(pattern)
+        self.regex_patterns.append(pattern)
         return []
-            # The special characters in the regex
-            # do not correspond to Python operators!
     d = self.op_name_dict
     keys1, keys2, keys3, keys9 = [], [], [], []
     for op in d:
@@ -3243,10 +3233,8 @@ def match_all(self, node, s, trace=False):
     s1 = truncate(s, 40)
     caller = g.callers(2).split(',')[1].strip()
         # The direct caller of match_all.
-    # if trace and verbose:
-        # g.trace(s)
-        # g.trace(self.patterns_dict.get(name, []))
-    for pattern in self.patterns_dict.get(name, []):
+    patterns = self.patterns_dict.get(name, []) + self.regex_patterns
+    for pattern in patterns:
         found, s = pattern.match(s,trace=False)
         if found:
             if trace:
@@ -6524,7 +6512,9 @@ def make_optional(self,r):
         r = [z for z in r if z != 'None']
         r = self.show('Optional[%s]' % r[0]) if r else self.show('None')
     return r</t>
-<t tx="ekr.20160214044429.1">class ReduceTypes:
+<t tx="ekr.20160214044429.1">
+
+class ReduceTypes:
     '''A helper class for the top-level reduce_types function.'''
     @others
 </t>
@@ -6536,7 +6526,7 @@ def __init__(self, aList=None, name=None, trace=False):
     self.optional = False
     self.trace = trace
 </t>
-<t tx="ekr.20160214044515.1">  
+<t tx="ekr.20160214044515.1">
 def reduce_types(self):
     '''
     self.aList consists of arbitrarily many types because this method is
@@ -6592,7 +6582,8 @@ def show(self, s, known=True):
             # widths above match the corresponding indents in match_all and match.
     return s
 </t>
-<t tx="ekr.20160214050501.1">def is_known_type(s):
+<t tx="ekr.20160214050501.1">
+def is_known_type(s):
     '''
     Return True if s is nothing but a single known type.
     Recursively test inner types in square brackets.
@@ -6643,13 +6634,12 @@ def merge_collection(self, aList, kind):
     if trace: g.trace('3', result)
     return result
 </t>
-<t tx="ekr.20160214093616.1"></t>
-<t tx="ekr.20160214094129.1">def reduce_unknowns(self, aList):
+<t tx="ekr.20160214094129.1">
+def reduce_unknowns(self, aList):
     '''Replace all unknown types in aList with Any.'''
     return [z if self.is_known_type(z) else 'Any' for z in aList]
 </t>
 <t tx="ekr.20160214103050.1"></t>
-<t tx="ekr.20160214113557.1"></t>
 <t tx="ekr.20160214154338.1">    r = sorted(set(aList))
     if trace: g.trace('1', r)
     table = (
