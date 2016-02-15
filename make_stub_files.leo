@@ -3841,7 +3841,7 @@ for a1, a2, expected in table:
     got = merge_types(a1, a2)
     assert expected == got, (a1, a2, 'expected:', expected, 'got', got)
 </t>
-<t tx="ekr.20160207101607.1">@language md
+<t tx="ekr.20160207101607.1">@language rest
 @wrap
 
 This is the theory-of-operation document for the `make_stub_files` script.
@@ -6168,6 +6168,7 @@ Views contain clones of nodes related to a particular topic.
 <t tx="ekr.20160211074737.1"></t>
 <t tx="ekr.20160211074825.1"></t>
 <t tx="ekr.20160211110739.1">@language rest
+@wrap
 
 This is the readme file for `make_stub_files.py`. This file explains what
 the script does, how it works and why it is important. After a brief
