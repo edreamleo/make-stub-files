@@ -2069,6 +2069,7 @@ StubTraverser.do_*: str
 # Test of regex pattern.
 .*__hash__$: int
 
+
 # Pattern.all_matches: Sequence
 # Pattern.full_balanced_match: Optional[int]
 # Pattern.match_balanced: int
@@ -2081,6 +2082,9 @@ StubTraverser.do_*: str
 # StubTraverser.match_balanced: int
 
 [General Patterns]
+
+# Test of regex patterns
+.*\.endswith\(.*\)$: bool
 
 # Declarations of names...
 NotImplemented: bool
@@ -2114,32 +2118,30 @@ s2: str
 # s[1-2]?$: str
 strict: bool
 trace: bool
-# New known functions
-endswith(*): bool 
 
 # Known functions...
+all(*): bool
+any(*): bool
+int(*): int
+hash(*): int
+len(*): int
 os.path.basename(*): str
 os.sep.join(*): str
+repr(*): str
 sep.join(*): str
 self.__eq__(*): bool
 self.__ne__(*): bool
 self.__gt__(*): bool
 self.__lt__(*): bool
-all(*): bool
-any(*): bool
-
-int(*): int
-hash(*): int
-len(*): int
-repr(*): str
 sorted(*): str
 str%(*): str
+str.endswith(*): bool 
 str.join(*): str
+str.startswith(*): bool 
 r[*]: str
 # Put this in the code.
 str[*]: str
-###.*\.__name__$: str
-###.*\.hash()$: int
+
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
@@ -3861,8 +3863,8 @@ You don't need to know anything about type inference.
 
 ### High level description
 
-This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of for traversal classes:
-the AstFormatter, AstArgFormatter, StubFormatter and StubTraverser classes. Each class produces the results needed at a particular point of the traversal.
+This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes:
+the AstFormatter, AstArgFormatter, StubFormatter and StubTraverser classes. Each class produces the results needed at a particular point of the traversal. Imo, using separate traversal classes is good style.
 
 This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**.  Pep 484 and the typing module define the known types.  The `is_known_type` function embodies that knowledge. 
 
@@ -6679,8 +6681,6 @@ def reduce_unknowns(self, aList):
 <t tx="ekr.20160215033703.1">@language rest
 @wrap
 
-The make_stub_files project is complete
-
 Unless serious bugs are reported, I plan no further work on this project.
 
 Yesterday saw the following improvements:
@@ -6696,7 +6696,8 @@ Yesterday saw the following improvements:
    entries might be improved, but in practice they are good enough. More
    importantly, they can always be bypassed with user patterns.
 
-Running make_stub_files on all of Leo's files was straightfoward and revealed no major problems.
+Running make_stub_files on all of Leo's files was straightfoward and
+revealed no major problems.
 
 **Important**: comments containing the return expressions of a function or
 method are oh so helpful. When the -v option is *off*, the script shows
@@ -6704,7 +6705,6 @@ these comments only when at least one of them does not reduce to a known
 type. In practice, this draws the eye to problems.
 
 This has been an satisfying project for me personally. Stub files *are*
-what I have long sought as the high-level "intuitive" view of code. It's
-been great fun working on this project.</t>
+what I have long sought as the high-level "intuitive" view of code.</t>
 </tnodes>
 </leo_file>

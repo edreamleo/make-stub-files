@@ -16,8 +16,8 @@ You don't need to know anything about type inference.
 
 ### High level description
 
-This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of for traversal classes:
-the AstFormatter, AstArgFormatter, StubFormatter and StubTraverser classes. Each class produces the results needed at a particular point of the traversal.
+This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes:
+the AstFormatter, AstArgFormatter, StubFormatter and StubTraverser classes. Each class produces the results needed at a particular point of the traversal. Imo, using separate traversal classes is good style.
 
 This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**.  Pep 484 and the typing module define the known types.  The `is_known_type` function embodies that knowledge. 
 
