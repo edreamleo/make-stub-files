@@ -16,16 +16,15 @@ You don't need to know anything about type inference.
 
 ### High level description
 
-This is, truly, a *very* simple script. This script is a code formatter, quite similar to the AstFormatter class. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes:
-the AstFormatter, AstArgFormatter, StubFormatter and StubTraverser classes. Each class produces the results needed at a particular point of the traversal. Imo, using separate traversal classes is good style.
-
-This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**.  Pep 484 and the typing module define the known types.  The `is_known_type` function embodies that knowledge. 
+This is, truly, a *very* simple script. Indeed, this is just a modified code formatter. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes. (See below for details). This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**.  Pep 484 and the typing module define the known types. A well-defined target language greatly simplifies the script.
 
 The StubFormatter visitors do most of the work of type reduction. They are simple because they delegate type reduction to the following helpers:
 
-1. **reduce_types(aList)** (a top-level function) reduces a *list* of 0 or more types to a *string* representing a type hint. It returns 'Any' for unknown types. At the top of the traversal, StubTraverser.do_FunctionDef also calls reduce_types (via helpers) on the list of all return expressions.
+1. **`ReduceTypes.reduce_types(aList)`** reduces a *list* of 0 or more types to a *string* representing a type hint. It returns 'Any' for unknown types. At the top of the traversal, StubTraverser.do_FunctionDef also calls reduce_types (via helpers) on the list of all return expressions.
 
-2. **sf.match_all(node, s)** applies all user-patterns to s and returns the result.
+2. **`StubFormatter.match_all(node, s)`** applies all user-patterns to s and returns the result.
+
+3. **ReduceTypes.is_known_type(s)** embodies the known types as defined in Pep 484 and the typing module.
 
 In short, visitors are hardly more complex than the corresponding AstFormatter methods.
 
@@ -98,7 +97,27 @@ Finally, here is *part* of the result of tracing make_stub_files.py itself:
     
 This trace contains pretty much everything you need to know about pattern matching and type reduction.
 
-Enable tracing in various visitors if you need more data. 
+Enable tracing in various visitors if you need more data.
+
+### Traversers
+
+As stated above, this script traverses the parse tree *once*, using four different traversal classes. Each traverser produces the results needed at a particular point of the traversal. Imo, using separate traversal classes is good style, even though it would be straightforward to use a single class. Indeed, each class has a distinct purpose...
+
+#### AstFormatter
+
+This is the base formatter class. It defines the default formatting for each kind of node. More importantly, it emphasizes that subclasses must return strings, *never* lists. The AstFormatter.visit method checks that this is so. This assertion guarantees that subclasses must call `st.reduce_types` to convert a list of possible types into a single string representing their union.
+
+#### StubTraverser
+
+This class drives the traversal. It is a subclass of ast.NodeVisitor. No custom visit method is needed. Visitors are *not* formatters--they *use* formatters to produce stubs. This class overrides only the visitors for ClassDef, FunctionDef and Return ast nodes. The FunctionDef visitor invokes the StubFormatter class to format all the functions return statements. The FunctionDef visitor invokes the AstArgFormatter to format names in argument lists.
+
+#### StubFormatter
+
+This class formats return statements. The overridden visitors of this class replace constants and operators with their corresponding type hints. The do_BinOp method contains hard-coded patterns for creating type hints. More could be added. The script is truly simple because the visitor methods of this class are hardly more complex than the corresponding methods of the AstFormatter class.
+
+### AstArgFormatter
+
+This class works just like the StubFormatter class except that does *not* apply patterns to Name nodes. As the name implies, it is used to format arguments in function definitions. It could easily be merged into the StubFormatter class, but imo having a separate class is cleaner and even a bit safer.
 
 ### Unit testing
 
@@ -107,11 +126,11 @@ The easy way to do unit testing is from within Leo:
 - Alt-6 runs all unit tests in @test nodes.
 - Alt-5 runs all *marked* @test nodes. Super convenient while developing code.
 
-The @button write-unit-test script writes all @test nodes to make_stub_files/test.
+The `@button write-unit-test` script writes all @test nodes to make_stub_files/test.
 
-The --test option runs all test files in make_stub_files/test.
+The `--test` option runs all test files in `make_stub_files/test`.
 
-The following also runs all test files in make_stub_files/test:
+The following also runs all test files in `make_stub_files/test`:
 
     cd make_stub_files
     python -m unittest discover -s test
