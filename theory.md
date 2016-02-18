@@ -16,7 +16,7 @@ You don't need to know anything about type inference.
 
 ### High level description
 
-This is, truly, a *very* simple script. Indeed, this is just a modified code formatter. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes. (See below for details). This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**.  Pep 484 and the typing module define the known types. A well-defined target language greatly simplifies the script.
+This is, truly, a *very* simple script. Indeed, this is just a modified code formatter. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes. (See below for details). This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**, as defined by Pep 484.
 
 The StubFormatter visitors do most of the work of type reduction. They are simple because they delegate type reduction to the following helpers:
 
@@ -24,7 +24,7 @@ The StubFormatter visitors do most of the work of type reduction. They are simpl
 
 2. **`StubFormatter.match_all(node, s)`** applies all user-patterns to s and returns the result.
 
-3. **ReduceTypes.is_known_type(s)** embodies the known types as defined in Pep 484 and the typing module.
+3. **`ReduceTypes.is_known_type(s)`** embodies the known types as defined in Pep 484 and the typing module.
 
 In short, visitors are hardly more complex than the corresponding AstFormatter methods.
 
@@ -105,7 +105,7 @@ As stated above, this script traverses the parse tree *once*, using four differe
 
 #### AstFormatter
 
-This is the base formatter class. It defines the default formatting for each kind of node. More importantly, it emphasizes that subclasses must return strings, *never* lists. The AstFormatter.visit method checks that this is so. This assertion guarantees that subclasses must call `st.reduce_types` to convert a list of possible types into a single string representing their union.
+This is the base formatter class. It defines the default formatting for each kind of node. More importantly, it emphasizes that subclasses must return strings, *never* lists. The `AstFormatter.visit` method checks that this is so. This assertion guarantees that subclasses must call `st.reduce_types` to convert a list of possible types into a single string representing their union.
 
 #### StubTraverser
 
@@ -126,7 +126,7 @@ The easy way to do unit testing is from within Leo:
 - Alt-6 runs all unit tests in @test nodes.
 - Alt-5 runs all *marked* @test nodes. Super convenient while developing code.
 
-The `@button write-unit-test` script writes all @test nodes to make_stub_files/test.
+The `@button write-unit-test` script writes all @test nodes to `make_stub_files/test`.
 
 The `--test` option runs all test files in `make_stub_files/test`.
 
