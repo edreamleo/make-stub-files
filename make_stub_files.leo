@@ -3846,7 +3846,7 @@ for a1, a2, expected in table:
 @wrap
 
 This is the theory-of-operation document for the `make_stub_files` script.
-It is intentionally brief. Please ask question if anything is unclear.
+It is intentionally brief. Please ask questions if anything is unclear.
 
 ### Prerequisites
 
@@ -3862,7 +3862,7 @@ You don't need to know anything about type inference.
 
 ### High level description
 
-This is, truly, a *very* simple script. Indeed, this is just a modified code formatter. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes. (See below for details). This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**, as defined by Pep 484.
+This is, truly, a *very* simple script. Indeed, this is just a modified code formatter. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes. (See [below](#Traversers) for details). This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**, as defined by Pep 484.
 
 The StubFormatter visitors do most of the work of type reduction. They are simple because they delegate type reduction to the following helpers:
 
