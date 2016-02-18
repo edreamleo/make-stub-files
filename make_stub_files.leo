@@ -3846,7 +3846,7 @@ for a1, a2, expected in table:
 @wrap
 
 This is the theory-of-operation document for the `make_stub_files` script.
-It is intentionally brief. Please ask questions if anything is unclear.
+It is intentionally brief. Please [ask questions](#summary) if anything is unclear.
 
 ### Prerequisites
 
@@ -3982,6 +3982,7 @@ The following also runs all test files in `make_stub_files/test`:
     cd make_stub_files
     python -m unittest discover -s test
 
+&lt;a name="summary"/&gt;
 ### Summary
 
 This script is a straightforward tree traversal. Or so it seems to me.
