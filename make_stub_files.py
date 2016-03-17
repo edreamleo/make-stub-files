@@ -542,6 +542,12 @@ class AstFormatter:
             node.module,
             ','.join(names)))
 
+    # Nonlocal(identifier* names)
+
+    def do_Nonlocal(self, node):
+        
+        return self.indent('nonlocal %s\n' % ', '.join(node.names))
+
     def do_Pass(self, node):
         return self.indent('pass\n')
 
@@ -575,6 +581,39 @@ class AstFormatter:
                 self.visit(node.value).strip()))
         else:
             return self.indent('return\n')
+
+    # Starred(expr value, expr_context ctx)
+
+    def do_Starred(self, node):
+
+        return '*' + self.visit(node.value)
+
+    # Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
+
+    def do_Try(self, node): # Python 3
+
+        result = []
+        self.append(self.indent('try:\n'))
+        for z in node.body:
+            self.level += 1
+            result.append(self.visit(z))
+            self.level -= 1
+        if node.handlers:
+            for z in node.handlers:
+                result.append(self.visit(z))
+        if node.orelse:
+            result.append(self.indent('else:\n'))
+            for z in node.orelse:
+                self.level += 1
+                result.append(self.visit(z))
+                self.level -= 1
+        if node.finalbody:
+            result.append(self.indent('finally:\n'))
+            for z in node.finalbody:
+                self.level += 1
+                result.append(self.visit(z))
+                self.level -= 1
+        return ''.join(result)
 
     def do_TryExcept(self, node):
         result = []
@@ -651,6 +690,13 @@ class AstFormatter:
                 self.visit(node.value)))
         else:
             return self.indent('yield\n')
+
+    # YieldFrom(expr value)
+
+    def do_YieldFrom(self, node):
+        
+        return self.indent('yield from %s\n' % (
+            self.visit(node.value)))
 
     # Utils...
 
@@ -2545,6 +2591,7 @@ class TestClass:
     # pylint: disable=undefined-variable
     # pylint: disable=no-self-argument
     # pylint: disable=no-method-argument
+    # pylint: disable=unsubscriptable-object
 
     def parse_group(group):
         if len(group) >= 3 and group[-2] == 'as':

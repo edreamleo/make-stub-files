@@ -290,15 +290,19 @@
 <v t="ekr.20160126153212.58"><vh>f.get_import_names</vh></v>
 </v>
 <v t="ekr.20160126153212.59"><vh>f.ImportFrom</vh></v>
+<v t="ekr.20160317060308.2"><vh>f.Nonlocal (Python 3)</vh></v>
 <v t="ekr.20160126153212.60"><vh>f.Pass</vh></v>
 <v t="ekr.20160126153212.61"><vh>f.Print</vh></v>
 <v t="ekr.20160126153212.62"><vh>f.Raise</vh></v>
 <v t="ekr.20160126153212.63"><vh>f.Return</vh></v>
+<v t="ekr.20160317060308.3"><vh>f.Starred (Python 3)</vh></v>
+<v t="ekr.20160317060308.4"><vh>f.Try (Python 3)</vh></v>
 <v t="ekr.20160126153212.64"><vh>f.TryExcept</vh></v>
 <v t="ekr.20160126153212.65"><vh>f.TryFinally</vh></v>
 <v t="ekr.20160126153212.66"><vh>f.While</vh></v>
 <v t="ekr.20160126153212.67"><vh>f.With</vh></v>
 <v t="ekr.20160126153212.68"><vh>f.Yield</vh></v>
+<v t="ekr.20160317060308.5"><vh>f.YieldFrom (Python 3)</vh></v>
 </v>
 <v t="ekr.20160126153212.69"><vh>f.Utils</vh>
 <v t="ekr.20160126153212.70"><vh>f.kind</vh></v>
@@ -2403,6 +2407,7 @@ class TestClass:
     # pylint: disable=undefined-variable
     # pylint: disable=no-self-argument
     # pylint: disable=no-method-argument
+    # pylint: disable=unsubscriptable-object
     @others</t>
 <t tx="ekr.20160131175118.1">
 def return_list(self, a):
@@ -6697,6 +6702,56 @@ def reduce_unknowns(self, aList):
             result.append(z if self.is_known_type(z) else 'Any')
     g.trace(aList, result)
     return result
+</t>
+<t tx="ekr.20160317060308.2">
+# Nonlocal(identifier* names)
+
+def do_Nonlocal(self, node):
+    
+    return self.indent('nonlocal %s\n' % ', '.join(node.names))
+</t>
+<t tx="ekr.20160317060308.3">
+# Starred(expr value, expr_context ctx)
+
+def do_Starred(self, node):
+
+    return '*' + self.visit(node.value)
+</t>
+<t tx="ekr.20160317060308.4">
+# Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
+
+def do_Try(self, node): # Python 3
+
+    result = []
+    self.append(self.indent('try:\n'))
+    for z in node.body:
+        self.level += 1
+        result.append(self.visit(z))
+        self.level -= 1
+    if node.handlers:
+        for z in node.handlers:
+            result.append(self.visit(z))
+    if node.orelse:
+        result.append(self.indent('else:\n'))
+        for z in node.orelse:
+            self.level += 1
+            result.append(self.visit(z))
+            self.level -= 1
+    if node.finalbody:
+        result.append(self.indent('finally:\n'))
+        for z in node.finalbody:
+            self.level += 1
+            result.append(self.visit(z))
+            self.level -= 1
+    return ''.join(result)
+</t>
+<t tx="ekr.20160317060308.5">
+# YieldFrom(expr value)
+
+def do_YieldFrom(self, node):
+    
+    return self.indent('yield from %s\n' % (
+        self.visit(node.value)))
 </t>
 </tnodes>
 </leo_file>
