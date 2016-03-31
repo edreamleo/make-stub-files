@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Created by Leo: http://leoeditor.com/leo_toc.html -->
-<?xml-stylesheet ekr_test ?>
 <leo_file xmlns:leo="http://leoeditor.com/namespaces/leo-python-editor/1.1" >
 <leo_header file_format="2" tnodes="0" max_tnode_index="0" clone_windows="0"/>
 <globals body_outline_ratio="0.5" body_secondary_ratio="0.5">
@@ -61,6 +60,7 @@
 <v t="ekr.20160211110811.1"><vh>Summary</vh></v>
 </v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
+<v t="ekr.20160330201030.1"><vh>@clean PKG-INFO.TXT</vh></v>
 <v t="ekr.20160211063121.1"><vh>Views for study</vh>
 <v t="ekr.20160211074825.1"><vh>1. ctors</vh>
 <v t="ekr.20160126153212.74"><vh>msf.ctor</vh></v>
@@ -9746,6 +9746,43 @@ def shortFileName(self,fileName, n=None):
         return os.path.basename(fileName)
     else:
         return '/'.join(fileName.replace('\\', '/').split('/')[-n:])
+</t>
+<t tx="ekr.20160330201030.1">Metadata-Version: 1.0
+Name: make_stub_files
+Version: 0.1
+Summary: make stub files for mypy
+Home-page: https://github.com/edreamleo/make-stub-files
+Author: Edward K. Ream
+Author-email: edreamleo@gmail.com
+License: MIT
+Description:
+    Usage: make_stub_files.py [options] file1, file2, ...
+    
+    Options:
+      -h, --help          show this help message and exit
+      -c FN, --config=FN  full path to configuration file
+      -d DIR, --dir=DIR   full path to the output directory
+      -o, --overwrite     overwrite existing stub (.pyi) files
+      -t, --test          run unit tests on startup
+      --trace-matches     trace Pattern.matches
+      --trace-patterns    trace pattern creation
+      --trace-reduce      trace st.reduce_types
+      --trace-visitors    trace visitor methods
+      -u, --update        update stubs in existing stub file
+      -v, --verbose       verbose output in .pyi file
+      -w, --warn          warn about unannotated args
+
+Download URL: https://github.com/edreamleo/make-stub-files
+Keywords: mypy, type checking, stub, Python
+Platform: Windows, Linux, MacOS
+Categories:
+    Development Status :: 6 - Mature
+    License :: OSI Approved :: MIT License
+    Operating System :: MacOS
+    Operating System :: Microsoft :: Windows
+    Operating System :: POSIX :: Linux
+    Programming Language :: Python
+    Topic :: Software Development
 </t>
 </tnodes>
 </leo_file>

@@ -1,0 +1,36 @@
+Metadata-Version: 1.0
+Name: make_stub_files
+Version: 0.1
+Summary: make stub files for mypy
+Home-page: https://github.com/edreamleo/make-stub-files
+Author: Edward K. Ream
+Author-email: edreamleo@gmail.com
+License: MIT
+Description:
+    Usage: make_stub_files.py [options] file1, file2, ...
+    
+    Options:
+      -h, --help          show this help message and exit
+      -c FN, --config=FN  full path to configuration file
+      -d DIR, --dir=DIR   full path to the output directory
+      -o, --overwrite     overwrite existing stub (.pyi) files
+      -t, --test          run unit tests on startup
+      --trace-matches     trace Pattern.matches
+      --trace-patterns    trace pattern creation
+      --trace-reduce      trace st.reduce_types
+      --trace-visitors    trace visitor methods
+      -u, --update        update stubs in existing stub file
+      -v, --verbose       verbose output in .pyi file
+      -w, --warn          warn about unannotated args
+
+Download URL: https://github.com/edreamleo/make-stub-files
+Keywords: mypy, type checking, stub, Python
+Platform: Windows, Linux, MacOS
+Categories:
+    Development Status :: 6 - Mature
+    License :: OSI Approved :: MIT License
+    Operating System :: MacOS
+    Operating System :: Microsoft :: Windows
+    Operating System :: POSIX :: Linux
+    Programming Language :: Python
+    Topic :: Software Development
