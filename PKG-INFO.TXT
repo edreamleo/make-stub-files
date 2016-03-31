@@ -27,7 +27,7 @@ Download URL: https://github.com/edreamleo/make-stub-files
 Keywords: mypy, type checking, stub, Python
 Platform: Windows, Linux, MacOS
 Categories:
-    Development Status :: 6 - Mature
+    Development Status :: 4 - Beta
     License :: OSI Approved :: MIT License
     Operating System :: MacOS
     Operating System :: Microsoft :: Windows
