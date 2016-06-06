@@ -38,6 +38,7 @@ def is_known_type(s):
     '''
     return ReduceTypes().is_known_type(s)
 
+
 def merge_types(a1, a2):
     '''
     a1 and a2 may be strings or lists.
@@ -50,6 +51,7 @@ def merge_types(a1, a2):
     r2 = a2 if isinstance(a2, (list, tuple)) else [a2]
     return sorted(set(r1 + r2))
 
+
 def reduce_types(aList, name=None, trace=False):
     '''
     Return a string containing the reduction of all types in aList.
@@ -57,6 +59,7 @@ def reduce_types(aList, name=None, trace=False):
     If present, name is the function name or class_name.method_name.
     '''
     return ReduceTypes(aList, name, trace).reduce_types()
+
 
 # Top-level functions
 
@@ -72,6 +75,7 @@ def dump_dict(title, d):
     for z in sorted(d):
         print('%30s %s' % (z, d.get(z)))
     print('')
+
 
 def dump_list(title, aList):
     '''Dump a list with a header.'''
@@ -91,6 +95,7 @@ def main():
     controller.scan_options()
     controller.run()
     print('done')
+
 
 def pdb(self):
     '''Invoke a debugger during unit testing.'''
@@ -194,14 +199,17 @@ class AstFormatter:
             self.level -= 1
         return ''.join(result)
 
+
     def do_Interactive(self, node):
         for z in node.body:
             self.visit(z)
+
 
     def do_Module(self, node):
         assert 'body' in node._fields
         result = ''.join([self.visit(z) for z in node.body])
         return result # 'module:\n%s' % (result)
+
 
     def do_Lambda(self, node):
         return self.indent('lambda %s: %s' % (
@@ -210,19 +218,23 @@ class AstFormatter:
 
     # Expressions...
 
+
     def do_Expr(self, node):
         '''An outer expression: must be indented.'''
         return self.indent('%s\n' % self.visit(node.value))
 
+
     def do_Expression(self, node):
         '''An inner expression: do not indent.'''
         return '%s\n' % self.visit(node.body)
+
 
     def do_GeneratorExp(self, node):
         elt = self.visit(node.elt) or ''
         gens = [self.visit(z) for z in node.generators]
         gens = [z if z else '<**None**>' for z in gens] # Kludge: probable bug.
         return '<gen %s for %s>' % (elt, ','.join(gens))
+
 
     def do_AugLoad(self, node):
         return 'AugLoad'
@@ -240,6 +252,7 @@ class AstFormatter:
         return 'Store'
 
     # Operands...
+
 
     # 2: arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
     # 3: arguments = (arg*  args, arg? vararg,
@@ -289,6 +302,7 @@ class AstFormatter:
             return '%s: %s' % (node.arg, self.visit(node.annotation))
         else:
             return node.arg
+
     # Attribute(expr value, identifier attr, expr_context ctx)
 
     def do_Attribute(self, node):
@@ -296,8 +310,10 @@ class AstFormatter:
             self.visit(node.value),
             node.attr) # Don't visit node.attr: it is always a string.
 
+
     def do_Bytes(self, node): # Python 3.x only.
         return str(node.s)
+
 
     # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
@@ -314,6 +330,7 @@ class AstFormatter:
         args = [z for z in args if z] # Kludge: Defensive coding.
         return '%s(%s)' % (func, ','.join(args))
 
+
     # keyword = (identifier arg, expr value)
 
     def do_keyword(self, node):
@@ -321,6 +338,7 @@ class AstFormatter:
         value = self.visit(node.value)
         # This is a keyword *arg*, not a Python keyword!
         return '%s=%s' % (node.arg, value)
+
 
     def do_comprehension(self, node):
         result = []
@@ -331,6 +349,7 @@ class AstFormatter:
         if ifs:
             result.append(' if %s' % (''.join(ifs)))
         return ''.join(result)
+
 
     def do_Dict(self, node):
         result = []
@@ -351,14 +370,18 @@ class AstFormatter:
                 repr(keys), repr(values)))
         return ''.join(result)
 
+
     def do_Ellipsis(self, node):
         return '...'
+
 
     def do_ExtSlice(self, node):
         return ':'.join([self.visit(z) for z in node.dims])
 
+
     def do_Index(self, node):
         return self.visit(node.value)
+
 
     def do_List(self, node):
         # Not used: list context.
@@ -367,11 +390,13 @@ class AstFormatter:
         elst = [z for z in elts if z] # Defensive.
         return '[%s]' % ','.join(elts)
 
+
     def do_ListComp(self, node):
         elt = self.visit(node.elt)
         gens = [self.visit(z) for z in node.generators]
         gens = [z if z else '<**None**>' for z in gens] # Kludge: probable bug.
         return '%s for %s' % (elt, ''.join(gens))
+
 
     def do_Name(self, node):
         return node.id
@@ -380,13 +405,16 @@ class AstFormatter:
         s = repr(node.value)
         return 'bool' if s in ('True', 'False') else s
 
+
     def do_Num(self, node):
         return repr(node.n)
+
 
     # Python 2.x only
 
     def do_Repr(self, node):
         return 'repr(%s)' % self.visit(node.value)
+
 
     def do_Slice(self, node):
         lower, upper, step = '', '', ''
@@ -401,9 +429,11 @@ class AstFormatter:
         else:
             return '%s:%s' % (lower, upper)
 
+
     def do_Str(self, node):
         '''This represents a string constant.'''
         return repr(node.s)
+
 
     # Subscript(expr value, slice slice, expr_context ctx)
 
@@ -412,11 +442,13 @@ class AstFormatter:
         the_slice = self.visit(node.slice)
         return '%s[%s]' % (value, the_slice)
 
+
     def do_Tuple(self, node):
         elts = [self.visit(z) for z in node.elts]
         return '(%s)' % ', '.join(elts)
 
     # Operators...
+
 
     def do_BinOp(self, node):
         return '%s%s%s' % (
@@ -424,10 +456,12 @@ class AstFormatter:
             self.op_name(node.op),
             self.visit(node.right))
 
+
     def do_BoolOp(self, node):
         op_name = self.op_name(node.op)
         values = [self.visit(z) for z in node.values]
         return op_name.join(values)
+
 
     def do_Compare(self, node):
         result = []
@@ -442,10 +476,12 @@ class AstFormatter:
             print('can not happen: ops', repr(ops), 'comparators', repr(comps))
         return ''.join(result)
 
+
     def do_UnaryOp(self, node):
         return '%s%s' % (
             self.op_name(node.op),
             self.visit(node.operand))
+
 
     def do_IfExp(self, node):
         return '%s if %s else %s ' % (
@@ -455,6 +491,7 @@ class AstFormatter:
 
     # Statements...
 
+
     def do_Assert(self, node):
         test = self.visit(node.test)
         if getattr(node, 'msg', None):
@@ -463,10 +500,12 @@ class AstFormatter:
         else:
             return self.indent('assert %s' % test)
 
+
     def do_Assign(self, node):
         return self.indent('%s=%s\n' % (
             '='.join([self.visit(z) for z in node.targets]),
             self.visit(node.value)))
+
 
     def do_AugAssign(self, node):
         return self.indent('%s%s=%s\n' % (
@@ -474,15 +513,19 @@ class AstFormatter:
             self.op_name(node.op), # Bug fix: 2013/03/08.
             self.visit(node.value)))
 
+
     def do_Break(self, node):
         return self.indent('break\n')
+
 
     def do_Continue(self, node):
         return self.indent('continue\n')
 
+
     def do_Delete(self, node):
         targets = [self.visit(z) for z in node.targets]
         return self.indent('del %s\n' % ','.join(targets))
+
 
     def do_ExceptHandler(self, node):
         result = []
@@ -501,6 +544,7 @@ class AstFormatter:
             self.level -= 1
         return ''.join(result)
 
+
     # Python 2.x only
 
     def do_Exec(self, node):
@@ -515,6 +559,7 @@ class AstFormatter:
                 body, ','.join(args)))
         else:
             return self.indent('exec %s\n' % (body))
+
 
     def do_For(self, node):
         result = []
@@ -533,9 +578,11 @@ class AstFormatter:
                 self.level -= 1
         return ''.join(result)
 
+
     def do_Global(self, node):
         return self.indent('global %s\n' % (
             ','.join(node.names)))
+
 
     def do_If(self, node):
         result = []
@@ -553,6 +600,7 @@ class AstFormatter:
                 self.level -= 1
         return ''.join(result)
 
+
     def do_Import(self, node):
         names = []
         for fn, asname in self.get_import_names(node):
@@ -562,6 +610,7 @@ class AstFormatter:
                 names.append(fn)
         return self.indent('import %s\n' % (
             ','.join(names)))
+
 
     def get_import_names(self, node):
         '''Return a list of the the full file names in the import statement.'''
@@ -573,6 +622,7 @@ class AstFormatter:
             else:
                 print('unsupported kind in Import.names list', self.kind(ast2))
         return result
+
 
     def do_ImportFrom(self, node):
         names = []
@@ -594,6 +644,7 @@ class AstFormatter:
     def do_Pass(self, node):
         return self.indent('pass\n')
 
+
     # Python 2.x only
 
     def do_Print(self, node):
@@ -607,6 +658,7 @@ class AstFormatter:
         return self.indent('print(%s)\n' % (
             ','.join(vals)))
 
+
     def do_Raise(self, node):
         args = []
         for attr in ('type', 'inst', 'tback'):
@@ -618,12 +670,14 @@ class AstFormatter:
         else:
             return self.indent('raise\n')
 
+
     def do_Return(self, node):
         if node.value:
             return self.indent('return %s\n' % (
                 self.visit(node.value).strip()))
         else:
             return self.indent('return\n')
+
 
     # Starred(expr value, expr_context ctx)
 
@@ -676,6 +730,7 @@ class AstFormatter:
                 self.level -= 1
         return ''.join(result)
 
+
     def do_TryFinally(self, node):
         result = []
         result.append(self.indent('try:\n'))
@@ -689,6 +744,7 @@ class AstFormatter:
             result.append(self.visit(z))
             self.level -= 1
         return ''.join(result)
+
 
     def do_While(self, node):
         result = []
@@ -759,12 +815,14 @@ class AstFormatter:
 
     # Utils...
 
+
     def kind(self, node):
         '''Return the name of node's class.'''
         return node.__class__.__name__
 
     def indent(self, s):
         return '%s%s' % (' ' * 4 * self.level, s)
+
 
     def op_name (self,node,strict=True):
         '''Return the print name of an operator node.'''
@@ -1176,10 +1234,12 @@ class Pattern(object):
         return s
 
 
+
+
 class ReduceTypes:
     '''
     A helper class for the top-level reduce_types function.
-
+    
     This class reduces a list of type hints to a string containing the
     reduction of all types in the list.
     '''
@@ -1384,6 +1444,7 @@ class ReduceTypes:
                 i1 = i+1
         aList.append(s[i1:].strip())
         return aList
+
 
 
 class StandAloneMakeStubFile:
