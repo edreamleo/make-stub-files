@@ -8,8 +8,7 @@
 <vnodes>
 <v t="ekr.20160207181637.1"><vh>Startup</vh>
 <v t="ekr.20160207181648.1"><vh>@settings</vh>
-<v t="ekr.20160207181710.1"><vh>@data history-list</vh></v>
-<v t="ekr.20160207181843.1"><vh>@button cfa-code</vh></v>
+<v t="ekr.20180706073424.1"><vh>@bool run-pyflakes-on-write = False</vh></v>
 <v t="ekr.20160207182535.1"><vh>@bool preload-find-pattern = False</vh></v>
 </v>
 <v t="ekr.20160207105647.1"><vh>Scripts</vh>
@@ -753,6 +752,11 @@
 </v>
 </v>
 <v t="ekr.20160630100214.1"><vh>@clean test.py</vh></v>
+<v t="ekr.20180706071406.1"><vh>#3: Duplicate annotations</vh></v>
+<v t="ekr.20180706073205.1"><vh>Recent</vh>
+<v t="ekr.20180706071540.1"><vh>#4: Fails to generate valid stubs for empty classes</vh></v>
+<v t="ekr.20160318141204.20"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -4105,16 +4109,6 @@ for s, expected in table:
 <t tx="ekr.20160207165240.1"></t>
 <t tx="ekr.20160207181637.1"></t>
 <t tx="ekr.20160207181648.1"></t>
-<t tx="ekr.20160207181710.1">pylint
-clone-find-all-flattened
-clone-to-at-spot
-beautify-tree
-sort-lines
-</t>
-<t tx="ekr.20160207181843.1">@language python
-
-c.cloneFindAllFlattenedAtNode('@clean make_stub_files.py',top_level=True)
-</t>
 <t tx="ekr.20160207182535.1"></t>
 <t tx="ekr.20160207190840.1">
 def remove_recursive_calls(self, name, raw, reduced):
@@ -6933,7 +6927,6 @@ def all_matches(self, s):
     Return a list of match objects for all matches in s.
     These are regex match objects or (start, end) for balanced searches.
     '''
-    trace = False
     if self.is_balanced():
         aList, i = [], 0
         while i &lt; len(s):
@@ -7235,6 +7228,7 @@ def pdb(self):
     '''Invoke a debugger during unit testing.'''
     try:
         import leo.core.leoGlobals as leo_g
+        assert leo_g
         # leo_g.pdb()
     except ImportError:
         import pdb
@@ -7684,7 +7678,6 @@ def is_section_name(self, s):
 <t tx="ekr.20160318141204.139">
 def make_patterns_dict(self):
     '''Assign all patterns to the appropriate ast.Node.'''
-    trace = False or self.trace_patterns
     for pattern in self.general_patterns:
         ops = self.find_pattern_ops(pattern)
         if ops:
@@ -7954,7 +7947,7 @@ def do_Dict(self, node):
 def do_List(self, node):
     '''StubFormatter.List.'''
     elts = [self.visit(z) for z in node.elts]
-    elst = [z for z in elts if z] # Defensive.
+    elts = [z for z in elts if z] # Defensive.
     # g.trace('=====',elts)
     return 'List[%s]' % ', '.join(elts)
 </t>
@@ -8842,7 +8835,8 @@ def do_ClassDef(self, node):
     if bases:
         result.append(self.indent('class %s(%s):\n' % (name, ','.join(bases))))
     else:
-        result.append(self.indent('class %s:\n' % name))
+        result.append(self.indent('class %s: ...\n' % name))
+            # Fix #4
     for z in node.body:
         self.level += 1
         result.append(self.visit(z))
@@ -9100,7 +9094,7 @@ def do_List(self, node):
     # Not used: list context.
     # self.visit(node.ctx)
     elts = [self.visit(z) for z in node.elts]
-    elst = [z for z in elts if z] # Defensive.
+    elts = [z for z in elts if z] # Defensive.
     return '[%s]' % ','.join(elts)
 
 </t>
@@ -9860,5 +9854,12 @@ class aClass2:
 i1, i2 = aClass(), aClass2()
 i1.foo()
 i2.foo()</t>
+<t tx="ekr.20180706071406.1">Creates duplicate annotations for function arguments that are already annotated
+https://github.com/edreamleo/make-stub-files/issues/3</t>
+<t tx="ekr.20180706071540.1">https://github.com/edreamleo/make-stub-files/issues/4
+Fails to generate valid stubs for empty classes
+</t>
+<t tx="ekr.20180706073205.1">@nosearch</t>
+<t tx="ekr.20180706073424.1"># pyflakes complains about the TestClass class.</t>
 </tnodes>
 </leo_file>

@@ -102,6 +102,7 @@ def pdb(self):
     '''Invoke a debugger during unit testing.'''
     try:
         import leo.core.leoGlobals as leo_g
+        assert leo_g
         # leo_g.pdb()
     except ImportError:
         import pdb
@@ -169,7 +170,8 @@ class AstFormatter:
         if bases:
             result.append(self.indent('class %s(%s):\n' % (name, ','.join(bases))))
         else:
-            result.append(self.indent('class %s:\n' % name))
+            result.append(self.indent('class %s: ...\n' % name))
+                # Fix #4
         for z in node.body:
             self.level += 1
             result.append(self.visit(z))
@@ -388,7 +390,7 @@ class AstFormatter:
         # Not used: list context.
         # self.visit(node.ctx)
         elts = [self.visit(z) for z in node.elts]
-        elst = [z for z in elts if z] # Defensive.
+        elts = [z for z in elts if z] # Defensive.
         return '[%s]' % ','.join(elts)
 
 
@@ -1079,7 +1081,6 @@ class Pattern(object):
         Return a list of match objects for all matches in s.
         These are regex match objects or (start, end) for balanced searches.
         '''
-        trace = False
         if self.is_balanced():
             aList, i = [], 0
             while i < len(s):
@@ -1768,7 +1769,6 @@ class StandAloneMakeStubFile:
 
     def make_patterns_dict(self):
         '''Assign all patterns to the appropriate ast.Node.'''
-        trace = False or self.trace_patterns
         for pattern in self.general_patterns:
             ops = self.find_pattern_ops(pattern)
             if ops:
@@ -2005,7 +2005,7 @@ class StubFormatter (AstFormatter):
     def do_List(self, node):
         '''StubFormatter.List.'''
         elts = [self.visit(z) for z in node.elts]
-        elst = [z for z in elts if z] # Defensive.
+        elts = [z for z in elts if z] # Defensive.
         # g.trace('=====',elts)
         return 'List[%s]' % ', '.join(elts)
 
