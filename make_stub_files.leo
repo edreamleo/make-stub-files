@@ -2392,7 +2392,9 @@ def test_is_known_type(self):
     # '''Called before each test.'''
 </t>
 <t tx="ekr.20160128225533.1">*.pyc
-test/*.pyc</t>
+*.pyi
+test/*.pyc
+</t>
 <t tx="ekr.20160130032546.1">
 def format_return_expressions(self, name, raw_returns, reduced_returns):
     '''
