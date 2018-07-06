@@ -10,6 +10,7 @@ This file is in the public domain.
 Written by Edward K. Ream.
 '''
 import ast
+# from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
     # the configparser will give random order for patterns.
@@ -101,7 +102,7 @@ def pdb(self):
     '''Invoke a debugger during unit testing.'''
     try:
         import leo.core.leoGlobals as leo_g
-        leo_g.pdb()
+        # leo_g.pdb()
     except ImportError:
         import pdb
         pdb.set_trace()
@@ -1911,6 +1912,9 @@ class StubFormatter (AstFormatter):
         self.trace_reduce = x.trace_reduce
         self.trace_visitors = x.trace_visitors
         self.verbose = x.verbose
+        
+        # mypy workarounds
+        self.seen_names = []
 
     matched_d = {}
 
@@ -1953,7 +1957,7 @@ class StubFormatter (AstFormatter):
 
     # Attribute(expr value, identifier attr, expr_context ctx)
 
-    attrs_seen = []
+    attrs_seen = [] # type: List[Any]
 
     def do_Attribute(self, node):
         '''StubFormatter.do_Attribute.'''
@@ -2005,7 +2009,7 @@ class StubFormatter (AstFormatter):
         # g.trace('=====',elts)
         return 'List[%s]' % ', '.join(elts)
 
-    seen_names = []
+    ### seen_names = [] # t--ype: List[str]
 
     def do_Name(self, node):
         '''StubFormatter ast.Name visitor.'''
@@ -2765,7 +2769,7 @@ class TestClass:
         return all([is_known_type(z) for z in s3.split(',')])
         # return all(['abc'])
 
-    def return_array():
+    def return_array(self):
         return f(s[1:-1])
 
     def return_list(self, a):

@@ -1,2 +1,3 @@
 *.pyc
+*.pyi
 test/*.pyc

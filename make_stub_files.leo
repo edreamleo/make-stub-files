@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Created by Leo: http://leoeditor.com/leo_toc.html -->
 <leo_file xmlns:leo="http://leoeditor.com/namespaces/leo-python-editor/1.1" >
-<leo_header file_format="2" tnodes="0" max_tnode_index="0" clone_windows="0"/>
-<globals body_outline_ratio="0.5" body_secondary_ratio="0.5">
-	<global_window_position top="50" left="50" height="500" width="700"/>
-	<global_log_window_position top="0" left="0" height="0" width="0"/>
-</globals>
+<leo_header file_format="2"/>
+<globals/>
 <preferences/>
 <find_panel_settings/>
 <vnodes>
@@ -755,6 +752,7 @@
 <v t="ekr.20160318141204.200"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
+<v t="ekr.20160630100214.1"><vh>@clean test.py</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -7235,7 +7233,7 @@ def pdb(self):
     '''Invoke a debugger during unit testing.'''
     try:
         import leo.core.leoGlobals as leo_g
-        leo_g.pdb()
+        # leo_g.pdb()
     except ImportError:
         import pdb
         pdb.set_trace()
@@ -7850,6 +7848,9 @@ def __init__(self, controller, traverser):
     self.trace_reduce = x.trace_reduce
     self.trace_visitors = x.trace_visitors
     self.verbose = x.verbose
+    
+    # mypy workarounds
+    self.seen_names = []
 </t>
 <t tx="ekr.20160318141204.149">
 matched_d = {}
@@ -7900,7 +7901,7 @@ def trace_visitor(self, node, op, s):
 <t tx="ekr.20160318141204.153">
 # Attribute(expr value, identifier attr, expr_context ctx)
 
-attrs_seen = []
+attrs_seen = [] # type: List[Any]
 
 def do_Attribute(self, node):
     '''StubFormatter.do_Attribute.'''
@@ -7956,7 +7957,7 @@ def do_List(self, node):
     return 'List[%s]' % ', '.join(elts)
 </t>
 <t tx="ekr.20160318141204.157">
-seen_names = []
+### seen_names = [] # t--ype: List[str]
 
 def do_Name(self, node):
     '''StubFormatter ast.Name visitor.'''
@@ -8786,7 +8787,7 @@ def return_all(self):
     # return all(['abc'])
 </t>
 <t tx="ekr.20160318141204.198">
-def return_array():
+def return_array(self):
     return f(s[1:-1])
 </t>
 <t tx="ekr.20160318141204.199">
@@ -8794,6 +8795,7 @@ def return_list(self, a):
     return [a]
 </t>
 <t tx="ekr.20160318141204.2">import ast
+# from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
     # the configparser will give random order for patterns.
@@ -9452,7 +9454,8 @@ def do_Return(self, node):
 
 def do_Starred(self, node):
 
-    return '*' + self.visit(node.value)</t>
+    return '*' + self.visit(node.value)
+</t>
 <t tx="ekr.20160318141204.79">
 # Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
 
@@ -9841,5 +9844,19 @@ Categories:
     Programming Language :: Python
     Topic :: Software Development
 </t>
+<t tx="ekr.20160630100214.1">class aClass:
+    aList = []
+    def foo(self):
+        print(self.aList)
+
+class aClass2:
+    def __init__(self):
+        self.aList = []
+    def foo(self):
+        print(self.aList)
+        
+i1, i2 = aClass(), aClass2()
+i1.foo()
+i2.foo()</t>
 </tnodes>
 </leo_file>
