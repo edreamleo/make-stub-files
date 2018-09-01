@@ -9929,10 +9929,7 @@ with open('bug2.pyi') as f:
 lines = g.splitLines(s)
 expected = 'class InvalidTag(Exception): ...\n'
 got = lines[1]
-if got != expected:
-    print('expected: %r\n, got:    %r' % (expected, got))
-    assert False
-</t>
+assert got == expected, 'expected: %r\ngot:    %r' % (expected, got)</t>
 <t tx="ekr.20180901044640.1">commands = [
     # 'cls',
     'python make_stub_files.py -o -s bug2a.py',
@@ -9943,10 +9940,7 @@ with open('bug2a.pyi') as f:
 lines = g.splitLines(s)
 expected = 'class NonEmptyClass:\n'
 got = lines[1]
-if got != expected:
-    print('expected: %r\n, got:    %r' % (expected, got))
-    assert False
-</t>
+assert got == expected, 'expected: %r\ngot:    %r' % (expected, got)</t>
 <t tx="ekr.20180901050914.1"></t>
 <t tx="ekr.20180901051603.1">commands = [
     # 'cls',
@@ -9961,9 +9955,6 @@ expected = '''\
 class UnsupportedAlgorithm(Exception):
     def __init__(self, message: Any, reason: Optional[str]=None) -&gt; None: ...
 '''
-if got != expected:
-    print('expected:\n%s\ngot:\n%s' % (expected, got))
-    assert False
-</t>
+assert got == expected, 'expected:\n%s\ngot:\n%s' % (expected, got)</t>
 </tnodes>
 </leo_file>
