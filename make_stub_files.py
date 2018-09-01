@@ -95,7 +95,8 @@ def main():
     controller.scan_command_line()
     controller.scan_options()
     controller.run()
-    print('done')
+    if not controller.silent:
+        print('done')
 
 
 def pdb(self):
@@ -167,11 +168,15 @@ class AstFormatter:
             bases.append('*%s', self.visit(node.starargs))
         if getattr(node, 'kwargs', None): # Python 3
             bases.append('*%s', self.visit(node.kwargs))
+        #
+        # Fix issue #2: look ahead to see if there are any functions in this class.
+        empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
+        tail = ' ...' if empty else ''
         if bases:
-            result.append(self.indent('class %s(%s):\n' % (name, ','.join(bases))))
+            result.append(self.indent('class %s(%s):%s\n' % (name, ','.join(bases), tail)))
         else:
-            result.append(self.indent('class %s: ...\n' % name))
-                # Fix #4
+            result.append(self.indent('class %s:%s\n' % (name, tail)))
+                # Fix #2
         for z in node.body:
             self.level += 1
             result.append(self.visit(z))
@@ -1470,6 +1475,7 @@ class StandAloneMakeStubFile:
             # self.finalize('~/stubs')
         self.overwrite = False
         self.prefix_lines = []
+        self.silent = False
         self.trace_matches = False
         self.trace_patterns = False
         self.trace_reduce = False
@@ -1554,6 +1560,8 @@ class StandAloneMakeStubFile:
             help='full path to the output directory')
         add('-o', '--overwrite', action='store_true', default=False,
             help='overwrite existing stub (.pyi) files')
+        add('-s', '--silent', action='store_true', default=False,
+            help='run without messages')
         add('-t', '--test', action='store_true', default=False,
             help='run unit tests on startup')
         add('--trace-matches', action='store_true', default=False,
@@ -1575,6 +1583,7 @@ class StandAloneMakeStubFile:
         # Handle the options...
         self.enable_unit_tests=options.test
         self.overwrite = options.overwrite
+        self.silent = options.silent
         self.trace_matches = options.trace_matches
         self.trace_patterns = options.trace_patterns
         self.trace_reduce = options.trace_reduce
@@ -2188,6 +2197,8 @@ class StubTraverser (ast.NodeVisitor):
             # A StandAloneMakeStubFile instance.
         # Internal state ivars...
         self.class_name_stack = []
+        self.class_defs_count = 0
+            # The number of defs seen for this class.
         self.context_stack = []
         sf = StubFormatter(controller=controller,traverser=self)
         self.format = sf.format
@@ -2204,6 +2215,7 @@ class StubTraverser (ast.NodeVisitor):
         self.output_fn = x.output_fn
         self.overwrite = x.overwrite
         self.prefix_lines = x.prefix_lines
+        self.silent = x.silent
         self.regex_patterns = x.regex_patterns
         self.update_flag = x.update_flag
         self.trace_matches = x.trace_matches
@@ -2274,7 +2286,8 @@ class StubTraverser (ast.NodeVisitor):
                 self.output_file = None
                 self.parent_stub = None
             t2 = time.clock()
-            print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
+            if not self.silent:
+                print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
         else:
             print('output directory not not found: %s' % dir_)
 
@@ -2536,6 +2549,7 @@ class StubTraverser (ast.NodeVisitor):
         
         # Create the stub in the old context.
         old_stub = self.parent_stub
+        self.class_defs_count = 0
         self.parent_stub = Stub('class', node.name,old_stub, self.context_stack)
         self.add_stub(self.stubs_dict, self.parent_stub)
         # Enter the new context.
@@ -2543,6 +2557,11 @@ class StubTraverser (ast.NodeVisitor):
         self.context_stack.append(node.name)
         if self.trace_matches or self.trace_reduce:
             print('\nclass %s\n' % node.name)
+        #
+        # Fix issue #2: look ahead to see if there are any functions in this class.
+        empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
+        tail = ' ...' if empty else ''
+        #
         # Format...
         bases = [self.visit(z) for z in node.bases] if node.bases else []
         if getattr(node, 'keywords', None): # Python 3
@@ -2557,11 +2576,12 @@ class StubTraverser (ast.NodeVisitor):
                 s = '(%s)' % ', '.join([self.format(z) for z in node.bases])
             else:
                 s = ''
-            self.out('class %s%s:' % (node.name, s))
+            self.out('class %s%s:%s' % (node.name, s, tail))
         # Visit...
         self.level += 1
         for z in node.body:
             self.visit(z)
+        # Restore the context
         self.context_stack.pop()
         self.class_name_stack.pop()
         self.level -= 1

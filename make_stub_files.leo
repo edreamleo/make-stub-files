@@ -518,6 +518,8 @@
 <v t="ekr.20160207115947.1"><vh>@test truncate</vh>
 <v t="ekr.20160207115604.1"></v>
 </v>
+<v t="ekr.20180901040718.1"><vh>@test bug2 empty</vh></v>
+<v t="ekr.20180901044640.1"><vh>@test bug2 non-empty</vh></v>
 </v>
 <v t="ekr.20160318141204.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
@@ -752,10 +754,49 @@
 </v>
 </v>
 <v t="ekr.20160630100214.1"><vh>@clean test.py</vh></v>
-<v t="ekr.20180706071406.1"><vh>#3: Duplicate annotations</vh></v>
 <v t="ekr.20180706073205.1"><vh>Recent</vh>
-<v t="ekr.20180706071540.1"><vh>#4: Fails to generate valid stubs for empty classes</vh></v>
+<v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh></v>
+</v>
+<v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
+<v t="ekr.20180901050914.1"><vh>Changed...</vh>
+<v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.20"></v>
+<v t="ekr.20160318141204.131"></v>
+</v>
+</v>
+<v t="ekr.20180901050852.1"><vh>git diff HEAD </vh>
+<v t="ekr.20180901050852.2"><vh>make_stub_files.py</vh>
+<v t="ekr.20180901050852.403"><vh>Changed</vh>
+<v t="ekr.20180901050852.404"><vh>main</vh>
+<v t="ekr.20180901050852.405"><vh>Old:main</vh></v>
+<v t="ekr.20160318141204.11"></v>
+</v>
+<v t="ekr.20180901050852.406"><vh>f.ClassDef (make_stub_files)</vh>
+<v t="ekr.20180901050852.407"><vh>Old:f.ClassDef (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.20"></v>
+</v>
+<v t="ekr.20180901050852.408"><vh>msf.ctor</vh>
+<v t="ekr.20180901050852.409"><vh>Old:msf.ctor</vh></v>
+<v t="ekr.20160318141204.126"></v>
+</v>
+<v t="ekr.20180901050852.410"><vh>msf.scan_command_line</vh>
+<v t="ekr.20180901050852.411"><vh>Old:msf.scan_command_line</vh></v>
+<v t="ekr.20160318141204.131"></v>
+</v>
+<v t="ekr.20180901050852.412"><vh>st.ctor</vh>
+<v t="ekr.20180901050852.413"><vh>Old:st.ctor</vh></v>
+<v t="ekr.20160318141204.170"></v>
+</v>
+<v t="ekr.20180901050852.414"><vh>st.run (main line) &amp; helpers</vh>
+<v t="ekr.20180901050852.415"><vh>Old:st.run (main line) &amp; helpers</vh></v>
+<v t="ekr.20160318141204.173"></v>
+</v>
+<v t="ekr.20180901050852.416"><vh>st.visit_ClassDef</vh>
+<v t="ekr.20180901050852.417"><vh>Old:st.visit_ClassDef</vh></v>
+<v t="ekr.20160318141204.186"></v>
+</v>
+</v>
+</v>
 </v>
 </vnodes>
 <tnodes>
@@ -776,7 +817,8 @@ def main():
     controller.scan_command_line()
     controller.scan_options()
     controller.run()
-    print('done')
+    if not controller.silent:
+        print('done')
 </t>
 <t tx="ekr.20160126153212.11">
 def do_Module(self, node):
@@ -6981,7 +7023,8 @@ def main():
     controller.scan_command_line()
     controller.scan_options()
     controller.run()
-    print('done')
+    if not controller.silent:
+        print('done')
 
 </t>
 <t tx="ekr.20160318141204.110">
@@ -7361,6 +7404,7 @@ def __init__ (self):
         # self.finalize('~/stubs')
     self.overwrite = False
     self.prefix_lines = []
+    self.silent = False
     self.trace_matches = False
     self.trace_patterns = False
     self.trace_reduce = False
@@ -7455,6 +7499,8 @@ def scan_command_line(self):
         help='full path to the output directory')
     add('-o', '--overwrite', action='store_true', default=False,
         help='overwrite existing stub (.pyi) files')
+    add('-s', '--silent', action='store_true', default=False,
+        help='run without messages')
     add('-t', '--test', action='store_true', default=False,
         help='run unit tests on startup')
     add('--trace-matches', action='store_true', default=False,
@@ -7476,6 +7522,7 @@ def scan_command_line(self):
     # Handle the options...
     self.enable_unit_tests=options.test
     self.overwrite = options.overwrite
+    self.silent = options.silent
     self.trace_matches = options.trace_matches
     self.trace_patterns = options.trace_patterns
     self.trace_reduce = options.trace_reduce
@@ -8152,6 +8199,8 @@ def __init__(self, controller):
         # A StandAloneMakeStubFile instance.
     # Internal state ivars...
     self.class_name_stack = []
+    self.class_defs_count = 0
+        # The number of defs seen for this class.
     self.context_stack = []
     sf = StubFormatter(controller=controller,traverser=self)
     self.format = sf.format
@@ -8168,6 +8217,7 @@ def __init__(self, controller):
     self.output_fn = x.output_fn
     self.overwrite = x.overwrite
     self.prefix_lines = x.prefix_lines
+    self.silent = x.silent
     self.regex_patterns = x.regex_patterns
     self.update_flag = x.update_flag
     self.trace_matches = x.trace_matches
@@ -8241,7 +8291,8 @@ def run(self, node):
             self.output_file = None
             self.parent_stub = None
         t2 = time.clock()
-        print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
+        if not self.silent:
+            print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
     else:
         print('output directory not not found: %s' % dir_)
 </t>
@@ -8532,6 +8583,7 @@ def visit_ClassDef(self, node):
     
     # Create the stub in the old context.
     old_stub = self.parent_stub
+    self.class_defs_count = 0
     self.parent_stub = Stub('class', node.name,old_stub, self.context_stack)
     self.add_stub(self.stubs_dict, self.parent_stub)
     # Enter the new context.
@@ -8539,6 +8591,11 @@ def visit_ClassDef(self, node):
     self.context_stack.append(node.name)
     if self.trace_matches or self.trace_reduce:
         print('\nclass %s\n' % node.name)
+    #
+    # Fix issue #2: look ahead to see if there are any functions in this class.
+    empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
+    tail = ' ...' if empty else ''
+    #
     # Format...
     bases = [self.visit(z) for z in node.bases] if node.bases else []
     if getattr(node, 'keywords', None): # Python 3
@@ -8553,11 +8610,12 @@ def visit_ClassDef(self, node):
             s = '(%s)' % ', '.join([self.format(z) for z in node.bases])
         else:
             s = ''
-        self.out('class %s%s:' % (node.name, s))
+        self.out('class %s%s:%s' % (node.name, s, tail))
     # Visit...
     self.level += 1
     for z in node.body:
         self.visit(z)
+    # Restore the context
     self.context_stack.pop()
     self.class_name_stack.pop()
     self.level -= 1
@@ -8832,11 +8890,15 @@ def do_ClassDef(self, node):
         bases.append('*%s', self.visit(node.starargs))
     if getattr(node, 'kwargs', None): # Python 3
         bases.append('*%s', self.visit(node.kwargs))
+    #
+    # Fix issue #2: look ahead to see if there are any functions in this class.
+    empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
+    tail = ' ...' if empty else ''
     if bases:
-        result.append(self.indent('class %s(%s):\n' % (name, ','.join(bases))))
+        result.append(self.indent('class %s(%s):%s\n' % (name, ','.join(bases), tail)))
     else:
-        result.append(self.indent('class %s: ...\n' % name))
-            # Fix #4
+        result.append(self.indent('class %s:%s\n' % (name, tail)))
+            # Fix #2
     for z in node.body:
         self.level += 1
         result.append(self.visit(z))
@@ -9854,12 +9916,588 @@ class aClass2:
 i1, i2 = aClass(), aClass2()
 i1.foo()
 i2.foo()</t>
-<t tx="ekr.20180706071406.1">Creates duplicate annotations for function arguments that are already annotated
-https://github.com/edreamleo/make-stub-files/issues/3</t>
-<t tx="ekr.20180706071540.1">https://github.com/edreamleo/make-stub-files/issues/4
-Fails to generate valid stubs for empty classes
-</t>
+<t tx="ekr.20180706071540.1">@language rest
+@wrap
+
+https://github.com/edreamleo/make-stub-files/issues/2
+
+Added --silent flag.
+Added "tail" logic in st.visit_ClassDef and f.ClassDef.
+Added two new unit tests.
+
+@language python</t>
 <t tx="ekr.20180706073205.1">@nosearch</t>
 <t tx="ekr.20180706073424.1"># pyflakes complains about the TestClass class.</t>
+<t tx="ekr.20180831102536.1">@language rest
+@wrap
+
+https://github.com/edreamleo/make-stub-files/issues/3
+
+Input:
+
+class UnsupportedAlgorithm(Exception):
+    def __init__(self, message: Any, reason: Optional[str]=None) -&gt; None:
+
+Output:
+
+class UnsupportedAlgorithm(Exception):
+    def __init__(self, message: Any: Any, reason: Optional[str]: Any=None) -&gt; None: ...
+    
+Expected output:
+
+class UnsupportedAlgorithm(Exception):
+    def __init__(self, message: Any, reason: Optional[str]=None) -&gt; None: ...
+
+@language python
+</t>
+<t tx="ekr.20180901040718.1">commands = [
+    # 'cls',
+    'python make_stub_files.py -o -s bug2.py',
+]
+g.execute_shell_commands(commands, trace=True)
+with open('bug2.pyi') as f:
+    s = f.read()
+lines = g.splitLines(s)
+expected = 'class InvalidTag(Exception): ...\n'
+got = lines[1]
+if got != expected:
+    print('expected: %r\n, got:    %r' % (expected, got))
+    assert False
+</t>
+<t tx="ekr.20180901044640.1">commands = [
+    # 'cls',
+    'python make_stub_files.py -o -s bug2a.py',
+]
+g.execute_shell_commands(commands, trace=True)
+with open('bug2a.pyi') as f:
+    s = f.read()
+lines = g.splitLines(s)
+expected = 'class NonEmptyClass:\n'
+got = lines[1]
+if got != expected:
+    print('expected: %r\n, got:    %r' % (expected, got))
+    assert False
+</t>
+<t tx="ekr.20180901050852.1">@nosearch
+HEAD=4bb32f5</t>
+<t tx="ekr.20180901050852.2">@language patch
+--- HEAD
++++ uncommitted
+@@ -95,7 +95,8 @@
+     controller.scan_command_line()
+     controller.scan_options()
+     controller.run()
+-    print('done')
++    if not controller.silent:
++        print('done')
+ 
+ 
+ def pdb(self):
+@@ -167,11 +168,15 @@
+             bases.append('*%s', self.visit(node.starargs))
+         if getattr(node, 'kwargs', None): # Python 3
+             bases.append('*%s', self.visit(node.kwargs))
++        #
++        # Fix issue #2: look ahead to see if there are any functions in this class.
++        empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
++        tail = ' ...' if empty else ''
+         if bases:
+-            result.append(self.indent('class %s(%s):\n' % (name, ','.join(bases))))
+-        else:
+-            result.append(self.indent('class %s: ...\n' % name))
+-                # Fix #4
++            result.append(self.indent('class %s(%s):%s\n' % (name, ','.join(bases), tail)))
++        else:
++            result.append(self.indent('class %s:%s\n' % (name, tail)))
++                # Fix #2
+         for z in node.body:
+             self.level += 1
+             result.append(self.visit(z))
+@@ -1470,6 +1475,7 @@
+             # self.finalize('~/stubs')
+         self.overwrite = False
+         self.prefix_lines = []
++        self.silent = False
+         self.trace_matches = False
+         self.trace_patterns = False
+         self.trace_reduce = False
+@@ -1554,6 +1560,8 @@
+             help='full path to the output directory')
+         add('-o', '--overwrite', action='store_true', default=False,
+             help='overwrite existing stub (.pyi) files')
++        add('-s', '--silent', action='store_true', default=False,
++            help='run without messages')
+         add('-t', '--test', action='store_true', default=False,
+             help='run unit tests on startup')
+         add('--trace-matches', action='store_true', default=False,
+@@ -1575,6 +1583,7 @@
+         # Handle the options...
+         self.enable_unit_tests=options.test
+         self.overwrite = options.overwrite
++        self.silent = options.silent
+         self.trace_matches = options.trace_matches
+         self.trace_patterns = options.trace_patterns
+         self.trace_reduce = options.trace_reduce
+@@ -2188,6 +2197,8 @@
+             # A StandAloneMakeStubFile instance.
+         # Internal state ivars...
+         self.class_name_stack = []
++        self.class_defs_count = 0
++            # The number of defs seen for this class.
+         self.context_stack = []
+         sf = StubFormatter(controller=controller,traverser=self)
+         self.format = sf.format
+@@ -2204,6 +2215,7 @@
+         self.output_fn = x.output_fn
+         self.overwrite = x.overwrite
+         self.prefix_lines = x.prefix_lines
++        self.silent = x.silent
+         self.regex_patterns = x.regex_patterns
+         self.update_flag = x.update_flag
+         self.trace_matches = x.trace_matches
+@@ -2274,7 +2286,8 @@
+                 self.output_file = None
+                 self.parent_stub = None
+             t2 = time.clock()
+-            print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
++            if not self.silent:
++                print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
+         else:
+             print('output directory not not found: %s' % dir_)
+ 
+@@ -2536,6 +2549,7 @@
+         
+         # Create the stub in the old context.
+         old_stub = self.parent_stub
++        self.class_defs_count = 0
+         self.parent_stub = Stub('class', node.name,old_stub, self.context_stack)
+         self.add_stub(self.stubs_dict, self.parent_stub)
+         # Enter the new context.
+@@ -2543,6 +2557,11 @@
+         self.context_stack.append(node.name)
+         if self.trace_matches or self.trace_reduce:
+             print('\nclass %s\n' % node.name)
++        #
++        # Fix issue #2: look ahead to see if there are any functions in this class.
++        empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
++        tail = ' ...' if empty else ''
++        #
+         # Format...
+         bases = [self.visit(z) for z in node.bases] if node.bases else []
+         if getattr(node, 'keywords', None): # Python 3
+@@ -2557,11 +2576,12 @@
+                 s = '(%s)' % ', '.join([self.format(z) for z in node.bases])
+             else:
+                 s = ''
+-            self.out('class %s%s:' % (node.name, s))
++            self.out('class %s%s:%s' % (node.name, s, tail))
+         # Visit...
+         self.level += 1
+         for z in node.body:
+             self.visit(z)
++        # Restore the context
+         self.context_stack.pop()
+         self.class_name_stack.pop()
+         self.level -= 1
+@language python
+</t>
+<t tx="ekr.20180901050852.403"></t>
+<t tx="ekr.20180901050852.404">@language patch
+--- HEAD
++++ uncommitted
+@@ -9,5 +9,6 @@
+     controller.scan_command_line()
+     controller.scan_options()
+     controller.run()
+-    print('done')
++    if not controller.silent:
++        print('done')
+ 
+@language python
+</t>
+<t tx="ekr.20180901050852.405">
+def main():
+    '''
+    The driver for the stand-alone version of make-stub-files.
+    All options come from ~/stubs/make_stub_files.cfg.
+    '''
+    # g.cls()
+    controller = StandAloneMakeStubFile()
+    controller.scan_command_line()
+    controller.scan_options()
+    controller.run()
+    print('done')
+
+</t>
+<t tx="ekr.20180901050852.406">@language patch
+--- HEAD
++++ uncommitted
+@@ -19,11 +19,15 @@
+         bases.append('*%s', self.visit(node.starargs))
+     if getattr(node, 'kwargs', None): # Python 3
+         bases.append('*%s', self.visit(node.kwargs))
++    #
++    # Fix issue #2: look ahead to see if there are any functions in this class.
++    empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
++    tail = ' ...' if empty else ''
+     if bases:
+-        result.append(self.indent('class %s(%s):\n' % (name, ','.join(bases))))
++        result.append(self.indent('class %s(%s):%s\n' % (name, ','.join(bases), tail)))
+     else:
+-        result.append(self.indent('class %s: ...\n' % name))
+-            # Fix #4
++        result.append(self.indent('class %s:%s\n' % (name, tail)))
++            # Fix #2
+     for z in node.body:
+         self.level += 1
+         result.append(self.visit(z))
+@language python
+</t>
+<t tx="ekr.20180901050852.407">
+# 2: ClassDef(identifier name, expr* bases,
+#             stmt* body, expr* decorator_list)
+# 3: ClassDef(identifier name, expr* bases,
+#             keyword* keywords, expr? starargs, expr? kwargs
+#             stmt* body, expr* decorator_list)
+#
+# keyword arguments supplied to call (NULL identifier for **kwargs)
+# keyword = (identifier? arg, expr value)
+
+def do_ClassDef(self, node):
+    result = []
+    name = node.name # Only a plain string is valid.
+    bases = [self.visit(z) for z in node.bases] if node.bases else []
+    if getattr(node, 'keywords', None): # Python 3
+        for keyword in node.keywords:
+            bases.append('%s=%s' % (keyword.arg, self.visit(keyword.value)))
+    if getattr(node, 'starargs', None): # Python 3
+        bases.append('*%s', self.visit(node.starargs))
+    if getattr(node, 'kwargs', None): # Python 3
+        bases.append('*%s', self.visit(node.kwargs))
+    if bases:
+        result.append(self.indent('class %s(%s):\n' % (name, ','.join(bases))))
+    else:
+        result.append(self.indent('class %s: ...\n' % name))
+            # Fix #4
+    for z in node.body:
+        self.level += 1
+        result.append(self.visit(z))
+        self.level -= 1
+    return ''.join(result)
+
+</t>
+<t tx="ekr.20180901050852.408">@language patch
+--- HEAD
++++ uncommitted
+@@ -13,6 +13,7 @@
+         # self.finalize('~/stubs')
+     self.overwrite = False
+     self.prefix_lines = []
++    self.silent = False
+     self.trace_matches = False
+     self.trace_patterns = False
+     self.trace_reduce = False
+@language python
+</t>
+<t tx="ekr.20180901050852.409">
+def __init__ (self):
+    '''Ctor for StandAloneMakeStubFile class.'''
+    self.options = {}
+    # Ivars set on the command line...
+    self.config_fn = None
+        # self.finalize('~/stubs/make_stub_files.cfg')
+    self.enable_unit_tests = False
+    self.files = [] # May also be set in the config file.
+    # Ivars set in the config file...
+    self.output_fn = None
+    self.output_directory = self.finalize('.')
+        # self.finalize('~/stubs')
+    self.overwrite = False
+    self.prefix_lines = []
+    self.trace_matches = False
+    self.trace_patterns = False
+    self.trace_reduce = False
+    self.trace_visitors = False
+    self.update_flag = False
+    self.verbose = False # Trace config arguments.
+    self.warn = False
+    # Pattern lists, set by config sections...
+    self.section_names = (
+        'Global', 'Def Name Patterns', 'General Patterns')
+    self.def_patterns = [] # [Def Name Patterns]
+    self.general_patterns = [] # [General Patterns]
+    self.names_dict = {}
+    self.op_name_dict = self.make_op_name_dict()
+    self.patterns_dict = {}
+    self.regex_patterns = []
+</t>
+<t tx="ekr.20180901050852.410">@language patch
+--- HEAD
++++ uncommitted
+@@ -11,6 +11,8 @@
+         help='full path to the output directory')
+     add('-o', '--overwrite', action='store_true', default=False,
+         help='overwrite existing stub (.pyi) files')
++    add('-s', '--silent', action='store_true', default=False,
++        help='run without messages')
+     add('-t', '--test', action='store_true', default=False,
+         help='run unit tests on startup')
+     add('--trace-matches', action='store_true', default=False,
+@@ -32,6 +34,7 @@
+     # Handle the options...
+     self.enable_unit_tests=options.test
+     self.overwrite = options.overwrite
++    self.silent = options.silent
+     self.trace_matches = options.trace_matches
+     self.trace_patterns = options.trace_patterns
+     self.trace_reduce = options.trace_reduce
+@language python
+</t>
+<t tx="ekr.20180901050852.411">
+def scan_command_line(self):
+    '''Set ivars from command-line arguments.'''
+    # This automatically implements the --help option.
+    usage = "usage: make_stub_files.py [options] file1, file2, ..."
+    parser = optparse.OptionParser(usage=usage)
+    add = parser.add_option
+    add('-c', '--config', dest='fn',
+        help='full path to configuration file')
+    add('-d', '--dir', dest='dir',
+        help='full path to the output directory')
+    add('-o', '--overwrite', action='store_true', default=False,
+        help='overwrite existing stub (.pyi) files')
+    add('-t', '--test', action='store_true', default=False,
+        help='run unit tests on startup')
+    add('--trace-matches', action='store_true', default=False,
+        help='trace Pattern.matches')
+    add('--trace-patterns', action='store_true', default=False,
+        help='trace pattern creation')
+    add('--trace-reduce', action='store_true', default=False,
+        help='trace st.reduce_types')
+    add('--trace-visitors', action='store_true', default=False,
+        help='trace visitor methods')
+    add('-u', '--update', action='store_true', default=False,
+        help='update stubs in existing stub file')
+    add('-v', '--verbose', action='store_true', default=False,
+        help='verbose output in .pyi file')
+    add('-w', '--warn', action='store_true', default=False,
+        help='warn about unannotated args')
+    # Parse the options
+    options, args = parser.parse_args()
+    # Handle the options...
+    self.enable_unit_tests=options.test
+    self.overwrite = options.overwrite
+    self.trace_matches = options.trace_matches
+    self.trace_patterns = options.trace_patterns
+    self.trace_reduce = options.trace_reduce
+    self.trace_visitors = options.trace_visitors
+    self.update_flag = options.update
+    self.verbose = options.verbose
+    self.warn = options.warn
+    if options.fn:
+        self.config_fn = options.fn
+    if options.dir:
+        dir_ = options.dir
+        dir_ = self.finalize(dir_)
+        if os.path.exists(dir_):
+            self.output_directory = dir_
+        else:
+            print('--dir: directory does not exist: %s' % dir_)
+            print('exiting')
+            sys.exit(1)
+    # If any files remain, set self.files.
+    if args:
+        args = [self.finalize(z) for z in args]
+        if args:
+            self.files = args
+</t>
+<t tx="ekr.20180901050852.412">@language patch
+--- HEAD
++++ uncommitted
+@@ -5,6 +5,8 @@
+         # A StandAloneMakeStubFile instance.
+     # Internal state ivars...
+     self.class_name_stack = []
++    self.class_defs_count = 0
++        # The number of defs seen for this class.
+     self.context_stack = []
+     sf = StubFormatter(controller=controller,traverser=self)
+     self.format = sf.format
+@@ -21,6 +23,7 @@
+     self.output_fn = x.output_fn
+     self.overwrite = x.overwrite
+     self.prefix_lines = x.prefix_lines
++    self.silent = x.silent
+     self.regex_patterns = x.regex_patterns
+     self.update_flag = x.update_flag
+     self.trace_matches = x.trace_matches
+@language python
+</t>
+<t tx="ekr.20180901050852.413">
+def __init__(self, controller):
+    '''Ctor for StubTraverser class.'''
+    self.controller = x = controller
+        # A StandAloneMakeStubFile instance.
+    # Internal state ivars...
+    self.class_name_stack = []
+    self.context_stack = []
+    sf = StubFormatter(controller=controller,traverser=self)
+    self.format = sf.format
+    self.arg_format = AstArgFormatter().format
+    self.level = 0
+    self.output_file = None
+    self.parent_stub = None
+    self.raw_format = AstFormatter().format
+    self.returns = []
+    self.stubs_dict = {}
+        # Keys are stub.full_name's.  Values are stubs.
+    self.warn_list = []
+    # Copies of controller ivars...
+    self.output_fn = x.output_fn
+    self.overwrite = x.overwrite
+    self.prefix_lines = x.prefix_lines
+    self.regex_patterns = x.regex_patterns
+    self.update_flag = x.update_flag
+    self.trace_matches = x.trace_matches
+    self.trace_patterns = x.trace_patterns
+    self.trace_reduce = x.trace_reduce
+    self.trace_visitors = x.trace_visitors
+    self.verbose = x.verbose
+    self.warn = x.warn
+    # Copies of controller patterns...
+    self.def_patterns = x.def_patterns
+    self.names_dict = x.names_dict
+    self.general_patterns = x.general_patterns
+    self.patterns_dict = x.patterns_dict
+    
+</t>
+<t tx="ekr.20180901050852.414">@language patch
+--- HEAD
++++ uncommitted
+@@ -23,6 +23,7 @@
+             self.output_file = None
+             self.parent_stub = None
+         t2 = time.clock()
+-        print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
++        if not self.silent:
++            print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
+     else:
+         print('output directory not not found: %s' % dir_)
+@language python
+</t>
+<t tx="ekr.20180901050852.415">
+def run(self, node):
+    '''StubTraverser.run: write the stubs in node's tree to self.output_fn.'''
+    fn = self.output_fn
+    dir_ = os.path.dirname(fn)
+    if os.path.exists(fn) and not self.overwrite:
+        print('file exists: %s' % fn)
+    elif not dir_ or os.path.exists(dir_):
+        t1 = time.clock()
+        # Delayed output allows sorting.
+        self.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
+        for z in self.prefix_lines or []:
+            self.parent_stub.out_list.append(z)
+        self.visit(node)
+            # Creates parent_stub.out_list.
+        if self.update_flag:
+            self.parent_stub = self.update(fn, new_root=self.parent_stub)
+        if 1:
+            self.output_file = open(fn, 'w')
+            self.output_time_stamp()
+            self.output_stubs(self.parent_stub)
+            self.output_file.close()
+            self.output_file = None
+            self.parent_stub = None
+        t2 = time.clock()
+        print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
+    else:
+        print('output directory not not found: %s' % dir_)
+</t>
+<t tx="ekr.20180901050852.416">@language patch
+--- HEAD
++++ uncommitted
+@@ -12,6 +12,7 @@
+     
+     # Create the stub in the old context.
+     old_stub = self.parent_stub
++    self.class_defs_count = 0
+     self.parent_stub = Stub('class', node.name,old_stub, self.context_stack)
+     self.add_stub(self.stubs_dict, self.parent_stub)
+     # Enter the new context.
+@@ -19,6 +20,11 @@
+     self.context_stack.append(node.name)
+     if self.trace_matches or self.trace_reduce:
+         print('\nclass %s\n' % node.name)
++    #
++    # Fix issue #2: look ahead to see if there are any functions in this class.
++    empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
++    tail = ' ...' if empty else ''
++    #
+     # Format...
+     bases = [self.visit(z) for z in node.bases] if node.bases else []
+     if getattr(node, 'keywords', None): # Python 3
+@@ -33,11 +39,12 @@
+             s = '(%s)' % ', '.join([self.format(z) for z in node.bases])
+         else:
+             s = ''
+-        self.out('class %s%s:' % (node.name, s))
++        self.out('class %s%s:%s' % (node.name, s, tail))
+     # Visit...
+     self.level += 1
+     for z in node.body:
+         self.visit(z)
++    # Restore the context
+     self.context_stack.pop()
+     self.class_name_stack.pop()
+     self.level -= 1
+@language python
+</t>
+<t tx="ekr.20180901050852.417">
+# 2: ClassDef(identifier name, expr* bases,
+#             stmt* body, expr* decorator_list)
+# 3: ClassDef(identifier name, expr* bases,
+#             keyword* keywords, expr? starargs, expr? kwargs
+#             stmt* body, expr* decorator_list)
+#
+# keyword arguments supplied to call (NULL identifier for **kwargs)
+# keyword = (identifier? arg, expr value)
+
+def visit_ClassDef(self, node):
+    
+    # Create the stub in the old context.
+    old_stub = self.parent_stub
+    self.parent_stub = Stub('class', node.name,old_stub, self.context_stack)
+    self.add_stub(self.stubs_dict, self.parent_stub)
+    # Enter the new context.
+    self.class_name_stack.append(node.name)
+    self.context_stack.append(node.name)
+    if self.trace_matches or self.trace_reduce:
+        print('\nclass %s\n' % node.name)
+    # Format...
+    bases = [self.visit(z) for z in node.bases] if node.bases else []
+    if getattr(node, 'keywords', None): # Python 3
+        for keyword in node.keywords:
+            bases.append('%s=%s' % (keyword.arg, self.visit(keyword.value)))
+    if getattr(node, 'starargs', None): # Python 3
+        bases.append('*%s', self.visit(node.starargs))
+    if getattr(node, 'kwargs', None): # Python 3
+        bases.append('*%s', self.visit(node.kwargs))
+    if not node.name.startswith('_'):
+        if node.bases:
+            s = '(%s)' % ', '.join([self.format(z) for z in node.bases])
+        else:
+            s = ''
+        self.out('class %s%s:' % (node.name, s))
+    # Visit...
+    self.level += 1
+    for z in node.body:
+        self.visit(z)
+    self.context_stack.pop()
+    self.class_name_stack.pop()
+    self.level -= 1
+    self.parent_stub = old_stub
+</t>
+<t tx="ekr.20180901050914.1"></t>
 </tnodes>
 </leo_file>
