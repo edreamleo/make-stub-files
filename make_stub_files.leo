@@ -520,6 +520,7 @@
 </v>
 <v t="ekr.20180901040718.1"><vh>@test bug2 empty</vh></v>
 <v t="ekr.20180901044640.1"><vh>@test bug2 non-empty</vh></v>
+<v t="ekr.20180901051603.1"><vh>@test bug3</vh></v>
 </v>
 <v t="ekr.20160318141204.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
@@ -764,6 +765,7 @@
 </v>
 <v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh></v>
 </v>
+<v t="ekr.20180901051603.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -9903,6 +9905,7 @@ Input:
 
 class UnsupportedAlgorithm(Exception):
     def __init__(self, message: Any, reason: Optional[str]=None) -&gt; None:
+        pass
 
 Output:
 
@@ -9945,5 +9948,22 @@ if got != expected:
     assert False
 </t>
 <t tx="ekr.20180901050914.1"></t>
+<t tx="ekr.20180901051603.1">commands = [
+    # 'cls',
+    'python make_stub_files.py -o -s bug3.py',
+]
+g.execute_shell_commands(commands, trace=True)
+with open('bug3.pyi') as f:
+    s = f.read()
+lines = g.splitLines(s)
+got = ''.join(lines[1:])
+expected = '''\
+class UnsupportedAlgorithm(Exception):
+    def __init__(self, message: Any, reason: Optional[str]=None) -&gt; None: ...
+'''
+if got != expected:
+    print('expected:\n%s\ngot:\n%s' % (expected, got))
+    assert False
+</t>
 </tnodes>
 </leo_file>
