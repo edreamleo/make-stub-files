@@ -128,6 +128,7 @@ class AstFormatter:
         '''Format the node (or list of nodes) and its descendants.'''
         self.level = 0
         val = self.visit(node)
+        # pylint: disable=consider-using-ternary
         return val and val.strip() or ''
 
     def visit(self, node):
@@ -698,7 +699,7 @@ class AstFormatter:
     def do_Try(self, node): # Python 3
 
         result = []
-        self.append(self.indent('try:\n'))
+        result.append(self.indent('try:\n'))
         for z in node.body:
             self.level += 1
             result.append(self.visit(z))
@@ -942,6 +943,9 @@ class LeoGlobals:
         except Exception:
             # es_exception()
             return '' # "<no caller name>"
+    def caller(self, i=1):
+        '''Return the caller name i levels up the stack.'''
+        return self.callers(i+1).split(',')[0]
 
     def callers(self, n=4, count=0, excludeCaller=True, files=False):
         '''Return a list containing the callers of the function that called g.callerList.
@@ -994,17 +998,17 @@ class LeoGlobals:
         #
         # Compute s.
         if isinstance(obj, dict):
-            s = dictToString(obj, indent=indent)
+            s = self.objToString(obj, indent=indent)
         elif isinstance(obj, list):
-            s = listToString(obj, indent=indent)
+            s = self.objToString(obj, indent=indent)
         elif isinstance(obj, tuple):
-            s = tupleToString(obj, indent=indent)
+            s = self.objToString(obj, indent=indent)
         elif g.isString(obj):
             # Print multi-line strings as lists.
             s = obj
             lines = g.splitLines(s)
             if len(lines) > 1:
-                s = listToString(lines, indent=indent)
+                s = self.objToString(lines, indent=indent)
             else:
                 s = repr(s)
         else:
@@ -1014,7 +1018,7 @@ class LeoGlobals:
         if printCaller and tag:
             prefix = '%s: %s' % (g.caller(), tag)
         elif printCaller or tag:
-            prefix = g.caller() if printCaller else tag
+            prefix = self.caller() if printCaller else tag
         else:
             prefix = None
         return '%s...\n%s\n' % (prefix, s) if prefix else s
@@ -1032,11 +1036,12 @@ class LeoGlobals:
         '''Pretty print any Python object using g.pr.'''
         print(self.objToString(obj, indent=indent, printCaller=printCaller, tag=tag))
 
-    printDict = printObj
-    printList = printObj
-    printTuple = printObj
+    # printDict = printObj
+    # printList = printObj
+    # printTuple = printObj
 
     def shortFileName(self,fileName, n=None):
+        # pylint: disable=invalid-unary-operand-type
         if n is None or n < 1:
             return os.path.basename(fileName)
         else:
@@ -2041,6 +2046,7 @@ class StubFormatter (AstFormatter):
         if len(keys) == len(values):
             result.append('{')
             items = []
+            # pylint: disable=consider-using-enumerate
             for i in range(len(keys)):
                 items.append('%s:%s' % (keys[i], values[i]))
             result.append(', '.join(items))

@@ -627,6 +627,7 @@
 <v t="ekr.20160318141204.92"><vh>class LeoGlobals</vh>
 <v t="ekr.20160318141204.93"><vh>class NullObject (Python Cookbook)</vh></v>
 <v t="ekr.20160318141204.94"><vh>g._callerName</vh></v>
+<v t="ekr.20180902035806.1"><vh>g.caller</vh></v>
 <v t="ekr.20160318141204.95"><vh>g.callers</vh></v>
 <v t="ekr.20160318141204.96"><vh>g.cls</vh></v>
 <v t="ekr.20160318141204.97"><vh>g.isString &amp; isUnicode (make_stub_files.py)</vh></v>
@@ -7986,6 +7987,7 @@ def do_Dict(self, node):
     if len(keys) == len(values):
         result.append('{')
         items = []
+        # pylint: disable=consider-using-enumerate
         for i in range(len(keys)):
             items.append('%s:%s' % (keys[i], values[i]))
         result.append(', '.join(items))
@@ -8196,6 +8198,7 @@ def format(self, node):
     '''Format the node (or list of nodes) and its descendants.'''
     self.level = 0
     val = self.visit(node)
+    # pylint: disable=consider-using-ternary
     return val and val.strip() or ''
 </t>
 <t tx="ekr.20160318141204.170">
@@ -9528,7 +9531,7 @@ def do_Starred(self, node):
 def do_Try(self, node): # Python 3
 
     result = []
-    self.append(self.indent('try:\n'))
+    result.append(self.indent('try:\n'))
     for z in node.body:
         self.level += 1
         result.append(self.visit(z))
@@ -9868,6 +9871,7 @@ def pdb(self):
 </t>
 <t tx="ekr.20160318141204.99">
 def shortFileName(self,fileName, n=None):
+    # pylint: disable=invalid-unary-operand-type
     if n is None or n &lt; 1:
         return os.path.basename(fileName)
     else:
@@ -10008,17 +10012,17 @@ assert got == expected, 'expected:\n%s\ngot:\n%s' % (expected, got)</t>
     #
     # Compute s.
     if isinstance(obj, dict):
-        s = dictToString(obj, indent=indent)
+        s = self.objToString(obj, indent=indent)
     elif isinstance(obj, list):
-        s = listToString(obj, indent=indent)
+        s = self.objToString(obj, indent=indent)
     elif isinstance(obj, tuple):
-        s = tupleToString(obj, indent=indent)
+        s = self.objToString(obj, indent=indent)
     elif g.isString(obj):
         # Print multi-line strings as lists.
         s = obj
         lines = g.splitLines(s)
         if len(lines) &gt; 1:
-            s = listToString(lines, indent=indent)
+            s = self.objToString(lines, indent=indent)
         else:
             s = repr(s)
     else:
@@ -10028,7 +10032,7 @@ assert got == expected, 'expected:\n%s\ngot:\n%s' % (expected, got)</t>
     if printCaller and tag:
         prefix = '%s: %s' % (g.caller(), tag)
     elif printCaller or tag:
-        prefix = g.caller() if printCaller else tag
+        prefix = self.caller() if printCaller else tag
     else:
         prefix = None
     return '%s...\n%s\n' % (prefix, s) if prefix else s
@@ -10039,9 +10043,9 @@ toString = objToString
     '''Pretty print any Python object using g.pr.'''
     print(self.objToString(obj, indent=indent, printCaller=printCaller, tag=tag))
 
-printDict = printObj
-printList = printObj
-printTuple = printObj
+# printDict = printObj
+# printList = printObj
+# printTuple = printObj
 </t>
 <t tx="ekr.20180902035107.1">@nosearch
 HEAD=bb81f2b</t>
@@ -10417,6 +10421,10 @@ def update(self, fn, new_root):
         return old_root
     else:
         return new_root
+</t>
+<t tx="ekr.20180902035806.1">def caller(self, i=1):
+    '''Return the caller name i levels up the stack.'''
+    return self.callers(i+1).split(',')[0]
 </t>
 </tnodes>
 </leo_file>
