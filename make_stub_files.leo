@@ -76,6 +76,13 @@
 </v>
 </v>
 <v t="ekr.20160131174909.1"><vh>To do</vh></v>
+<v t="ekr.20160318141204.141"><vh>class Stub(object)</vh>
+<v t="ekr.20160318141204.142"><vh>stub.ctor</vh></v>
+<v t="ekr.20160318141204.143"><vh>stub.__eq__ and __ne__</vh></v>
+<v t="ekr.20160318141204.144"><vh>stub.__hash__</vh></v>
+<v t="ekr.20160318141204.145"><vh>stub.__repr__and __str__</vh></v>
+<v t="ekr.20160318141204.146"><vh>stub.parents and level</vh></v>
+</v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
 <v t="ekr.20160318141204.5"><vh>merge_types (not used)</vh></v>
@@ -272,13 +279,7 @@
 <v t="ekr.20160318141204.168"><vh>sf.Return</vh></v>
 </v>
 </v>
-<v t="ekr.20160318141204.141"><vh>class Stub(object)</vh>
-<v t="ekr.20160318141204.142"><vh>stub.ctor</vh></v>
-<v t="ekr.20160318141204.143"><vh>stub.__eq__ and __ne__</vh></v>
-<v t="ekr.20160318141204.144"><vh>stub.__hash__</vh></v>
-<v t="ekr.20160318141204.145"><vh>stub.__repr__and __str__</vh></v>
-<v t="ekr.20160318141204.146"><vh>stub.parents and level</vh></v>
-</v>
+<v t="ekr.20160318141204.141"></v>
 <v t="ekr.20160318141204.169"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160318141204.170"><vh>st.ctor</vh></v>
 <v t="ekr.20160318141204.171"><vh>st.add_stub</vh></v>
@@ -326,19 +327,13 @@
 <v t="ekr.20160210144515.1"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
 <v t="ekr.20160206104634.1"></v>
 <v t="ekr.20160211050346.4"></v>
-<v t="ekr.20160203073604.1"><vh>class Stub(object)</vh>
-<v t="ekr.20160210134702.1"><vh>stub.ctor</vh></v>
-<v t="ekr.20160203130235.1"><vh>stub.__eq__ and __ne__</vh></v>
-<v t="ekr.20160203140342.1"><vh>stub.__hash__</vh></v>
-<v t="ekr.20160210111955.1"><vh>stub.__repr__and __str__</vh></v>
-<v t="ekr.20160210132520.1"><vh>stub.parents and level</vh></v>
-</v>
+<v t="ekr.20160318141204.141"></v>
 <v t="ekr.20160318141204.169"></v>
 </v>
 <v t="ekr.20160210112945.1"><vh>@test Stub class</vh>
 <v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160131180118.1"></v>
-<v t="ekr.20160203073604.1"></v>
+<v t="ekr.20160318141204.141"></v>
 </v>
 <v t="ekr.20160207115947.1"><vh>@test truncate</vh>
 <v t="ekr.20160207115604.1"></v>
@@ -1162,15 +1157,6 @@ def cls(self):
     if sys.platform.lower().startswith('win'):
         os.system('cls')
 </t>
-<t tx="ekr.20160203073604.1">
-
-class Stub(object):
-    '''
-    A class representing all the generated stub for a class or def.
-    stub.full_name should represent the complete context of a def.
-    '''
-    @others
-</t>
 <t tx="ekr.20160203075612.1">import ast
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
@@ -1237,21 +1223,6 @@ def _callerName(self, n=1, files=False):
         # es_exception()
         return '' # "&lt;no caller name&gt;"
 </t>
-<t tx="ekr.20160203130235.1">
-def __eq__(self, obj):
-    '''
-    Stub.__eq__. Return whether two stubs refer to the same method.
-    Do *not* test parent links. That would interfere with --update logic.
-    '''
-    if isinstance(obj, Stub):
-        return self.full_name == obj.full_name and self.kind == obj.kind
-    else:
-        return NotImplemented
-
-def __ne__(self, obj):
-    """Stub.__ne__"""
-    return not self.__eq__(obj)
-</t>
 <t tx="ekr.20160203130717.1">
 def __eq__(self, obj):
     """Return True if two Patterns are equivalent."""
@@ -1267,10 +1238,6 @@ def __ne__(self, obj):
 def __hash__(self):
     '''Pattern.__hash__'''
     return len(self.find_s) + len(self.repl_s)</t>
-<t tx="ekr.20160203140342.1">
-def __hash__(self):
-    '''Stub.__hash__. Equality depends *only* on full_name and kind.'''
-    return len(self.kind) + sum([ord(z) for z in self.full_name])</t>
 <t tx="ekr.20160203183934.1">
 def shortFileName(self,fileName, n=None):
     if n is None or n &lt; 1:
@@ -2105,15 +2072,6 @@ def dump(title, s=None):
     else:
         print('===== %s...\n' % title)
 </t>
-<t tx="ekr.20160210111955.1">
-def __repr__(self):
-    '''Stub.__repr__.'''
-    return 'Stub: %s %s' % (id(self), self.full_name)
-    
-def __str__(self):
-    '''Stub.__repr__.'''
-    return 'Stub: %s' % self.full_name
-</t>
 <t tx="ekr.20160210112634.1"></t>
 <t tx="ekr.20160210112945.1">&lt;&lt; imports &gt;&gt;
 @others
@@ -2147,31 +2105,6 @@ assert stub_3.parents() == ['stub_1', 'stub_2'], stub_3.parents()
 assert stub_1.level() == 0
 assert stub_2.level() == 1
 assert stub_3.level() == 2
-</t>
-<t tx="ekr.20160210132520.1">
-def level(self):
-    '''Return the number of parents.'''
-    return len(self.parents())
-    
-def parents(self):
-    '''Return a list of this stub's parents.'''
-    return self.full_name.split('.')[:-1]
-</t>
-<t tx="ekr.20160210134702.1">
-def __init__(self, kind, name, parent=None, stack=None):
-    '''Stub ctor. Equality depends only on full_name and kind.'''
-    self.children = []
-    self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
-    self.kind = kind
-    self.name = name
-    self.out_list = []
-    self.parent = parent
-    self.stack = stack # StubTraverser.context_stack.
-    if stack:
-        assert stack[-1] == parent.name, (stack[-1], parent.name)
-    if parent:
-        assert isinstance(parent, Stub)
-        parent.children.append(self)
 </t>
 <t tx="ekr.20160210141342.1">
 def dump_dict(title, d):
