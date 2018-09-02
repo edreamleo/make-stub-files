@@ -2390,8 +2390,6 @@ class StubTraverser (ast.NodeVisitor):
 
     def output_stubs(self, stub):
         '''Output this stub and all its descendants.'''
-        g.trace()
-        g.printObj(stub)
         for s in stub.out_list or []:
             # Indentation must be present when an item is added to stub.out_list.
             if self.output_file:

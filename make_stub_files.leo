@@ -779,6 +779,10 @@
 <v t="ekr.20160318141204.128"></v>
 <v t="ekr.20160318141204.173"></v>
 <v t="ekr.20180901051603.1"></v>
+<v t="ekr.20160318141204.187"></v>
+<v t="ekr.20160318141204.188"></v>
+<v t="ekr.20160209194832.1"></v>
+<v t="ekr.20160318141204.174"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -4194,19 +4198,14 @@ def output_time_stamp(self):
 <t tx="ekr.20160209194832.1">
 def add_stub(self, d, stub):
     '''Add the stub to d, checking that it does not exist.'''
-    trace = False ; verbose = False
     key = stub.full_name
     assert key
     if key in d:
-        caller = g.callers(2).split(',')[1]
+        caller = g.caller()
         g.trace('Ignoring duplicate entry for %s in %s' % (stub, caller))
     else:
         d [key] = stub
-        if trace and verbose:
-            caller = g.callers(2).split(',')[1]
-            g.trace('%17s %s' % (caller, stub.full_name))
-        elif trace:
-            g.trace(stub.full_name)</t>
+</t>
 <t tx="ekr.20160210041431.1">
 def merge_stubs(self, new_stubs, old_root, new_root, trace=False):
     '''
@@ -8281,8 +8280,6 @@ def run(self, node):
 <t tx="ekr.20160318141204.174">
 def output_stubs(self, stub):
     '''Output this stub and all its descendants.'''
-    g.trace()
-    g.printObj(stub)
     for s in stub.out_list or []:
         # Indentation must be present when an item is added to stub.out_list.
         if self.output_file:
