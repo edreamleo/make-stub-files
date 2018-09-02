@@ -987,6 +987,39 @@ class LeoGlobals:
             return isinstance(s, str)
         else:
             return isinstance(s, types.UnicodeType)
+    def objToString(self, obj, indent='', printCaller=False, tag=None):
+        '''Pretty print any Python object to a string.'''
+        # pylint: disable=undefined-loop-variable
+            # Looks like a a pylint bug.
+        #
+        # Compute s.
+        if isinstance(obj, dict):
+            s = dictToString(obj, indent=indent)
+        elif isinstance(obj, list):
+            s = listToString(obj, indent=indent)
+        elif isinstance(obj, tuple):
+            s = tupleToString(obj, indent=indent)
+        elif g.isString(obj):
+            # Print multi-line strings as lists.
+            s = obj
+            lines = g.splitLines(s)
+            if len(lines) > 1:
+                s = listToString(lines, indent=indent)
+            else:
+                s = repr(s)
+        else:
+            s = repr(obj)
+        #
+        # Compute the return value.
+        if printCaller and tag:
+            prefix = '%s: %s' % (g.caller(), tag)
+        elif printCaller or tag:
+            prefix = g.caller() if printCaller else tag
+        else:
+            prefix = None
+        return '%s...\n%s\n' % (prefix, s) if prefix else s
+
+    toString = objToString
 
     def pdb(self):
         try:
@@ -995,6 +1028,13 @@ class LeoGlobals:
         except ImportError:
             import pdb
             pdb.set_trace()
+    def printObj(self, obj, indent='', printCaller=False, tag=None):
+        '''Pretty print any Python object using g.pr.'''
+        print(self.objToString(obj, indent=indent, printCaller=printCaller, tag=tag))
+
+    printDict = printObj
+    printList = printObj
+    printTuple = printObj
 
     def shortFileName(self,fileName, n=None):
         if n is None or n < 1:
@@ -1265,7 +1305,6 @@ class ReduceTypes:
         It suits the other methods of this class *not* to test inside inner
         brackets. This prevents unwanted Any types.
         '''
-        trace = False
         s1 = s
         s = s.strip()
         table = (
@@ -1320,7 +1359,6 @@ class ReduceTypes:
                 pattern = Pattern(s2+'[*]', s)
                 if pattern.match_entire_string(s):
                     return True
-        if trace: g.trace('Fail:', s1)
         return False
 
     def reduce_collection(self, aList, kind):
@@ -1386,8 +1424,10 @@ class ReduceTypes:
         Returning a string means that all traversers always return strings,
         never lists.
         '''
-        trace = False
-        if trace: g.trace('=====', self.aList)
+        trace = True
+        if trace:
+            g.trace()
+            g.printObj(self.aList)
         r = [('None' if z in ('', None) else z) for z in self.aList]
         assert None not in r
         self.optional = 'None' in r
@@ -2293,6 +2333,8 @@ class StubTraverser (ast.NodeVisitor):
 
     def output_stubs(self, stub):
         '''Output this stub and all its descendants.'''
+        g.trace()
+        g.printObj(stub)
         for s in stub.out_list or []:
             # Indentation must be present when an item is added to stub.out_list.
             if self.output_file:
@@ -2318,7 +2360,6 @@ class StubTraverser (ast.NodeVisitor):
         
         Return old_root, or new_root if there are any errors.
         '''
-        trace = False ; verbose = False
         s = self.get_stub_file(fn)
         if not s or not s.strip():
             return new_root
@@ -2330,12 +2371,12 @@ class StubTraverser (ast.NodeVisitor):
         old_d, old_root = self.parse_stub_file(s, root_name='<old-stubs>')
         if old_root:
             # Merge new stubs into the old tree.
-            if trace and verbose:
+            if 0:
                 print(self.trace_stubs(old_root, header='old_root'))
                 print(self.trace_stubs(new_root, header='new_root'))
             print('***** updating stubs from %s *****' % fn)
             self.merge_stubs(self.stubs_dict.values(), old_root, new_root)
-            if trace:
+            if 0:
                 print(self.trace_stubs(old_root, header='updated_root'))
             return old_root
         else:
@@ -2773,6 +2814,7 @@ class TestClass:
     # pylint: disable=unsubscriptable-object
 
     def parse_group(group):
+        # pylint: disable=unsupported-delete-operation
         if len(group) >= 3 and group[-2] == 'as':
             del group[-2:]
         ndots = 0
