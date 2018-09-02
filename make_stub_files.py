@@ -1708,6 +1708,8 @@ class StandAloneMakeStubFile:
     def scan_options(self):
         '''Set all configuration-related ivars.'''
         trace = False
+        if trace:
+            g.trace('config file', self.config_fn)
         if not self.config_fn:
             return
         self.parser = parser = self.create_parser()
@@ -2725,9 +2727,8 @@ class StubTraverser (ast.NodeVisitor):
         # Assign default values to the last args.
         result = []
         n_plain = len(args) - len(defaults)
-        # pylint: disable=consider-using-enumerate
-        for i in range(len(args)):
-            s = self.munge_arg(args[i])
+        for i, arg in enumerate(args):
+            s = self.munge_arg(arg)
             if i < n_plain:
                 result.append(s)
             else:
@@ -2745,6 +2746,8 @@ class StubTraverser (ast.NodeVisitor):
             result.append('**' + name)
         return ', '.join(result)
 
+    type_pattern = re.compile(r'.*:.*')
+
     def munge_arg(self, s):
         '''Add an annotation for s if possible.'''
         if s == 'self':
@@ -2755,6 +2758,10 @@ class StubTraverser (ast.NodeVisitor):
         if self.warn and s not in self.warn_list:
             self.warn_list.append(s)
             print('no annotation for %s' % s)
+        # Fix issue #3.
+        if self.type_pattern.match(s):
+            ### g.trace('MATCH 2', s)
+            return s
         return s + ': Any'
 
     def format_returns(self, node):

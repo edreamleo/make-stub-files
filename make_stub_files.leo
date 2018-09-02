@@ -302,7 +302,7 @@
 <v t="ekr.20160318141204.186"><vh>st.visit_ClassDef</vh></v>
 <v t="ekr.20160318141204.187"><vh>st.visit_FunctionDef &amp; helpers</vh>
 <v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160318141204.189"><vh>st.munge_arg OK</vh></v>
+<v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
 </v>
 <v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers</vh>
 <v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
@@ -433,11 +433,31 @@
 </v>
 <v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh></v>
 </v>
+<v t="ekr.20180901051603.1"></v>
 <v t="ekr.20180902033513.1"><vh>--------</vh></v>
 <v t="ekr.20160318141204.128"></v>
 <v t="ekr.20160318141204.173"></v>
-<v t="ekr.20180901051603.1"></v>
 <v t="ekr.20160318141204.187"></v>
+<v t="ekr.20160318141204.188"></v>
+<v t="ekr.20160318141204.189"></v>
+<v t="ekr.20180902054517.1"><vh>git diff HEAD </vh>
+<v t="ekr.20180902054517.2"><vh>make_stub_files.py</vh>
+<v t="ekr.20180902054517.415"><vh>Changed</vh>
+<v t="ekr.20180902054517.416"><vh>msf.scan_options &amp; helpers</vh>
+<v t="ekr.20180902054517.417"><vh>Old:msf.scan_options &amp; helpers</vh></v>
+<v t="ekr.20160318141204.132"></v>
+</v>
+<v t="ekr.20180902054517.418"><vh>st.format_arguments &amp; helper</vh>
+<v t="ekr.20180902054517.419"><vh>Old:st.format_arguments &amp; helper</vh></v>
+<v t="ekr.20160318141204.188"></v>
+</v>
+<v t="ekr.20180902054517.420"><vh>st.munge_arg BUG</vh>
+<v t="ekr.20180902054517.421"><vh>Old:st.munge_arg BUG</vh></v>
+<v t="ekr.20160318141204.189"></v>
+</v>
+</v>
+</v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -3518,6 +3538,8 @@ def scan_command_line(self):
 def scan_options(self):
     '''Set all configuration-related ivars.'''
     trace = False
+    if trace:
+        g.trace('config file', self.config_fn)
     if not self.config_fn:
         return
     self.parser = parser = self.create_parser()
@@ -4629,19 +4651,12 @@ def format_arguments(self, node):
     assert isinstance(node,ast.arguments), node
     args = [self.raw_format(z) for z in node.args]
     defaults = [self.raw_format(z) for z in node.defaults]
-    g.trace('general patterns')
-    g.printObj(self.general_patterns)
-    g.trace('args...')
-    g.printObj(args)
     # Assign default values to the last args.
     result = []
     n_plain = len(args) - len(defaults)
-    #### py---lint: disable=consider-using-enumerate
-    ### for i in range(len(args)):
     for i, arg in enumerate(args):
-        g.trace(i, i&lt;=n_plain, arg)
         s = self.munge_arg(arg)
-        if i &lt;= n_plain: ###
+        if i &lt; n_plain:
             result.append(s)
         else:
             result.append('%s=%s' % (s, defaults[i - n_plain]))
@@ -4656,10 +4671,11 @@ def format_arguments(self, node):
         if hasattr(ast, 'arg'): # python 3:
             name = self.raw_format(name)
         result.append('**' + name)
-    g.printObj(result)
     return ', '.join(result)
 </t>
 <t tx="ekr.20160318141204.189">
+type_pattern = re.compile(r'.*:.*')
+
 def munge_arg(self, s):
     '''Add an annotation for s if possible.'''
     if s == 'self':
@@ -4670,6 +4686,10 @@ def munge_arg(self, s):
     if self.warn and s not in self.warn_list:
         self.warn_list.append(s)
         print('no annotation for %s' % s)
+    # Fix issue #3.
+    if self.type_pattern.match(s):
+        ### g.trace('MATCH 2', s)
+        return s
     return s + ': Any'
 </t>
 <t tx="ekr.20160318141204.19">
@@ -5954,14 +5974,15 @@ assert got == expected, 'expected: %r\ngot:    %r' % (expected, got)</t>
 <t tx="ekr.20180901050914.1"></t>
 <t tx="ekr.20180901051603.1"># https://github.com/edreamleo/make-stub-files/issues/3
 commands = [
-    'cls',
-    'python make_stub_files.py -o -s bug3.py',
+    # 'cls',
+    'python make_stub_files.py -c make_stub_files.cfg -o -s bug3.py',
 ]
 g.execute_shell_commands(commands, trace=True)
 with open('bug3.pyi') as f:
     s = f.read()
 lines = g.splitLines(s)
-got = ''.join(lines[1:])
+# Ignore the first 4 lines of the generated .pyi file.
+got = ''.join(lines[4:])
 # The input file 
 expected = '''\
 class UnsupportedAlgorithm(Exception):
@@ -6069,6 +6090,203 @@ toString = objToString
     result.append(')')
     s = ''.join(result)
     return '%s...\n%s\n' % (tag, s) if tag else s
+</t>
+<t tx="ekr.20180902054517.1">@nosearch
+HEAD=0a47138</t>
+<t tx="ekr.20180902054517.2">@language patch
+--- HEAD
++++ uncommitted
+@@ -1708,6 +1708,8 @@
+     def scan_options(self):
+         '''Set all configuration-related ivars.'''
+         trace = False
++        if trace:
++            g.trace('config file', self.config_fn)
+         if not self.config_fn:
+             return
+         self.parser = parser = self.create_parser()
+@@ -2725,9 +2727,8 @@
+         # Assign default values to the last args.
+         result = []
+         n_plain = len(args) - len(defaults)
+-        # pylint: disable=consider-using-enumerate
+-        for i in range(len(args)):
+-            s = self.munge_arg(args[i])
++        for i, arg in enumerate(args):
++            s = self.munge_arg(arg)
+             if i &lt; n_plain:
+                 result.append(s)
+             else:
+@@ -2745,6 +2746,8 @@
+             result.append('**' + name)
+         return ', '.join(result)
+ 
++    type_pattern = re.compile(r'.*:.*')
++
+     def munge_arg(self, s):
+         '''Add an annotation for s if possible.'''
+         if s == 'self':
+@@ -2755,6 +2758,10 @@
+         if self.warn and s not in self.warn_list:
+             self.warn_list.append(s)
+             print('no annotation for %s' % s)
++        # Fix issue #3.
++        if self.type_pattern.match(s):
++            ### g.trace('MATCH 2', s)
++            return s
+         return s + ': Any'
+ 
+     def format_returns(self, node):
+@language python
+</t>
+<t tx="ekr.20180902054517.415"></t>
+<t tx="ekr.20180902054517.416">@language patch
+--- HEAD
++++ uncommitted
+@@ -2,6 +2,8 @@
+ def scan_options(self):
+     '''Set all configuration-related ivars.'''
+     trace = False
++    if trace:
++        g.trace('config file', self.config_fn)
+     if not self.config_fn:
+         return
+     self.parser = parser = self.create_parser()
+@language python
+</t>
+<t tx="ekr.20180902054517.417">
+def scan_options(self):
+    '''Set all configuration-related ivars.'''
+    trace = False
+    if not self.config_fn:
+        return
+    self.parser = parser = self.create_parser()
+    s = self.get_config_string()
+    self.init_parser(s)
+    if self.files:
+        files_source = 'command-line'
+        files = self.files
+    elif parser.has_section('Global'):
+        files_source = 'config file'
+        files = parser.get('Global', 'files')
+        files = [z.strip() for z in files.split('\n') if z.strip()]
+    else:
+        return
+    files2 = []
+    for z in files:
+        files2.extend(glob.glob(self.finalize(z)))
+    self.files = [z for z in files2 if z and os.path.exists(z)]
+    if trace:
+        print('Files (from %s)...\n' % files_source)
+        for z in self.files:
+            print(z)
+        print('')
+    if 'output_directory' in parser.options('Global'):
+        s = parser.get('Global', 'output_directory')
+        output_dir = self.finalize(s)
+        if os.path.exists(output_dir):
+            self.output_directory = output_dir
+            if self.verbose:
+                print('output directory: %s\n' % output_dir)
+        else:
+            print('output directory not found: %s\n' % output_dir)
+            self.output_directory = None # inhibit run().
+    if 'prefix_lines' in parser.options('Global'):
+        prefix = parser.get('Global', 'prefix_lines')
+        self.prefix_lines = prefix.split('\n')
+            # The parser does not preserve leading whitespace.
+        if trace:
+            print('Prefix lines...\n')
+            for z in self.prefix_lines:
+                print(z)
+            print('')
+    self.def_patterns = self.scan_patterns('Def Name Patterns')
+    self.general_patterns = self.scan_patterns('General Patterns')
+    self.make_patterns_dict()
+</t>
+<t tx="ekr.20180902054517.418">@language patch
+--- HEAD
++++ uncommitted
+@@ -12,9 +12,8 @@
+     # Assign default values to the last args.
+     result = []
+     n_plain = len(args) - len(defaults)
+-    # pylint: disable=consider-using-enumerate
+-    for i in range(len(args)):
+-        s = self.munge_arg(args[i])
++    for i, arg in enumerate(args):
++        s = self.munge_arg(arg)
+         if i &lt; n_plain:
+             result.append(s)
+         else:
+@language python
+</t>
+<t tx="ekr.20180902054517.419">
+# arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
+
+def format_arguments(self, node):
+    '''
+    Format the arguments node.
+    Similar to AstFormat.do_arguments, but it is not a visitor!
+    '''
+    assert isinstance(node,ast.arguments), node
+    args = [self.raw_format(z) for z in node.args]
+    defaults = [self.raw_format(z) for z in node.defaults]
+    # Assign default values to the last args.
+    result = []
+    n_plain = len(args) - len(defaults)
+    # pylint: disable=consider-using-enumerate
+    for i in range(len(args)):
+        s = self.munge_arg(args[i])
+        if i &lt; n_plain:
+            result.append(s)
+        else:
+            result.append('%s=%s' % (s, defaults[i - n_plain]))
+    # Now add the vararg and kwarg args.
+    name = getattr(node, 'vararg', None)
+    if name:
+        if hasattr(ast, 'arg'): # python 3:
+            name = self.raw_format(name)
+        result.append('*' + name)
+    name = getattr(node, 'kwarg', None)
+    if name:
+        if hasattr(ast, 'arg'): # python 3:
+            name = self.raw_format(name)
+        result.append('**' + name)
+    return ', '.join(result)
+</t>
+<t tx="ekr.20180902054517.420">@language patch
+--- HEAD
++++ uncommitted
+@@ -1,3 +1,5 @@
++
++type_pattern = re.compile(r'.*:.*')
+ 
+ def munge_arg(self, s):
+     '''Add an annotation for s if possible.'''
+@@ -9,4 +11,8 @@
+     if self.warn and s not in self.warn_list:
+         self.warn_list.append(s)
+         print('no annotation for %s' % s)
++    # Fix issue #3.
++    if self.type_pattern.match(s):
++        ### g.trace('MATCH 2', s)
++        return s
+     return s + ': Any'
+@language python
+</t>
+<t tx="ekr.20180902054517.421">
+def munge_arg(self, s):
+    '''Add an annotation for s if possible.'''
+    if s == 'self':
+        return s
+    for pattern in self.general_patterns:
+        if pattern.match_entire_string(s):
+            return '%s: %s' % (s, pattern.repl_s)
+    if self.warn and s not in self.warn_list:
+        self.warn_list.append(s)
+        print('no annotation for %s' % s)
+    return s + ': Any'
 </t>
 </tnodes>
 </leo_file>
