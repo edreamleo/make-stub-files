@@ -12,3 +12,4 @@ class aClass2:
 i1, i2 = aClass(), aClass2()
 i1.foo()
 i2.foo()
+

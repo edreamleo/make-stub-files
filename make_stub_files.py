@@ -1481,10 +1481,6 @@ class ReduceTypes:
         Returning a string means that all traversers always return strings,
         never lists.
         '''
-        trace = True
-        if trace:
-            g.trace()
-            g.printObj(self.aList)
         r = [('None' if z in ('', None) else z) for z in self.aList]
         assert None not in r
         self.optional = 'None' in r

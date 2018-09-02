@@ -76,13 +76,6 @@
 </v>
 </v>
 <v t="ekr.20160131174909.1"><vh>To do</vh></v>
-<v t="ekr.20160318141204.141"><vh>class Stub(object)</vh>
-<v t="ekr.20160318141204.142"><vh>stub.ctor</vh></v>
-<v t="ekr.20160318141204.143"><vh>stub.__eq__ and __ne__</vh></v>
-<v t="ekr.20160318141204.144"><vh>stub.__hash__</vh></v>
-<v t="ekr.20160318141204.145"><vh>stub.__repr__and __str__</vh></v>
-<v t="ekr.20160318141204.146"><vh>stub.parents and level</vh></v>
-</v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
 <v t="ekr.20160318141204.5"><vh>merge_types (not used)</vh></v>
@@ -96,52 +89,60 @@
 <v t="ekr.20160206120522.1"><vh>pdb</vh></v>
 <v t="ekr.20160207115604.1"><vh>truncate</vh></v>
 </v>
-<v t="ekr.20160131180118.1"><vh>class LeoGlobals</vh>
-<v t="ekr.20160210143802.1"><vh>class NullObject (Python Cookbook)</vh></v>
-<v t="ekr.20160203095618.2"><vh>g._callerName</vh></v>
-<v t="ekr.20160203095618.1"><vh>g.callers</vh></v>
-<v t="ekr.20160202170529.1"><vh>g.cls</vh></v>
-<v t="ekr.20160131180244.1"><vh>g.pdb</vh></v>
-<v t="ekr.20160203183934.1"><vh>g.shortFileName</vh></v>
-<v t="ekr.20160206101140.1"><vh>g.splitLines</vh></v>
-<v t="ekr.20160131180306.1"><vh>g.trace</vh></v>
+<v t="ekr.20160318141204.92"><vh>class LeoGlobals</vh>
+<v t="ekr.20160318141204.93"><vh>class NullObject (Python Cookbook)</vh></v>
+<v t="ekr.20160318141204.94"><vh>g._callerName</vh></v>
+<v t="ekr.20180902035806.1"><vh>g.caller</vh></v>
+<v t="ekr.20160318141204.95"><vh>g.callers</vh></v>
+<v t="ekr.20160318141204.96"><vh>g.cls</vh></v>
+<v t="ekr.20160318141204.97"><vh>g.isString &amp; isUnicode (make_stub_files.py)</vh></v>
+<v t="ekr.20180902034437.1"><vh>g.objToSTring &amp; helpers</vh>
+<v t="ekr.20180902041247.1"><vh>g.dictToString</vh></v>
+<v t="ekr.20180902041311.1"><vh>g.listToString</vh></v>
+<v t="ekr.20180902041320.1"><vh>g.tupleToString</vh></v>
 </v>
-<v t="ekr.20160128041938.1"><vh>class Pattern(object)</vh>
-<v t="ekr.20160128113859.1"><vh>pattern.ctor</vh></v>
-<v t="ekr.20160203130717.1"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
-<v t="ekr.20160128113914.1"><vh>pattern.str &amp; repr</vh></v>
-<v t="ekr.20160128042857.1"><vh>pattern.is_balanced</vh></v>
-<v t="ekr.20160206174054.1"><vh>pattern.is_regex</vh></v>
-<v t="ekr.20160128042705.1"><vh>pattern.all_matches &amp; helpers</vh>
-<v t="ekr.20160128051025.1"><vh>pattern.full_balanced_match</vh></v>
-<v t="ekr.20160128045845.1"><vh>pattern.match_balanced</vh></v>
+<v t="ekr.20160318141204.98"><vh>g.pdb</vh></v>
+<v t="ekr.20180902034446.1"><vh>g.printObj</vh></v>
+<v t="ekr.20160318141204.99"><vh>g.shortFileName</vh></v>
+<v t="ekr.20160318141204.100"><vh>g.splitLines</vh></v>
+<v t="ekr.20160318141204.101"><vh>g.trace</vh></v>
 </v>
-<v t="ekr.20160202070025.1"><vh>pattern.match (trace-matches)</vh></v>
-<v t="ekr.20160128114726.1"><vh>pattern.match_entire_string</vh></v>
-<v t="ekr.20160206174740.1"><vh>pattern.replace &amp; helpers</vh>
-<v t="ekr.20160131204607.1"><vh>pattern.replace_balanced</vh></v>
-<v t="ekr.20160206174547.1"><vh>pattern.replace_regex</vh></v>
+<v t="ekr.20160318141204.102"><vh>class Pattern(object)</vh>
+<v t="ekr.20160318141204.103"><vh>pattern.ctor</vh></v>
+<v t="ekr.20160318141204.104"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
+<v t="ekr.20160318141204.105"><vh>pattern.str &amp; repr</vh></v>
+<v t="ekr.20160318141204.106"><vh>pattern.is_balanced</vh></v>
+<v t="ekr.20160318141204.107"><vh>pattern.is_regex</vh></v>
+<v t="ekr.20160318141204.108"><vh>pattern.all_matches &amp; helpers</vh>
+<v t="ekr.20160318141204.109"><vh>pattern.full_balanced_match</vh></v>
+<v t="ekr.20160318141204.110"><vh>pattern.match_balanced</vh></v>
+</v>
+<v t="ekr.20160318141204.111"><vh>pattern.match (trace-matches)</vh></v>
+<v t="ekr.20160318141204.112"><vh>pattern.match_entire_string</vh></v>
+<v t="ekr.20160318141204.113"><vh>pattern.replace &amp; helpers</vh>
+<v t="ekr.20160318141204.114"><vh>pattern.replace_balanced</vh></v>
+<v t="ekr.20160318141204.115"><vh>pattern.replace_regex</vh></v>
 </v>
 </v>
 </v>
 <v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
-<v t="ekr.20160214044429.1"><vh>class ReduceTypes</vh>
-<v t="ekr.20160214044444.1"><vh>rt.ctor</vh></v>
-<v t="ekr.20160130034812.1"><vh>rt.is_known_type</vh></v>
-<v t="ekr.20160214051730.1"><vh>rt.reduce_collection</vh></v>
-<v t="ekr.20160205101134.1"><vh>rt.reduce_numbers</vh></v>
-<v t="ekr.20160214044515.1"><vh>rt.reduce_types</vh></v>
-<v t="ekr.20160214094129.1"><vh>rt.reduce_unknowns</vh></v>
-<v t="ekr.20160214044536.1"><vh>rt.show</vh></v>
-<v t="ekr.20160206212123.1"><vh>rt.split_types</vh></v>
+<v t="ekr.20160318141204.116"><vh>class ReduceTypes</vh>
+<v t="ekr.20160318141204.117"><vh>rt.ctor</vh></v>
+<v t="ekr.20160318141204.118"><vh>rt.is_known_type</vh></v>
+<v t="ekr.20160318141204.119"><vh>rt.reduce_collection</vh></v>
+<v t="ekr.20160318141204.120"><vh>rt.reduce_numbers</vh></v>
+<v t="ekr.20160318141204.121"><vh>rt.reduce_types</vh></v>
+<v t="ekr.20160318141204.122"><vh>rt.reduce_unknowns</vh></v>
+<v t="ekr.20160318141204.123"><vh>rt.show</vh></v>
+<v t="ekr.20160318141204.124"><vh>rt.split_types</vh></v>
 </v>
 </v>
 <v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
-<v t="ekr.20160128041938.1"></v>
-<v t="ekr.20160214044429.1"></v>
+<v t="ekr.20160318141204.102"></v>
+<v t="ekr.20160318141204.116"></v>
 </v>
 <v t="ekr.20160207162818.1"><vh>@test split_types</vh>
-<v t="ekr.20160214044429.1"></v>
+<v t="ekr.20160318141204.116"></v>
 </v>
 <v t="ekr.20160210145128.1"><vh>@test st.find_stub &amp; find_parent_stub</vh>
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (@test st.find/parent_stub)</vh></v>
@@ -234,24 +235,7 @@
 <v t="ekr.20160318141204.90"><vh>class AstArgFormatter (AstFormatter)</vh>
 <v t="ekr.20160318141204.91"><vh>sf.Constants &amp; Name</vh></v>
 </v>
-<v t="ekr.20160318141204.92"><vh>class LeoGlobals</vh>
-<v t="ekr.20160318141204.93"><vh>class NullObject (Python Cookbook)</vh></v>
-<v t="ekr.20160318141204.94"><vh>g._callerName</vh></v>
-<v t="ekr.20180902035806.1"><vh>g.caller</vh></v>
-<v t="ekr.20160318141204.95"><vh>g.callers</vh></v>
-<v t="ekr.20160318141204.96"><vh>g.cls</vh></v>
-<v t="ekr.20160318141204.97"><vh>g.isString &amp; isUnicode (make_stub_files.py)</vh></v>
-<v t="ekr.20180902034437.1"><vh>g.objToSTring &amp; helpers</vh>
-<v t="ekr.20180902041247.1"><vh>g.dictToString</vh></v>
-<v t="ekr.20180902041311.1"><vh>g.listToString</vh></v>
-<v t="ekr.20180902041320.1"><vh>g.tupleToString</vh></v>
-</v>
-<v t="ekr.20160318141204.98"><vh>g.pdb</vh></v>
-<v t="ekr.20180902034446.1"><vh>g.printObj</vh></v>
-<v t="ekr.20160318141204.99"><vh>g.shortFileName</vh></v>
-<v t="ekr.20160318141204.100"><vh>g.splitLines</vh></v>
-<v t="ekr.20160318141204.101"><vh>g.trace</vh></v>
-</v>
+<v t="ekr.20160318141204.92"></v>
 <v t="ekr.20160318141204.147"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160318141204.148"><vh>sf.ctor</vh></v>
 <v t="ekr.20160318141204.149"><vh>sf.match_all</vh></v>
@@ -279,7 +263,13 @@
 <v t="ekr.20160318141204.168"><vh>sf.Return</vh></v>
 </v>
 </v>
-<v t="ekr.20160318141204.141"></v>
+<v t="ekr.20160318141204.141"><vh>class Stub(object)</vh>
+<v t="ekr.20160318141204.142"><vh>stub.ctor</vh></v>
+<v t="ekr.20160318141204.143"><vh>stub.__eq__ and __ne__</vh></v>
+<v t="ekr.20160318141204.144"><vh>stub.__hash__</vh></v>
+<v t="ekr.20160318141204.145"><vh>stub.__repr__and __str__</vh></v>
+<v t="ekr.20160318141204.146"><vh>stub.parents and level</vh></v>
+</v>
 <v t="ekr.20160318141204.169"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160318141204.170"><vh>st.ctor</vh></v>
 <v t="ekr.20160318141204.171"><vh>st.add_stub</vh></v>
@@ -332,7 +322,7 @@
 </v>
 <v t="ekr.20160210112945.1"><vh>@test Stub class</vh>
 <v t="ekr.20160203075612.1"></v>
-<v t="ekr.20160131180118.1"></v>
+<v t="ekr.20160318141204.92"></v>
 <v t="ekr.20160318141204.141"></v>
 </v>
 <v t="ekr.20160207115947.1"><vh>@test truncate</vh>
@@ -360,33 +350,8 @@
 <v t="ekr.20160318141204.14"></v>
 <v t="ekr.20160318141204.90"></v>
 <v t="ekr.20160318141204.92"></v>
-<v t="ekr.20160318141204.102"><vh>class Pattern(object)</vh>
-<v t="ekr.20160318141204.103"><vh>pattern.ctor</vh></v>
-<v t="ekr.20160318141204.104"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
-<v t="ekr.20160318141204.105"><vh>pattern.str &amp; repr</vh></v>
-<v t="ekr.20160318141204.106"><vh>pattern.is_balanced</vh></v>
-<v t="ekr.20160318141204.107"><vh>pattern.is_regex</vh></v>
-<v t="ekr.20160318141204.108"><vh>pattern.all_matches &amp; helpers</vh>
-<v t="ekr.20160318141204.109"><vh>pattern.full_balanced_match</vh></v>
-<v t="ekr.20160318141204.110"><vh>pattern.match_balanced</vh></v>
-</v>
-<v t="ekr.20160318141204.111"><vh>pattern.match (trace-matches)</vh></v>
-<v t="ekr.20160318141204.112"><vh>pattern.match_entire_string</vh></v>
-<v t="ekr.20160318141204.113"><vh>pattern.replace &amp; helpers</vh>
-<v t="ekr.20160318141204.114"><vh>pattern.replace_balanced</vh></v>
-<v t="ekr.20160318141204.115"><vh>pattern.replace_regex</vh></v>
-</v>
-</v>
-<v t="ekr.20160318141204.116"><vh>class ReduceTypes</vh>
-<v t="ekr.20160318141204.117"><vh>rt.ctor</vh></v>
-<v t="ekr.20160318141204.118"><vh>rt.is_known_type</vh></v>
-<v t="ekr.20160318141204.119"><vh>rt.reduce_collection</vh></v>
-<v t="ekr.20160318141204.120"><vh>rt.reduce_numbers</vh></v>
-<v t="ekr.20160318141204.121"><vh>rt.reduce_types</vh></v>
-<v t="ekr.20160318141204.122"><vh>rt.reduce_unknowns</vh></v>
-<v t="ekr.20160318141204.123"><vh>rt.show</vh></v>
-<v t="ekr.20160318141204.124"><vh>rt.split_types</vh></v>
-</v>
+<v t="ekr.20160318141204.102"></v>
+<v t="ekr.20160318141204.116"></v>
 <v t="ekr.20160318141204.125"><vh>class StandAloneMakeStubFile</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
 <v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
@@ -544,108 +509,6 @@ r[*]: str
 str[*]: str
 ###.*\.__name__$: str
 ###.*\.hash()$: int
-</t>
-<t tx="ekr.20160128041938.1">
-
-class Pattern(object):
-    '''
-    A class representing regex or balanced patterns.
-    
-    Sample matching code, for either kind of pattern:
-        
-        for m in reversed(pattern.all_matches(s)):
-            s = pattern.replace(m, s)
-    '''
-    @others
-</t>
-<t tx="ekr.20160128042705.1">
-def all_matches(self, s):
-    '''
-    Return a list of match objects for all matches in s.
-    These are regex match objects or (start, end) for balanced searches.
-    '''
-    trace = False
-    if self.is_balanced():
-        aList, i = [], 0
-        while i &lt; len(s):
-            progress = i
-            j = self.full_balanced_match(s, i)
-            if j is None:
-                i += 1
-            else:
-                aList.append((i,j),)
-                i = j
-            assert progress &lt; i
-        return aList
-    else:
-        return list(self.regex.finditer(s))
-</t>
-<t tx="ekr.20160128042857.1">
-def is_balanced(self):
-    '''Return True if self.find_s is a balanced pattern.'''
-    s = self.find_s
-    if s.endswith('*'):
-        return True
-    for pattern in ('(*)', '[*]', '{*}'):
-        if s.find(pattern) &gt; -1:
-            return True
-    return False
-</t>
-<t tx="ekr.20160128045845.1">
-def match_balanced(self, delim, s, i):
-    '''
-    delim == s[i] and delim is in '([{'
-    Return the index of the end of the balanced parenthesized string, or len(s)+1.
-    '''
-    trace = False
-    assert s[i] == delim, s[i]
-    assert delim in '([{'
-    delim2 = ')]}'['([{'.index(delim)]
-    assert delim2 in ')]}'
-    i1, level = i, 0
-    while i &lt; len(s):
-        progress = i
-        ch = s[i]
-        i += 1
-        if ch == delim:
-            level += 1
-        elif ch == delim2:
-            level -= 1
-            if level == 0:
-                if trace: g.trace('found: %s' % s[i1:i])
-                return i
-        assert progress &lt; i
-    # Unmatched: a syntax error.
-    g.trace('unmatched %s in %s' % (delim, s), g.callers(4))
-    return len(s) + 1
-</t>
-<t tx="ekr.20160128051025.1">
-def full_balanced_match(self, s, i):
-    '''Return the index of the end of the match found at s[i:] or None.'''
-    i1 = i
-    trace = False
-    if trace: g.trace(self.find_s, s[i:].rstrip())
-    pattern = self.find_s
-    j = 0 # index into pattern
-    while i &lt; len(s) and j &lt; len(pattern) and pattern[j] in ('*', s[i]):
-        progress = i
-        if pattern[j:j+3] in ('(*)', '[*]', '{*}'):
-            delim = pattern[j]
-            i = self.match_balanced(delim, s, i)
-            j += 3
-        elif j == len(pattern)-1 and pattern[j] == '*':
-            # A trailing * matches the rest of the string.
-            j += 1
-            i = len(s)
-            break
-        else:
-            i += 1
-            j += 1
-        assert progress &lt; i
-    found = i &lt;= len(s) and j == len(pattern)
-    if trace and found:
-        g.trace('%s -&gt; %s' % (pattern, s[i1:i]))
-    return i if found else None
 </t>
 <t tx="ekr.20160128102557.1"># An example configuration file for make_stub_files.py.
 # By default, make_stub_files.py uses ~/stubs/make_stub_files.cfg.
@@ -836,42 +699,6 @@ str[*]: str
 </t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128105006.1"></t>
-<t tx="ekr.20160128113859.1">
-def __init__ (self, find_s, repl_s=''):
-    '''Ctor for the Pattern class.'''
-    self.find_s = find_s
-    self.repl_s = repl_s
-    if self.is_regex():
-        self.regex = re.compile(find_s)
-    elif self.is_balanced():
-        self.regex = None
-    else:
-        # Escape all dangerous characters.
-        result = []
-        for ch in find_s:
-            if ch == '_' or ch.isalnum():
-                result.append(ch)
-            else:
-                result.append('\\'+ch)
-        self.regex = re.compile(''.join(result))
-</t>
-<t tx="ekr.20160128113914.1">
-def __repr__(self):
-    '''Pattern.__repr__'''
-    return '%s: %s' % (self.find_s, self.repl_s)
-    
-__str__ = __repr__
-</t>
-<t tx="ekr.20160128114726.1">
-def match_entire_string(self, s):
-    '''Return True if s matches self.find_s'''
-    if self.is_balanced():
-        j = self.full_balanced_match(s, 0)
-        return j == len(s)
-    else:
-        m = self.regex.match(s)
-        return m and m.group(0) == s
-</t>
 <t tx="ekr.20160128154704.1"></t>
 <t tx="ekr.20160128154715.1">import pdb
 import unittest
@@ -951,72 +778,6 @@ def test_is_known_type(self):
 *.pyi
 test/*.pyc
 </t>
-<t tx="ekr.20160130034812.1">
-def is_known_type(self, s):
-    '''
-    Return True if s is nothing but a single known type.
-
-    It suits the other methods of this class *not* to test inside inner
-    brackets. This prevents unwanted Any types.
-    '''
-    trace = False
-    s1 = s
-    s = s.strip()
-    table = (
-        '', 'None', # Tricky.
-        'complex', 'float', 'int', 'long', 'number',
-        'dict', 'list', 'tuple',
-        'bool', 'bytes', 'str', 'unicode',
-    )
-    for s2 in table:
-        if s2 == s:
-            return True
-        elif Pattern(s2+'(*)', s).match_entire_string(s):
-            return True
-    if s.startswith('[') and s.endswith(']'):
-        inner = s[1:-1]
-        return self.is_known_type(inner) if inner else True
-    elif s.startswith('(') and s.endswith(')'):
-        inner = s[1:-1]
-        return self.is_known_type(inner) if inner else True
-    elif s.startswith('{') and s.endswith('}'):
-        return True
-        # inner = s[1:-1]
-        # return self.is_known_type(inner) if inner else True
-    table = (
-        # Pep 484: https://www.python.org/dev/peps/pep-0484/
-        # typing module: https://docs.python.org/3/library/typing.html
-        # Test the most common types first.
-        'Any', 'Dict', 'List', 'Optional', 'Tuple', 'Union', 
-        # Not generated by this program, but could arise from patterns.
-        'AbstractSet', 'AnyMeta', 'AnyStr',
-        'BinaryIO', 'ByteString',
-        'Callable', 'CallableMeta', 'Container',
-        'Final', 'Generic', 'GenericMeta', 'Hashable',
-        'IO', 'ItemsView', 'Iterable', 'Iterator',
-        'KT', 'KeysView',
-        'Mapping', 'MappingView', 'Match',
-        'MutableMapping', 'MutableSequence', 'MutableSet',
-        'NamedTuple', 'OptionalMeta',
-        # 'POSIX', 'PY2', 'PY3',
-        'Pattern', 'Reversible',
-        'Sequence', 'Set', 'Sized',
-        'SupportsAbs', 'SupportsFloat', 'SupportsInt', 'SupportsRound',
-        'T', 'TextIO', 'TupleMeta', 'TypeVar', 'TypingMeta',
-        'Undefined', 'UnionMeta',
-        'VT', 'ValuesView', 'VarBinding',
-    )
-    for s2 in table:
-        if s2 == s:
-            return True
-        else:
-            # Don't look inside bracketss.
-            pattern = Pattern(s2+'[*]', s)
-            if pattern.match_entire_string(s):
-                return True
-    if trace: g.trace('Fail:', s1)
-    return False
-</t>
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
 
@@ -1026,59 +787,6 @@ more patterns.
 - Add more hard-coded patterns, especially binop patterns.
 - Rough edges re number types. Is reduce_numbers correct?
 - How are non-comment lines between subs updated?
-</t>
-<t tx="ekr.20160131180118.1">
-
-class LeoGlobals:
-    '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
-    @others
-</t>
-<t tx="ekr.20160131180244.1">
-def pdb(self):
-    try:
-        import leo.core.leoGlobals as leo_g
-        leo_g.pdb()
-    except ImportError:
-        import pdb
-        pdb.set_trace()
-</t>
-<t tx="ekr.20160131180306.1">
-def trace(self, *args, **keys):
-    try:
-        import leo.core.leoGlobals as leo_g
-        leo_g.trace(caller_level=2, *args, **keys)
-    except ImportError:
-        print(args, keys)
-</t>
-<t tx="ekr.20160131204607.1">
-def replace_balanced(self, s1, start, end):
-    '''
-    Use m (returned by all_matches) to replace s by the string implied by repr_s.
-    Within repr_s, * star matches corresponding * in find_s
-    '''
-    trace = False
-    s = s1[start:end]
-    f, r = self.find_s, self.repl_s
-    i1 = f.find('(*)')
-    i2 = f.find('[*]')
-    i3 = f.find('{*}')
-    if -1 == i1 == i2 == i3:
-        return s1[:start] + r + s1[end:]
-    j = r.find('*')
-    if j == -1:
-        return s1[:start] + r + s1[end:]
-    i = min([z for z in [i1, i2, i3] if z &gt; -1])
-    assert i &gt; -1 # i is an index into f AND s
-    delim = f[i]
-    if trace: g.trace('head', s[:i], f[:i])
-    assert s[:i] == f[:i], (s[:i], f[:i])
-    if trace: g.trace('delim',delim)
-    k = self.match_balanced(delim, s, i)
-    s_star = s[i+1:k-1]
-    if trace: g.trace('s_star',s_star)
-    repl = r[:j] + s_star + r[j+1:]
-    if trace: g.trace('repl',self.repl_s,'==&gt;',repl)
-    return s1[:start] + repl + s1[end:]
 </t>
 <t tx="ekr.20160202061118.1">
 seen_patterns = []
@@ -1121,42 +829,6 @@ def match(self, patterns, s):
             break
     return s
 </t>
-<t tx="ekr.20160202070025.1">
-def match(self, s, trace=False):
-    '''
-    Perform the match on the entire string if possible.
-    Return (found, new s)
-    '''
-    trace = False or trace
-    caller = g.callers(2).split(',')[0].strip()
-        # The caller of match_all.
-    s1 = truncate(s,40)
-    if self.is_balanced():
-        j = self.full_balanced_match(s, 0)
-        if j is None:
-            return False, s
-        else:
-            start, end = 0, len(s)
-            s = self.replace_balanced(s, start, end)
-            if trace:
-                g.trace('%-16s %30s %40s ==&gt; %s' % (caller, self, s1, s))
-            return True, s
-    else:
-        m = self.regex.match(s)
-        if m and m.group(0) == s:
-            s = self.replace_regex(m, s)
-            if trace:
-                g.trace('%-16s %30s %30s ==&gt; %s' % (caller, self, s1, s))
-            return True, s
-        else:
-            return False, s
-</t>
-<t tx="ekr.20160202170529.1">
-def cls(self):
-    '''Clear the screen.'''
-    if sys.platform.lower().startswith('win'):
-        os.system('cls')
-</t>
 <t tx="ekr.20160203075612.1">import ast
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
@@ -1176,97 +848,6 @@ try:
 except ImportError:
     import io # Python 3
 
-</t>
-<t tx="ekr.20160203095618.1">
-def callers(self, n=4, count=0, excludeCaller=True, files=False):
-    '''Return a list containing the callers of the function that called g.callerList.
-
-    If the excludeCaller keyword is True (the default), g.callers is not on the list.
-
-    If the files keyword argument is True, filenames are included in the list.
-    '''
-    # sys._getframe throws ValueError in both cpython and jython if there are less than i entries.
-    # The jython stack often has less than 8 entries,
-    # so we must be careful to call g._callerName with smaller values of i first.
-    result = []
-    i = 3 if excludeCaller else 2
-    while 1:
-        s = self._callerName(i, files=files)
-        # print(i,s)
-        if s:
-            result.append(s)
-        if not s or len(result) &gt;= n: break
-        i += 1
-    result.reverse()
-    if count &gt; 0: result = result[: count]
-    sep = '\n' if files else ','
-    return sep.join(result)
-</t>
-<t tx="ekr.20160203095618.2">
-def _callerName(self, n=1, files=False):
-    # print('_callerName: %s %s' % (n,files))
-    try: # get the function name from the call stack.
-        f1 = sys._getframe(n) # The stack frame, n levels up.
-        code1 = f1.f_code # The code object
-        name = code1.co_name
-        if name == '__init__':
-            name = '__init__(%s,line %s)' % (
-                self.shortFileName(code1.co_filename), code1.co_firstlineno)
-        if files:
-            return '%s:%s' % (self.shortFileName(code1.co_filename), name)
-        else:
-            return name # The code name
-    except ValueError:
-        # print('g._callerName: ValueError',n)
-        return '' # The stack is not deep enough.
-    except Exception:
-        # es_exception()
-        return '' # "&lt;no caller name&gt;"
-</t>
-<t tx="ekr.20160203130717.1">
-def __eq__(self, obj):
-    """Return True if two Patterns are equivalent."""
-    if isinstance(obj, Pattern):
-        return self.find_s == obj.find_s and self.repl_s == obj.repl_s
-    else:
-        return NotImplemented
-
-def __ne__(self, obj):
-    """Return True if two Patterns are not equivalent."""
-    return not self.__eq__(obj)
-
-def __hash__(self):
-    '''Pattern.__hash__'''
-    return len(self.find_s) + len(self.repl_s)</t>
-<t tx="ekr.20160203183934.1">
-def shortFileName(self,fileName, n=None):
-    if n is None or n &lt; 1:
-        return os.path.basename(fileName)
-    else:
-        return '/'.join(fileName.replace('\\', '/').split('/')[-n:])
-</t>
-<t tx="ekr.20160205101134.1">
-def reduce_numbers(self, aList):
-    '''
-    Return aList with all number types in aList replaced by the most
-    general numeric type in aList.
-    '''
-    trace = False
-    found = None
-    numbers = ('number', 'complex', 'float', 'long', 'int')
-    for kind in numbers:
-        for z in aList:
-            if z == kind:
-                found = kind
-                break
-        if found:
-            break
-    if found:
-        assert found in numbers, found
-        aList = [z for z in aList if z not in numbers]
-        aList.append(found)
-    if trace: g.trace(aList)
-    return aList
 </t>
 <t tx="ekr.20160206095102.1">&lt;&lt; docstring &gt;&gt;
 # **Note**: this is a Leo script.
@@ -1305,11 +886,6 @@ individual needs.
 The &lt;\&lt; file_template &gt;&gt; and &lt;\&lt; test_template &gt;&gt; sections in the TestWriter
 class determines exactly what this script writes.
 '''
-</t>
-<t tx="ekr.20160206101140.1">
-def splitLines(self, s):
-    '''Split s into lines, preserving trailing newlines.'''
-    return s.splitlines(True) if s else []
 </t>
 <t tx="ekr.20160206101802.10">
 def test(self,fn):
@@ -1746,48 +1322,6 @@ for aList, expected in table:
     got = ReduceTypes(aList).reduce_types()
     assert expected == got, '\naList:    %s\nexpected: %s\ngot:      %s' % (aList, expected, got)
 </t>
-<t tx="ekr.20160206174054.1">
-def is_regex(self):
-    '''
-    Return True if self.find_s is a regular pattern.
-    For now a kludgy convention suffices.
-    '''
-    return self.find_s.endswith('$')
-        # A dollar sign is not valid in any Python expression.
-</t>
-<t tx="ekr.20160206174547.1">
-def replace_regex(self, m, s):
-    '''Do the replacement in s specified by m.'''
-    s = self.repl_s
-    for i in range(9):
-        group = '\\%s' % i
-        if s.find(group) &gt; -1:
-            # g.trace(i, m.group(i))
-            s = s.replace(group, m.group(i))
-    return s</t>
-<t tx="ekr.20160206174740.1">
-def replace(self, m, s):
-    '''Perform any kind of replacement.'''
-    if self.is_balanced():
-        start, end = m
-        return self.replace_balanced(s, start, end)
-    else:
-        return self.replace_regex(m, s)
-</t>
-<t tx="ekr.20160206212123.1">
-def split_types(self, s):
-    '''Split types on *outer level* commas.'''
-    aList, i1, level = [], 0, 0
-    for i, ch in enumerate(s):
-        if ch == '[':
-            level += 1
-        elif ch == ']':
-            level -= 1
-        elif ch == ',' and level == 0:
-            aList.append(s[i1:i])
-            i1 = i+1
-    aList.append(s[i1:].strip())
-    return aList</t>
 <t tx="ekr.20160207051429.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
 none = 'None'
 La, Lc = ['Any'], ['complex']
@@ -2120,22 +1654,6 @@ def dump_list(title, aList):
     for z in aList:
         print(z)
     print('')
-</t>
-<t tx="ekr.20160210143802.1">
-class NullObject:
-    """
-    An object that does nothing, and does it very well.
-    From the Python cookbook, recipe 5.23
-    """
-    def __init__(self, *args, **keys): pass
-    def __call__(self, *args, **keys): return self
-    def __repr__(self): return "NullObject"
-    def __str__(self): return "NullObject"
-    def __bool__(self): return False
-    def __nonzero__(self): return 0
-    def __delattr__(self, attr): return self
-    def __getattr__(self, attr): return self
-    def __setattr__(self, attr, val): return self
 </t>
 <t tx="ekr.20160210144515.1"># To be DELETED (They exist in old_stubs, but not here)
 # class Pattern(object):
@@ -2574,122 +2092,6 @@ def make_optional(self,r):
         r = [z for z in r if z != 'None']
         r = self.show('Optional[%s]' % r[0]) if r else self.show('None')
     return r</t>
-<t tx="ekr.20160214044429.1">
-
-class ReduceTypes:
-    '''
-    A helper class for the top-level reduce_types function.
-    
-    This class reduces a list of type hints to a string containing the
-    reduction of all types in the list.
-    '''
-    @others
-</t>
-<t tx="ekr.20160214044444.1">
-def __init__(self, aList=None, name=None, trace=False):
-    '''Ctor for ReduceTypes class.'''
-    self.aList = aList
-    self.name = name
-    self.optional = False
-    self.trace = trace
-</t>
-<t tx="ekr.20160214044515.1">
-def reduce_types(self):
-    '''
-    self.aList consists of arbitrarily many types because this method is
-    called from format_return_expressions.
-    
-    Return a *string* containing the reduction of all types in this list.
-    Returning a string means that all traversers always return strings,
-    never lists.
-    '''
-    trace = False
-    if trace: g.trace('=====', self.aList)
-    r = [('None' if z in ('', None) else z) for z in self.aList]
-    assert None not in r
-    self.optional = 'None' in r
-        # self.show adds Optional if this flag is set.
-    r = [z for z in r if z != 'None']
-    if not r:
-        self.optional = False
-        return self.show('None')
-    r = sorted(set(r))
-    assert r
-    assert None not in r
-    r = self.reduce_numbers(r)
-    for kind in ('Dict', 'List', 'Tuple',):
-        r = self.reduce_collection(r, kind)
-    r = self.reduce_unknowns(r)
-    r = sorted(set(r))
-    assert r
-    assert 'None' not in r
-    if len(r) == 1:
-        return self.show(r[0])
-    else:
-        return self.show('Union[%s]' % (', '.join(sorted(r))))
-</t>
-<t tx="ekr.20160214044536.1">
-def show(self, s, known=True):
-    '''Show the result of reduce_types.'''
-    aList, name = self.aList, self.name
-    trace = False or self.trace
-    s = s.strip()
-    if self.optional:
-        s = 'Optional[%s]' % s
-    if trace and (not known or len(aList) &gt; 1):
-        if name:
-            if name.find('.') &gt; -1:
-                context = ''.join(name.split('.')[1:])
-            else:
-                context = name
-        else:
-            context = g.callers(3).split(',')[0].strip()
-        context = truncate(context, 26)
-        known = '' if known else '? '
-        pattern = sorted(set([z.replace('\n',' ') for z in aList]))
-        pattern = '[%s]' % truncate(', '.join(pattern), 53-2)
-        print('reduce_types: %-26s %53s ==&gt; %s%s' % (context, pattern, known, s))
-            # widths above match the corresponding indents in match_all and match.
-    return s
-</t>
-<t tx="ekr.20160214051730.1">
-def reduce_collection(self, aList, kind):
-    '''
-    Reduce the inner parts of a collection for the given kind.
-    Return a list with only collections of the given kind reduced.
-    '''
-    trace = False
-    if trace: g.trace(kind, aList)
-    assert isinstance(aList, list)
-    assert None not in aList, aList
-    pattern = Pattern('%s[*]' % kind)
-    others, r1, r2 = [], [], []
-    for s in sorted(set(aList)):
-        if pattern.match_entire_string(s):
-            r1.append(s)
-        else:
-            others.append(s)
-    if trace: g.trace('1', others, r1)
-    for s in sorted(set(r1)):
-        parts = []
-        s2 = s[len(kind)+1:-1]
-        for s3 in s2.split(','):
-            s3 = s3.strip()
-            if trace: g.trace('*', self.is_known_type(s3), s3)
-            parts.append(s3 if self.is_known_type(s3) else 'Any')
-        r2.append('%s[%s]' % (kind, ', '.join(parts)))
-    if trace: g.trace('2', r2)
-    result = others
-    result.extend(r2)
-    result = sorted(set(result))
-    if trace: g.trace('3', result)
-    return result
-</t>
-<t tx="ekr.20160214094129.1">
-def reduce_unknowns(self, aList):
-    '''Replace all unknown types in aList with Any.'''
-    return [z if self.is_known_type(z) else 'Any' for z in aList]
-</t>
 <t tx="ekr.20160214103050.1"></t>
 <t tx="ekr.20160214154338.1">    r = sorted(set(aList))
     if trace: g.trace('1', r)
@@ -3204,10 +2606,6 @@ def reduce_types(self):
     Returning a string means that all traversers always return strings,
     never lists.
     '''
-    trace = True
-    if trace:
-        g.trace()
-        g.printObj(self.aList)
     r = [('None' if z in ('', None) else z) for z in self.aList]
     assert None not in r
     self.optional = 'None' in r
