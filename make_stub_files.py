@@ -22,6 +22,7 @@ import glob
 import optparse
 import os
 import re
+import subprocess
 import sys
 import time
 import types
@@ -975,6 +976,17 @@ class LeoGlobals:
         '''Clear the screen.'''
         if sys.platform.lower().startswith('win'):
             os.system('cls')
+    def execute_shell_commands(self, commands, trace=False):
+        '''
+        Execute each shell command in a separate process.
+        Wait for each command to complete, except those starting with '&'
+        '''
+        if g.isString(commands): commands = [commands]
+        for command in commands:
+            wait = not command.startswith('&')
+            if command.startswith('&'): command = command[1:].strip()
+            proc = subprocess.Popen(command, shell=True)
+            if wait: proc.communicate()
 
     def isString(self, s):
         '''Return True if s is any string, but not bytes.'''

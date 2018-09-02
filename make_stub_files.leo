@@ -95,6 +95,7 @@
 <v t="ekr.20180902035806.1"><vh>g.caller</vh></v>
 <v t="ekr.20160318141204.95"><vh>g.callers</vh></v>
 <v t="ekr.20160318141204.96"><vh>g.cls</vh></v>
+<v t="ekr.20180902073131.1"><vh>g.execute_shell_commands</vh></v>
 <v t="ekr.20160318141204.97"><vh>g.isString &amp; isUnicode (make_stub_files.py)</vh></v>
 <v t="ekr.20180902034437.1"><vh>g.objToSTring &amp; helpers</vh>
 <v t="ekr.20180902041247.1"><vh>g.dictToString</vh></v>
@@ -1272,6 +1273,10 @@ for aList, expected in table:
     assert expected == got,  (aList, 'expected:', expected, 'got', got)
 </t>
 <t tx="ekr.20160206171945.1">@language rest
+
+To run unit tests from top-level directory:
+
+    python -m unittest discover test
 
 http://leoeditor.com/unitTesting.html discusses unit testing in Leo.
 
@@ -4161,6 +4166,7 @@ import glob
 import optparse
 import os
 import re
+import subprocess
 import sys
 import time
 import types
@@ -5287,14 +5293,14 @@ g.execute_shell_commands(commands, trace=True)
 with open('bug3.pyi') as f:
     s = f.read()
 lines = g.splitLines(s)
-# Ignore the first 4 lines of the generated .pyi file.
-got = ''.join(lines[4:])
+# Test only the last two linse of the generated .pyi file.
+got = ''.join(lines[-2:])
 # The input file 
-expected = '''\
-class UnsupportedAlgorithm(Exception):
-    def __init__(self, message: Any, reason: Optional[str]=None) -&gt; None: ...
-'''
-assert got == expected, 'expected:\n%s\ngot:\n%s' % (expected, got)</t>
+expected = (
+    'class UnsupportedAlgorithm(Exception):\n' 
+    '    def __init__(self, message: Any, reason: Optional[str]=None) -&gt; None: ...\n'
+)
+assert got == expected, '\nexpected:\n%s\ngot:\n%s' % (expected, got)</t>
 <t tx="ekr.20180902034437.1">def objToString(self, obj, indent='', printCaller=False, tag=None):
     '''Pretty print any Python object to a string.'''
     # pylint: disable=undefined-loop-variable
@@ -5395,6 +5401,18 @@ toString = objToString
     result.append(')')
     s = ''.join(result)
     return '%s...\n%s\n' % (tag, s) if tag else s
+</t>
+<t tx="ekr.20180902073131.1" annotate="7d71002e">def execute_shell_commands(self, commands, trace=False):
+    '''
+    Execute each shell command in a separate process.
+    Wait for each command to complete, except those starting with '&amp;'
+    '''
+    if g.isString(commands): commands = [commands]
+    for command in commands:
+        wait = not command.startswith('&amp;')
+        if command.startswith('&amp;'): command = command[1:].strip()
+        proc = subprocess.Popen(command, shell=True)
+        if wait: proc.communicate()
 </t>
 </tnodes>
 </leo_file>

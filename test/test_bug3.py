@@ -12,12 +12,12 @@ class test_bug3 (unittest.TestCase):
         with open('bug3.pyi') as f:
             s = f.read()
         lines = g.splitLines(s)
-        # Ignore the first 4 lines of the generated .pyi file.
-        got = ''.join(lines[4:])
+        # Test only the last two linse of the generated .pyi file.
+        got = ''.join(lines[-2:])
         # The input file 
-        expected = '''\
-        class UnsupportedAlgorithm(Exception):
-            def __init__(self, message: Any, reason: Optional[str]=None) -> None: ...
-        '''
-        assert got == expected, 'expected:\n%s\ngot:\n%s' % (expected, got)
+        expected = (
+            'class UnsupportedAlgorithm(Exception):\n' 
+            '    def __init__(self, message: Any, reason: Optional[str]=None) -> None: ...\n'
+        )
+        assert got == expected, '\nexpected:\n%s\ngot:\n%s' % (expected, got)
 
