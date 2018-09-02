@@ -9951,6 +9951,7 @@ with open('bug3.pyi') as f:
     s = f.read()
 lines = g.splitLines(s)
 got = ''.join(lines[1:])
+# The input file 
 expected = '''\
 class UnsupportedAlgorithm(Exception):
     def __init__(self, message: Any, reason: Optional[str]=None) -&gt; None: ...
