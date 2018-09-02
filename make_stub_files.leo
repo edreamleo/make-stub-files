@@ -631,7 +631,11 @@
 <v t="ekr.20160318141204.95"><vh>g.callers</vh></v>
 <v t="ekr.20160318141204.96"><vh>g.cls</vh></v>
 <v t="ekr.20160318141204.97"><vh>g.isString &amp; isUnicode (make_stub_files.py)</vh></v>
-<v t="ekr.20180902034437.1"><vh>g.objToSTring</vh></v>
+<v t="ekr.20180902034437.1"><vh>g.objToSTring &amp; helpers</vh>
+<v t="ekr.20180902041247.1"><vh>g.dictToString</vh></v>
+<v t="ekr.20180902041311.1"><vh>g.listToString</vh></v>
+<v t="ekr.20180902041320.1"><vh>g.tupleToString</vh></v>
+</v>
 <v t="ekr.20160318141204.98"><vh>g.pdb</vh></v>
 <v t="ekr.20180902034446.1"><vh>g.printObj</vh></v>
 <v t="ekr.20160318141204.99"><vh>g.shortFileName</vh></v>
@@ -770,41 +774,11 @@
 </v>
 <v t="ekr.20160318141204.169"></v>
 <v t="ekr.20160318141204.116"></v>
+<v t="ekr.20160318141204.141"></v>
 <v t="ekr.20180902033513.1"><vh>--------</vh></v>
 <v t="ekr.20160318141204.128"></v>
 <v t="ekr.20160318141204.173"></v>
-<v t="ekr.20160318141204.176"></v>
 <v t="ekr.20180901051603.1"></v>
-<v t="ekr.20180902035107.1"><vh>git diff HEAD </vh>
-<v t="ekr.20180902035108.1"><vh>make_stub_files.py</vh>
-<v t="ekr.20180902035108.406"><vh>Changed</vh>
-<v t="ekr.20180902035108.407"><vh>g.objToSTring</vh>
-<v t="ekr.20180902035108.408"><vh>Old:g.objToSTring</vh></v>
-<v t="ekr.20180902034437.1"></v>
-</v>
-<v t="ekr.20180902035108.409"><vh>g.printObj</vh>
-<v t="ekr.20180902035108.410"><vh>Old:g.printObj</vh></v>
-<v t="ekr.20180902034446.1"></v>
-</v>
-<v t="ekr.20180902035108.411"><vh>rt.is_known_type</vh>
-<v t="ekr.20180902035108.412"><vh>Old:rt.is_known_type</vh></v>
-<v t="ekr.20160318141204.118"></v>
-</v>
-<v t="ekr.20180902035108.413"><vh>rt.reduce_types</vh>
-<v t="ekr.20180902035108.414"><vh>Old:rt.reduce_types</vh></v>
-<v t="ekr.20160318141204.121"></v>
-</v>
-<v t="ekr.20180902035108.415"><vh>st.output_stubs</vh>
-<v t="ekr.20180902035108.416"><vh>Old:st.output_stubs</vh></v>
-<v t="ekr.20160318141204.174"></v>
-</v>
-<v t="ekr.20180902035108.417"><vh>st.update &amp; helpers</vh>
-<v t="ekr.20180902035108.418"><vh>Old:st.update &amp; helpers</vh></v>
-<v t="ekr.20160318141204.176"></v>
-</v>
-</v>
-</v>
-</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -7856,11 +7830,10 @@ def __hash__(self):
 <t tx="ekr.20160318141204.145">
 def __repr__(self):
     '''Stub.__repr__.'''
-    return 'Stub: %s %s' % (id(self), self.full_name)
+    # return 'Stub: %s %s' % (id(self), self.full_name)
+    return 'Stub: %s\n%s' % (self.full_name, g.objToString(self.out_list))
     
-def __str__(self):
-    '''Stub.__repr__.'''
-    return 'Stub: %s' % self.full_name
+__str__ = __repr__
 </t>
 <t tx="ekr.20160318141204.146">
 def level(self):
@@ -10012,11 +9985,11 @@ assert got == expected, 'expected:\n%s\ngot:\n%s' % (expected, got)</t>
     #
     # Compute s.
     if isinstance(obj, dict):
-        s = self.objToString(obj, indent=indent)
+        s = self.dictToString(obj, indent=indent)
     elif isinstance(obj, list):
-        s = self.objToString(obj, indent=indent)
+        s = self.listToString(obj, indent=indent)
     elif isinstance(obj, tuple):
-        s = self.objToString(obj, indent=indent)
+        s = self.tupleToString(obj, indent=indent)
     elif g.isString(obj):
         # Print multi-line strings as lists.
         s = obj
@@ -10047,384 +10020,64 @@ toString = objToString
 # printList = printObj
 # printTuple = printObj
 </t>
-<t tx="ekr.20180902035107.1">@nosearch
-HEAD=bb81f2b</t>
-<t tx="ekr.20180902035108.1">@language patch
---- HEAD
-+++ uncommitted
-@@ -987,6 +987,39 @@
-             return isinstance(s, str)
-         else:
-             return isinstance(s, types.UnicodeType)
-+    def objToString(self, obj, indent='', printCaller=False, tag=None):
-+        '''Pretty print any Python object to a string.'''
-+        # pylint: disable=undefined-loop-variable
-+            # Looks like a a pylint bug.
-+        #
-+        # Compute s.
-+        if isinstance(obj, dict):
-+            s = dictToString(obj, indent=indent)
-+        elif isinstance(obj, list):
-+            s = listToString(obj, indent=indent)
-+        elif isinstance(obj, tuple):
-+            s = tupleToString(obj, indent=indent)
-+        elif g.isString(obj):
-+            # Print multi-line strings as lists.
-+            s = obj
-+            lines = g.splitLines(s)
-+            if len(lines) &gt; 1:
-+                s = listToString(lines, indent=indent)
-+            else:
-+                s = repr(s)
-+        else:
-+            s = repr(obj)
-+        #
-+        # Compute the return value.
-+        if printCaller and tag:
-+            prefix = '%s: %s' % (g.caller(), tag)
-+        elif printCaller or tag:
-+            prefix = g.caller() if printCaller else tag
-+        else:
-+            prefix = None
-+        return '%s...\n%s\n' % (prefix, s) if prefix else s
-+
-+    toString = objToString
- 
-     def pdb(self):
-         try:
-@@ -995,6 +1028,13 @@
-         except ImportError:
-             import pdb
-             pdb.set_trace()
-+    def printObj(self, obj, indent='', printCaller=False, tag=None):
-+        '''Pretty print any Python object using g.pr.'''
-+        print(self.objToString(obj, indent=indent, printCaller=printCaller, tag=tag))
-+
-+    printDict = printObj
-+    printList = printObj
-+    printTuple = printObj
- 
-     def shortFileName(self,fileName, n=None):
-         if n is None or n &lt; 1:
-@@ -1265,7 +1305,6 @@
-         It suits the other methods of this class *not* to test inside inner
-         brackets. This prevents unwanted Any types.
-         '''
--        trace = False
-         s1 = s
-         s = s.strip()
-         table = (
-@@ -1320,7 +1359,6 @@
-                 pattern = Pattern(s2+'[*]', s)
-                 if pattern.match_entire_string(s):
-                     return True
--        if trace: g.trace('Fail:', s1)
-         return False
- 
-     def reduce_collection(self, aList, kind):
-@@ -1386,8 +1424,10 @@
-         Returning a string means that all traversers always return strings,
-         never lists.
-         '''
--        trace = False
--        if trace: g.trace('=====', self.aList)
-+        trace = True
-+        if trace:
-+            g.trace()
-+            g.printObj(self.aList)
-         r = [('None' if z in ('', None) else z) for z in self.aList]
-         assert None not in r
-         self.optional = 'None' in r
-@@ -2293,6 +2333,8 @@
- 
-     def output_stubs(self, stub):
-         '''Output this stub and all its descendants.'''
-+        g.trace()
-+        g.printObj(stub)
-         for s in stub.out_list or []:
-             # Indentation must be present when an item is added to stub.out_list.
-             if self.output_file:
-@@ -2318,7 +2360,7 @@
-         
-         Return old_root, or new_root if there are any errors.
-         '''
--        trace = False ; verbose = False
-+        trace = True ; verbose = True
-         s = self.get_stub_file(fn)
-         if not s or not s.strip():
-             return new_root
-@language python
-</t>
-<t tx="ekr.20180902035108.406"></t>
-<t tx="ekr.20180902035108.407">@language patch
---- HEAD
-+++ uncommitted
-@@ -0,0 +1,33 @@
-+def objToString(self, obj, indent='', printCaller=False, tag=None):
-+    '''Pretty print any Python object to a string.'''
-+    # pylint: disable=undefined-loop-variable
-+        # Looks like a a pylint bug.
-+    #
-+    # Compute s.
-+    if isinstance(obj, dict):
-+        s = dictToString(obj, indent=indent)
-+    elif isinstance(obj, list):
-+        s = listToString(obj, indent=indent)
-+    elif isinstance(obj, tuple):
-+        s = tupleToString(obj, indent=indent)
-+    elif g.isString(obj):
-+        # Print multi-line strings as lists.
-+        s = obj
-+        lines = g.splitLines(s)
-+        if len(lines) &gt; 1:
-+            s = listToString(lines, indent=indent)
-+        else:
-+            s = repr(s)
-+    else:
-+        s = repr(obj)
-+    #
-+    # Compute the return value.
-+    if printCaller and tag:
-+        prefix = '%s: %s' % (g.caller(), tag)
-+    elif printCaller or tag:
-+        prefix = g.caller() if printCaller else tag
-+    else:
-+        prefix = None
-+    return '%s...\n%s\n' % (prefix, s) if prefix else s
-+
-+toString = objToString
-@language python
-</t>
-<t tx="ekr.20180902035108.408"></t>
-<t tx="ekr.20180902035108.409">@language patch
---- HEAD
-+++ uncommitted
-@@ -0,0 +1,7 @@
-+def printObj(self, obj, indent='', printCaller=False, tag=None):
-+    '''Pretty print any Python object using g.pr.'''
-+    print(self.objToString(obj, indent=indent, printCaller=printCaller, tag=tag))
-+
-+printDict = printObj
-+printList = printObj
-+printTuple = printObj
-@language python
-</t>
-<t tx="ekr.20180902035108.410"></t>
-<t tx="ekr.20180902035108.411">@language patch
---- HEAD
-+++ uncommitted
-@@ -6,7 +6,6 @@
-     It suits the other methods of this class *not* to test inside inner
-     brackets. This prevents unwanted Any types.
-     '''
--    trace = False
-     s1 = s
-     s = s.strip()
-     table = (
-@@ -61,5 +60,4 @@
-             pattern = Pattern(s2+'[*]', s)
-             if pattern.match_entire_string(s):
-                 return True
--    if trace: g.trace('Fail:', s1)
-     return False
-@language python
-</t>
-<t tx="ekr.20180902035108.412">
-def is_known_type(self, s):
-    '''
-    Return True if s is nothing but a single known type.
-
-    It suits the other methods of this class *not* to test inside inner
-    brackets. This prevents unwanted Any types.
-    '''
-    trace = False
-    s1 = s
-    s = s.strip()
-    table = (
-        '', 'None', # Tricky.
-        'complex', 'float', 'int', 'long', 'number',
-        'dict', 'list', 'tuple',
-        'bool', 'bytes', 'str', 'unicode',
-    )
-    for s2 in table:
-        if s2 == s:
-            return True
-        elif Pattern(s2+'(*)', s).match_entire_string(s):
-            return True
-    if s.startswith('[') and s.endswith(']'):
-        inner = s[1:-1]
-        return self.is_known_type(inner) if inner else True
-    elif s.startswith('(') and s.endswith(')'):
-        inner = s[1:-1]
-        return self.is_known_type(inner) if inner else True
-    elif s.startswith('{') and s.endswith('}'):
-        return True
-        # inner = s[1:-1]
-        # return self.is_known_type(inner) if inner else True
-    table = (
-        # Pep 484: https://www.python.org/dev/peps/pep-0484/
-        # typing module: https://docs.python.org/3/library/typing.html
-        # Test the most common types first.
-        'Any', 'Dict', 'List', 'Optional', 'Tuple', 'Union', 
-        # Not generated by this program, but could arise from patterns.
-        'AbstractSet', 'AnyMeta', 'AnyStr',
-        'BinaryIO', 'ByteString',
-        'Callable', 'CallableMeta', 'Container',
-        'Final', 'Generic', 'GenericMeta', 'Hashable',
-        'IO', 'ItemsView', 'Iterable', 'Iterator',
-        'KT', 'KeysView',
-        'Mapping', 'MappingView', 'Match',
-        'MutableMapping', 'MutableSequence', 'MutableSet',
-        'NamedTuple', 'OptionalMeta',
-        # 'POSIX', 'PY2', 'PY3',
-        'Pattern', 'Reversible',
-        'Sequence', 'Set', 'Sized',
-        'SupportsAbs', 'SupportsFloat', 'SupportsInt', 'SupportsRound',
-        'T', 'TextIO', 'TupleMeta', 'TypeVar', 'TypingMeta',
-        'Undefined', 'UnionMeta',
-        'VT', 'ValuesView', 'VarBinding',
-    )
-    for s2 in table:
-        if s2 == s:
-            return True
-        else:
-            # Don't look inside bracketss.
-            pattern = Pattern(s2+'[*]', s)
-            if pattern.match_entire_string(s):
-                return True
-    if trace: g.trace('Fail:', s1)
-    return False
-</t>
-<t tx="ekr.20180902035108.413">@language patch
---- HEAD
-+++ uncommitted
-@@ -8,8 +8,10 @@
-     Returning a string means that all traversers always return strings,
-     never lists.
-     '''
--    trace = False
--    if trace: g.trace('=====', self.aList)
-+    trace = True
-+    if trace:
-+        g.trace()
-+        g.printObj(self.aList)
-     r = [('None' if z in ('', None) else z) for z in self.aList]
-     assert None not in r
-     self.optional = 'None' in r
-@language python
-</t>
-<t tx="ekr.20180902035108.414">
-def reduce_types(self):
-    '''
-    self.aList consists of arbitrarily many types because this method is
-    called from format_return_expressions.
-    
-    Return a *string* containing the reduction of all types in this list.
-    Returning a string means that all traversers always return strings,
-    never lists.
-    '''
-    trace = False
-    if trace: g.trace('=====', self.aList)
-    r = [('None' if z in ('', None) else z) for z in self.aList]
-    assert None not in r
-    self.optional = 'None' in r
-        # self.show adds Optional if this flag is set.
-    r = [z for z in r if z != 'None']
-    if not r:
-        self.optional = False
-        return self.show('None')
-    r = sorted(set(r))
-    assert r
-    assert None not in r
-    r = self.reduce_numbers(r)
-    for kind in ('Dict', 'List', 'Tuple',):
-        r = self.reduce_collection(r, kind)
-    r = self.reduce_unknowns(r)
-    r = sorted(set(r))
-    assert r
-    assert 'None' not in r
-    if len(r) == 1:
-        return self.show(r[0])
-    else:
-        return self.show('Union[%s]' % (', '.join(sorted(r))))
-</t>
-<t tx="ekr.20180902035108.415">@language patch
---- HEAD
-+++ uncommitted
-@@ -1,6 +1,8 @@
- 
- def output_stubs(self, stub):
-     '''Output this stub and all its descendants.'''
-+    g.trace()
-+    g.printObj(stub)
-     for s in stub.out_list or []:
-         # Indentation must be present when an item is added to stub.out_list.
-         if self.output_file:
-@language python
-</t>
-<t tx="ekr.20180902035108.416">
-def output_stubs(self, stub):
-    '''Output this stub and all its descendants.'''
-    for s in stub.out_list or []:
-        # Indentation must be present when an item is added to stub.out_list.
-        if self.output_file:
-            self.output_file.write(s.rstrip()+'\n')
-        else:
-            print(s)
-    # Recursively print all children.
-    for child in stub.children:
-        self.output_stubs(child)
-</t>
-<t tx="ekr.20180902035108.417">@language patch
---- HEAD
-+++ uncommitted
-@@ -8,7 +8,7 @@
-     
-     Return old_root, or new_root if there are any errors.
-     '''
--    trace = False ; verbose = False
-+    trace = True ; verbose = True
-     s = self.get_stub_file(fn)
-     if not s or not s.strip():
-         return new_root
-@language python
-</t>
-<t tx="ekr.20180902035108.418">
-def update(self, fn, new_root):
-    '''
-    Merge the new_root tree with the old_root tree in fn (a .pyi file).
-
-    new_root is the root of the stub tree from the .py file.
-    old_root (read below) is the root of stub tree from the .pyi file.
-    
-    Return old_root, or new_root if there are any errors.
-    '''
-    trace = False ; verbose = False
-    s = self.get_stub_file(fn)
-    if not s or not s.strip():
-        return new_root
-    if '\t' in s:
-        # Tabs in stub files make it impossible to parse them reliably.
-        g.trace('Can not update stub files containing tabs.')
-        return new_root
-    # Read old_root from the .pyi file.
-    old_d, old_root = self.parse_stub_file(s, root_name='&lt;old-stubs&gt;')
-    if old_root:
-        # Merge new stubs into the old tree.
-        if trace and verbose:
-            print(self.trace_stubs(old_root, header='old_root'))
-            print(self.trace_stubs(new_root, header='new_root'))
-        print('***** updating stubs from %s *****' % fn)
-        self.merge_stubs(self.stubs_dict.values(), old_root, new_root)
-        if trace:
-            print(self.trace_stubs(old_root, header='updated_root'))
-        return old_root
-    else:
-        return new_root
-</t>
 <t tx="ekr.20180902035806.1">def caller(self, i=1):
     '''Return the caller name i levels up the stack.'''
     return self.callers(i+1).split(',')[0]
+</t>
+<t tx="ekr.20180902041247.1">def dictToString(self, d, indent='', tag=None):
+    '''Pretty print a Python dict to a string.'''
+    # pylint: disable=unnecessary-lambda
+    if not d:
+        return '{}'
+    result = ['{\n']
+    indent2 = indent+' '*4
+    n = 2 + len(indent) + max([len(repr(z)) for z in d.keys()])
+    for i, key in enumerate(sorted(d, key=lambda z:repr(z))):
+        pad = ' ' * max(0, (n-len(repr(key))))
+        result.append('%s%s:' % (pad, key))
+        result.append(self.objToString(d.get(key),indent=indent2))
+        if i+1 &lt; len(d.keys()):
+            result.append(',')
+        result.append('\n')
+    result.append(indent+'}')
+    s = ''.join(result)
+    return '%s...\n%s\n' % (tag, s) if tag else s
+</t>
+<t tx="ekr.20180902041311.1">def listToString(self, obj, indent='', tag=None):
+    '''Pretty print a Python list to a string.'''
+    if not obj:
+        return '[]'
+    result = ['[']
+    indent2 = indent+' '*4
+    for i, obj2 in enumerate(obj):
+        if len(obj) &gt; 1:
+            result.append('\n'+indent2)
+        result.append(self.objToString(obj2,indent=indent2))
+        if i+1 &lt; len(obj) &gt; 1:
+            result.append(',')
+        elif len(obj) &gt; 1:
+            result.append('\n'+indent)
+    result.append(']')
+    s = ''.join(result)
+    return '%s...\n%s\n' % (tag, s) if tag else s
+</t>
+<t tx="ekr.20180902041320.1">def tupleToString(self, obj, indent='', tag=None):
+    '''Pretty print a Python tuple to a string.'''
+    if not obj:
+        return '(),'
+    result = ['(']
+    indent2 = indent+' '*4
+    for i, obj2 in enumerate(obj):
+        if len(obj) &gt; 1:
+            result.append('\n'+indent2)
+        result.append(self.objToString(obj2,indent=indent2))
+        if len(obj) == 1 or i+1 &lt; len(obj):
+            result.append(',')
+        elif len(obj) &gt; 1:
+            result.append('\n'+indent)
+    result.append(')')
+    s = ''.join(result)
+    return '%s...\n%s\n' % (tag, s) if tag else s
 </t>
 </tnodes>
 </leo_file>

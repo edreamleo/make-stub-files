@@ -998,11 +998,11 @@ class LeoGlobals:
         #
         # Compute s.
         if isinstance(obj, dict):
-            s = self.objToString(obj, indent=indent)
+            s = self.dictToString(obj, indent=indent)
         elif isinstance(obj, list):
-            s = self.objToString(obj, indent=indent)
+            s = self.listToString(obj, indent=indent)
         elif isinstance(obj, tuple):
-            s = self.objToString(obj, indent=indent)
+            s = self.tupleToString(obj, indent=indent)
         elif g.isString(obj):
             # Print multi-line strings as lists.
             s = obj
@@ -1024,6 +1024,58 @@ class LeoGlobals:
         return '%s...\n%s\n' % (prefix, s) if prefix else s
 
     toString = objToString
+    def dictToString(self, d, indent='', tag=None):
+        '''Pretty print a Python dict to a string.'''
+        # pylint: disable=unnecessary-lambda
+        if not d:
+            return '{}'
+        result = ['{\n']
+        indent2 = indent+' '*4
+        n = 2 + len(indent) + max([len(repr(z)) for z in d.keys()])
+        for i, key in enumerate(sorted(d, key=lambda z:repr(z))):
+            pad = ' ' * max(0, (n-len(repr(key))))
+            result.append('%s%s:' % (pad, key))
+            result.append(self.objToString(d.get(key),indent=indent2))
+            if i+1 < len(d.keys()):
+                result.append(',')
+            result.append('\n')
+        result.append(indent+'}')
+        s = ''.join(result)
+        return '%s...\n%s\n' % (tag, s) if tag else s
+    def listToString(self, obj, indent='', tag=None):
+        '''Pretty print a Python list to a string.'''
+        if not obj:
+            return '[]'
+        result = ['[']
+        indent2 = indent+' '*4
+        for i, obj2 in enumerate(obj):
+            if len(obj) > 1:
+                result.append('\n'+indent2)
+            result.append(self.objToString(obj2,indent=indent2))
+            if i+1 < len(obj) > 1:
+                result.append(',')
+            elif len(obj) > 1:
+                result.append('\n'+indent)
+        result.append(']')
+        s = ''.join(result)
+        return '%s...\n%s\n' % (tag, s) if tag else s
+    def tupleToString(self, obj, indent='', tag=None):
+        '''Pretty print a Python tuple to a string.'''
+        if not obj:
+            return '(),'
+        result = ['(']
+        indent2 = indent+' '*4
+        for i, obj2 in enumerate(obj):
+            if len(obj) > 1:
+                result.append('\n'+indent2)
+            result.append(self.objToString(obj2,indent=indent2))
+            if len(obj) == 1 or i+1 < len(obj):
+                result.append(',')
+            elif len(obj) > 1:
+                result.append('\n'+indent)
+        result.append(')')
+        s = ''.join(result)
+        return '%s...\n%s\n' % (tag, s) if tag else s
 
     def pdb(self):
         try:
@@ -1929,11 +1981,10 @@ class Stub(object):
 
     def __repr__(self):
         '''Stub.__repr__.'''
-        return 'Stub: %s %s' % (id(self), self.full_name)
+        # return 'Stub: %s %s' % (id(self), self.full_name)
+        return 'Stub: %s\n%s' % (self.full_name, g.objToString(self.out_list))
         
-    def __str__(self):
-        '''Stub.__repr__.'''
-        return 'Stub: %s' % self.full_name
+    __str__ = __repr__
 
     def level(self):
         '''Return the number of parents.'''
