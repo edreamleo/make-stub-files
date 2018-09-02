@@ -18,9 +18,9 @@ class test_st_flatten_stubs (unittest.TestCase):
         import sys
         import time
         try:
-            import io.StringIO as StringIO # Python 3
+            import StringIO as io # Python 2
         except ImportError:
-            import StringIO
+            import io # Python 3
         s = '''\
         def is_known_type(s: str) -> Union[Any,bool]: ...
         def main() -> None: ...
