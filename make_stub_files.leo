@@ -3573,8 +3573,8 @@ def make_op_name_dict(self):
         '(*)': ['Call', 'Tuple',],
         '[*]': ['List', 'Subscript',],
         '{*}': ['???',],
-        ### 'and': 'BoolOp',
-        ### 'or':  'BoolOp',
+        # 'and': 'BoolOp',
+        # 'or':  'BoolOp',
     }
     for op in (
         '+', '-', '*', '/', '%', '**', '&lt;&lt;',
@@ -3964,7 +3964,7 @@ def do_List(self, node):
     return 'List[%s]' % ', '.join(elts)
 </t>
 <t tx="ekr.20160318141204.157">
-### seen_names = [] # t--ype: List[str]
+# seen_names = [] # t--ype: List[str]
 
 def do_Name(self, node):
     '''StubFormatter ast.Name visitor.'''
@@ -4664,7 +4664,6 @@ def munge_arg(self, s):
         print('no annotation for %s' % s)
     # Fix issue #3.
     if self.type_pattern.match(s):
-        ### g.trace('MATCH 2', s)
         return s
     return s + ': Any'
 </t>

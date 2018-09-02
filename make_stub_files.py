@@ -1766,8 +1766,8 @@ class StandAloneMakeStubFile:
             '(*)': ['Call', 'Tuple',],
             '[*]': ['List', 'Subscript',],
             '{*}': ['???',],
-            ### 'and': 'BoolOp',
-            ### 'or':  'BoolOp',
+            # 'and': 'BoolOp',
+            # 'or':  'BoolOp',
         }
         for op in (
             '+', '-', '*', '/', '%', '**', '<<',
@@ -2117,7 +2117,7 @@ class StubFormatter (AstFormatter):
         # g.trace('=====',elts)
         return 'List[%s]' % ', '.join(elts)
 
-    ### seen_names = [] # t--ype: List[str]
+    # seen_names = [] # t--ype: List[str]
 
     def do_Name(self, node):
         '''StubFormatter ast.Name visitor.'''
@@ -2760,7 +2760,6 @@ class StubTraverser (ast.NodeVisitor):
             print('no annotation for %s' % s)
         # Fix issue #3.
         if self.type_pattern.match(s):
-            ### g.trace('MATCH 2', s)
             return s
         return s + ': Any'
 
