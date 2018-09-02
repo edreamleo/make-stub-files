@@ -710,7 +710,9 @@ class TestMakeStubFiles(unittest.TestCase):
     @others
     
 if __name__ == '__main__':
-    unittest.main()</t>
+    unittest.main()
+
+</t>
 <t tx="ekr.20160128190112.1">
 def test_pattern_class(self):
     table = (
@@ -1275,8 +1277,10 @@ for aList, expected in table:
 <t tx="ekr.20160206171945.1">@language rest
 
 To run unit tests from top-level directory:
+    
+1. Make sure to run the write-unit-tests script after making any changes.
 
-    python -m unittest discover test
+2. python -m unittest discover test
 
 http://leoeditor.com/unitTesting.html discusses unit testing in Leo.
 
@@ -5223,7 +5227,9 @@ class aClass2:
         
 i1, i2 = aClass(), aClass2()
 i1.foo()
-i2.foo()</t>
+i2.foo()
+
+</t>
 <t tx="ekr.20180706071540.1">@language rest
 @wrap
 
