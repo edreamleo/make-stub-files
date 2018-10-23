@@ -141,14 +141,17 @@ class AstFormatter:
         else:
             assert isinstance(node, ast.AST), node.__class__.__name__
             method_name = 'do_' + node.__class__.__name__
-            method = getattr(self, method_name)
+            try:
+                method = getattr(self, method_name)
+            except AttributeError:
+                return ''
+                
             s = method(node)
             # assert type(s) == type('abc'), (node, type(s))
             assert g.isString(s), type(s)
             return s
 
     # Contexts...
-
 
     # 2: ClassDef(identifier name, expr* bases,
     #             stmt* body, expr* decorator_list)
@@ -1455,6 +1458,7 @@ class ReduceTypes:
                 if trace: g.trace('*', self.is_known_type(s3), s3)
                 parts.append(s3 if self.is_known_type(s3) else 'Any')
             r2.append('%s[%s]' % (kind, ', '.join(parts)))
+
         if trace: g.trace('2', r2)
         result = others
         result.extend(r2)
@@ -1507,6 +1511,7 @@ class ReduceTypes:
         r = self.reduce_numbers(r)
         for kind in ('Dict', 'List', 'Tuple',):
             r = self.reduce_collection(r, kind)
+
         r = self.reduce_unknowns(r)
         r = sorted(set(r))
         assert r
@@ -1616,9 +1621,10 @@ class StandAloneMakeStubFile:
         if not os.path.exists(fn):
             print('not found', fn)
             return
-        base_fn = os.path.basename(fn)
-        out_fn = os.path.join(self.output_directory, base_fn)
-        out_fn = out_fn[:-3] + '.pyi'
+        # base_fn = os.path.basename(fn)
+        # out_fn = os.path.join(self.output_directory, base_fn)
+        # out_fn = out_fn[:-3] + '.pyi'
+        out_fn = fn + 'i'
         self.output_fn = os.path.normpath(out_fn)
         s = open(fn).read()
         node = ast.parse(s,filename=fn,mode='exec')
@@ -2116,14 +2122,21 @@ class StubFormatter (AstFormatter):
             print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
                 repr(keys), repr(values)))
         # return ''.join(result)
-        return 'Dict[%s]' % ''.join(result)
+
+        if result:
+            return 'Dict[%s]' % ''.join(result)
+        else:
+            return 'Dict'
 
     def do_List(self, node):
         '''StubFormatter.List.'''
         elts = [self.visit(z) for z in node.elts]
         elts = [z for z in elts if z] # Defensive.
         # g.trace('=====',elts)
-        return 'List[%s]' % ', '.join(elts)
+        if elts:
+            return 'List[%s]' % ', '.join(elts)
+        else:
+            return 'List'
 
     # seen_names = [] # t--ype: List[str]
 
@@ -2215,7 +2228,10 @@ class StubFormatter (AstFormatter):
         args = [z for z in args if z] # Kludge: Defensive coding.
         # Explicit pattern:
         if func in ('dict', 'list', 'set', 'tuple',):
-            s = '%s[%s]' % (func.capitalize(), ', '.join(args))
+            if args:
+                s = '%s[%s]' % (func.capitalize(), ', '.join(args))
+            else:
+                s = '%s' % func.capitalize()
         else:
             s = '%s(%s)' % (func, ', '.join(args))
         s = self.match_all(node, s, trace=trace)
@@ -2787,7 +2803,9 @@ class StubTraverser (ast.NodeVisitor):
         if trace and self.returns:
             g.trace('name: %s r:\n%s' % (name, r))
         if not [z for z in self.returns if z.value != None]:
-            return 'None: ...'
+            empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
+            tail = ': ...' if empty else ':'
+            return 'None' + tail
         # Step 2: [Def Name Patterns] override all other patterns.
         for pattern in self.def_patterns:
             found, s = pattern.match(name)
@@ -2799,9 +2817,9 @@ class StubTraverser (ast.NodeVisitor):
         # Step 3: remove recursive calls.
         raw, r = self.remove_recursive_calls(name, raw, r)
         # Step 4: Calculate return types.
-        return self.format_return_expressions(name, raw, r)
+        return self.format_return_expressions(node, name, raw, r)
 
-    def format_return_expressions(self, name, raw_returns, reduced_returns):
+    def format_return_expressions(self, node, name, raw_returns, reduced_returns):
         '''
         aList is a list of maximally reduced return expressions.
         For each expression e in Alist:
@@ -2814,6 +2832,10 @@ class StubTraverser (ast.NodeVisitor):
         n = len(raw_returns)
         known = all([is_known_type(e) for e in reduced_returns])
         # g.trace(reduced_returns)
+
+        empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
+        tail = ': ...' if empty else ':'
+
         if not known or self.verbose:
             # First, generate the return lines.
             aList = []
@@ -2828,14 +2850,16 @@ class StubTraverser (ast.NodeVisitor):
                 s = reduce_types(reduced_returns,
                                  name=name,
                                  trace=self.trace_reduce)
-                return s + ': ...' + results
+
+                return s + tail + results
             else:
-                return 'Any: ...' + results
+                return 'Any' + tail + results
         else:
             s = reduce_types(reduced_returns,
                              name=name,
-                             trace=self.trace_reduce) 
-            return s + ': ...'
+                             trace=self.trace_reduce)
+
+            return s + tail
 
     def get_def_name(self, node):
         '''Return the representaion of a function or method name.'''
