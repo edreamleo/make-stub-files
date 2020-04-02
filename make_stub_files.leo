@@ -356,6 +356,19 @@
 <v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
 <v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
 </v>
+<v t="ekr.20200402084239.1"><vh>Found:output_fn</vh>
+<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
+<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
+<v t="ekr.20160318141204.170"></v>
+<v t="ekr.20160318141204.173"></v>
+</v>
+<v t="ekr.20200402123656.1"><vh>Found:output_directory</vh>
+<v t="ekr.20160318141204.126"></v>
+<v t="ekr.20160318141204.128"></v>
+<v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
+<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.132"></v>
+</v>
 <v t="ekr.20160318141204.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160318141204.3"><vh>  type functions</vh>
@@ -374,10 +387,10 @@
 <v t="ekr.20160318141204.14"></v>
 <v t="ekr.20160318141204.90"></v>
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
-<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
+<v t="ekr.20160318141204.126"></v>
 <v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
-<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
+<v t="ekr.20160318141204.128"></v>
+<v t="ekr.20160318141204.129"></v>
 <v t="ekr.20160318141204.130"><vh>msf.run_all_unit_tests</vh></v>
 <v t="ekr.20160318141204.131"></v>
 <v t="ekr.20160318141204.132"></v>
@@ -395,19 +408,6 @@
 <v t="ekr.20160318141204.199"><vh>return_list</vh></v>
 <v t="ekr.20160318141204.200"><vh>return_two_lists (fails)</vh></v>
 </v>
-</v>
-<v t="ekr.20200402084239.1"><vh>Found:output_fn</vh>
-<v t="ekr.20160318141204.126"></v>
-<v t="ekr.20160318141204.128"></v>
-<v t="ekr.20160318141204.170"></v>
-<v t="ekr.20160318141204.173"></v>
-</v>
-<v t="ekr.20200402123656.1"><vh>Found:output_directory</vh>
-<v t="ekr.20160318141204.126"></v>
-<v t="ekr.20160318141204.128"></v>
-<v t="ekr.20160318141204.129"></v>
-<v t="ekr.20160318141204.131"></v>
-<v t="ekr.20160318141204.132"></v>
 </v>
 </vnodes>
 <tnodes>
@@ -2629,13 +2629,11 @@ def __init__(self):
     self.options = {}
     # Ivars set on the command line...
     self.config_fn = None
-        # self.finalize('~/stubs/make_stub_files.cfg')
     self.enable_unit_tests = False
-    self.files = []  # May also be set in the config file.
+    self.files = []
     # Ivars set in the config file...
     self.output_fn = None
-    self.output_directory = None  ### self.finalize('.')
-        # self.finalize('~/stubs')
+    self.output_directory = None
     self.overwrite = False
     self.prefix_lines = []
     self.silent = False
@@ -2647,8 +2645,7 @@ def __init__(self):
     self.verbose = False  # Trace config arguments.
     self.warn = False
     # Pattern lists, set by config sections...
-    self.section_names = (
-        'Global', 'Def Name Patterns', 'General Patterns')
+    self.section_names = ('Global', 'Def Name Patterns', 'General Patterns')
     self.def_patterns = []  # [Def Name Patterns]
     self.general_patterns = []  # [General Patterns]
     self.names_dict = {}
@@ -2715,16 +2712,6 @@ def run(self):
         return
     for fn in self.files:
         self.make_stub_file(fn)
-        ###
-            # dir_ = self.output_directory
-            # if dir_:
-                # if os.path.exists(dir_):
-                    # for fn in self.files:
-                        # self.make_stub_file(fn)
-                # else:
-                    # print('output directory not found: %s' % dir_)
-            # else:
-                # print('no output directory')
 </t>
 <t tx="ekr.20160318141204.13">
 def truncate(s, n):

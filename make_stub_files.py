@@ -915,13 +915,11 @@ class Controller:
         self.options = {}
         # Ivars set on the command line...
         self.config_fn = None
-            # self.finalize('~/stubs/make_stub_files.cfg')
         self.enable_unit_tests = False
-        self.files = []  # May also be set in the config file.
+        self.files = []
         # Ivars set in the config file...
         self.output_fn = None
-        self.output_directory = None  ### self.finalize('.')
-            # self.finalize('~/stubs')
+        self.output_directory = None
         self.overwrite = False
         self.prefix_lines = []
         self.silent = False
@@ -933,8 +931,7 @@ class Controller:
         self.verbose = False  # Trace config arguments.
         self.warn = False
         # Pattern lists, set by config sections...
-        self.section_names = (
-            'Global', 'Def Name Patterns', 'General Patterns')
+        self.section_names = ('Global', 'Def Name Patterns', 'General Patterns')
         self.def_patterns = []  # [Def Name Patterns]
         self.general_patterns = []  # [General Patterns]
         self.names_dict = {}
@@ -998,16 +995,6 @@ class Controller:
             return
         for fn in self.files:
             self.make_stub_file(fn)
-            ###
-                # dir_ = self.output_directory
-                # if dir_:
-                    # if os.path.exists(dir_):
-                        # for fn in self.files:
-                            # self.make_stub_file(fn)
-                    # else:
-                        # print('output directory not found: %s' % dir_)
-                # else:
-                    # print('no output directory')
 
     def run_all_unit_tests(self):
         '''Run all unit tests in the make_stub_files/test directory.'''
