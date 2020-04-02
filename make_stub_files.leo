@@ -122,7 +122,7 @@
 <v t="ekr.20160318141204.100"><vh>g.splitLines</vh></v>
 <v t="ekr.20160318141204.101"><vh>g.trace</vh></v>
 </v>
-<v t="ekr.20160318141204.102"><vh>class Pattern(object)</vh>
+<v t="ekr.20160318141204.102"><vh>class Pattern</vh>
 <v t="ekr.20160318141204.103"><vh>pattern.ctor</vh></v>
 <v t="ekr.20160318141204.104"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
 <v t="ekr.20160318141204.105"><vh>pattern.str &amp; repr</vh></v>
@@ -409,6 +409,9 @@
 <v t="ekr.20160318141204.200"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
+<v t="ekr.20200402143651.1"><vh>----- errors</vh></v>
+<v t="ekr.20160318141204.171"></v>
+<v t="ekr.20160318141204.110"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2140,7 +2143,8 @@ Written by Edward K. Ream.
 &lt;&lt; imports &gt;&gt;
 isPython3 = sys.version_info &gt;= (3, 0, 0)
 @others
-g = LeoGlobals()  # For ekr.
+g = LeoGlobals()
+g_input_file_name = None
 if __name__ == "__main__":
     main()
 </t>
@@ -2159,11 +2163,17 @@ def splitLines(self, s):
 </t>
 <t tx="ekr.20160318141204.101">
 def trace(self, *args, **keys):
+
+    # Compute the caller name.
     try:
-        import leo.core.leoGlobals as leo_g
-        leo_g.trace(caller_level=2, *args, **keys)
-    except ImportError:
-        print(args, keys)
+        f1 = sys._getframe(1)
+        code1 = f1.f_code
+        name = code1.co_name
+    except Exception:
+        name = ''
+    print('%s: %s' % (name, ' '.join(str(z) for z in args)))
+
+    
 </t>
 <t tx="ekr.20160318141204.102">
 
@@ -2288,14 +2298,10 @@ def main():
     The driver for the stand-alone version of make-stub-files.
     All options come from ~/stubs/make_stub_files.cfg.
     '''
-    # g.cls()
     controller = Controller()
     controller.scan_command_line()
     controller.scan_options()
     controller.run()
-    if not controller.silent:
-        print('done')
-
 </t>
 <t tx="ekr.20160318141204.110">
 def match_balanced(self, delim, s, i):
@@ -2303,6 +2309,7 @@ def match_balanced(self, delim, s, i):
     delim == s[i] and delim is in '([{'
     Return the index of the end of the balanced parenthesized string, or len(s)+1.
     '''
+    global g_input_file_name
     assert s[i] == delim, s[i]
     assert delim in '([{'
     delim2 = ')]}'['([{'.index(delim)]
@@ -2320,7 +2327,8 @@ def match_balanced(self, delim, s, i):
                 return i
         assert progress &lt; i
     # Unmatched: a syntax error.
-    g.trace('unmatched %s in %s' % (delim, s), g.callers(4))
+    print('%20s: unmatched %s in %s' % (g_input_file_name, delim, s))
+    # print('called from:', g.callers(4))
     return len(s) + 1
 </t>
 <t tx="ekr.20160318141204.111">
@@ -2669,6 +2677,7 @@ def make_stub_file(self, fn):
     Make a stub file in ~/stubs for all source files mentioned in the
     [Source Files] section of ~/stubs/make_stub_files.cfg
     '''
+    global g_input_file_name
     if not fn.endswith('.py'):
         print('not a python file', fn)
         return
@@ -2677,6 +2686,8 @@ def make_stub_file(self, fn):
     if not os.path.exists(fn):
         print('not found', fn)
         return
+    # Set g_input_file_name for error messages.
+    g_input_file_name = g.shortFileName(fn)
     with open(fn, 'r') as f:
         s = f.read()
     #
@@ -2793,8 +2804,8 @@ def scan_command_line(self):
 <t tx="ekr.20160318141204.132">
 def scan_options(self):
     '''Set all configuration-related ivars.'''
-    trace = True
-    if trace: g.trace('config file', self.config_fn)
+    if self.verbose:
+        g.trace('config file: %s' % self.config_fn)
     if not self.config_fn:
         return
     self.parser = parser = self.create_parser()
@@ -2813,7 +2824,7 @@ def scan_options(self):
     for z in files:
         files2.extend(glob.glob(self.finalize(z)))
     self.files = [z for z in files2 if z and os.path.exists(z)]
-    if trace:
+    if self.verbose:
         print('Files (from %s)...\n' % files_source)
         for z in self.files:
             print(z)
@@ -2830,12 +2841,13 @@ def scan_options(self):
             self.output_directory = None  # inhibit run().
     if 'prefix_lines' in parser.options('Global'):
         prefix = parser.get('Global', 'prefix_lines')
-        self.prefix_lines = prefix.split('\n')
+        prefix_lines = prefix.split('\n')
             # The parser does not preserve leading whitespace.
-        if trace:
+        self.prefix_lines = [z for z in prefix_lines if z.strip()]
+        if self.verbose:
             print('Prefix lines...\n')
             for z in self.prefix_lines:
-                print(z)
+                print('  %s' % z)
             print('')
     self.def_patterns = self.scan_patterns('Def Name Patterns')
     self.general_patterns = self.scan_patterns('General Patterns')
@@ -3459,11 +3471,12 @@ def __init__(self, controller):
 <t tx="ekr.20160318141204.171">
 def add_stub(self, d, stub):
     '''Add the stub to d, checking that it does not exist.'''
+    global g_input_file_name
     key = stub.full_name
     assert key
     if key in d:
-        caller = g.callers(2).split(',')[1]
-        g.trace('Ignoring duplicate entry for %s in %s' % (stub, caller))
+        # caller = g.callers(2).split(',')[1]
+        print('%20s: ignoring duplicate entry for %s' % (g_input_file_name, key))
     else:
         d[key] = stub
 </t>
@@ -3490,28 +3503,26 @@ def run(self, node):
     dir_ = os.path.dirname(fn)
     if os.path.exists(fn) and not self.overwrite:
         print('file exists: %s' % fn)
-    elif not dir_ or os.path.exists(dir_):
-        t1 = time.process_time()
-        # Delayed output allows sorting.
-        self.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
-        for z in self.prefix_lines or []:
-            self.parent_stub.out_list.append(z)
-        self.visit(node)
-            # Creates parent_stub.out_list.
-        if self.update_flag:
-            self.parent_stub = self.update(fn, new_root=self.parent_stub)
-        if 1:
-            self.output_file = open(fn, 'w')
-            self.output_time_stamp()
-            self.output_stubs(self.parent_stub)
-            self.output_file.close()
-            self.output_file = None
-            self.parent_stub = None
-        t2 = time.process_time()
-        if not self.silent:
-            print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
-    else:
+        return
+    if dir_ and not os.path.exists(dir_):
         print('output directory not not found: %s' % dir_)
+        return
+    # Create parent_stub.out_list.
+    self.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
+    for z in self.prefix_lines or []:
+        self.parent_stub.out_list.append(z)
+    self.visit(node)
+    if self.update_flag:
+        self.parent_stub = self.update(fn, new_root=self.parent_stub)
+    # Output the stubs.
+    self.output_file = open(fn, 'w')
+    self.output_time_stamp()
+    self.output_stubs(self.parent_stub)
+    self.output_file.close()
+    self.output_file = None
+    self.parent_stub = None
+    if self.verbose:
+        print('wrote: %s' % fn)
 </t>
 <t tx="ekr.20160318141204.174">
 def output_stubs(self, stub):
@@ -5302,5 +5313,6 @@ toString = objToString
 # flattened, word, ignore-case, head, body
 
 # found 10 nodes</t>
+<t tx="ekr.20200402143651.1"></t>
 </tnodes>
 </leo_file>
