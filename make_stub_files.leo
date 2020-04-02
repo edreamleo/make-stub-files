@@ -88,6 +88,10 @@
 <v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
 </v>
 </v>
+<v t="ekr.20200402143651.1"><vh>----- errors</vh>
+<v t="ekr.20160318141204.171"><vh>st.add_stub</vh></v>
+<v t="ekr.20160318141204.110"><vh>pattern.match_balanced</vh></v>
+</v>
 </v>
 <v t="ekr.20160131174909.1"><vh>To do</vh></v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
@@ -130,7 +134,7 @@
 <v t="ekr.20160318141204.107"><vh>pattern.is_regex</vh></v>
 <v t="ekr.20160318141204.108"><vh>pattern.all_matches &amp; helpers</vh>
 <v t="ekr.20160318141204.109"><vh>pattern.full_balanced_match</vh></v>
-<v t="ekr.20160318141204.110"><vh>pattern.match_balanced</vh></v>
+<v t="ekr.20160318141204.110"></v>
 </v>
 <v t="ekr.20160318141204.111"><vh>pattern.match (trace-matches)</vh></v>
 <v t="ekr.20160318141204.112"><vh>pattern.match_entire_string</vh></v>
@@ -287,7 +291,7 @@
 </v>
 <v t="ekr.20160318141204.169"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160318141204.170"><vh>st.ctor</vh></v>
-<v t="ekr.20160318141204.171"><vh>st.add_stub</vh></v>
+<v t="ekr.20160318141204.171"></v>
 <v t="ekr.20160318141204.172"><vh>st.indent &amp; out</vh></v>
 <v t="ekr.20160318141204.173"><vh>st.run (main line) &amp; helpers</vh>
 <v t="ekr.20160318141204.174"><vh>st.output_stubs</vh></v>
@@ -346,29 +350,6 @@
 <v t="ekr.20180901051603.1"><vh>@test bug3</vh></v>
 </v>
 <v t="ekr.20160630100214.1"><vh>@clean test.py</vh></v>
-<v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
-<v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
-<v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160318141204.135"><vh>msf.find_pattern_ops</vh></v>
-<v t="ekr.20160318141204.136"><vh>msf.get_config_string</vh></v>
-<v t="ekr.20160318141204.137"><vh>msf.init_parser</vh></v>
-<v t="ekr.20160318141204.138"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
-<v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
-</v>
-<v t="ekr.20200402084239.1"><vh>Found:output_fn</vh>
-<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
-<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.170"></v>
-<v t="ekr.20160318141204.173"></v>
-</v>
-<v t="ekr.20200402123656.1"><vh>Found:output_directory</vh>
-<v t="ekr.20160318141204.126"></v>
-<v t="ekr.20160318141204.128"></v>
-<v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
-<v t="ekr.20160318141204.131"></v>
-<v t="ekr.20160318141204.132"></v>
-</v>
 <v t="ekr.20160318141204.1"><vh>@clean make_stub_files.py</vh>
 <v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160318141204.3"><vh>  type functions</vh>
@@ -387,13 +368,22 @@
 <v t="ekr.20160318141204.14"></v>
 <v t="ekr.20160318141204.90"></v>
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
-<v t="ekr.20160318141204.126"></v>
+<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
 <v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
-<v t="ekr.20160318141204.128"></v>
-<v t="ekr.20160318141204.129"></v>
+<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
+<v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
 <v t="ekr.20160318141204.130"><vh>msf.run_all_unit_tests</vh></v>
 <v t="ekr.20160318141204.131"></v>
-<v t="ekr.20160318141204.132"></v>
+<v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
+<v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
+<v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
+<v t="ekr.20160318141204.135"><vh>msf.find_pattern_ops</vh></v>
+<v t="ekr.20160318141204.136"><vh>msf.get_config_string</vh></v>
+<v t="ekr.20160318141204.137"><vh>msf.init_parser</vh></v>
+<v t="ekr.20160318141204.138"><vh>msf.is_section_name</vh></v>
+<v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
+<v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
+</v>
 </v>
 <v t="ekr.20160318141204.92"></v>
 <v t="ekr.20160318141204.102"></v>
@@ -409,9 +399,6 @@
 <v t="ekr.20160318141204.200"><vh>return_two_lists (fails)</vh></v>
 </v>
 </v>
-<v t="ekr.20200402143651.1"><vh>----- errors</vh></v>
-<v t="ekr.20160318141204.171"></v>
-<v t="ekr.20160318141204.110"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -5303,16 +5290,6 @@ toString = objToString
         proc = subprocess.Popen(command, shell=True)
         if wait: proc.communicate()
 </t>
-<t tx="ekr.20200402084239.1">@nosearch
-
-# flattened, word, ignore-case, head, body
-
-# found 4 nodes</t>
-<t tx="ekr.20200402123656.1">@nosearch
-
-# flattened, word, ignore-case, head, body
-
-# found 10 nodes</t>
 <t tx="ekr.20200402143651.1"></t>
 </tnodes>
 </leo_file>
