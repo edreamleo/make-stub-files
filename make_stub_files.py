@@ -920,7 +920,7 @@ class Controller:
         self.files = []  # May also be set in the config file.
         # Ivars set in the config file...
         self.output_fn = None
-        self.output_directory = self.finalize('.')
+        self.output_directory = None  ### self.finalize('.')
             # self.finalize('~/stubs')
         self.overwrite = False
         self.prefix_lines = []
@@ -949,6 +949,8 @@ class Controller:
         fn = os.path.normpath(fn)
         return fn
 
+    directory_warning_given = False
+
     def make_stub_file(self, fn):
         '''
         Make a stub file in ~/stubs for all source files mentioned in the
@@ -957,15 +959,29 @@ class Controller:
         if not fn.endswith('.py'):
             print('not a python file', fn)
             return
+        #
+        # Read the input file.
         if not os.path.exists(fn):
             print('not found', fn)
             return
-        # base_fn = os.path.basename(fn)
-        # out_fn = os.path.join(self.output_directory, base_fn)
-        # out_fn = out_fn[:-3] + '.pyi'
-        out_fn = fn + 'i'
+        with open(fn, 'r') as f:
+            s = f.read()
+        #
+        # Compute the output file name.
+        if self.output_directory:
+            if not os.path.exists(self.output_directory):
+                if not self.directory_warning_given:
+                    self.directory_warning_given = True
+                    print('output directory not found:', repr(self.output_directory))
+                return
+            base_fn = os.path.basename(fn)
+            out_fn = os.path.join(self.output_directory, base_fn)
+            out_fn = out_fn[:-3] + '.pyi'
+        else:
+             out_fn = fn + 'i'
         self.output_fn = os.path.normpath(out_fn)
-        s = open(fn).read()
+        #
+        # Process s.
         node = ast.parse(s, filename=fn, mode='exec')
         StubTraverser(controller=self).run(node)
 
@@ -976,18 +992,22 @@ class Controller:
         '''
         if self.enable_unit_tests:
             self.run_all_unit_tests()
-        if self.files:
-            dir_ = self.output_directory
-            if dir_:
-                if os.path.exists(dir_):
-                    for fn in self.files:
-                        self.make_stub_file(fn)
-                else:
-                    print('output directory not found: %s' % dir_)
-            else:
-                print('no output directory')
-        elif not self.enable_unit_tests:
-            print('no input files')
+        if not self.files:
+            if not self.enable_unit_tests:
+                print('no input files')
+            return
+        for fn in self.files:
+            self.make_stub_file(fn)
+            ###
+                # dir_ = self.output_directory
+                # if dir_:
+                    # if os.path.exists(dir_):
+                        # for fn in self.files:
+                            # self.make_stub_file(fn)
+                    # else:
+                        # print('output directory not found: %s' % dir_)
+                # else:
+                    # print('no output directory')
 
     def run_all_unit_tests(self):
         '''Run all unit tests in the make_stub_files/test directory.'''
@@ -1044,8 +1064,9 @@ class Controller:
         if options.fn:
             self.config_fn = options.fn
         if options.dir:
-            dir_ = options.dir
+            dir_ = options.dir and options.dir.strip()
             dir_ = self.finalize(dir_)
+            g.trace('dir', dir_)
             if os.path.exists(dir_):
                 self.output_directory = dir_
             else:
@@ -1086,7 +1107,7 @@ class Controller:
                 print(z)
             print('')
         if 'output_directory' in parser.options('Global'):
-            s = parser.get('Global', 'output_directory')
+            s = parser.get('Global', 'output_directory').strip()
             output_dir = self.finalize(s)
             if os.path.exists(output_dir):
                 self.output_directory = output_dir
