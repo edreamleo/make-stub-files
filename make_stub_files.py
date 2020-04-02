@@ -92,7 +92,7 @@ def main():
     All options come from ~/stubs/make_stub_files.cfg.
     '''
     # g.cls()
-    controller = StandAloneMakeStubFile()
+    controller = Controller()
     controller.scan_command_line()
     controller.scan_options()
     controller.run()
@@ -910,6 +910,397 @@ class AstArgFormatter (AstFormatter):
         return 'str' # return repr(node.s)
 
 
+class Controller:
+    '''
+    A class to make Python stub (.pyi) files in the ~/stubs directory for
+    every file mentioned in the [Source Files] section of
+    ~/stubs/make_stub_files.cfg.
+    '''
+
+    def __init__ (self):
+        '''Ctor for Controller class.'''
+        self.options = {}
+        # Ivars set on the command line...
+        self.config_fn = None
+            # self.finalize('~/stubs/make_stub_files.cfg')
+        self.enable_unit_tests = False
+        self.files = [] # May also be set in the config file.
+        # Ivars set in the config file...
+        self.output_fn = None
+        self.output_directory = self.finalize('.')
+            # self.finalize('~/stubs')
+        self.overwrite = False
+        self.prefix_lines = []
+        self.silent = False
+        self.trace_matches = False
+        self.trace_patterns = False
+        self.trace_reduce = False
+        self.trace_visitors = False
+        self.update_flag = False
+        self.verbose = False # Trace config arguments.
+        self.warn = False
+        # Pattern lists, set by config sections...
+        self.section_names = (
+            'Global', 'Def Name Patterns', 'General Patterns')
+        self.def_patterns = [] # [Def Name Patterns]
+        self.general_patterns = [] # [General Patterns]
+        self.names_dict = {}
+        self.op_name_dict = self.make_op_name_dict()
+        self.patterns_dict = {}
+        self.regex_patterns = []
+
+    def finalize(self, fn):
+        '''Finalize and regularize a filename.'''
+        fn = os.path.expanduser(fn)
+        fn = os.path.abspath(fn)
+        fn = os.path.normpath(fn)
+        return fn
+
+    def make_stub_file(self, fn):
+        '''
+        Make a stub file in ~/stubs for all source files mentioned in the
+        [Source Files] section of ~/stubs/make_stub_files.cfg
+        '''
+        if not fn.endswith('.py'):
+            print('not a python file', fn)
+            return
+        if not os.path.exists(fn):
+            print('not found', fn)
+            return
+        # base_fn = os.path.basename(fn)
+        # out_fn = os.path.join(self.output_directory, base_fn)
+        # out_fn = out_fn[:-3] + '.pyi'
+        out_fn = fn + 'i'
+        self.output_fn = os.path.normpath(out_fn)
+        s = open(fn).read()
+        node = ast.parse(s,filename=fn,mode='exec')
+        StubTraverser(controller=self).run(node)
+
+    def run(self):
+        '''
+        Make stub files for all files.
+        Do nothing if the output directory does not exist.
+        '''
+        if self.enable_unit_tests:
+            self.run_all_unit_tests()
+        if self.files:
+            dir_ = self.output_directory
+            if dir_:
+                if os.path.exists(dir_):
+                    for fn in self.files:
+                        self.make_stub_file(fn)
+                else:
+                    print('output directory not found: %s' % dir_)
+            else:
+                print('no output directory')
+        elif not self.enable_unit_tests:
+            print('no input files')
+
+    def run_all_unit_tests(self):
+        '''Run all unit tests in the make_stub_files/test directory.'''
+        import unittest
+        loader = unittest.TestLoader()
+        suite = loader.discover(os.path.abspath('.'),
+                                pattern='test*.py',
+                                top_level_dir=None)
+        unittest.TextTestRunner(verbosity=1).run(suite)
+
+    def scan_command_line(self):
+        '''Set ivars from command-line arguments.'''
+        # This automatically implements the --help option.
+        usage = "usage: make_stub_files.py [options] file1, file2, ..."
+        parser = optparse.OptionParser(usage=usage)
+        add = parser.add_option
+        add('-c', '--config', dest='fn',
+            help='full path to configuration file')
+        add('-d', '--dir', dest='dir',
+            help='full path to the output directory')
+        add('-o', '--overwrite', action='store_true', default=False,
+            help='overwrite existing stub (.pyi) files')
+        add('-s', '--silent', action='store_true', default=False,
+            help='run without messages')
+        add('-t', '--test', action='store_true', default=False,
+            help='run unit tests on startup')
+        add('--trace-matches', action='store_true', default=False,
+            help='trace Pattern.matches')
+        add('--trace-patterns', action='store_true', default=False,
+            help='trace pattern creation')
+        add('--trace-reduce', action='store_true', default=False,
+            help='trace st.reduce_types')
+        add('--trace-visitors', action='store_true', default=False,
+            help='trace visitor methods')
+        add('-u', '--update', action='store_true', default=False,
+            help='update stubs in existing stub file')
+        add('-v', '--verbose', action='store_true', default=False,
+            help='verbose output in .pyi file')
+        add('-w', '--warn', action='store_true', default=False,
+            help='warn about unannotated args')
+        # Parse the options
+        options, args = parser.parse_args()
+        # Handle the options...
+        self.enable_unit_tests=options.test
+        self.overwrite = options.overwrite
+        self.silent = options.silent
+        self.trace_matches = options.trace_matches
+        self.trace_patterns = options.trace_patterns
+        self.trace_reduce = options.trace_reduce
+        self.trace_visitors = options.trace_visitors
+        self.update_flag = options.update
+        self.verbose = options.verbose
+        self.warn = options.warn
+        if options.fn:
+            self.config_fn = options.fn
+        if options.dir:
+            dir_ = options.dir
+            dir_ = self.finalize(dir_)
+            if os.path.exists(dir_):
+                self.output_directory = dir_
+            else:
+                print('--dir: directory does not exist: %s' % dir_)
+                print('exiting')
+                sys.exit(1)
+        # If any files remain, set self.files.
+        if args:
+            args = [self.finalize(z) for z in args]
+            if args:
+                self.files = args
+
+    def scan_options(self):
+        '''Set all configuration-related ivars.'''
+        trace = True
+        if trace:
+            g.trace('config file', self.config_fn)
+        if not self.config_fn:
+            return
+        self.parser = parser = self.create_parser()
+        s = self.get_config_string()
+        self.init_parser(s)
+        if self.files:
+            files_source = 'command-line'
+            files = self.files
+        elif parser.has_section('Global'):
+            files_source = 'config file'
+            files = parser.get('Global', 'files')
+            files = [z.strip() for z in files.split('\n') if z.strip()]
+        else:
+            return
+        files2 = []
+        for z in files:
+            files2.extend(glob.glob(self.finalize(z)))
+        self.files = [z for z in files2 if z and os.path.exists(z)]
+        if trace:
+            print('Files (from %s)...\n' % files_source)
+            for z in self.files:
+                print(z)
+            print('')
+        if 'output_directory' in parser.options('Global'):
+            s = parser.get('Global', 'output_directory')
+            output_dir = self.finalize(s)
+            if os.path.exists(output_dir):
+                self.output_directory = output_dir
+                if self.verbose:
+                    print('output directory: %s\n' % output_dir)
+            else:
+                print('output directory not found: %s\n' % output_dir)
+                self.output_directory = None # inhibit run().
+        if 'prefix_lines' in parser.options('Global'):
+            prefix = parser.get('Global', 'prefix_lines')
+            self.prefix_lines = prefix.split('\n')
+                # The parser does not preserve leading whitespace.
+            if trace:
+                print('Prefix lines...\n')
+                for z in self.prefix_lines:
+                    print(z)
+                print('')
+        self.def_patterns = self.scan_patterns('Def Name Patterns')
+        self.general_patterns = self.scan_patterns('General Patterns')
+        self.make_patterns_dict()
+
+    def make_op_name_dict(self):
+        '''
+        Make a dict whose keys are operators ('+', '+=', etc),
+        and whose values are lists of values of ast.Node.__class__.__name__.
+        '''
+        d = {
+            '.':   ['Attr',],
+            '(*)': ['Call', 'Tuple',],
+            '[*]': ['List', 'Subscript',],
+            '{*}': ['???',],
+            # 'and': 'BoolOp',
+            # 'or':  'BoolOp',
+        }
+        for op in (
+            '+', '-', '*', '/', '%', '**', '<<',
+            '>>', '|', '^', '&', '//',
+        ):
+            d[op] = ['BinOp',]
+        for op in (
+            '==', '!=', '<', '<=', '>', '>=',
+            'is', 'is not', 'in', 'not in',
+        ):
+            d[op] = ['Compare',]
+        return d
+
+    def create_parser(self):
+        '''Create a RawConfigParser and return it.'''
+        parser = configparser.RawConfigParser(dict_type=OrderedDict)
+            # Requires Python 2.7
+        parser.optionxform = str
+        return parser
+
+    def find_pattern_ops(self, pattern):
+        '''Return a list of operators in pattern.find_s.'''
+        trace = False or self.trace_patterns
+        if pattern.is_regex():
+            # Add the pattern to the regex patterns list.
+            g.trace(pattern)
+            self.regex_patterns.append(pattern)
+            return []
+        d = self.op_name_dict
+        keys1, keys2, keys3, keys9 = [], [], [], []
+        for op in d:
+            aList = d.get(op)
+            if op.replace(' ','').isalnum():
+                # an alpha op, like 'not, 'not in', etc.
+                keys9.append(op)
+            elif len(op) == 3:
+                keys3.append(op)
+            elif len(op) == 2:
+                keys2.append(op)
+            elif len(op) == 1:
+                keys1.append(op)
+            else:
+                g.trace('bad op', op)
+        ops = []
+        s = s1 = pattern.find_s
+        for aList in (keys3, keys2, keys1):
+            for op in aList:
+                # Must match word here!
+                if s.find(op) > -1:
+                    s = s.replace(op, '')
+                    ops.append(op)
+        # Handle the keys9 list very carefully.
+        for op in keys9:
+            target = ' %s ' % op
+            if s.find(target) > -1:
+                ops.append(op)
+                break # Only one match allowed.
+        if trace and ops: g.trace(s1, ops)
+        return ops
+
+    def get_config_string(self):
+        
+        fn = self.finalize(self.config_fn)
+        if os.path.exists(fn):
+            if self.verbose:
+                print('\nconfiguration file: %s\n' % fn)
+            f = open(fn, 'r')
+            s = f.read()
+            f.close()
+            return s
+        else:
+            print('\nconfiguration file not found: %s' % fn)
+            return ''
+        
+
+    def init_parser(self, s):
+        '''Add double back-slashes to all patterns starting with '['.'''
+        trace = False
+        if not s: return
+        aList = []
+        for s in s.split('\n'):
+            if self.is_section_name(s):
+                aList.append(s)
+            elif s.strip().startswith('['):
+                aList.append(r'\\'+s[1:])
+                if trace: g.trace('*** escaping:',s)
+            else:
+                aList.append(s)
+        s = '\n'.join(aList)+'\n'
+        if trace: g.trace(s)
+        file_object = io.StringIO(s)
+        self.parser.read_file(file_object)
+
+    def is_section_name(self, s):
+        
+        def munge(s):
+            return s.strip().lower().replace(' ','')
+        
+        s = s.strip()
+        if s.startswith('[') and s.endswith(']'):
+            s = munge(s[1:-1])
+            for s2 in self.section_names:
+                if s == munge(s2):
+                    return True
+        return False
+
+    def make_patterns_dict(self):
+        '''Assign all patterns to the appropriate ast.Node.'''
+        for pattern in self.general_patterns:
+            ops = self.find_pattern_ops(pattern)
+            if ops:
+                for op in ops:
+                    # Add the pattern to op's list.
+                    op_names = self.op_name_dict.get(op)
+                    for op_name in op_names:
+                        aList = self.patterns_dict.get(op_name, [])
+                        aList.append(pattern)
+                        self.patterns_dict[op_name] = aList
+            else:
+                # Enter the name in self.names_dict.
+                name = pattern.find_s
+                # Special case for 'number'
+                if name == 'number':
+                    aList = self.patterns_dict.get('Num', [])
+                    aList.append(pattern)
+                    self.patterns_dict['Num'] = aList
+                elif name in self.names_dict:
+                    g.trace('duplicate pattern', pattern)
+                else:
+                    self.names_dict [name] = pattern.repl_s
+        if 0:
+            g.trace('names_dict...')
+            for z in sorted(self.names_dict):
+                print('  %s: %s' % (z, self.names_dict.get(z)))
+        if 0:
+            g.trace('patterns_dict...')
+            for z in sorted(self.patterns_dict):
+                aList = self.patterns_dict.get(z)
+                print(z)
+                for pattern in sorted(aList):
+                    print('  '+repr(pattern))
+        # Note: retain self.general_patterns for use in argument lists.
+
+    def scan_patterns(self, section_name):
+        '''Parse the config section into a list of patterns, preserving order.'''
+        trace = False or self.trace_patterns
+        parser = self.parser
+        aList = []
+        if parser.has_section(section_name):
+            seen = set()
+            for key in parser.options(section_name):
+                value = parser.get(section_name, key)
+                # A kludge: strip leading \\ from patterns.
+                if key.startswith(r'\\'):
+                    key = '[' + key[2:]
+                    if trace: g.trace('removing escapes', key)
+                if key in seen:
+                    g.trace('duplicate key', key)
+                else:
+                    seen.add(key)
+                    aList.append(Pattern(key, value))
+            if trace:
+                g.trace('%s...\n' % section_name)
+                for z in aList:
+                    print(z)
+                print('')
+        # elif trace:
+            # print('no section: %s' % section_name)
+            # print(parser.sections())
+            # print('')
+        return aList
+
+
 class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
 
@@ -1564,397 +1955,6 @@ class ReduceTypes:
 
 
 
-class StandAloneMakeStubFile:
-    '''
-    A class to make Python stub (.pyi) files in the ~/stubs directory for
-    every file mentioned in the [Source Files] section of
-    ~/stubs/make_stub_files.cfg.
-    '''
-
-    def __init__ (self):
-        '''Ctor for StandAloneMakeStubFile class.'''
-        self.options = {}
-        # Ivars set on the command line...
-        self.config_fn = None
-            # self.finalize('~/stubs/make_stub_files.cfg')
-        self.enable_unit_tests = False
-        self.files = [] # May also be set in the config file.
-        # Ivars set in the config file...
-        self.output_fn = None
-        self.output_directory = self.finalize('.')
-            # self.finalize('~/stubs')
-        self.overwrite = False
-        self.prefix_lines = []
-        self.silent = False
-        self.trace_matches = False
-        self.trace_patterns = False
-        self.trace_reduce = False
-        self.trace_visitors = False
-        self.update_flag = False
-        self.verbose = False # Trace config arguments.
-        self.warn = False
-        # Pattern lists, set by config sections...
-        self.section_names = (
-            'Global', 'Def Name Patterns', 'General Patterns')
-        self.def_patterns = [] # [Def Name Patterns]
-        self.general_patterns = [] # [General Patterns]
-        self.names_dict = {}
-        self.op_name_dict = self.make_op_name_dict()
-        self.patterns_dict = {}
-        self.regex_patterns = []
-
-    def finalize(self, fn):
-        '''Finalize and regularize a filename.'''
-        fn = os.path.expanduser(fn)
-        fn = os.path.abspath(fn)
-        fn = os.path.normpath(fn)
-        return fn
-
-    def make_stub_file(self, fn):
-        '''
-        Make a stub file in ~/stubs for all source files mentioned in the
-        [Source Files] section of ~/stubs/make_stub_files.cfg
-        '''
-        if not fn.endswith('.py'):
-            print('not a python file', fn)
-            return
-        if not os.path.exists(fn):
-            print('not found', fn)
-            return
-        # base_fn = os.path.basename(fn)
-        # out_fn = os.path.join(self.output_directory, base_fn)
-        # out_fn = out_fn[:-3] + '.pyi'
-        out_fn = fn + 'i'
-        self.output_fn = os.path.normpath(out_fn)
-        s = open(fn).read()
-        node = ast.parse(s,filename=fn,mode='exec')
-        StubTraverser(controller=self).run(node)
-
-    def run(self):
-        '''
-        Make stub files for all files.
-        Do nothing if the output directory does not exist.
-        '''
-        if self.enable_unit_tests:
-            self.run_all_unit_tests()
-        if self.files:
-            dir_ = self.output_directory
-            if dir_:
-                if os.path.exists(dir_):
-                    for fn in self.files:
-                        self.make_stub_file(fn)
-                else:
-                    print('output directory not found: %s' % dir_)
-            else:
-                print('no output directory')
-        elif not self.enable_unit_tests:
-            print('no input files')
-
-    def run_all_unit_tests(self):
-        '''Run all unit tests in the make_stub_files/test directory.'''
-        import unittest
-        loader = unittest.TestLoader()
-        suite = loader.discover(os.path.abspath('.'),
-                                pattern='test*.py',
-                                top_level_dir=None)
-        unittest.TextTestRunner(verbosity=1).run(suite)
-
-    def scan_command_line(self):
-        '''Set ivars from command-line arguments.'''
-        # This automatically implements the --help option.
-        usage = "usage: make_stub_files.py [options] file1, file2, ..."
-        parser = optparse.OptionParser(usage=usage)
-        add = parser.add_option
-        add('-c', '--config', dest='fn',
-            help='full path to configuration file')
-        add('-d', '--dir', dest='dir',
-            help='full path to the output directory')
-        add('-o', '--overwrite', action='store_true', default=False,
-            help='overwrite existing stub (.pyi) files')
-        add('-s', '--silent', action='store_true', default=False,
-            help='run without messages')
-        add('-t', '--test', action='store_true', default=False,
-            help='run unit tests on startup')
-        add('--trace-matches', action='store_true', default=False,
-            help='trace Pattern.matches')
-        add('--trace-patterns', action='store_true', default=False,
-            help='trace pattern creation')
-        add('--trace-reduce', action='store_true', default=False,
-            help='trace st.reduce_types')
-        add('--trace-visitors', action='store_true', default=False,
-            help='trace visitor methods')
-        add('-u', '--update', action='store_true', default=False,
-            help='update stubs in existing stub file')
-        add('-v', '--verbose', action='store_true', default=False,
-            help='verbose output in .pyi file')
-        add('-w', '--warn', action='store_true', default=False,
-            help='warn about unannotated args')
-        # Parse the options
-        options, args = parser.parse_args()
-        # Handle the options...
-        self.enable_unit_tests=options.test
-        self.overwrite = options.overwrite
-        self.silent = options.silent
-        self.trace_matches = options.trace_matches
-        self.trace_patterns = options.trace_patterns
-        self.trace_reduce = options.trace_reduce
-        self.trace_visitors = options.trace_visitors
-        self.update_flag = options.update
-        self.verbose = options.verbose
-        self.warn = options.warn
-        if options.fn:
-            self.config_fn = options.fn
-        if options.dir:
-            dir_ = options.dir
-            dir_ = self.finalize(dir_)
-            if os.path.exists(dir_):
-                self.output_directory = dir_
-            else:
-                print('--dir: directory does not exist: %s' % dir_)
-                print('exiting')
-                sys.exit(1)
-        # If any files remain, set self.files.
-        if args:
-            args = [self.finalize(z) for z in args]
-            if args:
-                self.files = args
-
-    def scan_options(self):
-        '''Set all configuration-related ivars.'''
-        trace = False
-        if trace:
-            g.trace('config file', self.config_fn)
-        if not self.config_fn:
-            return
-        self.parser = parser = self.create_parser()
-        s = self.get_config_string()
-        self.init_parser(s)
-        if self.files:
-            files_source = 'command-line'
-            files = self.files
-        elif parser.has_section('Global'):
-            files_source = 'config file'
-            files = parser.get('Global', 'files')
-            files = [z.strip() for z in files.split('\n') if z.strip()]
-        else:
-            return
-        files2 = []
-        for z in files:
-            files2.extend(glob.glob(self.finalize(z)))
-        self.files = [z for z in files2 if z and os.path.exists(z)]
-        if trace:
-            print('Files (from %s)...\n' % files_source)
-            for z in self.files:
-                print(z)
-            print('')
-        if 'output_directory' in parser.options('Global'):
-            s = parser.get('Global', 'output_directory')
-            output_dir = self.finalize(s)
-            if os.path.exists(output_dir):
-                self.output_directory = output_dir
-                if self.verbose:
-                    print('output directory: %s\n' % output_dir)
-            else:
-                print('output directory not found: %s\n' % output_dir)
-                self.output_directory = None # inhibit run().
-        if 'prefix_lines' in parser.options('Global'):
-            prefix = parser.get('Global', 'prefix_lines')
-            self.prefix_lines = prefix.split('\n')
-                # The parser does not preserve leading whitespace.
-            if trace:
-                print('Prefix lines...\n')
-                for z in self.prefix_lines:
-                    print(z)
-                print('')
-        self.def_patterns = self.scan_patterns('Def Name Patterns')
-        self.general_patterns = self.scan_patterns('General Patterns')
-        self.make_patterns_dict()
-
-    def make_op_name_dict(self):
-        '''
-        Make a dict whose keys are operators ('+', '+=', etc),
-        and whose values are lists of values of ast.Node.__class__.__name__.
-        '''
-        d = {
-            '.':   ['Attr',],
-            '(*)': ['Call', 'Tuple',],
-            '[*]': ['List', 'Subscript',],
-            '{*}': ['???',],
-            # 'and': 'BoolOp',
-            # 'or':  'BoolOp',
-        }
-        for op in (
-            '+', '-', '*', '/', '%', '**', '<<',
-            '>>', '|', '^', '&', '//',
-        ):
-            d[op] = ['BinOp',]
-        for op in (
-            '==', '!=', '<', '<=', '>', '>=',
-            'is', 'is not', 'in', 'not in',
-        ):
-            d[op] = ['Compare',]
-        return d
-
-    def create_parser(self):
-        '''Create a RawConfigParser and return it.'''
-        parser = configparser.RawConfigParser(dict_type=OrderedDict)
-            # Requires Python 2.7
-        parser.optionxform = str
-        return parser
-
-    def find_pattern_ops(self, pattern):
-        '''Return a list of operators in pattern.find_s.'''
-        trace = False or self.trace_patterns
-        if pattern.is_regex():
-            # Add the pattern to the regex patterns list.
-            g.trace(pattern)
-            self.regex_patterns.append(pattern)
-            return []
-        d = self.op_name_dict
-        keys1, keys2, keys3, keys9 = [], [], [], []
-        for op in d:
-            aList = d.get(op)
-            if op.replace(' ','').isalnum():
-                # an alpha op, like 'not, 'not in', etc.
-                keys9.append(op)
-            elif len(op) == 3:
-                keys3.append(op)
-            elif len(op) == 2:
-                keys2.append(op)
-            elif len(op) == 1:
-                keys1.append(op)
-            else:
-                g.trace('bad op', op)
-        ops = []
-        s = s1 = pattern.find_s
-        for aList in (keys3, keys2, keys1):
-            for op in aList:
-                # Must match word here!
-                if s.find(op) > -1:
-                    s = s.replace(op, '')
-                    ops.append(op)
-        # Handle the keys9 list very carefully.
-        for op in keys9:
-            target = ' %s ' % op
-            if s.find(target) > -1:
-                ops.append(op)
-                break # Only one match allowed.
-        if trace and ops: g.trace(s1, ops)
-        return ops
-
-    def get_config_string(self):
-        
-        fn = self.finalize(self.config_fn)
-        if os.path.exists(fn):
-            if self.verbose:
-                print('\nconfiguration file: %s\n' % fn)
-            f = open(fn, 'r')
-            s = f.read()
-            f.close()
-            return s
-        else:
-            print('\nconfiguration file not found: %s' % fn)
-            return ''
-        
-
-    def init_parser(self, s):
-        '''Add double back-slashes to all patterns starting with '['.'''
-        trace = False
-        if not s: return
-        aList = []
-        for s in s.split('\n'):
-            if self.is_section_name(s):
-                aList.append(s)
-            elif s.strip().startswith('['):
-                aList.append(r'\\'+s[1:])
-                if trace: g.trace('*** escaping:',s)
-            else:
-                aList.append(s)
-        s = '\n'.join(aList)+'\n'
-        if trace: g.trace(s)
-        file_object = io.StringIO(s)
-        self.parser.read_file(file_object)
-
-    def is_section_name(self, s):
-        
-        def munge(s):
-            return s.strip().lower().replace(' ','')
-        
-        s = s.strip()
-        if s.startswith('[') and s.endswith(']'):
-            s = munge(s[1:-1])
-            for s2 in self.section_names:
-                if s == munge(s2):
-                    return True
-        return False
-
-    def make_patterns_dict(self):
-        '''Assign all patterns to the appropriate ast.Node.'''
-        for pattern in self.general_patterns:
-            ops = self.find_pattern_ops(pattern)
-            if ops:
-                for op in ops:
-                    # Add the pattern to op's list.
-                    op_names = self.op_name_dict.get(op)
-                    for op_name in op_names:
-                        aList = self.patterns_dict.get(op_name, [])
-                        aList.append(pattern)
-                        self.patterns_dict[op_name] = aList
-            else:
-                # Enter the name in self.names_dict.
-                name = pattern.find_s
-                # Special case for 'number'
-                if name == 'number':
-                    aList = self.patterns_dict.get('Num', [])
-                    aList.append(pattern)
-                    self.patterns_dict['Num'] = aList
-                elif name in self.names_dict:
-                    g.trace('duplicate pattern', pattern)
-                else:
-                    self.names_dict [name] = pattern.repl_s
-        if 0:
-            g.trace('names_dict...')
-            for z in sorted(self.names_dict):
-                print('  %s: %s' % (z, self.names_dict.get(z)))
-        if 0:
-            g.trace('patterns_dict...')
-            for z in sorted(self.patterns_dict):
-                aList = self.patterns_dict.get(z)
-                print(z)
-                for pattern in sorted(aList):
-                    print('  '+repr(pattern))
-        # Note: retain self.general_patterns for use in argument lists.
-
-    def scan_patterns(self, section_name):
-        '''Parse the config section into a list of patterns, preserving order.'''
-        trace = False or self.trace_patterns
-        parser = self.parser
-        aList = []
-        if parser.has_section(section_name):
-            seen = set()
-            for key in parser.options(section_name):
-                value = parser.get(section_name, key)
-                # A kludge: strip leading \\ from patterns.
-                if key.startswith(r'\\'):
-                    key = '[' + key[2:]
-                    if trace: g.trace('removing escapes', key)
-                if key in seen:
-                    g.trace('duplicate key', key)
-                else:
-                    seen.add(key)
-                    aList.append(Pattern(key, value))
-            if trace:
-                g.trace('%s...\n' % section_name)
-                for z in aList:
-                    print(z)
-                print('')
-        # elif trace:
-            # print('no section: %s' % section_name)
-            # print(parser.sections())
-            # print('')
-        return aList
-
-
 class Stub(object):
     '''
     A class representing all the generated stub for a class or def.
@@ -2315,8 +2315,7 @@ class StubTraverser (ast.NodeVisitor):
 
     def __init__(self, controller):
         '''Ctor for StubTraverser class.'''
-        self.controller = x = controller
-            # A StandAloneMakeStubFile instance.
+        self.controller = x = controller  # A Controller instance.
         # Internal state ivars...
         self.class_name_stack = []
         self.class_defs_count = 0
@@ -2391,7 +2390,7 @@ class StubTraverser (ast.NodeVisitor):
         if os.path.exists(fn) and not self.overwrite:
             print('file exists: %s' % fn)
         elif not dir_ or os.path.exists(dir_):
-            t1 = time.clock()
+            t1 = time.process_time()
             # Delayed output allows sorting.
             self.parent_stub = Stub(kind='root', name='<new-stubs>')
             for z in self.prefix_lines or []:
@@ -2407,7 +2406,7 @@ class StubTraverser (ast.NodeVisitor):
                 self.output_file.close()
                 self.output_file = None
                 self.parent_stub = None
-            t2 = time.clock()
+            t2 = time.process_time()
             if not self.silent:
                 print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
         else:

@@ -75,6 +75,20 @@
 <v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
 </v>
 </v>
+<v t="ekr.20180706073205.1"><vh>Recent Code</vh>
+<v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
+<v t="ekr.20180901050914.1"><vh>Changed...</vh>
+<v t="ekr.20160318141204.186"><vh>st.visit_ClassDef</vh></v>
+<v t="ekr.20160318141204.20"><vh>f.ClassDef (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
+</v>
+</v>
+<v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh>
+<v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
+<v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
+</v>
+</v>
+</v>
 <v t="ekr.20160131174909.1"><vh>To do</vh></v>
 <v t="ekr.20160206171945.1"><vh>Unit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
@@ -155,7 +169,7 @@
 <v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
 </v>
 <v t="ekr.20160318141204.19"><vh>f.Contexts</vh>
-<v t="ekr.20160318141204.20"><vh>f.ClassDef (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.20"></v>
 <v t="ekr.20160318141204.21"><vh>f.FunctionDef (make_stub_files)</vh></v>
 <v t="ekr.20160318141204.22"><vh>f.Interactive</vh></v>
 <v t="ekr.20160318141204.23"><vh>f.Module</vh></v>
@@ -291,11 +305,9 @@
 <v t="ekr.20160318141204.185"><vh>st.trace_stubs</vh></v>
 </v>
 </v>
-<v t="ekr.20160318141204.186"><vh>st.visit_ClassDef</vh></v>
+<v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.187"><vh>st.visit_FunctionDef &amp; helpers</vh>
-<v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
-</v>
+<v t="ekr.20160318141204.188"></v>
 <v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers</vh>
 <v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
 <v t="ekr.20160318141204.192"><vh>st.get_def_name</vh></v>
@@ -333,8 +345,24 @@
 <v t="ekr.20180901044640.1"><vh>@test bug2 non-empty</vh></v>
 <v t="ekr.20180901051603.1"><vh>@test bug3</vh></v>
 </v>
+<v t="ekr.20160630100214.1"><vh>@clean test.py</vh></v>
+<v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
+<v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
+<v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
+<v t="ekr.20160318141204.135"><vh>msf.find_pattern_ops</vh></v>
+<v t="ekr.20160318141204.136"><vh>msf.get_config_string</vh></v>
+<v t="ekr.20160318141204.137"><vh>msf.init_parser</vh></v>
+<v t="ekr.20160318141204.138"><vh>msf.is_section_name</vh></v>
+<v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
+<v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
+</v>
+<v t="ekr.20200402084239.1"><vh>Found:output_fn</vh>
+<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
+<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
+<v t="ekr.20160318141204.170"></v>
+<v t="ekr.20160318141204.173"></v>
+</v>
 <v t="ekr.20160318141204.1"><vh>@clean make_stub_files.py</vh>
-<v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160318141204.3"><vh>  type functions</vh>
 <v t="ekr.20160318141204.4"><vh>is_known_type</vh></v>
 <v t="ekr.20160318141204.5"></v>
@@ -348,29 +376,21 @@
 <v t="ekr.20160318141204.12"><vh>pdb</vh></v>
 <v t="ekr.20160318141204.13"><vh>truncate</vh></v>
 </v>
+<v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160318141204.14"></v>
 <v t="ekr.20160318141204.90"></v>
+<v t="ekr.20160318141204.125"><vh>class Controller</vh>
+<v t="ekr.20160318141204.126"></v>
+<v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
+<v t="ekr.20160318141204.128"></v>
+<v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
+<v t="ekr.20160318141204.130"><vh>msf.run_all_unit_tests</vh></v>
+<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.132"></v>
+</v>
 <v t="ekr.20160318141204.92"></v>
 <v t="ekr.20160318141204.102"></v>
 <v t="ekr.20160318141204.116"></v>
-<v t="ekr.20160318141204.125"><vh>class StandAloneMakeStubFile</vh>
-<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
-<v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
-<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
-<v t="ekr.20160318141204.130"><vh>msf.run_all_unit_tests</vh></v>
-<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
-<v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
-<v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
-<v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160318141204.135"><vh>msf.find_pattern_ops</vh></v>
-<v t="ekr.20160318141204.136"><vh>msf.get_config_string</vh></v>
-<v t="ekr.20160318141204.137"><vh>msf.init_parser</vh></v>
-<v t="ekr.20160318141204.138"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
-<v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
-</v>
-</v>
 <v t="ekr.20160318141204.141"></v>
 <v t="ekr.20160318141204.147"></v>
 <v t="ekr.20160318141204.169"></v>
@@ -380,19 +400,6 @@
 <v t="ekr.20160318141204.198"><vh>return_array</vh></v>
 <v t="ekr.20160318141204.199"><vh>return_list</vh></v>
 <v t="ekr.20160318141204.200"><vh>return_two_lists (fails)</vh></v>
-</v>
-</v>
-<v t="ekr.20160630100214.1"><vh>@clean test.py</vh></v>
-<v t="ekr.20180706073205.1"><vh>Recent</vh>
-<v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
-<v t="ekr.20180901050914.1"><vh>Changed...</vh>
-<v t="ekr.20160318141204.186"></v>
-<v t="ekr.20160318141204.20"></v>
-<v t="ekr.20160318141204.131"></v>
-</v>
-</v>
-<v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh>
-<v t="ekr.20160318141204.188"></v>
 </v>
 </v>
 </vnodes>
@@ -780,6 +787,9 @@ def test_is_known_type(self):
 <t tx="ekr.20160128225533.1">*.pyc
 *.pyi
 test/*.pyc
+__pycache__/
+.mypy_cache/
+.cache/
 </t>
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
@@ -1808,7 +1818,7 @@ the script produces the stub:
 
     def foo(i: int, s: str) --&gt; str: ...
 
-The `make_stub_files` script eliminates much of the drudgery of creating [python stub (.pyi) files] (https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. This script should encourage more people to use mypy. Stub files can be used by people who use Python 2.x code bases.
+The `make_stub_files` script eliminates much of the drudgery of creating [python stub (.pyi) files](https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. This script should encourage more people to use mypy. Stub files can be used by people who use Python 2.x code bases.
 
 </t>
 <t tx="ekr.20160211110810.1">
@@ -2279,7 +2289,7 @@ def main():
     All options come from ~/stubs/make_stub_files.cfg.
     '''
     # g.cls()
-    controller = StandAloneMakeStubFile()
+    controller = Controller()
     controller.scan_command_line()
     controller.scan_options()
     controller.run()
@@ -2639,7 +2649,7 @@ def split_types(self, s):
 </t>
 <t tx="ekr.20160318141204.125">
 
-class StandAloneMakeStubFile:
+class Controller:
     '''
     A class to make Python stub (.pyi) files in the ~/stubs directory for
     every file mentioned in the [Source Files] section of
@@ -2649,7 +2659,7 @@ class StandAloneMakeStubFile:
 </t>
 <t tx="ekr.20160318141204.126">
 def __init__ (self):
-    '''Ctor for StandAloneMakeStubFile class.'''
+    '''Ctor for Controller class.'''
     self.options = {}
     # Ivars set on the command line...
     self.config_fn = None
@@ -2809,7 +2819,7 @@ def scan_command_line(self):
 <t tx="ekr.20160318141204.132">
 def scan_options(self):
     '''Set all configuration-related ivars.'''
-    trace = False
+    trace = True
     if trace:
         g.trace('config file', self.config_fn)
     if not self.config_fn:
@@ -3466,8 +3476,7 @@ def format(self, node):
 <t tx="ekr.20160318141204.170">
 def __init__(self, controller):
     '''Ctor for StubTraverser class.'''
-    self.controller = x = controller
-        # A StandAloneMakeStubFile instance.
+    self.controller = x = controller  # A Controller instance.
     # Internal state ivars...
     self.class_name_stack = []
     self.class_defs_count = 0
@@ -3545,7 +3554,7 @@ def run(self, node):
     if os.path.exists(fn) and not self.overwrite:
         print('file exists: %s' % fn)
     elif not dir_ or os.path.exists(dir_):
-        t1 = time.clock()
+        t1 = time.process_time()
         # Delayed output allows sorting.
         self.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
         for z in self.prefix_lines or []:
@@ -3561,7 +3570,7 @@ def run(self, node):
             self.output_file.close()
             self.output_file = None
             self.parent_stub = None
-        t2 = time.clock()
+        t2 = time.process_time()
         if not self.silent:
             print('wrote: %s in %4.2f sec' % (fn, t2 - t1))
     else:
@@ -5396,5 +5405,10 @@ toString = objToString
         proc = subprocess.Popen(command, shell=True)
         if wait: proc.communicate()
 </t>
+<t tx="ekr.20200402084239.1">@nosearch
+
+# flattened, word, ignore-case, head, body
+
+# found 4 nodes</t>
 </tnodes>
 </leo_file>
