@@ -1355,8 +1355,7 @@ for a1, a2, expected in table:
 <t tx="ekr.20160207101607.1">@language rest
 @wrap
 
-This is the theory-of-operation document for the `make_stub_files` script.
-It is intentionally brief. Please [ask questions](#summary) if anything is unclear.
+This is the theory-of-operation document for the `make_stub_files` script. It is intentionally brief. Please [ask questions](#summary) if anything is unclear.
 
 ### Prerequisites
 
@@ -1775,39 +1774,22 @@ class AstFormatter:
 <t tx="ekr.20160211110739.1">@language rest
 @wrap
 
-This is the readme file for `make_stub_files.py`. This file explains what
-the script does, how it works and why it is important. After a brief
-overview, a step-by-step section will get you started. Full source code for
-the script is in its [github repository]
-(https://github.com/edreamleo/make-stub-files). This script is in the
-public domain.
+This is the readme file for `make_stub_files.py`. This file explains what the script does, how it works and why it is important. After a brief overview, a step-by-step section will get you started. Full source code for the script is in its [github repository](https://github.com/edreamleo/make-stub-files). This script is in the public domain.
 
 @others
 </t>
 <t tx="ekr.20160211110807.1">
 ### Overview
 
-This script makes a stub (.pyi) file in the **output directory** for each
-**source file** listed on the command line (wildcard file names are
-supported). This script never creates directories automatically, nor does
-it overwrite stub files unless the --overwrite command-line option is in
-effect.
+This script makes a stub (.pyi) file in the **output directory** for each **source file** listed on the command line (wildcard file names are supported). This script never creates directories automatically, nor does it overwrite stub files unless the --overwrite command-line option is in effect.
 
-GvR says,
-&gt; We actually do have a [stub generator](https://github.com/JukkaL/mypy/blob/master/mypy/stubgen.py)
-&gt; as part of mypy now (it has a few options) but yours has the advantage of
-&gt; providing a way to tune the generated signatures...This allows for a nice
-&gt; iterative way of developing stubs.
+GvR says, "We actually do have a [stub generator](https://github.com/JukkaL/mypy/blob/master/mypy/stubgen.py) as part of mypy now (it has a few options) but yours has the advantage of providing a way to tune the generated signatures...This allows for a nice iterative way of developing stubs."
 
-The script does no type inference. Instead, the user supplies **patterns**
-in a configuration file. The script matches these patterns to:
+The script does no type inference. Instead, the user supplies **patterns** in a configuration file. The script matches these patterns to:
 
 1. The names of arguments in functions and methods and
 
-2. The text of **return expressions**. Return expressions are the actual
-   text of whatever follows the "return" keyword. The script removes all
-   comments in return expressions and converts all strings to "str". This
-   **preprocessing** greatly simplifies pattern matching.
+2. The text of **return expressions**. Return expressions are the actual text of whatever follows the "return" keyword. The script removes all comments in return expressions and converts all strings to "str". This **preprocessing** greatly simplifies pattern matching.
 
 As a first example, given the method:
 
@@ -1826,10 +1808,7 @@ the script produces the stub:
 
     def foo(i: int, s: str) --&gt; str: ...
 
-The `make_stub_files` script eliminates much of the drudgery of creating
-[python stub (.pyi) files]
-(https://www.python.org/dev/peps/pep-0484/#stub-files)
-from python source files. This script should encourage more people to use mypy. Stub files can be used by people who use Python 2.x code bases.
+The `make_stub_files` script eliminates much of the drudgery of creating [python stub (.pyi) files] (https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. This script should encourage more people to use mypy. Stub files can be used by people who use Python 2.x code bases.
 
 </t>
 <t tx="ekr.20160211110810.1">
@@ -1856,58 +1835,32 @@ from python source files. This script should encourage more people to use mypy. 
 <t tx="ekr.20160211110810.2">
 ### The configuration file
 
-The --config command-line option specifies the full path to the optional
-configuration file. The configuration file uses the .ini format. It has
-several configuration sections, all optional.
+The --config command-line option specifies the full path to the optional configuration file. The configuration file uses the .ini format. It has several configuration sections, all optional.
 
 </t>
 <t tx="ekr.20160211110810.3">
 ### Why this script is important
 
-The script eliminates most of the drudgery from creating stub files. The
-script produces syntactically and semantically correct stub files without
-any patterns at all. Patterns make it easy to make stubs more specific.
+The script eliminates most of the drudgery from creating stub files. The script produces syntactically and semantically correct stub files without any patterns at all. Patterns make it easy to make stubs more specific.
 
-Once we create stub files, mypy will check them by doing real type
-inference. This will find errors both in the stub files and in the program
-under test. There is now an easy way to use mypy!
+Once we create stub files, mypy will check them by doing real type inference. This will find errors both in the stub files and in the program under test. There is now an easy way to use mypy!
 
-Stubs express design intentions and intuitions as well as types. Until now,
-there has been no practical way of expressing and *testing* these
-assumptions. Now there is.
+Stubs express design intentions and intuitions as well as types. Until now, there has been no practical way of expressing and *testing* these assumptions. Now there is.
 
-Using mypy, we can be as specific as we like about types. We can simply
-annotate that d is a dict, or we can say that d is a dict whose keys are
-strings and whose values are executables with a union of possible
-signatures. Stubs are the easy way to play with type inference.
+Using mypy, we can be as specific as we like about types. We can simply annotate that d is a dict, or we can say that d is a dict whose keys are strings and whose values are executables with a union of possible signatures. Stubs are the easy way to play with type inference.
 
-Stub files clarify long-standing questions about types. To what extent *do*
-we understand types? How dynamic (RPython-like) *are* our programs? mypy
-will tell us where are stub files are dubious. Could we use type annotation
-to convert our programs to C? Not likely, but now there is a way to know
-where things get sticky.
+Stub files clarify long-standing questions about types. To what extent *do* we understand types? How dynamic (RPython-like) *are* our programs? mypy will tell us where are stub files are dubious. Could we use type annotation to convert our programs to C? Not likely, but now there is a way to know where things get sticky.
 
-Finally, stubs can simplify the general type inference problem. Without
-type hints or annotations, the type of everything depends on the type of
-everything else. Stubs could allow robust, maybe even complete, type
-inference to be done locally. Stubs help mypy to work faster.
+Finally, stubs can simplify the general type inference problem. Without type hints or annotations, the type of everything depends on the type of everything else. Stubs could allow robust, maybe even complete, type inference to be done locally. Stubs help mypy to work faster.
 </t>
 <t tx="ekr.20160211110811.1">
 ### Summary
 
-The make-stub-files script does for type/design analysis what Leo's c2py
-command did for converting C sources to python. It eliminates much of the
-drudgery associated with creating stub files, leaving the programmer to
-make non-trivial inferences.
+The make-stub-files script does for type/design analysis what Leo's c2py command did for converting C sources to python. It eliminates much of the drudgery associated with creating stub files, leaving the programmer to make non-trivial inferences.
 
-Stub files allow us to explore type checking using mypy as a guide and
-helper. Stub files are both a design document and an executable, checkable,
-type specification. Stub files allow those with a Python 2 code base to use
-mypy.
+Stub files allow us to explore type checking using mypy as a guide and helper. Stub files are both a design document and an executable, checkable, type specification. Stub files allow those with a Python 2 code base to use mypy.
 
-One could imagine a similar insert_annotations script that would inject
-function annotations into source files using stub files as data. The
-"reverse" script should be more straightforward than this script.
+One could imagine a similar insert_annotations script that would inject function annotations into source files using stub files as data. The "reverse" script should be more straightforward than this script.
 
 Edward K. Ream  
 January 25 to February 15, 2016
@@ -2564,6 +2517,7 @@ def reduce_collection(self, aList, kind):
             if trace: g.trace('*', self.is_known_type(s3), s3)
             parts.append(s3 if self.is_known_type(s3) else 'Any')
         r2.append('%s[%s]' % (kind, ', '.join(parts)))
+
     if trace: g.trace('2', r2)
     result = others
     result.extend(r2)
@@ -2629,6 +2583,7 @@ def reduce_types(self):
     r = self.reduce_numbers(r)
     for kind in ('Dict', 'List', 'Tuple',):
         r = self.reduce_collection(r, kind)
+
     r = self.reduce_unknowns(r)
     r = sorted(set(r))
     assert r
@@ -2745,9 +2700,10 @@ def make_stub_file(self, fn):
     if not os.path.exists(fn):
         print('not found', fn)
         return
-    base_fn = os.path.basename(fn)
-    out_fn = os.path.join(self.output_directory, base_fn)
-    out_fn = out_fn[:-3] + '.pyi'
+    # base_fn = os.path.basename(fn)
+    # out_fn = os.path.join(self.output_directory, base_fn)
+    # out_fn = out_fn[:-3] + '.pyi'
+    out_fn = fn + 'i'
     self.output_fn = os.path.normpath(out_fn)
     s = open(fn).read()
     node = ast.parse(s,filename=fn,mode='exec')
@@ -3010,8 +2966,7 @@ def init_parser(self, s):
     s = '\n'.join(aList)+'\n'
     if trace: g.trace(s)
     file_object = io.StringIO(s)
-    # pylint: disable=deprecated-method
-    self.parser.readfp(file_object)
+    self.parser.read_file(file_object)
 </t>
 <t tx="ekr.20160318141204.138">
 def is_section_name(self, s):
@@ -3293,7 +3248,11 @@ def do_Dict(self, node):
         print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
             repr(keys), repr(values)))
     # return ''.join(result)
-    return 'Dict[%s]' % ''.join(result)
+
+    if result:
+        return 'Dict[%s]' % ''.join(result)
+    else:
+        return 'Dict'
 </t>
 <t tx="ekr.20160318141204.156">
 def do_List(self, node):
@@ -3301,7 +3260,10 @@ def do_List(self, node):
     elts = [self.visit(z) for z in node.elts]
     elts = [z for z in elts if z] # Defensive.
     # g.trace('=====',elts)
-    return 'List[%s]' % ', '.join(elts)
+    if elts:
+        return 'List[%s]' % ', '.join(elts)
+    else:
+        return 'List'
 </t>
 <t tx="ekr.20160318141204.157">
 # seen_names = [] # t--ype: List[str]
@@ -3399,7 +3361,10 @@ def do_Call(self, node):
     args = [z for z in args if z] # Kludge: Defensive coding.
     # Explicit pattern:
     if func in ('dict', 'list', 'set', 'tuple',):
-        s = '%s[%s]' % (func.capitalize(), ', '.join(args))
+        if args:
+            s = '%s[%s]' % (func.capitalize(), ', '.join(args))
+        else:
+            s = '%s' % func.capitalize()
     else:
         s = '%s(%s)' % (func, ', '.join(args))
     s = self.match_all(node, s, trace=trace)
@@ -3775,7 +3740,11 @@ def visit(self, node):
     else:
         assert isinstance(node, ast.AST), node.__class__.__name__
         method_name = 'do_' + node.__class__.__name__
-        method = getattr(self, method_name)
+        try:
+            method = getattr(self, method_name)
+        except AttributeError:
+            return ''
+            
         s = method(node)
         # assert type(s) == type('abc'), (node, type(s))
         assert g.isString(s), type(s)
@@ -4009,7 +3978,6 @@ def munge_arg(self, s):
 </t>
 <t tx="ekr.20160318141204.19">
 # Contexts...
-
 </t>
 <t tx="ekr.20160318141204.190">
 def format_returns(self, node):
@@ -4028,7 +3996,9 @@ def format_returns(self, node):
     if trace and self.returns:
         g.trace('name: %s r:\n%s' % (name, r))
     if not [z for z in self.returns if z.value != None]:
-        return 'None: ...'
+        empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
+        tail = ': ...' if empty else ':'
+        return 'None' + tail
     # Step 2: [Def Name Patterns] override all other patterns.
     for pattern in self.def_patterns:
         found, s = pattern.match(name)
@@ -4040,10 +4010,10 @@ def format_returns(self, node):
     # Step 3: remove recursive calls.
     raw, r = self.remove_recursive_calls(name, raw, r)
     # Step 4: Calculate return types.
-    return self.format_return_expressions(name, raw, r)
+    return self.format_return_expressions(node, name, raw, r)
 </t>
 <t tx="ekr.20160318141204.191">
-def format_return_expressions(self, name, raw_returns, reduced_returns):
+def format_return_expressions(self, node, name, raw_returns, reduced_returns):
     '''
     aList is a list of maximally reduced return expressions.
     For each expression e in Alist:
@@ -4056,6 +4026,10 @@ def format_return_expressions(self, name, raw_returns, reduced_returns):
     n = len(raw_returns)
     known = all([is_known_type(e) for e in reduced_returns])
     # g.trace(reduced_returns)
+
+    empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
+    tail = ': ...' if empty else ':'
+
     if not known or self.verbose:
         # First, generate the return lines.
         aList = []
@@ -4070,14 +4044,16 @@ def format_return_expressions(self, name, raw_returns, reduced_returns):
             s = reduce_types(reduced_returns,
                              name=name,
                              trace=self.trace_reduce)
-            return s + ': ...' + results
+
+            return s + tail + results
         else:
-            return 'Any: ...' + results
+            return 'Any' + tail + results
     else:
         s = reduce_types(reduced_returns,
                          name=name,
-                         trace=self.trace_reduce) 
-        return s + ': ...'
+                         trace=self.trace_reduce)
+
+        return s + tail
 </t>
 <t tx="ekr.20160318141204.192">
 def get_def_name(self, node):
