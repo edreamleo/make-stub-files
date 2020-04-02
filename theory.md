@@ -1,6 +1,5 @@
 
-This is the theory-of-operation document for the `make_stub_files` script.
-It is intentionally brief. Please [ask questions](#summary) if anything is unclear.
+This is the theory-of-operation document for the `make_stub_files` script. It is intentionally brief. Please [ask questions](#summary) if anything is unclear.
 
 ### Prerequisites
 
