@@ -960,8 +960,12 @@ class Controller:
             return
         # Set g_input_file_name for error messages.
         g_input_file_name = g.shortFileName(fn)
-        with open(fn, 'r') as f:
-            s = f.read()
+        try:
+            with open(fn, 'r') as f:
+                s = f.read()
+        except UnicodeDecodeError:  # Python 3 only, try utf-8 encoding.
+            with open(fn, 'r', encoding='utf-8') as f:
+                s = f.read()
         #
         # Compute the output file name.
         if self.output_directory:
