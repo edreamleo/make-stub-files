@@ -950,7 +950,8 @@ class Controller:
         [Source Files] section of ~/stubs/make_stub_files.cfg
         '''
         global g_input_file_name
-        if not fn.endswith('.py'):
+        extension = fn[fn.rfind('.'):]
+        if not extension == '.py' and not (self.force_pyx and extension == '.pyx'):
             print('not a python file', fn)
             return
         #
@@ -976,9 +977,9 @@ class Controller:
                 return
             base_fn = os.path.basename(fn)
             out_fn = os.path.join(self.output_directory, base_fn)
-            out_fn = out_fn[:-3] + '.pyi'
+            out_fn = out_fn[:-len(extension)] + '.pyi'
         else:
-             out_fn = fn + 'i'
+            out_fn = fn[:-len(extension)] + '.pyi'
         self.output_fn = os.path.normpath(out_fn)
         #
         # Process s.
@@ -1038,6 +1039,7 @@ class Controller:
             help='verbose output in .pyi file')
         add('-w', '--warn', action='store_true', default=False,
             help='warn about unannotated args')
+        add('--force-pyx', action='store_true', default=False, help='force the parsing of .pyx files')
         # Parse the options
         options, args = parser.parse_args()
         # Handle the options...
@@ -1051,6 +1053,7 @@ class Controller:
         self.update_flag = options.update
         self.verbose = options.verbose
         self.warn = options.warn
+        self.force_pyx = options.force_pyx
         if options.fn:
             self.config_fn = options.fn
         if options.dir:
@@ -1063,6 +1066,8 @@ class Controller:
                 print('--dir: directory does not exist: %s' % dir_)
                 print('exiting')
                 sys.exit(1)
+        if options.force_pyx:
+            print('--force-pyx: .pyx files will be parsed as regular python, cython syntax is not supported')
         # If any files remain, set self.files.
         if args:
             args = [self.finalize(z) for z in args]
