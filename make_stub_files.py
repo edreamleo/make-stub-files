@@ -112,24 +112,24 @@ def truncate(s, n):
 
 
 class AstFormatter:
-    '''
+    """
     A class to recreate source code from an AST.
     
     This does not have to be perfect, but it should be close.
-    '''
+    """
     # pylint: disable=consider-using-enumerate
 
     # Entries...
 
     def format(self, node):
-        '''Format the node (or list of nodes) and its descendants.'''
+        """Format the node (or list of nodes) and its descendants."""
         self.level = 0
         val = self.visit(node)
         # pylint: disable=consider-using-ternary
         return val and val.strip() or ''
 
     def visit(self, node):
-        '''Return the formatted version of an Ast node, or list of Ast nodes.'''
+        """Return the formatted version of an Ast node, or list of Ast nodes."""
         if isinstance(node, (list, tuple)):
             return ','.join([self.visit(z) for z in node])
         if node is None:
@@ -190,7 +190,7 @@ class AstFormatter:
     #                expr? returns)
 
     def do_FunctionDef(self, node):
-        '''Format a FunctionDef node.'''
+        """Format a FunctionDef node."""
         result = []
         if node.decorator_list:
             for z in node.decorator_list:
@@ -229,12 +229,12 @@ class AstFormatter:
 
 
     def do_Expr(self, node):
-        '''An outer expression: must be indented.'''
+        """An outer expression: must be indented."""
         return self.indent('%s\n' % self.visit(node.value))
 
 
     def do_Expression(self, node):
-        '''An inner expression: do not indent.'''
+        """An inner expression: do not indent."""
         return '%s\n' % self.visit(node.body)
 
 
@@ -269,7 +269,7 @@ class AstFormatter:
     #                arg? kwarg, expr* defaults)
 
     def do_arguments(self, node):
-        '''Format the arguments node.'''
+        """Format the arguments node."""
         kind = self.kind(node)
         assert kind == 'arguments', kind
         args = [self.visit(z) for z in node.args]
@@ -438,7 +438,7 @@ class AstFormatter:
 
 
     def do_Str(self, node):
-        '''This represents a string constant.'''
+        """This represents a string constant."""
         return repr(node.s)
 
 
@@ -618,7 +618,7 @@ class AstFormatter:
 
 
     def get_import_names(self, node):
-        '''Return a list of the the full file names in the import statement.'''
+        """Return a list of the the full file names in the import statement."""
         result = []
         for ast2 in node.names:
             if self.kind(ast2) == 'alias':
@@ -819,7 +819,7 @@ class AstFormatter:
 
 
     def kind(self, node):
-        '''Return the name of node's class.'''
+        """Return the name of node's class."""
         return node.__class__.__name__
 
     def indent(self, s):
@@ -827,7 +827,7 @@ class AstFormatter:
 
 
     def op_name(self, node, strict=True):
-        '''Return the print name of an operator node.'''
+        """Return the print name of an operator node."""
         d = {
             # Binary operators.
             'Add': '+',
@@ -875,10 +875,10 @@ class AstFormatter:
 
 
 class AstArgFormatter(AstFormatter):
-    '''
+    """
     Just like the AstFormatter class, except it prints the class
     names of constants instead of actual values.
-    '''
+    """
 
     # Return generic markers to allow better pattern matches.
 
@@ -895,7 +895,7 @@ class AstArgFormatter(AstFormatter):
         return 'number'  # return repr(node.n)
 
     def do_Str(self, node):
-        '''This represents a string constant.'''
+        """This represents a string constant."""
         return 'str'  # return repr(node.s)
 
 
@@ -1298,7 +1298,7 @@ class Controller:
 
 
 class LeoGlobals:
-    '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
+    """A class supporting g.pdb and g.trace for compatibility with Leo."""
 
     class NullObject:
         """
@@ -1334,16 +1334,16 @@ class LeoGlobals:
             # es_exception()
             return ''  # "<no caller name>"
     def caller(self, i=1):
-        '''Return the caller name i levels up the stack.'''
+        """Return the caller name i levels up the stack."""
         return self.callers(i + 1).split(',')[0]
 
     def callers(self, n=4, count=0, excludeCaller=True, files=False):
-        '''Return a list containing the callers of the function that called g.callerList.
+        """Return a list containing the callers of the function that called g.callerList.
 
         If the excludeCaller keyword is True (the default), g.callers is not on the list.
 
         If the files keyword argument is True, filenames are included in the list.
-        '''
+        """
         # sys._getframe throws ValueError in both cpython and jython if there are less than i entries.
         # The jython stack often has less than 8 entries,
         # so we must be careful to call g._callerName with smaller values of i first.
@@ -1362,14 +1362,14 @@ class LeoGlobals:
         return sep.join(result)
 
     def cls(self):
-        '''Clear the screen.'''
+        """Clear the screen."""
         if sys.platform.lower().startswith('win'):
             os.system('cls')
     def execute_shell_commands(self, commands, trace=False):
-        '''
+        """
         Execute each shell command in a separate process.
         Wait for each command to complete, except those starting with '&'
-        '''
+        """
         if g.isString(commands): commands = [commands]
         for command in commands:
             wait = not command.startswith('&')
@@ -1378,20 +1378,20 @@ class LeoGlobals:
             if wait: proc.communicate()
 
     def isString(self, s):
-        '''Return True if s is any string, but not bytes.'''
+        """Return True if s is any string, but not bytes."""
         # pylint: disable=no-member
         if isPython3:
             return isinstance(s, str)
         return isinstance(s, types.StringTypes)
 
     def isUnicode(self, s):
-        '''Return True if s is a unicode string.'''
+        """Return True if s is a unicode string."""
         # pylint: disable=no-member
         if isPython3:
             return isinstance(s, str)
         return isinstance(s, types.UnicodeType)
     def objToString(self, obj, indent='', printCaller=False, tag=None):
-        '''Pretty print any Python object to a string.'''
+        """Pretty print any Python object to a string."""
         # pylint: disable=undefined-loop-variable
             # Looks like a a pylint bug.
         #
@@ -1424,7 +1424,7 @@ class LeoGlobals:
 
     toString = objToString
     def dictToString(self, d, indent='', tag=None):
-        '''Pretty print a Python dict to a string.'''
+        """Pretty print a Python dict to a string."""
         # pylint: disable=unnecessary-lambda
         if not d:
             return '{}'
@@ -1442,7 +1442,7 @@ class LeoGlobals:
         s = ''.join(result)
         return '%s...\n%s\n' % (tag, s) if tag else s
     def listToString(self, obj, indent='', tag=None):
-        '''Pretty print a Python list to a string.'''
+        """Pretty print a Python list to a string."""
         if not obj:
             return '[]'
         result = ['[']
@@ -1459,7 +1459,7 @@ class LeoGlobals:
         s = ''.join(result)
         return '%s...\n%s\n' % (tag, s) if tag else s
     def tupleToString(self, obj, indent='', tag=None):
-        '''Pretty print a Python tuple to a string.'''
+        """Pretty print a Python tuple to a string."""
         if not obj:
             return '(),'
         result = ['(']
@@ -1484,7 +1484,7 @@ class LeoGlobals:
             import pdb
             pdb.set_trace()
     def printObj(self, obj, indent='', printCaller=False, tag=None):
-        '''Pretty print any Python object using g.pr.'''
+        """Pretty print any Python object using g.pr."""
         print(self.objToString(obj, indent=indent, printCaller=printCaller, tag=tag))
 
 
@@ -1495,7 +1495,7 @@ class LeoGlobals:
         return '/'.join(fileName.replace('\\', '/').split('/')[-n :])
 
     def splitLines(self, s):
-        '''Split s into lines, preserving trailing newlines.'''
+        """Split s into lines, preserving trailing newlines."""
         return s.splitlines(True) if s else []
 
     def trace(self, *args, **keys):
@@ -1513,17 +1513,17 @@ class LeoGlobals:
 
 
 class Pattern:
-    '''
+    """
     A class representing regex or balanced patterns.
     
     Sample matching code, for either kind of pattern:
         
         for m in reversed(pattern.all_matches(s)):
             s = pattern.replace(m, s)
-    '''
+    """
 
     def __init__(self, find_s, repl_s=''):
-        '''Ctor for the Pattern class.'''
+        """Ctor for the Pattern class."""
         self.find_s = find_s
         self.repl_s = repl_s
         if self.is_regex():
@@ -1551,17 +1551,17 @@ class Pattern:
         return not self.__eq__(obj)
 
     def __hash__(self):
-        '''Pattern.__hash__'''
+        """Pattern.__hash__"""
         return len(self.find_s) + len(self.repl_s)
 
     def __repr__(self):
-        '''Pattern.__repr__'''
+        """Pattern.__repr__"""
         return '%s: %s' % (self.find_s, self.repl_s)
 
     __str__ = __repr__
 
     def is_balanced(self):
-        '''Return True if self.find_s is a balanced pattern.'''
+        """Return True if self.find_s is a balanced pattern."""
         s = self.find_s
         if s.endswith('*'):
             return True
@@ -1571,18 +1571,18 @@ class Pattern:
         return False
 
     def is_regex(self):
-        '''
+        """
         Return True if self.find_s is a regular pattern.
         For now a kludgy convention suffices.
-        '''
+        """
         return self.find_s.endswith('$')
             # A dollar sign is not valid in any Python expression.
 
     def all_matches(self, s):
-        '''
+        """
         Return a list of match objects for all matches in s.
         These are regex match objects or (start, end) for balanced searches.
-        '''
+        """
         if self.is_balanced():
             aList, i = [], 0
             while i < len(s):
@@ -1598,7 +1598,7 @@ class Pattern:
         return list(self.regex.finditer(s))
 
     def full_balanced_match(self, s, i):
-        '''Return the index of the end of the match found at s[i:] or None.'''
+        """Return the index of the end of the match found at s[i:] or None."""
         pattern = self.find_s
         j = 0  # index into pattern
         while i < len(s) and j < len(pattern) and pattern[j] in ('*', s[i]):
@@ -1620,10 +1620,10 @@ class Pattern:
         return i if found else None
 
     def match_balanced(self, delim, s, i):
-        '''
+        """
         delim == s[i] and delim is in '([{'
         Return the index of the end of the balanced parenthesized string, or len(s)+1.
-        '''
+        """
         global g_input_file_name
         assert s[i] == delim, s[i]
         assert delim in '([{'
@@ -1647,10 +1647,10 @@ class Pattern:
         return len(s) + 1
 
     def match(self, s, trace=False):
-        '''
+        """
         Perform the match on the entire string if possible.
         Return (found, new s)
-        '''
+        """
         # caller = g.callers(2).split(',')[0].strip()
         # s1 = truncate(s,40)
         if self.is_balanced():
@@ -1667,7 +1667,7 @@ class Pattern:
         return False, s
 
     def match_entire_string(self, s):
-        '''Return True if s matches self.find_s'''
+        """Return True if s matches self.find_s"""
         if self.is_balanced():
             j = self.full_balanced_match(s, 0)
             return j == len(s)
@@ -1675,17 +1675,17 @@ class Pattern:
         return m and m.group(0) == s
 
     def replace(self, m, s):
-        '''Perform any kind of replacement.'''
+        """Perform any kind of replacement."""
         if self.is_balanced():
             start, end = m
             return self.replace_balanced(s, start, end)
         return self.replace_regex(m, s)
 
     def replace_balanced(self, s1, start, end):
-        '''
+        """
         Use m (returned by all_matches) to replace s by the string implied by repr_s.
         Within repr_s, * star matches corresponding * in find_s
-        '''
+        """
         s = s1[start:end]
         f, r = self.find_s, self.repl_s
         i1 = f.find('(*)')
@@ -1706,7 +1706,7 @@ class Pattern:
         return s1[:start] + repl + s1[end:]
 
     def replace_regex(self, m, s):
-        '''Do the replacement in s specified by m.'''
+        """Do the replacement in s specified by m."""
         s = self.repl_s
         for i in range(9):
             group = '\\%s' % i
@@ -1718,27 +1718,27 @@ class Pattern:
 
 
 class ReduceTypes:
-    '''
+    """
     A helper class for the top-level reduce_types function.
     
     This class reduces a list of type hints to a string containing the
     reduction of all types in the list.
-    '''
+    """
 
     def __init__(self, aList=None, name=None, trace=False):
-        '''Ctor for ReduceTypes class.'''
+        """Ctor for ReduceTypes class."""
         self.aList = aList
         self.name = name
         self.optional = False
         self.trace = trace
 
     def is_known_type(self, s):
-        '''
+        """
         Return True if s is nothing but a single known type.
 
         It suits the other methods of this class *not* to test inside inner
         brackets. This prevents unwanted Any types.
-        '''
+        """
         s = s.strip()
         table = (
             '', 'None',  # Tricky.
@@ -1792,10 +1792,10 @@ class ReduceTypes:
         return False
 
     def reduce_collection(self, aList, kind):
-        '''
+        """
         Reduce the inner parts of a collection for the given kind.
         Return a list with only collections of the given kind reduced.
-        '''
+        """
         assert isinstance(aList, list)
         assert None not in aList, aList
         pattern = Pattern('%s[*]' % kind)
@@ -1817,10 +1817,10 @@ class ReduceTypes:
         return sorted(set(result))
 
     def reduce_numbers(self, aList):
-        '''
+        """
         Return aList with all number types in aList replaced by the most
         general numeric type in aList.
-        '''
+        """
         found = None
         numbers = ('number', 'complex', 'float', 'long', 'int')
         for kind in numbers:
@@ -1837,14 +1837,14 @@ class ReduceTypes:
         return aList
 
     def reduce_types(self):
-        '''
+        """
         self.aList consists of arbitrarily many types because this method is
         called from format_return_expressions.
         
         Return a *string* containing the reduction of all types in this list.
         Returning a string means that all traversers always return strings,
         never lists.
-        '''
+        """
         r = [('None' if z in ('', None) else z) for z in self.aList]
         assert None not in r
         self.optional = 'None' in r
@@ -1869,11 +1869,11 @@ class ReduceTypes:
         return self.show('Union[%s]' % (', '.join(sorted(r))))
 
     def reduce_unknowns(self, aList):
-        '''Replace all unknown types in aList with Any.'''
+        """Replace all unknown types in aList with Any."""
         return [z if self.is_known_type(z) else 'Any' for z in aList]
 
     def show(self, s, known=True):
-        '''Show the result of reduce_types.'''
+        """Show the result of reduce_types."""
         aList, name = self.aList, self.name
         trace = self.trace
         s = s.strip()
@@ -1896,7 +1896,7 @@ class ReduceTypes:
         return s
 
     def split_types(self, s):
-        '''Split types on *outer level* commas.'''
+        """Split types on *outer level* commas."""
         aList, i1, level = [], 0, 0
         for i, ch in enumerate(s):
             if ch == '[':
@@ -1912,13 +1912,13 @@ class ReduceTypes:
 
 
 class Stub:
-    '''
+    """
     A class representing all the generated stub for a class or def.
     stub.full_name should represent the complete context of a def.
-    '''
+    """
 
     def __init__(self, kind, name, parent=None, stack=None):
-        '''Stub ctor. Equality depends only on full_name and kind.'''
+        """Stub ctor. Equality depends only on full_name and kind."""
         self.children = []
         self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
         self.kind = kind
@@ -1933,10 +1933,10 @@ class Stub:
             parent.children.append(self)
 
     def __eq__(self, obj):
-        '''
+        """
         Stub.__eq__. Return whether two stubs refer to the same method.
         Do *not* test parent links. That would interfere with --update logic.
-        '''
+        """
         if isinstance(obj, Stub):
             return self.full_name == obj.full_name and self.kind == obj.kind
         return NotImplemented
@@ -1946,33 +1946,33 @@ class Stub:
         return not self.__eq__(obj)
 
     def __hash__(self):
-        '''Stub.__hash__. Equality depends *only* on full_name and kind.'''
+        """Stub.__hash__. Equality depends *only* on full_name and kind."""
         return len(self.kind) + sum([ord(z) for z in self.full_name])
 
     def __repr__(self):
-        '''Stub.__repr__.'''
+        """Stub.__repr__."""
         # return 'Stub: %s %s' % (id(self), self.full_name)
         return 'Stub: %s\n%s' % (self.full_name, g.objToString(self.out_list))
 
     __str__ = __repr__
 
     def level(self):
-        '''Return the number of parents.'''
+        """Return the number of parents."""
         return len(self.parents())
 
     def parents(self):
-        '''Return a list of this stub's parents.'''
+        """Return a list of this stub's parents."""
         return self.full_name.split('.')[:-1]
 
 
 class StubFormatter(AstFormatter):
-    '''
+    """
     Formats an ast.Node and its descendants,
     making pattern substitutions in Name and operator nodes.
-    '''
+    """
 
     def __init__(self, controller, traverser):
-        '''Ctor for StubFormatter class.'''
+        """Ctor for StubFormatter class."""
         self.controller = x = controller
         self.traverser = traverser
             # 2016/02/07: to give the formatter access to the class_stack.
@@ -1994,7 +1994,7 @@ class StubFormatter(AstFormatter):
     matched_d = {}
 
     def match_all(self, node, s, trace=False):
-        '''Match all the patterns for the given node.'''
+        """Match all the patterns for the given node."""
         trace = trace or self.trace_matches
         # verbose = True
         d = self.matched_d
@@ -2016,12 +2016,12 @@ class StubFormatter(AstFormatter):
         return s
 
     def visit(self, node):
-        '''StubFormatter.visit: supports --verbose tracing.'''
+        """StubFormatter.visit: supports --verbose tracing."""
         s = AstFormatter.visit(self, node)
         return s
 
     def trace_visitor(self, node, op, s):
-        '''Trace node's visitor.'''
+        """Trace node's visitor."""
         if self.trace_visitors:
             caller = g.callers(2).split(',')[1]
             s1 = AstFormatter().format(node).strip()
@@ -2034,7 +2034,7 @@ class StubFormatter(AstFormatter):
     attrs_seen = []
 
     def do_Attribute(self, node):
-        '''StubFormatter.do_Attribute.'''
+        """StubFormatter.do_Attribute."""
         s = '%s.%s' % (
             self.visit(node.value),
             node.attr)  # Don't visit node.attr: it is always a string.
@@ -2055,7 +2055,7 @@ class StubFormatter(AstFormatter):
         return 'number'  # return repr(node.n)
 
     def do_Str(self, node):
-        '''This represents a string constant.'''
+        """This represents a string constant."""
         return 'str'  # return repr(node.s)
 
     def do_Dict(self, node):
@@ -2077,7 +2077,7 @@ class StubFormatter(AstFormatter):
 
 
     def do_List(self, node):
-        '''StubFormatter.List.'''
+        """StubFormatter.List."""
         elts = [self.visit(z) for z in node.elts]
         elts = [z for z in elts if z]  # Defensive.
         return 'List[%s]' % ', '.join(elts) if elts else 'List'
@@ -2085,7 +2085,7 @@ class StubFormatter(AstFormatter):
     # seen_names = [] # t--ype: List[str]
 
     def do_Name(self, node):
-        '''StubFormatter ast.Name visitor.'''
+        """StubFormatter ast.Name visitor."""
         d = self.names_dict
         name = d.get(node.id, node.id)
         s = 'bool' if name in ('True', 'False') else name
@@ -2098,7 +2098,7 @@ class StubFormatter(AstFormatter):
         return s
 
     def do_Tuple(self, node):
-        '''StubFormatter.Tuple.'''
+        """StubFormatter.Tuple."""
         elts = [self.visit(z) for z in node.elts]
         return 'Tuple[%s]' % ', '.join(elts)
 
@@ -2107,7 +2107,7 @@ class StubFormatter(AstFormatter):
     # BinOp(expr left, operator op, expr right)
 
     def do_BinOp(self, node):
-        '''StubFormatter.BinOp visitor.'''
+        """StubFormatter.BinOp visitor."""
         trace = self.trace_reduce
         numbers = ['number', 'complex', 'float', 'long', 'int',]
         op = self.op_name(node.op)
@@ -2138,7 +2138,7 @@ class StubFormatter(AstFormatter):
     # BoolOp(boolop op, expr* values)
 
     def do_BoolOp(self, node):  # Python 2.x only.
-        '''StubFormatter.BoolOp visitor for 'and' and 'or'.'''
+        """StubFormatter.BoolOp visitor for 'and' and 'or'."""
         trace = self.trace_reduce
         op = self.op_name(node.op)
         values = [self.visit(z).strip() for z in node.values]
@@ -2150,7 +2150,7 @@ class StubFormatter(AstFormatter):
     # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
     def do_Call(self, node):
-        '''StubFormatter.Call visitor.'''
+        """StubFormatter.Call visitor."""
         func = self.visit(node.func)
         args = [self.visit(z) for z in node.args]
         for z in node.keywords:
@@ -2184,10 +2184,10 @@ class StubFormatter(AstFormatter):
     # Compare(expr left, cmpop* ops, expr* comparators)
 
     def do_Compare(self, node):
-        '''
+        """
         StubFormatter ast.Compare visitor for these ops:
         '==', '!=', '<', '<=', '>', '>=', 'is', 'is not', 'in', 'not in',
-        '''
+        """
         s = 'bool'  # Correct regardless of arguments.
         ops = ','.join([self.op_name(z) for z in node.ops])
         self.trace_visitor(node, ops, s)
@@ -2196,7 +2196,7 @@ class StubFormatter(AstFormatter):
     # If(expr test, stmt* body, stmt* orelse)
 
     def do_IfExp(self, node):
-        '''StubFormatterIfExp (ternary operator).'''
+        """StubFormatterIfExp (ternary operator)."""
         trace = self.trace_reduce
         aList = [
             self.match_all(node, self.visit(node.body)),
@@ -2210,7 +2210,7 @@ class StubFormatter(AstFormatter):
     # Subscript(expr value, slice slice, expr_context ctx)
 
     def do_Subscript(self, node):
-        '''StubFormatter.Subscript.'''
+        """StubFormatter.Subscript."""
         s = '%s[%s]' % (
             self.visit(node.value),
             self.visit(node.slice))
@@ -2221,7 +2221,7 @@ class StubFormatter(AstFormatter):
     # UnaryOp(unaryop op, expr operand)
 
     def do_UnaryOp(self, node):
-        '''StubFormatter.UnaryOp for unary +, -, ~ and 'not' operators.'''
+        """StubFormatter.UnaryOp for unary +, -, ~ and 'not' operators."""
         op = self.op_name(node.op)
         if op.strip() == 'not':
             return 'bool'
@@ -2231,24 +2231,24 @@ class StubFormatter(AstFormatter):
         return s
 
     def do_Return(self, node):
-        '''
+        """
         StubFormatter ast.Return vsitor.
         Return only the return expression itself.
-        '''
+        """
         s = AstFormatter.do_Return(self, node)
         assert s.startswith('return'), repr(s)
         return s[len('return') :].strip()
 
 
 class StubTraverser(ast.NodeVisitor):
-    '''
+    """
     An ast.Node traverser class that outputs a stub for each class or def.
     Names of visitors must start with visit_. The order of traversal does
     not matter, because so few visitors do anything.
-    '''
+    """
 
     def __init__(self, controller):
-        '''Ctor for StubTraverser class.'''
+        """Ctor for StubTraverser class."""
         self.controller = x = controller  # A Controller instance.
         # Internal state ivars...
         self.class_name_stack = []
@@ -2287,7 +2287,7 @@ class StubTraverser(ast.NodeVisitor):
 
 
     def add_stub(self, d, stub):
-        '''Add the stub to d, checking that it does not exist.'''
+        """Add the stub to d, checking that it does not exist."""
         global g_input_file_name
         key = stub.full_name
         assert key
@@ -2298,12 +2298,12 @@ class StubTraverser(ast.NodeVisitor):
             d[key] = stub
 
     def indent(self, s):
-        '''Return s, properly indented.'''
+        """Return s, properly indented."""
         # This version of indent *is* used.
         return '%s%s' % (' ' * 4 * self.level, s)
 
     def out(self, s):
-        '''Output the string to the console or the file.'''
+        """Output the string to the console or the file."""
         s = self.indent(s)
         if self.parent_stub:
             self.parent_stub.out_list.append(s)
@@ -2313,7 +2313,7 @@ class StubTraverser(ast.NodeVisitor):
             print(s)
 
     def run(self, node):
-        '''StubTraverser.run: write the stubs in node's tree to self.output_fn.'''
+        """StubTraverser.run: write the stubs in node's tree to self.output_fn."""
         fn = self.output_fn
         dir_ = os.path.dirname(fn)
         if os.path.exists(fn) and not self.overwrite:
@@ -2340,7 +2340,7 @@ class StubTraverser(ast.NodeVisitor):
             print('wrote: %s' % fn)
 
     def output_stubs(self, stub):
-        '''Output this stub and all its descendants.'''
+        """Output this stub and all its descendants."""
         for s in stub.out_list or []:
             # Indentation must be present when an item is added to stub.out_list.
             if self.output_file:
@@ -2352,20 +2352,20 @@ class StubTraverser(ast.NodeVisitor):
             self.output_stubs(child)
 
     def output_time_stamp(self):
-        '''Put a time-stamp in the output file.'''
+        """Put a time-stamp in the output file."""
         if self.output_file:
             self.output_file.write('# make_stub_files: %s\n' %
                 time.strftime("%a %d %b %Y at %H:%M:%S"))
 
     def update(self, fn, new_root):
-        '''
+        """
         Merge the new_root tree with the old_root tree in fn (a .pyi file).
 
         new_root is the root of the stub tree from the .py file.
         old_root (read below) is the root of stub tree from the .pyi file.
         
         Return old_root, or new_root if there are any errors.
-        '''
+        """
         s = self.get_stub_file(fn)
         if not s or not s.strip():
             return new_root
@@ -2387,7 +2387,7 @@ class StubTraverser(ast.NodeVisitor):
         return new_root
 
     def get_stub_file(self, fn):
-        '''Read the stub file into s.'''
+        """Read the stub file into s."""
         if os.path.exists(fn):
             try:
                 s = open(fn, 'r').read()
@@ -2399,11 +2399,11 @@ class StubTraverser(ast.NodeVisitor):
         return None
 
     def parse_stub_file(self, s, root_name):
-        '''
+        """
         Parse s, the contents of a stub file, into a tree of Stubs.
         
         Parse by hand, so that --update can be run with Python 2.
-        '''
+        """
         assert '\t' not in s
         d = {}
         root = Stub(kind='root', name=root_name)
@@ -2451,12 +2451,12 @@ class StubTraverser(ast.NodeVisitor):
         return d, root
 
     def merge_stubs(self, new_stubs, old_root, new_root, trace=False):
-        '''
+        """
         Merge the new_stubs *list* into the old_root *tree*.
         - new_stubs is a list of Stubs from the .py file.
         - old_root is the root of the stubs from the .pyi file.
         - new_root is the root of the stubs from the .py file.
-        '''
+        """
         # Part 1: Delete old stubs do *not* exist in the *new* tree.
         aList = self.check_delete(new_stubs, old_root, new_root, trace)
             # Checks that all ancestors of deleted nodes will be deleted.
@@ -2478,7 +2478,7 @@ class StubTraverser(ast.NodeVisitor):
             assert self.find_stub(stub, old_root), stub
 
     def check_delete(self, new_stubs, old_root, new_root, trace):
-        '''Return a list of nodes that can be deleted.'''
+        """Return a list of nodes that can be deleted."""
         old_stubs = self.flatten_stubs(old_root)
         old_stubs.remove(old_root)
         aList = [z for z in old_stubs if z not in new_stubs]
@@ -2508,24 +2508,24 @@ class StubTraverser(ast.NodeVisitor):
         return delete_list
 
     def flatten_stubs(self, root):
-        '''Return a flattened list of all stubs in root's tree.'''
+        """Return a flattened list of all stubs in root's tree."""
         aList = [root]
         for child in root.children:
             self.flatten_stubs_helper(child, aList)
         return aList
 
     def flatten_stubs_helper(self, root, aList):
-        '''Append all stubs in root's tree to aList.'''
+        """Append all stubs in root's tree to aList."""
         aList.append(root)
         for child in root.children:
             self.flatten_stubs_helper(child, aList)
 
     def find_parent_stub(self, stub, root):
-        '''Return stub's parent **in root's tree**.'''
+        """Return stub's parent **in root's tree**."""
         return self.find_stub(stub.parent, root) if stub.parent else None
 
     def find_stub(self, stub, root):
-        '''Return the stub **in root's tree** that matches stub.'''
+        """Return the stub **in root's tree** that matches stub."""
         if stub == root:  # Must use Stub.__eq__!
             return root  # not stub!
         for child in root.children:
@@ -2534,10 +2534,10 @@ class StubTraverser(ast.NodeVisitor):
         return None
 
     def sort_stubs_by_hierarchy(self, stubs1):
-        '''
+        """
         Sort the list of Stubs so that parents appear before all their
         descendants.
-        '''
+        """
         stubs, result = stubs1[:], []
         for i in range(50):
             if stubs:
@@ -2552,7 +2552,7 @@ class StubTraverser(ast.NodeVisitor):
         return []  # Abort the merge.
 
     def trace_stubs(self, stub, aList=None, header=None, level=-1):
-        '''Return a trace of the given stub and all its descendants.'''
+        """Return a trace of the given stub and all its descendants."""
         indent = ' ' * 4 * max(0, level)
         if level == -1:
             aList = ['===== %s...\n' % (header) if header else '']
@@ -2647,10 +2647,10 @@ class StubTraverser(ast.NodeVisitor):
     # arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
 
     def format_arguments(self, node):
-        '''
+        """
         Format the arguments node.
         Similar to AstFormat.do_arguments, but it is not a visitor!
-        '''
+        """
         assert isinstance(node, ast.arguments), node
         args = [self.raw_format(z) for z in node.args]
         defaults = [self.raw_format(z) for z in node.defaults]
@@ -2679,7 +2679,7 @@ class StubTraverser(ast.NodeVisitor):
     type_pattern = re.compile(r'.*:.*')
 
     def munge_arg(self, s):
-        '''Add an annotation for s if possible.'''
+        """Add an annotation for s if possible."""
         if s == 'self':
             return s
         for pattern in self.general_patterns:
@@ -2694,12 +2694,12 @@ class StubTraverser(ast.NodeVisitor):
         return s + ': Any'
 
     def format_returns(self, node):
-        '''
+        """
         Calculate the return type:
         - Return None if there are no return statements.
         - Patterns in [Def Name Patterns] override all other patterns.
         - Otherwise, return a list of return values.
-        '''
+        """
         name = self.get_def_name(node)
         raw = [self.raw_format(z) for z in self.returns]
         # Allow StubFormatter.do_Return to do the hack.
@@ -2720,13 +2720,13 @@ class StubTraverser(ast.NodeVisitor):
         return self.format_return_expressions(node, name, raw, r)
 
     def format_return_expressions(self, node, name, raw_returns, reduced_returns):
-        '''
+        """
         aList is a list of maximally reduced return expressions.
         For each expression e in Alist:
         - If e is a single known type, add e to the result.
         - Otherwise, add Any # e to the result.
         Return the properly indented result.
-        '''
+        """
         assert len(raw_returns) == len(reduced_returns)
         lws = '\n' + ' ' * 4
         n = len(raw_returns)
@@ -2752,7 +2752,7 @@ class StubTraverser(ast.NodeVisitor):
         return s + tail
 
     def get_def_name(self, node):
-        '''Return the representaion of a function or method name.'''
+        """Return the representaion of a function or method name."""
         if self.class_name_stack:
             name = '%s.%s' % (self.class_name_stack[-1], node.name)
             # All ctors should return None
@@ -2763,7 +2763,7 @@ class StubTraverser(ast.NodeVisitor):
         return name
 
     def remove_recursive_calls(self, name, raw, reduced):
-        '''Remove any recursive calls to name from both lists.'''
+        """Remove any recursive calls to name from both lists."""
         # At present, this works *only* if the return is nothing but the recursive call.
         assert len(raw) == len(reduced)
         pattern = Pattern('%s(*)' % name)
