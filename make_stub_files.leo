@@ -66,24 +66,6 @@
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 <v t="ekr.20160330201030.1"><vh>@clean PKG-INFO.TXT</vh></v>
 </v>
-<v t="ekr.20180706073205.1"><vh>Recent Code</vh>
-<v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
-<v t="ekr.20180901050914.1"><vh>Changed...</vh>
-<v t="ekr.20160318141204.186"><vh>st.visit_ClassDef</vh></v>
-<v t="ekr.20160318141204.20"><vh>f.ClassDef (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
-</v>
-</v>
-<v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh>
-<v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
-</v>
-</v>
-<v t="ekr.20200402143651.1"><vh>----- errors</vh>
-<v t="ekr.20160318141204.171"><vh>st.add_stub</vh></v>
-<v t="ekr.20160318141204.110"><vh>pattern.match_balanced</vh></v>
-</v>
-</v>
 <v t="ekr.20160131174909.1"><vh>To do</vh></v>
 </v>
 <v t="ekr.20210803060400.1"><vh>--- old unit tests</vh>
@@ -134,7 +116,7 @@
 <v t="ekr.20160318141204.107"><vh>pattern.is_regex</vh></v>
 <v t="ekr.20160318141204.108"><vh>pattern.all_matches &amp; helpers</vh>
 <v t="ekr.20160318141204.109"><vh>pattern.full_balanced_match</vh></v>
-<v t="ekr.20160318141204.110"></v>
+<v t="ekr.20160318141204.110"><vh>pattern.match_balanced</vh></v>
 </v>
 <v t="ekr.20160318141204.111"><vh>pattern.match (trace-matches)</vh></v>
 <v t="ekr.20160318141204.112"><vh>pattern.match_entire_string</vh></v>
@@ -173,7 +155,7 @@
 <v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
 </v>
 <v t="ekr.20160318141204.19"><vh>f.Contexts</vh>
-<v t="ekr.20160318141204.20"></v>
+<v t="ekr.20160318141204.20"><vh>f.ClassDef (make_stub_files)</vh></v>
 <v t="ekr.20160318141204.21"><vh>f.FunctionDef (make_stub_files)</vh></v>
 <v t="ekr.20160318141204.22"><vh>f.Interactive</vh></v>
 <v t="ekr.20160318141204.23"><vh>f.Module</vh></v>
@@ -291,7 +273,7 @@
 </v>
 <v t="ekr.20160318141204.169"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160318141204.170"><vh>st.ctor</vh></v>
-<v t="ekr.20160318141204.171"></v>
+<v t="ekr.20160318141204.171"><vh>st.add_stub</vh></v>
 <v t="ekr.20160318141204.172"><vh>st.indent &amp; out</vh></v>
 <v t="ekr.20160318141204.173"><vh>st.run (main line) &amp; helpers</vh>
 <v t="ekr.20160318141204.174"><vh>st.output_stubs</vh></v>
@@ -309,9 +291,11 @@
 <v t="ekr.20160318141204.185"><vh>st.trace_stubs</vh></v>
 </v>
 </v>
-<v t="ekr.20160318141204.186"></v>
+<v t="ekr.20160318141204.186"><vh>st.visit_ClassDef</vh></v>
 <v t="ekr.20160318141204.187"><vh>st.visit_FunctionDef &amp; helpers</vh>
-<v t="ekr.20160318141204.188"></v>
+<v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
+<v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
+</v>
 <v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers</vh>
 <v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
 <v t="ekr.20160318141204.192"><vh>st.get_def_name</vh></v>
@@ -358,12 +342,30 @@
 <v t="ekr.20160206165656.1"><vh>@@@clean test/test.py</vh></v>
 </v>
 <v t="ekr.20210803060804.1"><vh>To do</vh></v>
+<v t="ekr.20180706073205.1"><vh>Recent Code</vh>
+<v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
+<v t="ekr.20180901050914.1"><vh>Changed...</vh>
+<v t="ekr.20160318141204.186"></v>
+<v t="ekr.20160318141204.20"></v>
+<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
+</v>
+</v>
+<v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh>
+<v t="ekr.20160318141204.188"></v>
+</v>
+<v t="ekr.20200402143651.1"><vh>----- errors</vh>
+<v t="ekr.20160318141204.171"></v>
+<v t="ekr.20160318141204.110"></v>
+</v>
+<v t="ekr.20210803131252.1"><vh>=== #13: None</vh>
 <v t="ekr.20160318141204.30"></v>
 <v t="ekr.20160318141204.147"></v>
 <v t="ekr.20160318141204.14"></v>
 <v t="ekr.20160318141204.21"></v>
-<v t="ekr.20160318141204.11"><vh>main</vh></v>
-<v t="ekr.20210803061104.1"><vh>COPY: leoAst.py:main</vh></v>
+</v>
+</v>
+<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
+<v t="ekr.20210803131439.1"><vh>=== #10: unit tests</vh>
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
 <v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
@@ -382,7 +384,12 @@
 <v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
-<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
+<v t="ekr.20210803061104.1"><vh>COPY: leoAst.py:main</vh></v>
+<v t="ekr.20210803140525.1"><vh>COPY NEW msf.scan_command_line</vh></v>
+</v>
+<v t="ekr.20160318141204.11"><vh>main</vh></v>
+<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.132"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2230,8 +2237,24 @@ __str__ = __repr__
     '''
     controller = Controller()
     controller.scan_command_line()
-    controller.scan_options()
-    controller.run()
+    if controller.enable_coverage_tests:
+        if pytest:
+            pytest.main(args=[
+                '--cov-report=html',
+                '--cov-report=term-missing',
+                '--cov=make_stub_files',
+                __file__,
+            ])
+        else:
+            print('Can not import pytest')
+    elif controller.enable_unit_tests:
+        g.trace('**unit tests')
+        # sys.argv.remove('--unittest')
+        sys.argv = [__file__]
+        unittest.main()
+    else:
+        controller.scan_options()
+        controller.run()
 </t>
 <t tx="ekr.20160318141204.110">def match_balanced(self, delim, s, i):
     '''
@@ -2533,6 +2556,7 @@ __str__ = __repr__
     self.options = {}
     # Ivars set on the command line...
     self.config_fn = None
+    self.enable_coverage_tests = False
     self.enable_unit_tests = False
     self.files = []
     # Ivars set in the config file...
@@ -2634,7 +2658,13 @@ def make_stub_file(self, fn):
 <t tx="ekr.20160318141204.131">def scan_command_line(self):
     '''Set ivars from command-line arguments.'''
     # This automatically implements the --help option.
-    usage = "usage: make_stub_files.py [options] file1, file2, ..."
+    # usage = "usage: make_stub_files.py [options] file1, file2, ..."
+    usage = '\n'.join([
+        '',
+        '    make_stub_files.py [options] file1, file2, ...',
+        '    make_stub_files.py --py-cov [ARGS]',
+        '    make_stub_files.py --test [ARGS]',
+    ])
     parser = optparse.OptionParser(usage=usage)
     add = parser.add_option
     add('-c', '--config', dest='fn',
@@ -2643,10 +2673,12 @@ def make_stub_file(self, fn):
         help='full path to the output directory')
     add('-o', '--overwrite', action='store_true', default=False,
         help='overwrite existing stub (.pyi) files')
+    add('-p', '--py-cov', action='store_true', default=False,
+        help='run coverage tests, then exit')
     add('-s', '--silent', action='store_true', default=False,
         help='run without messages')
     add('-t', '--test', action='store_true', default=False,
-        help='run unit tests on startup')
+        help='run unit tests, then exit')
     add('--trace-matches', action='store_true', default=False,
         help='trace Pattern.matches')
     add('--trace-patterns', action='store_true', default=False,
@@ -2666,6 +2698,7 @@ def make_stub_file(self, fn):
     options, args = parser.parse_args()
     # Handle the options...
     self.enable_unit_tests = options.test
+    self.enable_coverage_tests = options.py_cov
     self.overwrite = options.overwrite
     self.silent = options.silent
     self.trace_matches = options.trace_matches
@@ -4982,11 +5015,7 @@ toString = objToString
 <t tx="ekr.20200402143651.1"></t>
 <t tx="ekr.20210803060314.1"></t>
 <t tx="ekr.20210803060400.1"></t>
-<t tx="ekr.20210803060804.1">- Convert to @file
-- Write on new unit test.
-  - Adjust args.
-
-- Rewrite the readme.
+<t tx="ekr.20210803060804.1">- Rewrite the readme.
 </t>
 <t tx="ekr.20210803061104.1">def main():
     """Run commands specified by sys.argv."""
@@ -5063,6 +5092,104 @@ toString = objToString
     if isinstance(args.unittest, (str, list)):
         sys.argv.remove('--unittest')
         unittest.main()
+</t>
+<t tx="ekr.20210803131252.1">@language rest
+@wrap
+
+https://github.com/edreamleo/make-stub-files/issues/13
+
+@language python
+</t>
+<t tx="ekr.20210803131439.1">@language rest
+@wrap
+
+https://github.com/edreamleo/make-stub-files/issues/13
+
+- Write a new unit test.
+  - Adjust args.
+
+@language python
+@nosearch</t>
+<t tx="ekr.20210803140525.1">def scan_command_line(self):
+    '''Set ivars from command-line arguments.'''
+    # This automatically implements the --help option.
+    ### usage = "usage: make_stub_files.py [options] file1, file2, ..."
+    usage = '\n'.join([
+        '',
+        '    make_stub_files.py [options] file1, file2, ...',
+        '    make_stub_files.py --py-cov [ARGS]',
+        '    make_stub_files.py --unittest [ARGS]',
+    ])
+    ### parser = optparse.OptionParser(usage=usage)
+   
+    parser = argparse.ArgumentParser(description=None, usage=usage)
+    # group = parser.add_mutually_exclusive_group(required=False)  # Don't require any args.
+    # add = group.add_argument
+    # add = parser.add_option
+    add = parser.add_argument
+    add('-c', '--config', dest='fn', metavar='ARGS', nargs='?', const=[], default=False,
+        help='full path to configuration file')
+    add('-d', '--dir', dest='dir',
+        help='full path to the output directory')
+    add('-f', '--force-pyx', dest='force_pyx', action='store_true', default=False,
+        help='force the parsing of .pyx files')
+    add('-o', '--overwrite', dest='overwrite', action='store_true', default=False,
+        help='overwrite existing stub (.pyi) files')
+    add('-p', '--py-cov', dest='py_cov', metavar='ARGS', nargs='?', const=[], default=False,
+        help='run `pytest --cov` and exit')
+    add('-s', '--silent', action='store_true', default=False,
+        help='run without messages')
+    # add('-t', '--test', action='store_true', default=False,
+        # help='run unit tests on startup')
+    add('-t', '--unittest', dest='unittest', metavar='ARGS', nargs='?', const=[], default=False,
+        help='run unittests and exit')
+    add('--trace-matches', dest='trace_matches', action='store_true', default=False,
+        help='trace Pattern.matches')
+    add('--trace-patterns', dest='trace_patterns', action='store_true', default=False,
+        help='trace pattern creation')
+    add('--trace-reduce', dest='trace_reduce', action='store_true', default=False,
+        help='trace st.reduce_types')
+    add('--trace-visitors', dest='trace_visitors', action='store_true', default=False,
+        help='trace visitor methods')
+    add('-u', '--update', dest='update', action='store_true', default=False,
+        help='update stubs in existing stub file')
+    add('-v', '--verbose', action='store_true', default=False,
+        help='verbose output in .pyi file')
+    add('-w', '--warn', action='store_true', default=False,
+        help='warn about unannotated args')
+    # Parse the options
+    options, args = parser.parse_args()
+    # Handle the options...
+    self.enable_unit_tests = options.test
+    self.force_pyx = options.force_pyx
+    self.overwrite = options.overwrite
+    self.silent = options.silent
+    self.trace_matches = options.trace_matches
+    self.trace_patterns = options.trace_patterns
+    self.trace_reduce = options.trace_reduce
+    self.trace_visitors = options.trace_visitors
+    self.update_flag = options.update
+    self.verbose = options.verbose
+    self.warn = options.warn
+    if options.fn:
+        self.config_fn = options.fn
+    if options.dir:
+        dir_ = options.dir and options.dir.strip()
+        dir_ = self.finalize(dir_)
+        g.trace('dir', dir_)
+        if os.path.exists(dir_):
+            self.output_directory = dir_
+        else:
+            print('--dir: directory does not exist: %s' % dir_)
+            print('exiting')
+            sys.exit(1)
+    if options.force_pyx:
+        print('--force-pyx: .pyx files will be parsed as regular python, cython syntax is not supported')
+    # If any files remain, set self.files.
+    if args:
+        args = [self.finalize(z) for z in args]
+        if args:
+            self.files = args
 </t>
 </tnodes>
 </leo_file>

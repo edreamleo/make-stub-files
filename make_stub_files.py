@@ -30,10 +30,16 @@ import subprocess
 import sys
 import time
 import types
+import unittest
 try:
     import StringIO as io  # Python 2
 except ImportError:
     import io  # Python 3
+# Third party imports.
+try:
+    import pytest
+except Exception:
+    pytest = None  # type:ignore
 
 #@-<< imports >>
 isPython3 = sys.version_info >= (3, 0, 0)
@@ -100,8 +106,24 @@ def main():
     '''
     controller = Controller()
     controller.scan_command_line()
-    controller.scan_options()
-    controller.run()
+    if controller.enable_coverage_tests:
+        if pytest:
+            pytest.main(args=[
+                '--cov-report=html',
+                '--cov-report=term-missing',
+                '--cov=make_stub_files',
+                __file__,
+            ])
+        else:
+            print('Can not import pytest')
+    elif controller.enable_unit_tests:
+        g.trace('**unit tests')
+        # sys.argv.remove('--unittest')
+        sys.argv = [__file__]
+        unittest.main()
+    else:
+        controller.scan_options()
+        controller.run()
 #@+node:ekr.20160318141204.12: *3* pdb
 def pdb(self):
     '''Invoke a debugger during unit testing.'''
@@ -922,6 +944,7 @@ class Controller:
         self.options = {}
         # Ivars set on the command line...
         self.config_fn = None
+        self.enable_coverage_tests = False
         self.enable_unit_tests = False
         self.files = []
         # Ivars set in the config file...
@@ -1023,7 +1046,13 @@ class Controller:
     def scan_command_line(self):
         '''Set ivars from command-line arguments.'''
         # This automatically implements the --help option.
-        usage = "usage: make_stub_files.py [options] file1, file2, ..."
+        # usage = "usage: make_stub_files.py [options] file1, file2, ..."
+        usage = '\n'.join([
+            '',
+            '    make_stub_files.py [options] file1, file2, ...',
+            '    make_stub_files.py --py-cov [ARGS]',
+            '    make_stub_files.py --test [ARGS]',
+        ])
         parser = optparse.OptionParser(usage=usage)
         add = parser.add_option
         add('-c', '--config', dest='fn',
@@ -1032,10 +1061,12 @@ class Controller:
             help='full path to the output directory')
         add('-o', '--overwrite', action='store_true', default=False,
             help='overwrite existing stub (.pyi) files')
+        add('-p', '--py-cov', action='store_true', default=False,
+            help='run coverage tests, then exit')
         add('-s', '--silent', action='store_true', default=False,
             help='run without messages')
         add('-t', '--test', action='store_true', default=False,
-            help='run unit tests on startup')
+            help='run unit tests, then exit')
         add('--trace-matches', action='store_true', default=False,
             help='trace Pattern.matches')
         add('--trace-patterns', action='store_true', default=False,
@@ -1055,6 +1086,7 @@ class Controller:
         options, args = parser.parse_args()
         # Handle the options...
         self.enable_unit_tests = options.test
+        self.enable_coverage_tests = options.py_cov
         self.overwrite = options.overwrite
         self.silent = options.silent
         self.trace_matches = options.trace_matches
