@@ -2115,9 +2115,7 @@ def make_optional(self,r):
 
     
 </t>
-<t tx="ekr.20160318141204.102">
-
-class Pattern:
+<t tx="ekr.20160318141204.102">class Pattern:
     '''
     A class representing regex or balanced patterns.
     
@@ -2522,9 +2520,7 @@ __str__ = __repr__
     aList.append(s[i1:].strip())
     return aList
 </t>
-<t tx="ekr.20160318141204.125">
-
-class Controller:
+<t tx="ekr.20160318141204.125">class Controller:
     '''
     A class to make Python stub (.pyi) files in the ~/stubs directory for
     every file mentioned in the [Source Files] section of
@@ -2903,9 +2899,7 @@ def make_stub_file(self, fn):
                 print('  ' + repr(pattern))
     # Note: retain self.general_patterns for use in argument lists.
 </t>
-<t tx="ekr.20160318141204.14">
-
-class AstFormatter:
+<t tx="ekr.20160318141204.14">class AstFormatter:
     '''
     A class to recreate source code from an AST.
     
@@ -4624,9 +4618,7 @@ def op_name(self, node, strict=True):
     if strict: assert name, self.kind(node)
     return name
 </t>
-<t tx="ekr.20160318141204.90">
-
-class AstArgFormatter(AstFormatter):
+<t tx="ekr.20160318141204.90">class AstArgFormatter(AstFormatter):
     '''
     Just like the AstFormatter class, except it prints the class
     names of constants instead of actual values.
@@ -4651,9 +4643,7 @@ def do_Str(self, node):
     '''This represents a string constant.'''
     return 'str'  # return repr(node.s)
 </t>
-<t tx="ekr.20160318141204.92">
-
-class LeoGlobals:
+<t tx="ekr.20160318141204.92">class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
     @others
 </t>

@@ -117,8 +117,6 @@ def truncate(s, n):
     '''Return s truncated to n characters.'''
     return s if len(s) <= n else s[: n - 3] + '...'
 #@+node:ekr.20160318141204.14: **  class AstFormatter
-
-
 class AstFormatter:
     '''
     A class to recreate source code from an AST.
@@ -885,8 +883,6 @@ class AstFormatter:
         return name
     #@-others
 #@+node:ekr.20160318141204.90: ** class AstArgFormatter (AstFormatter)
-
-
 class AstArgFormatter(AstFormatter):
     '''
     Just like the AstFormatter class, except it prints the class
@@ -913,8 +909,6 @@ class AstArgFormatter(AstFormatter):
         return 'str'  # return repr(node.s)
     #@-others
 #@+node:ekr.20160318141204.125: ** class Controller
-
-
 class Controller:
     '''
     A class to make Python stub (.pyi) files in the ~/stubs directory for
@@ -1319,8 +1313,6 @@ class Controller:
         return aList
     #@-others
 #@+node:ekr.20160318141204.92: ** class LeoGlobals
-
-
 class LeoGlobals:
     '''A class supporting g.pdb and g.trace for compatibility with Leo.'''
     #@+others
@@ -1545,8 +1537,6 @@ class LeoGlobals:
         
     #@-others
 #@+node:ekr.20160318141204.102: ** class Pattern
-
-
 class Pattern:
     '''
     A class representing regex or balanced patterns.
