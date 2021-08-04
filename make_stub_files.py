@@ -34,12 +34,6 @@ try:
     import StringIO as io  # Python 2
 except ImportError:
     import io  # Python 3
-###
-    # # Third party imports.
-    # try:
-        # import pytest
-    # except Exception:
-        # pytest = None  # type:ignore
 #@-<< imports >>
 isPython3 = sys.version_info >= (3, 0, 0)
 #@+others
@@ -2784,20 +2778,25 @@ class StubTraverser(ast.NodeVisitor):
 class TestMakeStubFiles(unittest.TestCase):
     """Unit tests for make_stub_files"""
     #@+others
-    #@+node:ekr.20180901040718.1: *3* test_bug2_empty (revise)
+    #@+node:ekr.20180901040718.1: *3* test_bug2_empty (rewritten)
     def test_bug2_empty(self):
         # https://github.com/edreamleo/make-stub-files/issues/2
-        commands = [
-            # 'cls',
-            'python make_stub_files.py -o -s bug2.py',
-        ]
-        g.execute_shell_commands(commands, trace=True)
-        with open('bug2.pyi') as f:
-            s = f.read()
+        tag = 'test_bug2_empty'
+        s = 'class InvalidTag(Exception):\n    pass'
+        controller = Controller()
+        node = ast.parse(s, filename=tag, mode='exec')
+        st = StubTraverser(controller=controller)
+        # From StubTraverser.run.
+        st.parent_stub = Stub(kind='root', name='<new-stubs>')
+        st.visit(node)
+        # Allocate a StringIo file for output_stubs.
+        st.output_file = io.StringIO()
+        st.output_stubs(st.parent_stub)
+        s = st.output_file.getvalue()
         lines = g.splitLines(s)
-        expected = 'class InvalidTag(Exception): ...\n'
-        got = lines[1]
-        self.assertEqual(got, expected)
+        # Test.
+        expected = ['class InvalidTag(Exception): ...\n']
+        self.assertEqual(lines, expected)
     #@+node:ekr.20180901044640.1: *3* test_bug2_non_empty (revise)
     def test_bug2_non_empty(self):
         # https://github.com/edreamleo/make-stub-files/issues/2
@@ -2811,7 +2810,6 @@ class TestMakeStubFiles(unittest.TestCase):
         lines = g.splitLines(s)
         expected = 'class NonEmptyClass:\n'
         got = lines[1]
-        ### assert got == expected, 'expected: %r\ngot:    %r' % (expected, got)
         self.assertEqual(got, expected)
     #@+node:ekr.20180901051603.1: *3* test_bug3 (FAILS) (revise)
     def test_bug3(self):
