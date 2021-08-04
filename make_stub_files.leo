@@ -244,6 +244,10 @@
 </v>
 </v>
 </v>
+<v t="ekr.20210804153200.1"><vh>@button convert-test</vh></v>
+<v t="ekr.20210804153220.1"><vh>@test truncate</vh>
+<v t="ekr.20210804153220.2"><vh>truncate</vh></v>
+</v>
 <v t="ekr.20160206171945.1"><vh>OLDUnit tests</vh>
 <v t="ekr.20160207115947.1"><vh>@test truncate</vh>
 <v t="ekr.20160207115604.1"><vh>truncate</vh></v>
@@ -3703,6 +3707,41 @@ class AstFormatter:
     self.assertEqual(stub_1.level(), 0)
     self.assertEqual(stub_2.level(), 1)
     self.assertEqual(stub_3.level(), 2)
+</t>
+<t tx="ekr.20210804153200.1">g.cls()
+
+def body(p):
+    def_s = f"def {headline(p)}:\n"
+    lines = [' '*4 + z.rstrip()+'\n' for z in g.splitLines(p.b) if '@others' not in z]
+    return def_s + ''.join(lines)
+
+def headline(p):
+    s = p.h
+    assert s.startswith('@test')
+    return s[1:].replace(' ','_').replace('__', '_')
+    
+target_h = '@test truncate'
+p = g.findTopLevelNode(c, target_h)
+h = headline(p)
+b = body(p)
+print(h.rstrip())
+print(b.rstrip())
+</t>
+<t tx="ekr.20210804153220.1">table = (
+    ('abc',     'abc'),
+    ('abcd',    'abcd'),
+    ('abcde',   'abcde'),
+    ('abcdef',  'ab...'),
+    ('abcdefg', 'ab...'),
+)
+@others  
+for s1, s2 in table:
+    got = truncate(s1, 5)
+    assert s2 == got, (s1, 'expected', s2, 'got', got)</t>
+<t tx="ekr.20210804153220.2">
+def truncate(s, n):
+    '''Return s truncated to n characters.'''
+    return s if len(s) &lt;= n else s[:n-3] + '...'
 </t>
 </tnodes>
 </leo_file>
