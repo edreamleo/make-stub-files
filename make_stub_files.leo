@@ -244,7 +244,7 @@
 </v>
 </v>
 </v>
-<v t="ekr.20210804153200.1"><vh>@button convert-at-test</vh></v>
+<v t="ekr.20210804153200.1"><vh>script convert-at-test</vh></v>
 <v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
 <v t="ekr.20180901040718.1"><vh>test_bug2_empty (revise)</vh></v>
 <v t="ekr.20180901044640.1"><vh>test_bug2_non_empty (revise)</vh></v>
@@ -3705,7 +3705,8 @@ class AstFormatter:
     self.assertEqual(stub_2.level(), 1)
     self.assertEqual(stub_3.level(), 2)
 </t>
-<t tx="ekr.20210804153200.1">g.cls()
+<t tx="ekr.20210804153200.1">"""Convert all following @test nodes."""
+g.cls()
 
 def body(p):
     def_s = f"def {headline(p)}(self):\n"
@@ -3717,12 +3718,12 @@ def headline(p):
 
 while p:
     if p.h.startswith('@test'):
-        if 1:
+        if 1:  # Change.
             print(p.h)
             p.b = body(p)  # body first, to use original headline.
             p.h = headline(p)
             p.setDirty()
-        else:
+        else:  # Report.
             h = headline(p)
             b = body(p)
             print(h.rstrip())
