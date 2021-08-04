@@ -2780,7 +2780,7 @@ class StubTraverser(ast.NodeVisitor):
         self.returns.append(node)
             # New: return the entire node, not node.value.
     #@-others
-#@+node:ekr.20210803055042.1: ** class TestMSB(unittest.TestCase)
+#@+node:ekr.20210803055042.1: ** class TestMakeStubFiles(unittest.TestCase)
 class TestMakeStubFiles(unittest.TestCase):
     """Unit tests for make_stub_files"""
     #@+others
@@ -2839,6 +2839,223 @@ class TestMakeStubFiles(unittest.TestCase):
         for aList, expected in table:
             got = ReduceTypes().reduce_numbers(aList)
             self.assertEqual(expected, got, msg=repr(aList))
+    #@+node:ekr.20210804111613.1: *3* test_reduce_types
+    def test_reduce_types(self):
+
+        a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
+        none = 'None'
+        x = 'xyzzy'
+        y = 'pdq'
+        table = (
+            ([i,i],         i),
+            ([i],           i),
+            ([f, i],        f),
+            ([c, i],        c),
+            ([l, a],        'Union[Any, long]'),
+            # Handle None
+            ([None],        none),
+            ([None, None],  none),
+            ([None, a, c],  'Optional[Union[Any, complex]]'),
+            # Handle unknown types, and special cases
+            ([i, x],        'Union[Any, int]'),
+            ([None, x],     'Optional[Any]'),
+            ([none, x],     'Optional[Any]'),
+            (['', x],       'Optional[Any]'),
+            ([none, x, c],  'Optional[Union[Any, complex]]'),
+            ([x, y],        'Any'),
+            # Collection merging.  More could be done...
+            (['Dict[int, str]', 'Dict[Any, str]'],          'Union[Dict[Any, str], Dict[int, str]]'),
+            (['List[int, str]', 'List[Any, str]'],          'Union[List[Any, str], List[int, str]]'),
+            (['Union[int, str]', 'Union[Any, str]'],        'Union[Union[Any, str], Union[int, str]]'),
+            (['Union[int, str]', 'int', 'Union[Any, str]'], 'Union[Union[Any, str], Union[int, str], int]'),
+            (['Tuple[xyz, pdq]'],                           'Tuple[Any, Any]'),
+        )
+        for aList, expected in table:
+            got = ReduceTypes(aList).reduce_types()
+            self.assertEqual(expected, got, msg=repr(aList))
+    #@+node:ekr.20210804111803.1: *3* test_split_types
+    def test_split_types(self):
+        table = (
+            ('list',                    ['list']),
+            ('List[a,b]',               ['List[a,b]']),
+            ('List[a,b], List[c,d]',    ['List[a,b]', 'List[c,d]']),
+        )
+        for s, expected in table:
+            got = ReduceTypes().split_types(s)
+            self.assertEqual(expected, got, msg=repr(s))
+    #@+node:ekr.20210804111915.1: *3* test_st_find
+    def test_st_find(self):
+
+        s = '''\
+    def is_known_type(s: str) -> Union[Any,bool]: ...
+    def main() -> None: ...
+    def merge_types(a1: Any, a2: Any) -> str: ...
+
+    class AstFormatter:
+        def format(self, node: Node) -> Union[Any,str]: ...
+            def helper(self): -> None
+        def visit(self, node: Node) -> str: ...
+        def do_ClassDef(self, node: Node) -> str: ...
+        def do_FunctionDef(self, node: Node) -> str: ...
+    '''
+        g = LeoGlobals() # Use the g available to the script.
+        st = StubTraverser(controller=g.NullObject())
+        d, root = st.parse_stub_file(s, root_name='<root>')
+            # Root *is* used below.
+        if 0:
+            print(st.trace_stubs(root, header='root'))
+        stub1 = Stub(kind='class', name='AstFormatter')
+        stub2 = Stub(kind='def', name='format', parent=stub1, stack=['AstFormatter'])
+        stub3 = Stub(kind='def', name='helper', parent = stub2, stack=['AstFormatter', 'format'])
+        # stub4 = Stub(kind='def', name='main')
+        for stub in (stub1, stub2, stub3,): # (stub1, stub2, stub3):
+            found = st.find_stub(stub, root)
+            id_found = found and id(found) or None
+            if 0:
+                print('found  %s => %9s %35s ==> %s' % (id(stub), id_found, stub, found))
+            found = st.find_parent_stub(stub, root)
+            id_found = found and id(found) or None
+            if 0:
+                print('parent %s => %9s %35s ==> %s' % (id(stub), id_found, stub, found))
+    #@+node:ekr.20210804112211.1: *3* test_st_flatten_stubs
+    def test_st_flatten_stubs(self):
+        s = '''\
+        def is_known_type(s: str) -> Union[Any,bool]: ...
+        def main() -> None: ...
+        def merge_types(a1: Any, a2: Any) -> str: ...
+        
+        class AstFormatter:
+            def format(self, node: Node) -> Union[Any,str]: ...
+                def helper(self): -> None
+            def visit(self, node: Node) -> str: ...
+            def do_ClassDef(self, node: Node) -> str: ...
+            def do_FunctionDef(self, node: Node) -> str: ...
+        '''
+        g = LeoGlobals() # Use the g available to the script.
+        st = StubTraverser(controller=g.NullObject())
+        d, root = st.parse_stub_file(s, root_name='<root>')
+        if 0:
+            print(st.trace_stubs(root, header='root'))
+        aList = st.flatten_stubs(root)
+        self.assertTrue(aList)
+        if 0:
+            for i, stub in enumerate(aList):
+                print('%2s %s' % (i, stub))
+        for stub in aList:
+            found = st.find_stub(stub, root)
+            self.assertTrue(found, msg=repr(stub))
+    #@+node:ekr.20210804112405.1: *3* test_st_merge_stubs
+    def test_st_merge_stubs(self):
+        # To do:
+        # - Test between-stub lines and leading lines.
+        # - Round-trip tests!
+        #@+<< old_stubs >>
+        #@+node:ekr.20210804112405.3: *4* << old_stubs >>
+        # To be INSERTED (They exist in new stubs, but not here.)
+        # def is_known_type(s: str) -> Union[Any,bool]: ...
+        # def reduce_numbers(aList: List[Any]) -> List[Any]: ...
+        # class AstFormatter:
+            # def format(self, node: Node) -> Union[Any,str]: ...
+            # def visit(self, node: Node) -> str: ...
+            # def do_ClassDef(self, node: Node) -> str: ...
+            # def do_FunctionDef(self, node: Node) -> str: ...
+        old_s = '''\
+        def main() -> None: ...
+        def merge_types(a1: Any, a2: Any) -> str: ...
+        def pdb(self) -> None: ...
+        def reduce_types(aList: List[Any], name: str=None, trace: bool=False) -> Any: ...
+        class Pattern(object):
+            def __init__(self, find_s: str, repl_s: str='') -> None: ...
+            def __eq__(self, obj: Any) -> bool: ...
+            def __ne__(self, obj: Any) -> bool: ...
+            def __hash__(self) -> int: ...
+            def __repr__(self) -> str: ...
+            def is_balanced(self) -> bool: ...
+            def is_regex(self) -> Any: ...
+                #   0: return self.find_s.endswith('$')
+                # ? 0: return self.find_s.endswith(str)
+        '''
+        #@-<< old_stubs >>
+        #@+<< new_stubs >>
+        #@+node:ekr.20210804112405.4: *4* << new_stubs >>
+        # To be DELETED (They exist in old_stubs, but not here)
+        # class Pattern(object):
+            # def __init__(self, find_s: str, repl_s: str='') -> None: ...
+            # def __eq__(self, obj: Any) -> bool: ...
+            # def __ne__(self, obj: Any) -> bool: ...
+            # def __hash__(self) -> int: ...
+            # def __repr__(self) -> str: ...
+            # def is_balanced(self) -> bool: ...
+            # def is_regex(self) -> Any: ...
+                # #   0: return self.find_s.endswith('$')
+                # # ? 0: return self.find_s.endswith(str)
+        new_s = '''\
+        def is_known_type(s: str) -> Union[Any,bool]: ...
+        def main() -> None: ...
+        def merge_types(a1: Any, a2: Any) -> str: ...
+        def pdb(self) -> None: ...
+        def reduce_numbers(aList: List[Any]) -> List[Any]: ...
+        def reduce_types(aList: List[Any], name: str=None, trace: bool=False) -> Any: ...
+
+        class AstFormatter:
+            def format(self, node: Node) -> Union[Any,str]: ...
+            def visit(self, node: Node) -> str: ...
+            def do_ClassDef(self, node: Node) -> str: ...
+            def do_FunctionDef(self, node: Node) -> str: ...
+        '''
+        #@-<< new_stubs >>
+        g = LeoGlobals() # Use the g available to the script.
+        # g.cls()
+        st = StubTraverser(controller=g.NullObject())
+        # dump('old_s', old_s)
+        # dump('new_s', new_s)
+        old_d, old_root = st.parse_stub_file(old_s, root_name='<old-root>')
+        new_d, new_root = st.parse_stub_file(new_s, root_name='<new-root>')
+        if 0:
+            dump_dict('old_d', old_d)
+            dump_dict('new_d', new_d)
+            print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
+            print(st.trace_stubs(new_root, header='trace_stubs(new_root)'))
+        if 0: # separate unit test. Passed.
+            aList = st.sort_stubs_by_hierarchy(new_root)
+            dump_list(aList, 'after sort_stubs_by_hierarcy')
+        new_stubs = new_d.values()
+        st.merge_stubs(new_stubs, old_root, new_root, trace=False)
+        if 0:
+            print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
+    #@+node:ekr.20210804112556.1: *3* test_stub_class
+    def test_stub_class(self):
+
+        g = LeoGlobals() # Use the g available to the script.
+        # g.cls()
+        # Test equality...
+        stub1 = Stub(kind='def', name='foo')
+        stub2 = Stub(kind='class', name='foo')
+        stub3 = Stub(kind='def', name='bar')
+        stub4 = Stub(kind='def', name='foo')
+        stub4.out_list = ['xyzzy']
+            # Contents of out_list must not affect equality!
+        aList = [stub1, stub3]
+        self.assertNotEqual(stub1, stub2)
+        self.assertNotEqual(stub1, stub3)
+        self.assertEqual(stub1, stub4)
+        self.assertTrue(stub1 in aList)
+        self.assertFalse(stub2 in aList)
+        self.assertTrue(stub3 in aList)
+        # Test __hash__
+        d = {stub1: 'stub1'}
+        self.assertTrue(stub1 in d)
+        self.assertFalse(stub2 in d)
+        # Test parents and level.
+        stub_1 = Stub(kind='def', name='stub_1')
+        stub_2 = Stub(kind='def', name='stub_2', parent=stub_1, stack=['stub_1'])
+        stub_3 = Stub(kind='def', name='stub_3', parent=stub_2, stack=['stub_1', 'stub_2'])
+        self.assertEqual(stub_1.parents(), [], msg=repr(stub_1.parents()))
+        self.assertEqual(stub_2.parents(), ['stub_1'], msg=repr(stub_2.parents()))
+        self.assertEqual(stub_3.parents(), ['stub_1', 'stub_2'], msg=repr(stub_3.parents()))
+        self.assertEqual(stub_1.level(), 0)
+        self.assertEqual(stub_2.level(), 1)
+        self.assertEqual(stub_3.level(), 2)
     #@-others
 #@-others
 g = LeoGlobals()
