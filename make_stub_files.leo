@@ -42,15 +42,13 @@
 <v t="ekr.20160214043351.1"><vh>rt.make_optional</vh></v>
 </v>
 </v>
-<v t="ekr.20210803060314.1"><vh>--- others</vh>
-<v t="ekr.20160128104714.1"><vh>Config files</vh>
+<v t="ekr.20210803060804.1"><vh>To do</vh></v>
+<v t="ekr.20160128104714.1"><vh>Files</vh>
 <v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
 <v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
-<v t="ekr.20160128104639.1"><vh>@clean msf.cfg</vh></v>
 <v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
-<v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
-</v>
-<v t="ekr.20160128105006.1"><vh>Documentation</vh>
+<v t="ekr.20160128104639.1"><vh>@clean msf.cfg</vh></v>
+<v t="ekr.20160330201030.1"><vh>@clean PKG-INFO.TXT</vh></v>
 <v t="ekr.20160211110739.1"><vh>@clean README.md</vh>
 <v t="ekr.20160211110807.1"><vh>Overview</vh></v>
 <v t="ekr.20160211113019.1"><vh>Quick start</vh></v>
@@ -64,11 +62,146 @@
 <v t="ekr.20160211110810.3"><vh>Why this script is important</vh></v>
 <v t="ekr.20160211110811.1"><vh>Summary</vh></v>
 </v>
+<v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
-<v t="ekr.20160330201030.1"><vh>@clean PKG-INFO.TXT</vh></v>
+<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
 </v>
-<v t="ekr.20160131174909.1"><vh>To do</vh></v>
+<v t="ekr.20180706073205.1"><vh>Recent Code</vh>
+<v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
+<v t="ekr.20180901050914.1"><vh>Changed...</vh>
+<v t="ekr.20160318141204.186"><vh>st.visit_ClassDef</vh></v>
+<v t="ekr.20160318141204.20"><vh>f.ClassDef (make_stub_files)</vh></v>
 </v>
+</v>
+<v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh>
+<v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
+<v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
+</v>
+</v>
+<v t="ekr.20200402143651.1"><vh>----- errors</vh>
+<v t="ekr.20160318141204.171"><vh>st.add_stub</vh></v>
+<v t="ekr.20160318141204.110"><vh>pattern.match_balanced</vh></v>
+</v>
+<v t="ekr.20210803131252.1"><vh>=== #13: None</vh>
+<v t="ekr.20160318141204.30"><vh>f.Operands</vh>
+<v t="ekr.20160318141204.31"><vh>f.arguments (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.32"><vh>f.arg (Python3 only) (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.33"><vh>f.Attribute</vh></v>
+<v t="ekr.20160318141204.34"><vh>f.Bytes</vh></v>
+<v t="ekr.20160318141204.35"><vh>f.Call &amp; f.keyword</vh>
+<v t="ekr.20160318141204.36"><vh>f.keyword</vh></v>
+</v>
+<v t="ekr.20160318141204.37"><vh>f.comprehension</vh></v>
+<v t="ekr.20160318141204.38"><vh>f.Dict</vh></v>
+<v t="ekr.20160318141204.39"><vh>f.Ellipsis</vh></v>
+<v t="ekr.20160318141204.40"><vh>f.ExtSlice</vh></v>
+<v t="ekr.20160318141204.41"><vh>f.Index</vh></v>
+<v t="ekr.20160318141204.42"><vh>f.List</vh></v>
+<v t="ekr.20160318141204.43"><vh>f.ListComp</vh></v>
+<v t="ekr.20160318141204.44"><vh>f.Name &amp; NameConstant</vh></v>
+<v t="ekr.20160318141204.45"><vh>f.Num</vh></v>
+<v t="ekr.20160318141204.46"><vh>f.Repr</vh></v>
+<v t="ekr.20160318141204.47"><vh>f.Slice</vh></v>
+<v t="ekr.20160318141204.48"><vh>f.Str</vh></v>
+<v t="ekr.20160318141204.49"><vh>f.Subscript</vh></v>
+<v t="ekr.20160318141204.50"><vh>f.Tuple</vh></v>
+</v>
+<v t="ekr.20160318141204.147"><vh>class StubFormatter (AstFormatter)</vh>
+<v t="ekr.20160318141204.148"><vh>sf.ctor</vh></v>
+<v t="ekr.20160318141204.149"><vh>sf.match_all</vh></v>
+<v t="ekr.20160318141204.150"><vh>sf.visit</vh></v>
+<v t="ekr.20160318141204.151"><vh>sf.trace_visitor</vh></v>
+<v t="ekr.20160318141204.152"><vh>sf.Operands</vh>
+<v t="ekr.20160318141204.153"><vh>sf.Attribute</vh></v>
+<v t="ekr.20160318141204.154"><vh>sf.Constants: Bytes, Num, Str</vh></v>
+<v t="ekr.20160318141204.155"><vh>sf.Dict</vh></v>
+<v t="ekr.20160318141204.156"><vh>sf.List</vh></v>
+<v t="ekr.20160318141204.157"><vh>sf.Name</vh></v>
+<v t="ekr.20160318141204.158"><vh>sf.Tuple</vh></v>
+</v>
+<v t="ekr.20160318141204.159"><vh>sf.Operators</vh>
+<v t="ekr.20160318141204.160"><vh>sf.BinOp</vh></v>
+<v t="ekr.20160318141204.161"><vh>sf.BoolOp</vh></v>
+<v t="ekr.20160318141204.162"><vh>sf.Call &amp; sf.keyword</vh>
+<v t="ekr.20160318141204.163"><vh>sf.keyword</vh></v>
+</v>
+<v t="ekr.20160318141204.164"><vh>sf.Compare</vh></v>
+<v t="ekr.20160318141204.165"><vh>sf.IfExp</vh></v>
+<v t="ekr.20160318141204.166"><vh>sf.Subscript</vh></v>
+<v t="ekr.20160318141204.167"><vh>sf.UnaryOp</vh></v>
+</v>
+<v t="ekr.20160318141204.168"><vh>sf.Return</vh></v>
+</v>
+<v t="ekr.20160318141204.14"><vh> class AstFormatter</vh>
+<v t="ekr.20160318141204.15"><vh> f.Entries</vh>
+<v t="ekr.20160318141204.17"><vh>f.format</vh></v>
+<v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
+</v>
+<v t="ekr.20160318141204.19"><vh>f.Contexts</vh>
+<v t="ekr.20160318141204.20"></v>
+<v t="ekr.20160318141204.21"><vh>f.FunctionDef (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.22"><vh>f.Interactive</vh></v>
+<v t="ekr.20160318141204.23"><vh>f.Module</vh></v>
+<v t="ekr.20160318141204.24"><vh>f.Lambda</vh></v>
+</v>
+<v t="ekr.20160318141204.25"><vh>f.Expressions</vh>
+<v t="ekr.20160318141204.26"><vh>f.Expr</vh></v>
+<v t="ekr.20160318141204.27"><vh>f.Expression</vh></v>
+<v t="ekr.20160318141204.28"><vh>f.GeneratorExp</vh></v>
+<v t="ekr.20160318141204.29"><vh>f.ctx nodes</vh></v>
+</v>
+<v t="ekr.20160318141204.30"></v>
+<v t="ekr.20160318141204.51"><vh>f.Operators</vh>
+<v t="ekr.20160318141204.52"><vh>f.BinOp</vh></v>
+<v t="ekr.20160318141204.53"><vh>f.BoolOp</vh></v>
+<v t="ekr.20160318141204.54"><vh>f.Compare</vh></v>
+<v t="ekr.20160318141204.55"><vh>f.UnaryOp</vh></v>
+<v t="ekr.20160318141204.56"><vh>f.ifExp (ternary operator)</vh></v>
+</v>
+<v t="ekr.20160318141204.57"><vh>f.Statements</vh>
+<v t="ekr.20160318141204.58"><vh>f.Assert</vh></v>
+<v t="ekr.20160318141204.59"><vh>f.Assign</vh></v>
+<v t="ekr.20160318141204.60"><vh>f.AugAssign</vh></v>
+<v t="ekr.20160318141204.61"><vh>f.Break</vh></v>
+<v t="ekr.20160318141204.62"><vh>f.Continue</vh></v>
+<v t="ekr.20160318141204.63"><vh>f.Delete</vh></v>
+<v t="ekr.20160318141204.64"><vh>f.ExceptHandler</vh></v>
+<v t="ekr.20160318141204.65"><vh>f.Exec</vh></v>
+<v t="ekr.20160318141204.66"><vh>f.For</vh></v>
+<v t="ekr.20160318141204.67"><vh>f.Global</vh></v>
+<v t="ekr.20160318141204.68"><vh>f.If</vh></v>
+<v t="ekr.20160318141204.69"><vh>f.Import &amp; helper</vh>
+<v t="ekr.20160318141204.70"><vh>f.get_import_names</vh></v>
+</v>
+<v t="ekr.20160318141204.71"><vh>f.ImportFrom</vh></v>
+<v t="ekr.20160318141204.72"><vh>f.Nonlocal (Python 3)</vh></v>
+<v t="ekr.20160318141204.73"><vh>f.Pass</vh></v>
+<v t="ekr.20160318141204.74"><vh>f.Print</vh></v>
+<v t="ekr.20160318141204.75"><vh>f.Raise</vh></v>
+<v t="ekr.20160318141204.76"><vh>f.Return</vh></v>
+<v t="ekr.20160318141204.77"><vh>f.Starred (Python 3)</vh></v>
+<v t="ekr.20160318141204.79"><vh>f.Try (Python 3)</vh></v>
+<v t="ekr.20160318141204.80"><vh>f.TryExcept</vh></v>
+<v t="ekr.20160318141204.81"><vh>f.TryFinally</vh></v>
+<v t="ekr.20160318141204.82"><vh>f.While</vh></v>
+<v t="ekr.20160318141204.83"><vh>f.With (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.84"><vh>f.Yield</vh></v>
+<v t="ekr.20160318141204.85"><vh>f.YieldFrom (Python 3)</vh></v>
+</v>
+<v t="ekr.20160318141204.86"><vh>f.Utils</vh>
+<v t="ekr.20160318141204.87"><vh>f.kind</vh></v>
+<v t="ekr.20160318141204.88"><vh>f.indent</vh></v>
+<v t="ekr.20160318141204.89"><vh>f.op_name</vh></v>
+</v>
+</v>
+<v t="ekr.20160318141204.21"></v>
+</v>
+</v>
+<v t="ekr.20210803131439.1"><vh>=== #10: unit tests</vh>
+<v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
+<v t="ekr.20210804020706.1"><vh>@button coverage</vh></v>
+<v t="ekr.20210804060105.1"><vh>@button unitttest</vh></v>
+<v t="ekr.20210804021331.1"><vh>@button msf</vh></v>
 <v t="ekr.20210803060400.1"><vh>--- old unit tests</vh>
 <v t="ekr.20160318141204.195"><vh>class TestClass</vh>
 <v t="ekr.20160318141204.196"><vh>parse_group (Guido)</vh></v>
@@ -117,7 +250,7 @@
 <v t="ekr.20160318141204.107"><vh>pattern.is_regex</vh></v>
 <v t="ekr.20160318141204.108"><vh>pattern.all_matches &amp; helpers</vh>
 <v t="ekr.20160318141204.109"><vh>pattern.full_balanced_match</vh></v>
-<v t="ekr.20160318141204.110"><vh>pattern.match_balanced</vh></v>
+<v t="ekr.20160318141204.110"></v>
 </v>
 <v t="ekr.20160318141204.111"><vh>pattern.match (trace-matches)</vh></v>
 <v t="ekr.20160318141204.112"><vh>pattern.match_entire_string</vh></v>
@@ -150,120 +283,12 @@
 <v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (@test st.find/parent_stub)</vh></v>
 <v t="ekr.20160210164250.1"><vh>&lt;&lt; define s &gt;&gt; (@test st.find/parent_stub)</vh></v>
 <v t="ekr.20160211050346.4"><vh>base classes</vh>
-<v t="ekr.20160318141204.14"><vh> class AstFormatter</vh>
-<v t="ekr.20160318141204.15"><vh> f.Entries</vh>
-<v t="ekr.20160318141204.17"><vh>f.format</vh></v>
-<v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
-</v>
-<v t="ekr.20160318141204.19"><vh>f.Contexts</vh>
-<v t="ekr.20160318141204.20"><vh>f.ClassDef (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.21"><vh>f.FunctionDef (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.22"><vh>f.Interactive</vh></v>
-<v t="ekr.20160318141204.23"><vh>f.Module</vh></v>
-<v t="ekr.20160318141204.24"><vh>f.Lambda</vh></v>
-</v>
-<v t="ekr.20160318141204.25"><vh>f.Expressions</vh>
-<v t="ekr.20160318141204.26"><vh>f.Expr</vh></v>
-<v t="ekr.20160318141204.27"><vh>f.Expression</vh></v>
-<v t="ekr.20160318141204.28"><vh>f.GeneratorExp</vh></v>
-<v t="ekr.20160318141204.29"><vh>f.ctx nodes</vh></v>
-</v>
-<v t="ekr.20160318141204.30"><vh>f.Operands</vh>
-<v t="ekr.20160318141204.31"><vh>f.arguments (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.32"><vh>f.arg (Python3 only) (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.33"><vh>f.Attribute</vh></v>
-<v t="ekr.20160318141204.34"><vh>f.Bytes</vh></v>
-<v t="ekr.20160318141204.35"><vh>f.Call &amp; f.keyword</vh>
-<v t="ekr.20160318141204.36"><vh>f.keyword</vh></v>
-</v>
-<v t="ekr.20160318141204.37"><vh>f.comprehension</vh></v>
-<v t="ekr.20160318141204.38"><vh>f.Dict</vh></v>
-<v t="ekr.20160318141204.39"><vh>f.Ellipsis</vh></v>
-<v t="ekr.20160318141204.40"><vh>f.ExtSlice</vh></v>
-<v t="ekr.20160318141204.41"><vh>f.Index</vh></v>
-<v t="ekr.20160318141204.42"><vh>f.List</vh></v>
-<v t="ekr.20160318141204.43"><vh>f.ListComp</vh></v>
-<v t="ekr.20160318141204.44"><vh>f.Name &amp; NameConstant</vh></v>
-<v t="ekr.20160318141204.45"><vh>f.Num</vh></v>
-<v t="ekr.20160318141204.46"><vh>f.Repr</vh></v>
-<v t="ekr.20160318141204.47"><vh>f.Slice</vh></v>
-<v t="ekr.20160318141204.48"><vh>f.Str</vh></v>
-<v t="ekr.20160318141204.49"><vh>f.Subscript</vh></v>
-<v t="ekr.20160318141204.50"><vh>f.Tuple</vh></v>
-</v>
-<v t="ekr.20160318141204.51"><vh>f.Operators</vh>
-<v t="ekr.20160318141204.52"><vh>f.BinOp</vh></v>
-<v t="ekr.20160318141204.53"><vh>f.BoolOp</vh></v>
-<v t="ekr.20160318141204.54"><vh>f.Compare</vh></v>
-<v t="ekr.20160318141204.55"><vh>f.UnaryOp</vh></v>
-<v t="ekr.20160318141204.56"><vh>f.ifExp (ternary operator)</vh></v>
-</v>
-<v t="ekr.20160318141204.57"><vh>f.Statements</vh>
-<v t="ekr.20160318141204.58"><vh>f.Assert</vh></v>
-<v t="ekr.20160318141204.59"><vh>f.Assign</vh></v>
-<v t="ekr.20160318141204.60"><vh>f.AugAssign</vh></v>
-<v t="ekr.20160318141204.61"><vh>f.Break</vh></v>
-<v t="ekr.20160318141204.62"><vh>f.Continue</vh></v>
-<v t="ekr.20160318141204.63"><vh>f.Delete</vh></v>
-<v t="ekr.20160318141204.64"><vh>f.ExceptHandler</vh></v>
-<v t="ekr.20160318141204.65"><vh>f.Exec</vh></v>
-<v t="ekr.20160318141204.66"><vh>f.For</vh></v>
-<v t="ekr.20160318141204.67"><vh>f.Global</vh></v>
-<v t="ekr.20160318141204.68"><vh>f.If</vh></v>
-<v t="ekr.20160318141204.69"><vh>f.Import &amp; helper</vh>
-<v t="ekr.20160318141204.70"><vh>f.get_import_names</vh></v>
-</v>
-<v t="ekr.20160318141204.71"><vh>f.ImportFrom</vh></v>
-<v t="ekr.20160318141204.72"><vh>f.Nonlocal (Python 3)</vh></v>
-<v t="ekr.20160318141204.73"><vh>f.Pass</vh></v>
-<v t="ekr.20160318141204.74"><vh>f.Print</vh></v>
-<v t="ekr.20160318141204.75"><vh>f.Raise</vh></v>
-<v t="ekr.20160318141204.76"><vh>f.Return</vh></v>
-<v t="ekr.20160318141204.77"><vh>f.Starred (Python 3)</vh></v>
-<v t="ekr.20160318141204.79"><vh>f.Try (Python 3)</vh></v>
-<v t="ekr.20160318141204.80"><vh>f.TryExcept</vh></v>
-<v t="ekr.20160318141204.81"><vh>f.TryFinally</vh></v>
-<v t="ekr.20160318141204.82"><vh>f.While</vh></v>
-<v t="ekr.20160318141204.83"><vh>f.With (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.84"><vh>f.Yield</vh></v>
-<v t="ekr.20160318141204.85"><vh>f.YieldFrom (Python 3)</vh></v>
-</v>
-<v t="ekr.20160318141204.86"><vh>f.Utils</vh>
-<v t="ekr.20160318141204.87"><vh>f.kind</vh></v>
-<v t="ekr.20160318141204.88"><vh>f.indent</vh></v>
-<v t="ekr.20160318141204.89"><vh>f.op_name</vh></v>
-</v>
-</v>
+<v t="ekr.20160318141204.14"></v>
 <v t="ekr.20160318141204.90"><vh>class AstArgFormatter (AstFormatter)</vh>
 <v t="ekr.20160318141204.91"><vh>sf.Constants &amp; Name</vh></v>
 </v>
 <v t="ekr.20160318141204.92"></v>
-<v t="ekr.20160318141204.147"><vh>class StubFormatter (AstFormatter)</vh>
-<v t="ekr.20160318141204.148"><vh>sf.ctor</vh></v>
-<v t="ekr.20160318141204.149"><vh>sf.match_all</vh></v>
-<v t="ekr.20160318141204.150"><vh>sf.visit</vh></v>
-<v t="ekr.20160318141204.151"><vh>sf.trace_visitor</vh></v>
-<v t="ekr.20160318141204.152"><vh>sf.Operands</vh>
-<v t="ekr.20160318141204.153"><vh>sf.Attribute</vh></v>
-<v t="ekr.20160318141204.154"><vh>sf.Constants: Bytes, Num, Str</vh></v>
-<v t="ekr.20160318141204.155"><vh>sf.Dict</vh></v>
-<v t="ekr.20160318141204.156"><vh>sf.List</vh></v>
-<v t="ekr.20160318141204.157"><vh>sf.Name</vh></v>
-<v t="ekr.20160318141204.158"><vh>sf.Tuple</vh></v>
-</v>
-<v t="ekr.20160318141204.159"><vh>sf.Operators</vh>
-<v t="ekr.20160318141204.160"><vh>sf.BinOp</vh></v>
-<v t="ekr.20160318141204.161"><vh>sf.BoolOp</vh></v>
-<v t="ekr.20160318141204.162"><vh>sf.Call &amp; sf.keyword</vh>
-<v t="ekr.20160318141204.163"><vh>sf.keyword</vh></v>
-</v>
-<v t="ekr.20160318141204.164"><vh>sf.Compare</vh></v>
-<v t="ekr.20160318141204.165"><vh>sf.IfExp</vh></v>
-<v t="ekr.20160318141204.166"><vh>sf.Subscript</vh></v>
-<v t="ekr.20160318141204.167"><vh>sf.UnaryOp</vh></v>
-</v>
-<v t="ekr.20160318141204.168"><vh>sf.Return</vh></v>
-</v>
+<v t="ekr.20160318141204.147"></v>
 </v>
 <v t="ekr.20160318141204.141"><vh>class Stub</vh>
 <v t="ekr.20160318141204.142"><vh>stub.ctor</vh></v>
@@ -274,7 +299,7 @@
 </v>
 <v t="ekr.20160318141204.169"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160318141204.170"><vh>st.ctor</vh></v>
-<v t="ekr.20160318141204.171"><vh>st.add_stub</vh></v>
+<v t="ekr.20160318141204.171"></v>
 <v t="ekr.20160318141204.172"><vh>st.indent &amp; out</vh></v>
 <v t="ekr.20160318141204.173"><vh>st.run (main line) &amp; helpers</vh>
 <v t="ekr.20160318141204.174"><vh>st.output_stubs</vh></v>
@@ -292,11 +317,9 @@
 <v t="ekr.20160318141204.185"><vh>st.trace_stubs</vh></v>
 </v>
 </v>
-<v t="ekr.20160318141204.186"><vh>st.visit_ClassDef</vh></v>
+<v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.187"><vh>st.visit_FunctionDef &amp; helpers</vh>
-<v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
-</v>
+<v t="ekr.20160318141204.188"></v>
 <v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers</vh>
 <v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
 <v t="ekr.20160318141204.192"><vh>st.get_def_name</vh></v>
@@ -342,31 +365,8 @@
 </v>
 <v t="ekr.20160206165656.1"><vh>@@@clean test/test.py</vh></v>
 </v>
-<v t="ekr.20210803060804.1"><vh>To do</vh></v>
-<v t="ekr.20180706073205.1"><vh>Recent Code</vh>
-<v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
-<v t="ekr.20180901050914.1"><vh>Changed...</vh>
-<v t="ekr.20160318141204.186"></v>
-<v t="ekr.20160318141204.20"></v>
 </v>
-</v>
-<v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh>
-<v t="ekr.20160318141204.188"></v>
-</v>
-<v t="ekr.20200402143651.1"><vh>----- errors</vh>
-<v t="ekr.20160318141204.171"></v>
-<v t="ekr.20160318141204.110"></v>
-</v>
-<v t="ekr.20210803131252.1"><vh>=== #13: None</vh>
-<v t="ekr.20160318141204.30"></v>
-<v t="ekr.20160318141204.147"></v>
-<v t="ekr.20160318141204.14"></v>
-<v t="ekr.20160318141204.21"></v>
-</v>
-</v>
-<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
-<v t="ekr.20210803131439.1"><vh>=== #10: unit tests</vh>
-<v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
+<v t="ekr.20210804070157.1"><vh>--- recent</vh>
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
 <v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
@@ -385,17 +385,10 @@
 <v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
-<v t="ekr.20210803061104.1"><vh>COPY: leoAst.py:main</vh></v>
-<v t="ekr.20210803140525.1"><vh>COPY NEW msf.scan_command_line</vh></v>
-<v t="ekr.20160318141204.132"></v>
-</v>
-<v t="ekr.20210804020706.1"><vh>@button coverage</vh></v>
-<v t="ekr.20210804060105.1"><vh>@button unitttest</vh></v>
-<v t="ekr.20160318141204.11"><vh>main</vh></v>
-<v t="ekr.20210804021331.1"><vh>@button msf</vh></v>
 <v t="ekr.20160318141204.131"></v>
 <v t="ekr.20160318141204.132"></v>
 <v t="ekr.20160318141204.136"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -700,7 +693,6 @@ str[*]: str
 
 </t>
 <t tx="ekr.20160128104714.1"></t>
-<t tx="ekr.20160128105006.1"></t>
 <t tx="ekr.20160128154715.1">import pdb
 import unittest
 import make_stub_files as msf
@@ -785,16 +777,6 @@ __pycache__/
 .cache/
 .coverage
 htmlcov/
-</t>
-<t tx="ekr.20160131174909.1">@language rest
-@wrap
-
-None of the following are very important because the user can always add
-more patterns.
-
-- Add more hard-coded patterns, especially binop patterns.
-- Rough edges re number types. Is reduce_numbers correct?
-- How are non-comment lines between subs updated?
 </t>
 <t tx="ekr.20160202061118.1">
 seen_patterns = []
@@ -2237,16 +2219,6 @@ __str__ = __repr__
         assert progress &lt; i
     found = i &lt;= len(s) and j == len(pattern)
     return i if found else None
-</t>
-<t tx="ekr.20160318141204.11">def main():
-    '''
-    The driver for the stand-alone version of make-stub-files.
-    All options come from ~/stubs/make_stub_files.cfg.
-    '''
-    controller = Controller()
-    controller.scan_command_line()
-    controller.scan_options()
-    controller.run()
 </t>
 <t tx="ekr.20160318141204.110">def match_balanced(self, delim, s, i):
     '''
@@ -3895,7 +3867,6 @@ def return_list(self, a):
 </t>
 <t tx="ekr.20160318141204.2">import argparse
 import ast
-### from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
     # the configparser will give random order for patterns.
@@ -3904,7 +3875,6 @@ try:
 except ImportError:
     import configparser  # Python 3
 import glob
-### import optparse
 import os
 import re
 import subprocess
@@ -3921,7 +3891,6 @@ try:
     import pytest
 except Exception:
     pytest = None  # type:ignore
-
 </t>
 <t tx="ekr.20160318141204.20"># 2: ClassDef(identifier name, expr* bases,
 #             stmt* body, expr* decorator_list)
@@ -5031,85 +5000,9 @@ toString = objToString
         if wait: proc.communicate()
 </t>
 <t tx="ekr.20200402143651.1"></t>
-<t tx="ekr.20210803060314.1"></t>
 <t tx="ekr.20210803060400.1"></t>
 <t tx="ekr.20210803060804.1">- Rewrite the readme.
-</t>
-<t tx="ekr.20210803061104.1">def main():
-    """Run commands specified by sys.argv."""
-    usage = '\n'.join([
-        '',
-        '    leoAst.py --help',
-        '    leoAst.py [--fstringify | --fstringify-diff | --orange | --orange-diff] PATHS',
-        '    leoAst.py --py-cov [ARGS]',
-        '    leoAst.py --pytest [ARGS]',
-        '    leoAst.py --unittest [ARGS]',
-        '\n',
-        'examples...'
-        '',
-        '   --py-cov "-f TestOrange"',
-        '   --pytest "-f TestOrange"',
-        '   --unittest TestOrange',
-    ])
-    parser = argparse.ArgumentParser(description=None, usage=usage)
-    parser.add_argument('PATHS', nargs='*', help='directory or list of files')
-    group = parser.add_mutually_exclusive_group(required=False)  # Don't require any args.
-    add = group.add_argument
-    add('--fstringify', dest='f', action='store_true', help='leonine fstringify')
-    add('--fstringify-diff', dest='fd', action='store_true', help='show fstringify diff')
-    add('--orange', dest='o', action='store_true', help='leonine Black')
-    add('--orange-diff', dest='od', action='store_true', help='show orange diff')
-    add('--py-cov', dest='pycov', metavar='ARGS', nargs='?', const=[], default=False, help='run pytest --cov')
-    add('--pytest', dest='pytest', metavar='ARGS', nargs='?', const=[], default=False, help='run pytest')
-    add('--unittest', dest='unittest', metavar='ARGS', nargs='?', const=[], default=False, help='run unittest')
-    args = parser.parse_args()
-    # g.printObj(args, tag='ARGS')
-    # Default to --py-cov
-    if not any(getattr(args, z) for z in ('f', 'fd', 'o', 'od', 'pycov', 'pytest', 'unittest')):
-        if not pytest:
-            print('pytest not found')
-            return
-        pycov_args = sys.argv + [
-            '--cov-report=html',
-            '--cov-report=term-missing',
-            '--cov=leo.core.leoAst',
-            'leo/core/leoAst.py',
-        ]
-        pytest.main(args=pycov_args)
-        return  # Seems necessary.
-    files = args.PATHS
-    if len(files) == 1 and os.path.isdir(files[0]):
-        files = glob.glob(f"{files[0]}{os.sep}*.py")
-    if args.f:
-        fstringify_command(files)
-    if args.fd:
-        fstringify_diff_command(files)
-    if args.o:
-        orange_command(files)
-    if args.od:
-        orange_diff_command(files)
-    if isinstance(args.pycov, (str, list)):
-        if not pytest:
-            print('pytest not found')
-            return
-        sys.argv.remove('--py-cov')
-        pycov_args = sys.argv + [
-            '--cov-report=html',
-            '--cov-report=term-missing',
-            '--cov=leo.core.leoAst',
-            'leo/core/leoAst.py',
-        ]
-        pytest.main(args=pycov_args)
-        return
-    if isinstance(args.pytest, (str, list)):
-        if not pytest:
-            print('pytest not found')
-            return
-        sys.argv.remove('--pytest')
-        pytest.main(args=sys.argv)
-    if isinstance(args.unittest, (str, list)):
-        sys.argv.remove('--unittest')
-        unittest.main()
+- Why are there two .cfg files??
 </t>
 <t tx="ekr.20210803131252.1">@language rest
 @wrap
@@ -5128,87 +5021,6 @@ https://github.com/edreamleo/make-stub-files/issues/13
 
 @language python
 @nosearch</t>
-<t tx="ekr.20210803140525.1">def scan_command_line(self):
-    '''Set ivars from command-line arguments.'''
-    # This automatically implements the --help option.
-    ### usage = "usage: make_stub_files.py [options] file1, file2, ..."
-    usage = '\n'.join([
-        '',
-        '    make_stub_files.py [options] file1, file2, ...',
-        '    make_stub_files.py --py-cov [ARGS]',
-        '    make_stub_files.py --unittest [ARGS]',
-    ])
-    ### parser = optparse.OptionParser(usage=usage)
-   
-    parser = argparse.ArgumentParser(description=None, usage=usage)
-    # group = parser.add_mutually_exclusive_group(required=False)  # Don't require any args.
-    # add = group.add_argument
-    # add = parser.add_option
-    add = parser.add_argument
-    add('-c', '--config', dest='fn', metavar='ARGS', nargs='?', const=[], default=False,
-        help='full path to configuration file')
-    add('-d', '--dir', dest='dir',
-        help='full path to the output directory')
-    add('-f', '--force-pyx', dest='force_pyx', action='store_true', default=False,
-        help='force the parsing of .pyx files')
-    add('-o', '--overwrite', dest='overwrite', action='store_true', default=False,
-        help='overwrite existing stub (.pyi) files')
-    add('-p', '--py-cov', dest='py_cov', metavar='ARGS', nargs='?', const=[], default=False,
-        help='run `pytest --cov` and exit')
-    add('-s', '--silent', action='store_true', default=False,
-        help='run without messages')
-    # add('-t', '--test', action='store_true', default=False,
-        # help='run unit tests on startup')
-    add('-t', '--unittest', dest='unittest', metavar='ARGS', nargs='?', const=[], default=False,
-        help='run unittests and exit')
-    add('--trace-matches', dest='trace_matches', action='store_true', default=False,
-        help='trace Pattern.matches')
-    add('--trace-patterns', dest='trace_patterns', action='store_true', default=False,
-        help='trace pattern creation')
-    add('--trace-reduce', dest='trace_reduce', action='store_true', default=False,
-        help='trace st.reduce_types')
-    add('--trace-visitors', dest='trace_visitors', action='store_true', default=False,
-        help='trace visitor methods')
-    add('-u', '--update', dest='update', action='store_true', default=False,
-        help='update stubs in existing stub file')
-    add('-v', '--verbose', action='store_true', default=False,
-        help='verbose output in .pyi file')
-    add('-w', '--warn', action='store_true', default=False,
-        help='warn about unannotated args')
-    # Parse the options
-    options, args = parser.parse_args()
-    # Handle the options...
-    self.enable_unit_tests = options.test
-    self.force_pyx = options.force_pyx
-    self.overwrite = options.overwrite
-    self.silent = options.silent
-    self.trace_matches = options.trace_matches
-    self.trace_patterns = options.trace_patterns
-    self.trace_reduce = options.trace_reduce
-    self.trace_visitors = options.trace_visitors
-    self.update_flag = options.update
-    self.verbose = options.verbose
-    self.warn = options.warn
-    if options.fn:
-        self.config_fn = options.fn
-    if options.dir:
-        dir_ = options.dir and options.dir.strip()
-        dir_ = self.finalize(dir_)
-        g.trace('dir', dir_)
-        if os.path.exists(dir_):
-            self.output_directory = dir_
-        else:
-            print('--dir: directory does not exist: %s' % dir_)
-            print('exiting')
-            sys.exit(1)
-    if options.force_pyx:
-        print('--force-pyx: .pyx files will be parsed as regular python, cython syntax is not supported')
-    # If any files remain, set self.files.
-    if args:
-        args = [self.finalize(z) for z in args]
-        if args:
-            self.files = args
-</t>
 <t tx="ekr.20210804020706.1">g.cls()
 command = r"python -m pytest --cov-report html --cov-report term-missing --cov make_stub_files make_stub_files.py"
 g.execute_shell_commands(command, trace=False)
@@ -5226,5 +5038,6 @@ g.execute_shell_commands(command, trace=False)</t>
 test = '' # Run all tests.
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
+<t tx="ekr.20210804070157.1"></t>
 </tnodes>
 </leo_file>

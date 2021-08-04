@@ -39,7 +39,6 @@ try:
     import pytest
 except Exception:
     pytest = None  # type:ignore
-
 #@-<< imports >>
 isPython3 = sys.version_info >= (3, 0, 0)
 #@+others
