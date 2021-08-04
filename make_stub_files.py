@@ -13,8 +13,9 @@ Written by Edward K. Ream.
 '''
 #@+<< imports >>
 #@+node:ekr.20160318141204.2: **  << imports >> (make_stub_files.py)
+import argparse
 import ast
-# from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+### from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
     # the configparser will give random order for patterns.
@@ -23,7 +24,7 @@ try:
 except ImportError:
     import configparser  # Python 3
 import glob
-import optparse
+### import optparse
 import os
 import re
 import subprocess
@@ -106,6 +107,7 @@ def main():
     '''
     controller = Controller()
     controller.scan_command_line()
+    ### To do: allow args for tests.
     if controller.enable_coverage_tests:
         if pytest:
             pytest.main(args=[
@@ -117,8 +119,6 @@ def main():
         else:
             print('Can not import pytest')
     elif controller.enable_unit_tests:
-        g.trace('**unit tests')
-        # sys.argv.remove('--unittest')
         sys.argv = [__file__]
         unittest.main()
     else:
@@ -1045,27 +1045,32 @@ class Controller:
     #@+node:ekr.20160318141204.131: *3* msf.scan_command_line
     def scan_command_line(self):
         '''Set ivars from command-line arguments.'''
-        # This automatically implements the --help option.
-        # usage = "usage: make_stub_files.py [options] file1, file2, ..."
+        description='Create stub files'
         usage = '\n'.join([
             '',
             '    make_stub_files.py [options] file1, file2, ...',
             '    make_stub_files.py --py-cov [ARGS]',
             '    make_stub_files.py --test [ARGS]',
         ])
-        parser = optparse.OptionParser(usage=usage)
-        add = parser.add_option
-        add('-c', '--config', dest='fn',
+        # The parser implements the --help option.
+        parser = argparse.ArgumentParser(description=description, usage=usage)
+        add = parser.add_argument
+        add('files', metavar='FILE', type=str, nargs='?',  ### Was '+'
+            help='input files')
+        add('-c', '--config', dest='fn', metavar='FILE',
             help='full path to configuration file')
         add('-d', '--dir', dest='dir',
             help='full path to the output directory')
+        add('-f', '--force-pyx', action='store_true', default=False,
+            help='force the parsing of .pyx files')
         add('-o', '--overwrite', action='store_true', default=False,
             help='overwrite existing stub (.pyi) files')
         add('-p', '--py-cov', action='store_true', default=False,
             help='run coverage tests, then exit')
         add('-s', '--silent', action='store_true', default=False,
             help='run without messages')
-        add('-t', '--test', action='store_true', default=False,
+        ### add('-t', '--test', action='store_true', default=False,
+        add('-t', '--test', dest='unittest_args', metavar='unittest args', type=str, nargs='?',
             help='run unit tests, then exit')
         add('--trace-matches', action='store_true', default=False,
             help='trace Pattern.matches')
@@ -1081,9 +1086,10 @@ class Controller:
             help='verbose output in .pyi file')
         add('-w', '--warn', action='store_true', default=False,
             help='warn about unannotated args')
-        add('--force-pyx', action='store_true', default=False, help='force the parsing of .pyx files')
         # Parse the options
-        options, args = parser.parse_args()
+        ### options, args = parser.parse_args()
+        args = parser.parse_args()
+        options = args
         # Handle the options...
         self.enable_unit_tests = options.test
         self.enable_coverage_tests = options.py_cov
@@ -1111,11 +1117,14 @@ class Controller:
                 sys.exit(1)
         if options.force_pyx:
             print('--force-pyx: .pyx files will be parsed as regular python, cython syntax is not supported')
-        # If any files remain, set self.files.
-        if args:
-            args = [self.finalize(z) for z in args]
-            if args:
-                self.files = args
+        self.files = args.files
+        g.trace('self.files', self.files)
+        g.trace('unittest_args', args.unittest_args)
+        # # If any files remain, set self.files.
+        # if args:
+            # args = [self.finalize(z) for z in args]
+            # if args:
+                # self.files = args
     #@+node:ekr.20160318141204.132: *3* msf.scan_options & helpers
     def scan_options(self):
         '''Set all configuration-related ivars.'''

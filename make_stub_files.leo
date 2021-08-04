@@ -12,7 +12,8 @@
 <v t="ekr.20160207182535.1"><vh>@bool preload-find-pattern = False</vh></v>
 </v>
 <v t="ekr.20160207105647.1"><vh>Scripts</vh>
-<v t="ekr.20160206095102.1"><vh>@button write-unit-tests</vh>
+<v t="ekr.20210804025215.1"><vh>@button backup</vh></v>
+<v t="ekr.20160206095102.1"><vh>@@@button write-unit-tests</vh>
 <v t="ekr.20160206095102.2"><vh>&lt;&lt; docstring &gt;&gt; (write-unit-tests)</vh></v>
 <v t="ekr.20160206101802.3"><vh>class TestWriter</vh>
 <v t="ekr.20160206101802.4"><vh>&lt;&lt; define file_template &gt;&gt;</vh></v>
@@ -26,7 +27,7 @@
 <v t="ekr.20160206101802.11"><vh>write_file</vh></v>
 </v>
 </v>
-<v t="ekr.20160207105710.1"><vh>@button check-leading-lines</vh></v>
+<v t="ekr.20160207105710.1"><vh>@@@button check-leading-lines</vh></v>
 </v>
 <v t="ekr.20160126153016.3"><vh>Unused</vh>
 <v t="ekr.20160206104033.1"><vh>@@test run all msf unit tests</vh></v>
@@ -347,7 +348,6 @@
 <v t="ekr.20180901050914.1"><vh>Changed...</vh>
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.20"></v>
-<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
 </v>
 </v>
 <v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh>
@@ -366,13 +366,14 @@
 </v>
 <v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
 <v t="ekr.20210803131439.1"><vh>=== #10: unit tests</vh>
+<v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
 <v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
 <v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
 <v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
 <v t="ekr.20160318141204.130"><vh>msf.run_all_unit_tests</vh></v>
-<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
@@ -386,10 +387,12 @@
 </v>
 <v t="ekr.20210803061104.1"><vh>COPY: leoAst.py:main</vh></v>
 <v t="ekr.20210803140525.1"><vh>COPY NEW msf.scan_command_line</vh></v>
-</v>
-<v t="ekr.20160318141204.11"><vh>main</vh></v>
-<v t="ekr.20160318141204.131"></v>
 <v t="ekr.20160318141204.132"></v>
+</v>
+<v t="ekr.20210804020706.1"><vh>@button test-msf</vh></v>
+<v t="ekr.20160318141204.11"><vh>main</vh></v>
+<v t="ekr.20210804021331.1"><vh>@button msf</vh></v>
+<v t="ekr.20160318141204.131"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -2237,6 +2240,7 @@ __str__ = __repr__
     '''
     controller = Controller()
     controller.scan_command_line()
+    ### To do: allow args for tests.
     if controller.enable_coverage_tests:
         if pytest:
             pytest.main(args=[
@@ -2248,8 +2252,6 @@ __str__ = __repr__
         else:
             print('Can not import pytest')
     elif controller.enable_unit_tests:
-        g.trace('**unit tests')
-        # sys.argv.remove('--unittest')
         sys.argv = [__file__]
         unittest.main()
     else:
@@ -2657,27 +2659,32 @@ def make_stub_file(self, fn):
 </t>
 <t tx="ekr.20160318141204.131">def scan_command_line(self):
     '''Set ivars from command-line arguments.'''
-    # This automatically implements the --help option.
-    # usage = "usage: make_stub_files.py [options] file1, file2, ..."
+    description='Create stub files'
     usage = '\n'.join([
         '',
         '    make_stub_files.py [options] file1, file2, ...',
         '    make_stub_files.py --py-cov [ARGS]',
         '    make_stub_files.py --test [ARGS]',
     ])
-    parser = optparse.OptionParser(usage=usage)
-    add = parser.add_option
-    add('-c', '--config', dest='fn',
+    # The parser implements the --help option.
+    parser = argparse.ArgumentParser(description=description, usage=usage)
+    add = parser.add_argument
+    add('files', metavar='FILE', type=str, nargs='?',  ### Was '+'
+        help='input files')
+    add('-c', '--config', dest='fn', metavar='FILE',
         help='full path to configuration file')
     add('-d', '--dir', dest='dir',
         help='full path to the output directory')
+    add('-f', '--force-pyx', action='store_true', default=False,
+        help='force the parsing of .pyx files')
     add('-o', '--overwrite', action='store_true', default=False,
         help='overwrite existing stub (.pyi) files')
     add('-p', '--py-cov', action='store_true', default=False,
         help='run coverage tests, then exit')
     add('-s', '--silent', action='store_true', default=False,
         help='run without messages')
-    add('-t', '--test', action='store_true', default=False,
+    ### add('-t', '--test', action='store_true', default=False,
+    add('-t', '--test', dest='unittest_args', metavar='unittest args', type=str, nargs='?',
         help='run unit tests, then exit')
     add('--trace-matches', action='store_true', default=False,
         help='trace Pattern.matches')
@@ -2693,9 +2700,10 @@ def make_stub_file(self, fn):
         help='verbose output in .pyi file')
     add('-w', '--warn', action='store_true', default=False,
         help='warn about unannotated args')
-    add('--force-pyx', action='store_true', default=False, help='force the parsing of .pyx files')
     # Parse the options
-    options, args = parser.parse_args()
+    ### options, args = parser.parse_args()
+    args = parser.parse_args()
+    options = args
     # Handle the options...
     self.enable_unit_tests = options.test
     self.enable_coverage_tests = options.py_cov
@@ -2723,11 +2731,14 @@ def make_stub_file(self, fn):
             sys.exit(1)
     if options.force_pyx:
         print('--force-pyx: .pyx files will be parsed as regular python, cython syntax is not supported')
-    # If any files remain, set self.files.
-    if args:
-        args = [self.finalize(z) for z in args]
-        if args:
-            self.files = args
+    self.files = args.files
+    g.trace('self.files', self.files)
+    g.trace('unittest_args', args.unittest_args)
+    # # If any files remain, set self.files.
+    # if args:
+        # args = [self.finalize(z) for z in args]
+        # if args:
+            # self.files = args
 </t>
 <t tx="ekr.20160318141204.132">def scan_options(self):
     '''Set all configuration-related ivars.'''
@@ -3904,6 +3915,36 @@ def return_array(self):
 <t tx="ekr.20160318141204.199">
 def return_list(self, a):
     return [a]
+</t>
+<t tx="ekr.20160318141204.2">import argparse
+import ast
+### from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+from collections import OrderedDict
+    # Requires Python 2.7 or above. Without OrderedDict
+    # the configparser will give random order for patterns.
+try:
+    import ConfigParser as configparser  # Python 2
+except ImportError:
+    import configparser  # Python 3
+import glob
+### import optparse
+import os
+import re
+import subprocess
+import sys
+import time
+import types
+import unittest
+try:
+    import StringIO as io  # Python 2
+except ImportError:
+    import io  # Python 3
+# Third party imports.
+try:
+    import pytest
+except Exception:
+    pytest = None  # type:ignore
+
 </t>
 <t tx="ekr.20160318141204.20"># 2: ClassDef(identifier name, expr* bases,
 #             stmt* body, expr* decorator_list)
@@ -5190,6 +5231,26 @@ https://github.com/edreamleo/make-stub-files/issues/13
         args = [self.finalize(z) for z in args]
         if args:
             self.files = args
+</t>
+<t tx="ekr.20210804020706.1">g.cls()
+if 0:
+    command = r"python -m pytest --cov-report html --cov-report term-missing --cov make_stub_files make_stub_files.py"
+else:  # Unit test.
+    test = '' # Run all tests.
+    command = f"python -m unittest make_stub_files{test}"
+g.execute_shell_commands(command, trace=False)
+</t>
+<t tx="ekr.20210804021331.1">g.cls()
+cfg = r'c:\users\Edward~1\make_stub_files.cfg'
+msf = 'make_stub_files.py'
+src = 'make_stub_files.py'
+#
+if 1: # unit test
+    command = f"python {msf} -t msf"
+else: # Run msf
+    command = f"python {msf} -c {cfg} -o -v {src}"
+g.execute_shell_commands(command, trace=False)</t>
+<t tx="ekr.20210804025215.1">c.backup_helper(sub_dir='MakeStubFiles')
 </t>
 </tnodes>
 </leo_file>

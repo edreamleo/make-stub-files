@@ -1,10 +1,12 @@
-# make_stub_files: Tue 03 Aug 2021 at 14:11:24
+# make_stub_files: Wed 04 Aug 2021 at 02:46:53
 from typing import Any, Dict, Optional, Sequence, Tuple, Union
 Node = Any
 def is_known_type(s: str) -> Any: ...
     #   0: return ReduceTypes().is_known_type(s)
     # ? 0: return ReduceTypes().is_known_type(str)
 def merge_types(a1: Any, a2: Any) -> str: ...
+    #   0: return sorted(set(r1+r2))
+    #   0: return str
 def reduce_types(aList: List[Any], name: str=, trace: bool=) -> Any: ...
     #   0: return ReduceTypes(aList,name,trace).reduce_types()
     # ? 0: return ReduceTypes(List[Any], str, bool).reduce_types()
@@ -14,8 +16,12 @@ def dump_list(title: Any, aList: List[Any]) -> None: ...
 def main() -> None: ...
 def pdb(self) -> None: ...
 def truncate(s: str, n: int) -> str: ...
+    #   0: return s if len(s)<=n else s[:n-]+
+    #   0: return str
 class AstFormatter:
     def format(self, node: Node) -> Optional[Any]: ...
+        #   0: return val and val.strip() or
+        #   0: return Optional[Any]
     def visit(self, node: Node) -> Optional[Union[Any, str]]: ...
         #   0: return .join(self.visit(z) for z in node)
         # ? 0: return .join(self.visit(z) for z in Node)
@@ -100,15 +106,29 @@ class AstFormatter:
         #   0: return %(**self.level, s)
         # ? 0: return %Tuple[*self.level, str]
     def op_name(self, node: Node, strict: bool=) -> str: ...
+        #   0: return name
+        #   0: return str
 class AstArgFormatter(AstFormatter):
     def do_BoolOp(self, node: Node) -> None: ...
+        #   0: return
+        #   0: return
     def do_Bytes(self, node: Node) -> None: ...
+        #   0: return
+        #   0: return
     def do_Name(self, node: Node) -> Optional[Any]: ...
+        #   0: return if node.id in (, ) else node.id
+        #   0: return Optional[Any]
     def do_Num(self, node: Node) -> None: ...
+        #   0: return
+        #   0: return
     def do_Str(self, node: Node) -> None: ...
+        #   0: return
+        #   0: return
 class Controller:
     def __init__(self) -> None: ...
     def finalize(self, fn: str) -> str: ...
+        #   0: return fn
+        #   0: return str
     def make_stub_file(self, fn: str) -> None: ...
     def run(self) -> None: ...
     def run_all_unit_tests(self) -> None: ...
@@ -126,6 +146,10 @@ class Controller:
         #   1: return ops
         # ? 1: return ops
     def get_config_string(self) -> Optional[str]: ...
+        #   0: return s
+        #   0: return str
+        #   1: return
+        #   1: return
     def init_parser(self, s: str) -> None: ...
     def is_section_name(self, s: str) -> Optional[Any]:
         #   0: return s.strip().lower().replace()
@@ -139,6 +163,8 @@ class Controller:
             # ? 0: return str.strip().lower().replace()
     def make_patterns_dict(self) -> None: ...
     def scan_patterns(self, section_name: Any) -> List[Any]: ...
+        #   0: return aList
+        #   0: return List[Any]
 class LeoGlobals:
     class NullObject:
         def __init__(self, *args, **keys) -> None: ...
@@ -146,9 +172,17 @@ class LeoGlobals:
             #   0: return self
             # ? 0: return self
         def __repr__(self) -> None: ...
+            #   0: return
+            #   0: return
         def __str__(self) -> None: ...
+            #   0: return
+            #   0: return
         def __bool__(self) -> None: ...
+            #   0: return
+            #   0: return
         def __nonzero__(self) -> None: ...
+            #   0: return
+            #   0: return
         def __delattr__(self, attr: Any) -> Any: ...
             #   0: return self
             # ? 0: return self
@@ -171,6 +205,8 @@ class LeoGlobals:
         #   0: return self.callers(i+).split()[]
         # ? 0: return self.callers(int+).split()[]
     def callers(self, n: int=, count: Any=, excludeCaller: Any=, files: Any=) -> str: ...
+        #   0: return sep.join(result)
+        #   0: return str
     def cls(self) -> None: ...
     def execute_shell_commands(self, commands: Any, trace: bool=) -> None: ...
     def isString(self, s: str) -> Any: ...
@@ -184,9 +220,23 @@ class LeoGlobals:
         #   1: return isinstance(s,types.UnicodeType)
         # ? 1: return isinstance(str, types.UnicodeType)
     def objToString(self, obj: Any, indent: Any=, printCaller: Any=, tag: Any=) -> Union[Any, str]: ...
+        #   0: return %(prefix, s) if prefix else s
+        #   0: return Union[Any, str]
     def dictToString(self, d: Any, indent: Any=, tag: Any=) -> Optional[Union[Any, str]]: ...
+        #   0: return
+        #   0: return 
+        #   1: return %(tag, s) if tag else s
+        #   1: return Union[Any, str]
     def listToString(self, obj: Any, indent: Any=, tag: Any=) -> Optional[Union[Any, str]]: ...
+        #   0: return
+        #   0: return 
+        #   1: return %(tag, s) if tag else s
+        #   1: return Union[Any, str]
     def tupleToString(self, obj: Any, indent: Any=, tag: Any=) -> Optional[Union[Any, str]]: ...
+        #   0: return
+        #   0: return 
+        #   1: return %(tag, s) if tag else s
+        #   1: return Union[Any, str]
     def pdb(self) -> None: ...
     def printObj(self, obj: Any, indent: Any=, printCaller: Any=, tag: Any=) -> None: ...
     def shortFileName(self, fileName: Any, n: int=) -> Union[Any, str]: ...
@@ -195,40 +245,100 @@ class LeoGlobals:
         #   1: return .join(fileName.replace().split()[-n:])
         # ? 1: return .join(fileName.replace().split()[int:])
     def splitLines(self, s: str) -> Union[Any, List]: ...
+        #   0: return s.splitlines() if s else []
+        #   0: return Union[Any, List]
     def trace(self, *args, **keys) -> None: ...
 class Pattern:
     def __init__(self, find_s: str, repl_s: str=) -> None: ...
     def __eq__(self, obj: Any) -> bool: ...
+        #   0: return self.find_s==obj.find_s and self.repl_s==obj.repl_s
+        #   0: return bool
+        #   1: return NotImplemented
+        #   1: return bool
     def __ne__(self, obj: Any) -> bool: ...
+        #   0: return not self.__eq__(obj)
+        #   0: return bool
     def __hash__(self) -> int: ...
     def __repr__(self) -> Any: ...
         #   0: return %(self.find_s, self.repl_s)
         # ? 0: return %Tuple[self.find_s, self.repl_s]
     def is_balanced(self) -> None: ...
+        #   0: return
+        #   0: return 
+        #   1: return
+        #   1: return 
+        #   2: return
+        #   2: return
     def is_regex(self) -> Any: ...
         #   0: return self.find_s.endswith()
         # ? 0: return self.find_s.endswith()
     def all_matches(self, s: str) -> List[Any]: ...
+        #   0: return aList
+        #   0: return List[Any]
+        #   1: return list(self.regex.finditer(s))
+        #   1: return List[self.regex.finditer(str)]
     def full_balanced_match(self, s: str, i: int) -> Optional[int]: ...
+        #   0: return i if found else
+        #   0: return Optional[int]
     def match_balanced(self, delim: Any, s: str, i: int) -> Union[Any, int]: ...
         #   0: return i
         #   0: return int
         #   1: return len(s)+
         # ? 1: return int+
     def match(self, s: str, trace: bool=) -> Tuple[, str]: ...
+        #   0: return (, s)
+        #   0: return Tuple[, str]
+        #   1: return (, s)
+        #   1: return Tuple[, str]
+        #   2: return (, s)
+        #   2: return Tuple[, str]
+        #   3: return (, s)
+        #   3: return Tuple[, str]
     def match_entire_string(self, s: str) -> Union[Union[Any, bool], bool]: ...
+        #   0: return j==len(s)
+        #   0: return bool
+        #   1: return m and m.group()==s
+        #   1: return Union[Any, bool]
     def replace(self, m: Any, s: str) -> Any: ...
         #   0: return self.replace_balanced(s,start,end)
         # ? 0: return self.replace_balanced(str, start, end)
         #   1: return self.replace_regex(m,s)
         # ? 1: return self.replace_regex(m, str)
     def replace_balanced(self, s1: str, start: Any, end: Any) -> str: ...
+        #   0: return s1[:start]+r+s1[end:]
+        #   0: return str
+        #   1: return s1[:start]+r+s1[end:]
+        #   1: return str
+        #   2: return s1[:start]+repl+s1[end:]
+        #   2: return str
     def replace_regex(self, m: Any, s: str) -> str: ...
+        #   0: return s
+        #   0: return str
 class ReduceTypes:
     def __init__(self, aList: List[Any]=, name: str=, trace: bool=) -> None: ...
     def is_known_type(self, s: str) -> Optional[Optional[Any]]: ...
+        #   0: return
+        #   0: return 
+        #   1: return
+        #   1: return 
+        #   2: return self.is_known_type(inner) if inner else
+        #   2: return Optional[Any]
+        #   3: return self.is_known_type(inner) if inner else
+        #   3: return Optional[Any]
+        #   4: return
+        #   4: return 
+        #   5: return
+        #   5: return 
+        #   6: return
+        #   6: return 
+        #   7: return
+        #   7: return
     def reduce_collection(self, aList: List[Any], kind: Any) -> str: ...
+        #   0: return sorted(set(result))
+        #   0: return str
     def reduce_numbers(self, aList: List[Any]) -> List[Any]: ...
+        #   0: return aList
+        #   0: return List[Any]
     def reduce_types(self) -> Any: ...
         #   0: return self.show()
         # ? 0: return self.show()
@@ -240,23 +350,39 @@ class ReduceTypes:
         #   0: return z if self.is_known_type(z) else   for z in aList
         # ? 0: return Optional[Any] for z in List[Any]
     def show(self, s: str, known: Any=) -> str: ...
+        #   0: return s
+        #   0: return str
     def split_types(self, s: str) -> List[Any]: ...
+        #   0: return aList
+        #   0: return List[Any]
 class Stub:
     def __init__(self, kind: Any, name: str, parent: Any=, stack: Any=) -> None: ...
     def __eq__(self, obj: Any) -> bool: ...
+        #   0: return self.full_name==obj.full_name and self.kind==obj.kind
+        #   0: return bool
+        #   1: return NotImplemented
+        #   1: return bool
     def __ne__(self, obj: Any) -> bool: ...
+        #   0: return not self.__eq__(obj)
+        #   0: return bool
     def __hash__(self) -> int: ...
     def __repr__(self) -> Any: ...
         #   0: return %(self.full_name, g.objToString(self.out_list))
         # ? 0: return %Tuple[self.full_name, g.objToString(self.out_list)]
     def level(self) -> int: ...
+        #   0: return len(self.parents())
+        #   0: return int
     def parents(self) -> Any: ...
         #   0: return self.full_name.split()[:-]
         # ? 0: return self.full_name.split()[:]
 class StubFormatter(AstFormatter):
     def __init__(self, controller: StandAloneMakeStubFile, traverser: Any) -> None: ...
     def match_all(self, node: Node, s: str, trace: bool=) -> str: ...
+        #   0: return s
+        #   0: return str
     def visit(self, node: Node) -> str: ...
+        #   0: return s
+        #   0: return str
     def trace_visitor(self, node: Node, op: Any, s: str) -> None: ...
     def do_Attribute(self, node: Node) -> str: ...
     def do_Bytes(self, node: Node) -> str: ...
@@ -295,14 +421,24 @@ class StubTraverser(ast.NodeVisitor):
         #   3: return new_root
         # ? 3: return new_root
     def get_stub_file(self, fn: str) -> Optional[str]: ...
+        #   0: return s
+        #   0: return str
+        #   1: return
+        #   1: return
     def parse_stub_file(self, s: str, root_name: Any) -> Tuple[Any, Any]: ...
+        #   0: return (d, root)
+        #   0: return Tuple[d, root]
     def merge_stubs(self, new_stubs: Any, old_root: Any, new_root: Any, trace: bool=) -> None: ...
     def check_delete(self, new_stubs: Any, old_root: Any, new_root: Any, trace: bool) -> Any: ...
         #   0: return delete_list
         # ? 0: return delete_list
     def flatten_stubs(self, root: Any) -> List[Any]: ...
+        #   0: return aList
+        #   0: return List[Any]
     def flatten_stubs_helper(self, root: Any, aList: List[Any]) -> None: ...
     def find_parent_stub(self, stub: Any, root: Any) -> Optional[Any]: ...
+        #   0: return self.find_stub(stub.parent,root) if stub.parent else
+        #   0: return Optional[Any]
     def find_stub(self, stub: Any, root: Any) -> Optional[Any]: ...
         #   0: return root
         # ? 0: return root
@@ -349,5 +485,9 @@ class StubTraverser(ast.NodeVisitor):
         #   2: return s+tail
         #   2: return str
     def get_def_name(self, node: Node) -> str: ...
+        #   0: return name
+        #   0: return str
     def remove_recursive_calls(self, name: str, raw: Any, reduced: Any) -> Tuple[Any, Any]: ...
+        #   0: return (raw_result, reduced_result)
+        #   0: return Tuple[raw_result, reduced_result]
     def visit_Return(self, node: Node) -> None: ...
