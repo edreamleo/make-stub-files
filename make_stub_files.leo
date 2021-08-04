@@ -2201,7 +2201,7 @@ def do_BinOp(self, node):
 </t>
 <t tx="ekr.20160318141204.161"># BoolOp(boolop op, expr* values)
 
-def do_BoolOp(self, node):  # Python 2.x only.
+def do_BoolOp(self, node):  # pragma: no cover (Python 2.x only)
     '''StubFormatter.BoolOp visitor for 'and' and 'or'.'''
     trace = self.trace_reduce
     op = self.op_name(node.op)
@@ -2764,7 +2764,7 @@ def do_NameConstant(self, node):  # Python 3 only.
     return repr(node.n)
 
 </t>
-<t tx="ekr.20160318141204.46">def do_Repr(self, node):  # Python 2.x only
+<t tx="ekr.20160318141204.46">def do_Repr(self, node):  # pragma: no cover (Python 2.x only)
     return 'repr(%s)' % self.visit(node.value)
 
 </t>
@@ -2910,7 +2910,7 @@ def do_Subscript(self, node):
     return ''.join(result)
 
 </t>
-<t tx="ekr.20160318141204.65">def do_Exec(self, node):  # Python 2.x only
+<t tx="ekr.20160318141204.65">def do_Exec(self, node):  # pragma: no cover (Python 2.x only)
     body = self.visit(node.body)
     args = []  # Globals before locals.
     if getattr(node, 'globals', None):
@@ -3007,7 +3007,7 @@ def do_Nonlocal(self, node):
     return self.indent('pass\n')
 
 </t>
-<t tx="ekr.20160318141204.74">def do_Print(self, node):  # Python 2.x only
+<t tx="ekr.20160318141204.74">def do_Print(self, node):  # pragma: no cover (Python 2.x only)
     vals = []
     for z in node.values:
         vals.append(self.visit(z))
@@ -3389,8 +3389,8 @@ class UnsupportedAlgorithm(Exception):
     lines = g.splitLines(st.output_file.getvalue())
     self.assertEqual(lines, expected)</t>
 <t tx="ekr.20200402143651.1"></t>
-<t tx="ekr.20210803055042.1">class TestMakeStubFiles(unittest.TestCase):
-    """Unit tests for make_stub_files"""
+<t tx="ekr.20210803055042.1">class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
+    """Unit tests for make_stub_files.py"""
     @others</t>
 <t tx="ekr.20210803060400.1"></t>
 <t tx="ekr.20210803131252.1">@language rest
@@ -3407,7 +3407,7 @@ https://github.com/edreamleo/make-stub-files/issues/13
 
 *** Remove all bug*.pyi files.
 *** Fix failing unit test.
-*** Create coverage tests: Suppress coverage of tests themselves.
+*** Create coverage tests.
 
 Later:
 - Rewrite the readme.

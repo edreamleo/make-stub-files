@@ -58,13 +58,13 @@ def reduce_types(aList, name=None, trace=False):
 #@+node:ekr.20160318141204.7: **   utility functions
 # Top-level functions
 #@+node:ekr.20160318141204.8: *3* dump
-def dump(title, s=None):
+def dump(title, s=None):  # pragma: no cover
     if s:
         print('===== %s...\n%s\n' % (title, s.rstrip()))
     else:
         print('===== %s...\n' % title)
 #@+node:ekr.20160318141204.9: *3* dump_dict
-def dump_dict(title, d):
+def dump_dict(title, d):  # pragma: no cover
     '''Dump a dictionary with a header.'''
     dump(title)
     for z in sorted(d):
@@ -72,14 +72,14 @@ def dump_dict(title, d):
     print('')
 
 #@+node:ekr.20160318141204.10: *3* dump_list
-def dump_list(title, aList):
+def dump_list(title, aList):  # pragma: no cover
     '''Dump a list with a header.'''
     dump(title)
     for z in aList:
         print(z)
     print('')
 #@+node:ekr.20160318141204.11: *3* main
-def main():
+def main():  # pragma: no cover
     '''
     The driver for the stand-alone version of make-stub-files.
     All options come from ~/stubs/make_stub_files.cfg.
@@ -90,7 +90,7 @@ def main():
     for fn in controller.files:
         controller.make_stub_file(fn)
 #@+node:ekr.20160318141204.12: *3* pdb
-def pdb(self):
+def pdb(self):  # pragma: no cover
     '''Invoke a debugger during unit testing.'''
     try:
         import leo.core.leoGlobals as leo_g
@@ -416,7 +416,7 @@ class AstFormatter:
         return repr(node.n)
 
     #@+node:ekr.20160318141204.46: *4* f.Repr
-    def do_Repr(self, node):  # Python 2.x only
+    def do_Repr(self, node):  # pragma: no cover (Python 2.x only)
         return 'repr(%s)' % self.visit(node.value)
 
     #@+node:ekr.20160318141204.47: *4* f.Slice
@@ -549,7 +549,7 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.65: *4* f.Exec
-    def do_Exec(self, node):  # Python 2.x only
+    def do_Exec(self, node):  # pragma: no cover (Python 2.x only)
         body = self.visit(node.body)
         args = []  # Globals before locals.
         if getattr(node, 'globals', None):
@@ -646,7 +646,7 @@ class AstFormatter:
         return self.indent('pass\n')
 
     #@+node:ekr.20160318141204.74: *4* f.Print
-    def do_Print(self, node):  # Python 2.x only
+    def do_Print(self, node):  # pragma: no cover (Python 2.x only)
         vals = []
         for z in node.values:
             vals.append(self.visit(z))
@@ -879,7 +879,7 @@ class AstArgFormatter(AstFormatter):
     #@+node:ekr.20160318141204.91: *3* sf.Constants & Name
     # Return generic markers to allow better pattern matches.
 
-    def do_BoolOp(self, node):  # Python 2.x only.
+    def do_BoolOp(self, node):  # pragma: no cover (Python 2.x only)
         return 'bool'
 
     def do_Bytes(self, node):  # Python 3.x only.
@@ -2131,7 +2131,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.161: *4* sf.BoolOp
     # BoolOp(boolop op, expr* values)
 
-    def do_BoolOp(self, node):  # Python 2.x only.
+    def do_BoolOp(self, node):  # pragma: no cover (Python 2.x only)
         '''StubFormatter.BoolOp visitor for 'and' and 'or'.'''
         trace = self.trace_reduce
         op = self.op_name(node.op)
@@ -2775,8 +2775,8 @@ class StubTraverser(ast.NodeVisitor):
             # New: return the entire node, not node.value.
     #@-others
 #@+node:ekr.20210803055042.1: ** class TestMakeStubFiles(unittest.TestCase)
-class TestMakeStubFiles(unittest.TestCase):
-    """Unit tests for make_stub_files"""
+class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
+    """Unit tests for make_stub_files.py"""
     #@+others
     #@+node:ekr.20180901040718.1: *3* test_bug2_empty
     def test_bug2_empty(self):
