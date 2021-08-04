@@ -42,7 +42,6 @@
 <v t="ekr.20160214043351.1"><vh>rt.make_optional</vh></v>
 </v>
 </v>
-<v t="ekr.20210803060804.1"><vh>To do</vh></v>
 <v t="ekr.20160128104714.1"><vh>Files</vh>
 <v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
 <v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
@@ -64,8 +63,8 @@
 </v>
 <v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
-<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
 </v>
+<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
 <v t="ekr.20180706073205.1"><vh>Recent Code</vh>
 <v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
 <v t="ekr.20180901050914.1"><vh>Changed...</vh>
@@ -198,7 +197,6 @@
 </v>
 </v>
 <v t="ekr.20210803131439.1"><vh>=== #10: unit tests</vh>
-<v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20210804020706.1"><vh>@button coverage</vh></v>
 <v t="ekr.20210804060105.1"><vh>@button unitttest</vh></v>
 <v t="ekr.20210804021331.1"><vh>@button msf</vh></v>
@@ -365,8 +363,7 @@
 </v>
 <v t="ekr.20160206165656.1"><vh>@@@clean test/test.py</vh></v>
 </v>
-</v>
-<v t="ekr.20210804070157.1"><vh>--- recent</vh>
+<v t="ekr.20210804071509.1"><vh>--- classes</vh>
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
 <v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
@@ -385,9 +382,12 @@
 <v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
+</v>
+<v t="ekr.20210804070157.1"><vh>--- recent</vh>
 <v t="ekr.20160318141204.131"></v>
 <v t="ekr.20160318141204.132"></v>
 <v t="ekr.20160318141204.136"></v>
+</v>
 </v>
 </vnodes>
 <tnodes>
@@ -3865,33 +3865,6 @@ def return_array(self):
 def return_list(self, a):
     return [a]
 </t>
-<t tx="ekr.20160318141204.2">import argparse
-import ast
-from collections import OrderedDict
-    # Requires Python 2.7 or above. Without OrderedDict
-    # the configparser will give random order for patterns.
-try:
-    import ConfigParser as configparser  # Python 2
-except ImportError:
-    import configparser  # Python 3
-import glob
-import os
-import re
-import subprocess
-import sys
-import time
-import types
-import unittest
-try:
-    import StringIO as io  # Python 2
-except ImportError:
-    import io  # Python 3
-# Third party imports.
-try:
-    import pytest
-except Exception:
-    pytest = None  # type:ignore
-</t>
 <t tx="ekr.20160318141204.20"># 2: ClassDef(identifier name, expr* bases,
 #             stmt* body, expr* decorator_list)
 # 3: ClassDef(identifier name, expr* bases,
@@ -4822,7 +4795,8 @@ Added "tail" logic in st.visit_ClassDef and f.ClassDef.
 Added two new unit tests.
 
 @language python</t>
-<t tx="ekr.20180706073205.1">@nosearch</t>
+<t tx="ekr.20180706073205.1">### To be deleted.
+@nosearch</t>
 <t tx="ekr.20180706073424.1"># pyflakes complains about the TestClass class.</t>
 <t tx="ekr.20180831102536.1">@language rest
 @wrap
@@ -5001,9 +4975,6 @@ toString = objToString
 </t>
 <t tx="ekr.20200402143651.1"></t>
 <t tx="ekr.20210803060400.1"></t>
-<t tx="ekr.20210803060804.1">- Rewrite the readme.
-- Why are there two .cfg files??
-</t>
 <t tx="ekr.20210803131252.1">@language rest
 @wrap
 
@@ -5016,8 +4987,15 @@ https://github.com/edreamleo/make-stub-files/issues/13
 
 https://github.com/edreamleo/make-stub-files/issues/13
 
-- Write a new unit test.
-  - Adjust args.
+Create coverage tests:
+- For *Formatter classes.
+- For ReduceTypes class.
+- For Stub* classes.
+- Convert all old tests.
+
+Later:
+- Rewrite the readme.
+- Why are there two .cfg files??
 
 @language python
 @nosearch</t>
@@ -5039,5 +5017,6 @@ test = '' # Run all tests.
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210804070157.1"></t>
+<t tx="ekr.20210804071509.1"></t>
 </tnodes>
 </leo_file>
