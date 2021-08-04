@@ -2825,22 +2825,28 @@ class TestMakeStubFiles(unittest.TestCase):
     #@+node:ekr.20180901051603.1: *3* test_bug3 (FAILS)
     def test_bug3(self):
         # https://github.com/edreamleo/make-stub-files/issues/3
-        commands = [
-            # 'cls',
-            'python make_stub_files.py -c make_stub_files.cfg -o -s bug3.py',
-        ]
-        g.execute_shell_commands(commands, trace=True)
-        with open('bug3.pyi') as f:
-            s = f.read()
-        lines = g.splitLines(s)
-        # Test only the last two linse of the generated .pyi file.
-        got = ''.join(lines[-2:])
-        # The input file
-        expected = (
+        tag = 'test_bug3'
+        s = (
             'class UnsupportedAlgorithm(Exception):\n'
-            '    def __init__(self, message: Any, reason: Optional[str]=None) -> None: ...\n'
+            '    def __init__(self, message: Any, reason: Optional[str]=None) -> None:\n'
+            '        pass\n'
         )
-        self.assertEqual(got, expected)
+        expected = [
+            'class UnsupportedAlgorithm(Exception):\n',
+            '    def __init__(self, message: Any, reason: Optional[str]=None) -> None: ...\n',
+        ]
+        controller = Controller()
+        node = ast.parse(s, filename=tag, mode='exec')
+        st = StubTraverser(controller=controller)
+        # From StubTraverser.run.
+        st.parent_stub = Stub(kind='root', name='<new-stubs>')
+        st.visit(node)
+        # Allocate a StringIo file for output_stubs.
+        st.output_file = io.StringIO()
+        st.output_stubs(st.parent_stub)
+        # Test.
+        lines = g.splitLines(st.output_file.getvalue())
+        self.assertEqual(lines, expected)
     #@+node:ekr.20210804103146.1: *3* test_pattern_class
     def test_pattern_class(self):
         g = LeoGlobals() # Use the g available to the script.
