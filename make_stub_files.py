@@ -15,7 +15,6 @@ Written by Edward K. Ream.
 #@+node:ekr.20160318141204.2: **  << imports >> (make_stub_files.py)
 import argparse
 import ast
-### from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 from collections import OrderedDict
     # Requires Python 2.7 or above. Without OrderedDict
     # the configparser will give random order for patterns.
@@ -24,7 +23,6 @@ try:
 except ImportError:
     import configparser  # Python 3
 import glob
-### import optparse
 import os
 import re
 import subprocess
