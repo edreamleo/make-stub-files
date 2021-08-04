@@ -12,7 +12,7 @@
 <v t="ekr.20160207182535.1"><vh>@bool preload-find-pattern = False</vh></v>
 </v>
 <v t="ekr.20160207105647.1"><vh>Scripts</vh>
-<v t="ekr.20210804025215.1"><vh>@@@button backup</vh></v>
+<v t="ekr.20210804025215.1"><vh>@button backup</vh></v>
 <v t="ekr.20160206095102.1"><vh>@@@button write-unit-tests</vh>
 <v t="ekr.20160206095102.2"><vh>&lt;&lt; docstring &gt;&gt; (write-unit-tests)</vh></v>
 <v t="ekr.20160206101802.3"><vh>class TestWriter</vh>
@@ -244,19 +244,11 @@
 </v>
 </v>
 </v>
-<v t="ekr.20210804153200.1"><vh>@button convert-test</vh></v>
-<v t="ekr.20210804153220.1"><vh>@test truncate</vh>
-<v t="ekr.20210804153220.2"><vh>truncate</vh></v>
-</v>
-<v t="ekr.20160206171945.1"><vh>OLDUnit tests</vh>
-<v t="ekr.20160207115947.1"><vh>@test truncate</vh>
-<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
-</v>
-<v t="ekr.20180901040718.1"><vh>@test bug2 empty</vh></v>
-<v t="ekr.20180901044640.1"><vh>@test bug2 non-empty</vh></v>
-<v t="ekr.20180901051603.1"><vh>@test bug3</vh></v>
-</v>
+<v t="ekr.20210804153200.1"><vh>@button convert-at-test</vh></v>
 <v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
+<v t="ekr.20180901040718.1"><vh>test_bug2_empty (revise)</vh></v>
+<v t="ekr.20180901044640.1"><vh>test_bug2_non_empty (revise)</vh></v>
+<v t="ekr.20180901051603.1"><vh>test_bug3 (FAILS) (revise)</vh></v>
 <v t="ekr.20210804103146.1"><vh>test_pattern_class</vh></v>
 <v t="ekr.20210804105256.1"><vh>test_reduce_numbers</vh></v>
 <v t="ekr.20210804111613.1"><vh>test_reduce_types</vh></v>
@@ -268,6 +260,9 @@
 <v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
 </v>
 <v t="ekr.20210804112556.1"><vh>test_stub_class</vh></v>
+<v t="ekr.20160207115947.1"><vh>test_truncate</vh>
+<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
+</v>
 </v>
 </vnodes>
 <tnodes>
@@ -1039,7 +1034,6 @@ def optional_any2(a):
     else:
         return
 </t>
-<t tx="ekr.20160206171945.1"></t>
 <t tx="ekr.20160207051429.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
 none = 'None'
 La, Lc = ['Any'], ['complex']
@@ -1226,17 +1220,18 @@ def truncate(s, n):
     '''Return s truncated to n characters.'''
     return s if len(s) &lt;= n else s[:n-3] + '...'
 </t>
-<t tx="ekr.20160207115947.1">table = (
-    ('abc',     'abc'),
-    ('abcd',    'abcd'),
-    ('abcde',   'abcde'),
-    ('abcdef',  'ab...'),
-    ('abcdefg', 'ab...'),
-)
-@others  
-for s1, s2 in table:
-    got = truncate(s1, 5)
-    assert s2 == got, (s1, 'expected', s2, 'got', got)</t>
+<t tx="ekr.20160207115947.1">def test_truncate(self):
+    table = (
+        ('abc',     'abc'),
+        ('abcd',    'abcd'),
+        ('abcde',   'abcde'),
+        ('abcdef',  'ab...'),
+        ('abcdefg', 'ab...'),
+    )
+    for s1, s2 in table:
+        got = truncate(s1, 5)
+        self.assertEqual(s2, got, msg=f"s1: {s1!r}")
+</t>
 <t tx="ekr.20160207181637.1"></t>
 <t tx="ekr.20160207181648.1"></t>
 <t tx="ekr.20160207182535.1"></t>
@@ -3348,48 +3343,55 @@ class UnsupportedAlgorithm(Exception):
 
 @language python
 </t>
-<t tx="ekr.20180901040718.1"># https://github.com/edreamleo/make-stub-files/issues/2
-commands = [
-    # 'cls',
-    'python make_stub_files.py -o -s bug2.py',
-]
-g.execute_shell_commands(commands, trace=True)
-with open('bug2.pyi') as f:
-    s = f.read()
-lines = g.splitLines(s)
-expected = 'class InvalidTag(Exception): ...\n'
-got = lines[1]
-assert got == expected, 'expected: %r\ngot:    %r' % (expected, got)</t>
-<t tx="ekr.20180901044640.1"># https://github.com/edreamleo/make-stub-files/issues/2
-commands = [
-    # 'cls',
-    'python make_stub_files.py -o -s bug2a.py',
-]
-g.execute_shell_commands(commands, trace=True)
-with open('bug2a.pyi') as f:
-    s = f.read()
-lines = g.splitLines(s)
-expected = 'class NonEmptyClass:\n'
-got = lines[1]
-assert got == expected, 'expected: %r\ngot:    %r' % (expected, got)</t>
+<t tx="ekr.20180901040718.1">def test_bug2_empty(self):
+    # https://github.com/edreamleo/make-stub-files/issues/2
+    commands = [
+        # 'cls',
+        'python make_stub_files.py -o -s bug2.py',
+    ]
+    g.execute_shell_commands(commands, trace=True)
+    with open('bug2.pyi') as f:
+        s = f.read()
+    lines = g.splitLines(s)
+    expected = 'class InvalidTag(Exception): ...\n'
+    got = lines[1]
+    self.assertEqual(got, expected)
+</t>
+<t tx="ekr.20180901044640.1">def test_bug2_non_empty(self):
+    # https://github.com/edreamleo/make-stub-files/issues/2
+    commands = [
+        # 'cls',
+        'python make_stub_files.py -o -s bug2a.py',
+    ]
+    g.execute_shell_commands(commands, trace=True)
+    with open('bug2a.pyi') as f:
+        s = f.read()
+    lines = g.splitLines(s)
+    expected = 'class NonEmptyClass:\n'
+    got = lines[1]
+    ### assert got == expected, 'expected: %r\ngot:    %r' % (expected, got)
+    self.assertEqual(got, expected)
+</t>
 <t tx="ekr.20180901050914.1"></t>
-<t tx="ekr.20180901051603.1"># https://github.com/edreamleo/make-stub-files/issues/3
-commands = [
-    # 'cls',
-    'python make_stub_files.py -c make_stub_files.cfg -o -s bug3.py',
-]
-g.execute_shell_commands(commands, trace=True)
-with open('bug3.pyi') as f:
-    s = f.read()
-lines = g.splitLines(s)
-# Test only the last two linse of the generated .pyi file.
-got = ''.join(lines[-2:])
-# The input file 
-expected = (
-    'class UnsupportedAlgorithm(Exception):\n' 
-    '    def __init__(self, message: Any, reason: Optional[str]=None) -&gt; None: ...\n'
-)
-assert got == expected, '\nexpected:\n%s\ngot:\n%s' % (expected, got)</t>
+<t tx="ekr.20180901051603.1">def test_bug3(self):
+    # https://github.com/edreamleo/make-stub-files/issues/3
+    commands = [
+        # 'cls',
+        'python make_stub_files.py -c make_stub_files.cfg -o -s bug3.py',
+    ]
+    g.execute_shell_commands(commands, trace=True)
+    with open('bug3.pyi') as f:
+        s = f.read()
+    lines = g.splitLines(s)
+    # Test only the last two linse of the generated .pyi file.
+    got = ''.join(lines[-2:])
+    # The input file
+    expected = (
+        'class UnsupportedAlgorithm(Exception):\n'
+        '    def __init__(self, message: Any, reason: Optional[str]=None) -&gt; None: ...\n'
+    )
+    self.assertEqual(got, expected)
+</t>
 <t tx="ekr.20200402143651.1"></t>
 <t tx="ekr.20210803055042.1">class TestMakeStubFiles(unittest.TestCase):
     """Unit tests for make_stub_files"""
@@ -3553,15 +3555,14 @@ class AstFormatter:
 '''
     g = LeoGlobals() # Use the g available to the script.
     st = StubTraverser(controller=g.NullObject())
-    d, root = st.parse_stub_file(s, root_name='&lt;root&gt;')
-        # Root *is* used below.
+    d, root = st.parse_stub_file(s, root_name='&lt;root&gt;')  # Root *is* used below.
     if 0:
         print(st.trace_stubs(root, header='root'))
     stub1 = Stub(kind='class', name='AstFormatter')
     stub2 = Stub(kind='def', name='format', parent=stub1, stack=['AstFormatter'])
     stub3 = Stub(kind='def', name='helper', parent = stub2, stack=['AstFormatter', 'format'])
     # stub4 = Stub(kind='def', name='main')
-    for stub in (stub1, stub2, stub3,): # (stub1, stub2, stub3):
+    for stub in (stub1, stub2, stub3,):  # (stub1, stub2, stub3):
         found = st.find_stub(stub, root)
         id_found = found and id(found) or None
         if 0:
@@ -3584,7 +3585,7 @@ class AstFormatter:
         def do_ClassDef(self, node: Node) -&gt; str: ...
         def do_FunctionDef(self, node: Node) -&gt; str: ...
     '''
-    g = LeoGlobals() # Use the g available to the script.
+    g = LeoGlobals()  # Use the g available to the script.
     st = StubTraverser(controller=g.NullObject())
     d, root = st.parse_stub_file(s, root_name='&lt;root&gt;')
     if 0:
@@ -3605,7 +3606,6 @@ class AstFormatter:
     &lt;&lt; old_stubs &gt;&gt;
     &lt;&lt; new_stubs &gt;&gt;
     g = LeoGlobals() # Use the g available to the script.
-    # g.cls()
     st = StubTraverser(controller=g.NullObject())
     # dump('old_s', old_s)
     # dump('new_s', new_s)
@@ -3616,7 +3616,7 @@ class AstFormatter:
         dump_dict('new_d', new_d)
         print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
         print(st.trace_stubs(new_root, header='trace_stubs(new_root)'))
-    if 0: # separate unit test. Passed.
+    if 0:  # separate unit test. Passed.
         aList = st.sort_stubs_by_hierarchy(new_root)
         dump_list(aList, 'after sort_stubs_by_hierarcy')
     new_stubs = new_d.values()
@@ -3676,16 +3676,13 @@ class AstFormatter:
 '''
 </t>
 <t tx="ekr.20210804112556.1">def test_stub_class(self):
-
-    g = LeoGlobals() # Use the g available to the script.
-    # g.cls()
+    g = LeoGlobals()  # Use the g available to the script.
     # Test equality...
     stub1 = Stub(kind='def', name='foo')
     stub2 = Stub(kind='class', name='foo')
     stub3 = Stub(kind='def', name='bar')
     stub4 = Stub(kind='def', name='foo')
-    stub4.out_list = ['xyzzy']
-        # Contents of out_list must not affect equality!
+    stub4.out_list = ['xyzzy']  # Contents of out_list must not affect equality!
     aList = [stub1, stub3]
     self.assertNotEqual(stub1, stub2)
     self.assertNotEqual(stub1, stub3)
@@ -3711,37 +3708,28 @@ class AstFormatter:
 <t tx="ekr.20210804153200.1">g.cls()
 
 def body(p):
-    def_s = f"def {headline(p)}:\n"
+    def_s = f"def {headline(p)}(self):\n"
     lines = [' '*4 + z.rstrip()+'\n' for z in g.splitLines(p.b) if '@others' not in z]
     return def_s + ''.join(lines)
 
 def headline(p):
-    s = p.h
-    assert s.startswith('@test')
-    return s[1:].replace(' ','_').replace('__', '_')
-    
-target_h = '@test truncate'
-p = g.findTopLevelNode(c, target_h)
-h = headline(p)
-b = body(p)
-print(h.rstrip())
-print(b.rstrip())
-</t>
-<t tx="ekr.20210804153220.1">table = (
-    ('abc',     'abc'),
-    ('abcd',    'abcd'),
-    ('abcde',   'abcde'),
-    ('abcdef',  'ab...'),
-    ('abcdefg', 'ab...'),
-)
-@others  
-for s1, s2 in table:
-    got = truncate(s1, 5)
-    assert s2 == got, (s1, 'expected', s2, 'got', got)</t>
-<t tx="ekr.20210804153220.2">
-def truncate(s, n):
-    '''Return s truncated to n characters.'''
-    return s if len(s) &lt;= n else s[:n-3] + '...'
+    return p.h[1:].replace('-','_').replace(' ','_').replace('__', '_')
+
+while p:
+    if p.h.startswith('@test'):
+        if 1:
+            print(p.h)
+            p.b = body(p)  # body first, to use original headline.
+            p.h = headline(p)
+            p.setDirty()
+        else:
+            h = headline(p)
+            b = body(p)
+            print(h.rstrip())
+            print(b.rstrip())
+            print('-'*40)
+    p.moveToThreadNext()
+c.redraw()
 </t>
 </tnodes>
 </leo_file>

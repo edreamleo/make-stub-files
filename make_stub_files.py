@@ -2784,6 +2784,54 @@ class StubTraverser(ast.NodeVisitor):
 class TestMakeStubFiles(unittest.TestCase):
     """Unit tests for make_stub_files"""
     #@+others
+    #@+node:ekr.20180901040718.1: *3* test_bug2_empty (revise)
+    def test_bug2_empty(self):
+        # https://github.com/edreamleo/make-stub-files/issues/2
+        commands = [
+            # 'cls',
+            'python make_stub_files.py -o -s bug2.py',
+        ]
+        g.execute_shell_commands(commands, trace=True)
+        with open('bug2.pyi') as f:
+            s = f.read()
+        lines = g.splitLines(s)
+        expected = 'class InvalidTag(Exception): ...\n'
+        got = lines[1]
+        self.assertEqual(got, expected)
+    #@+node:ekr.20180901044640.1: *3* test_bug2_non_empty (revise)
+    def test_bug2_non_empty(self):
+        # https://github.com/edreamleo/make-stub-files/issues/2
+        commands = [
+            # 'cls',
+            'python make_stub_files.py -o -s bug2a.py',
+        ]
+        g.execute_shell_commands(commands, trace=True)
+        with open('bug2a.pyi') as f:
+            s = f.read()
+        lines = g.splitLines(s)
+        expected = 'class NonEmptyClass:\n'
+        got = lines[1]
+        ### assert got == expected, 'expected: %r\ngot:    %r' % (expected, got)
+        self.assertEqual(got, expected)
+    #@+node:ekr.20180901051603.1: *3* test_bug3 (FAILS) (revise)
+    def test_bug3(self):
+        # https://github.com/edreamleo/make-stub-files/issues/3
+        commands = [
+            # 'cls',
+            'python make_stub_files.py -c make_stub_files.cfg -o -s bug3.py',
+        ]
+        g.execute_shell_commands(commands, trace=True)
+        with open('bug3.pyi') as f:
+            s = f.read()
+        lines = g.splitLines(s)
+        # Test only the last two linse of the generated .pyi file.
+        got = ''.join(lines[-2:])
+        # The input file
+        expected = (
+            'class UnsupportedAlgorithm(Exception):\n'
+            '    def __init__(self, message: Any, reason: Optional[str]=None) -> None: ...\n'
+        )
+        self.assertEqual(got, expected)
     #@+node:ekr.20210804103146.1: *3* test_pattern_class
     def test_pattern_class(self):
         g = LeoGlobals() # Use the g available to the script.
@@ -2900,15 +2948,14 @@ class TestMakeStubFiles(unittest.TestCase):
     '''
         g = LeoGlobals() # Use the g available to the script.
         st = StubTraverser(controller=g.NullObject())
-        d, root = st.parse_stub_file(s, root_name='<root>')
-            # Root *is* used below.
+        d, root = st.parse_stub_file(s, root_name='<root>')  # Root *is* used below.
         if 0:
             print(st.trace_stubs(root, header='root'))
         stub1 = Stub(kind='class', name='AstFormatter')
         stub2 = Stub(kind='def', name='format', parent=stub1, stack=['AstFormatter'])
         stub3 = Stub(kind='def', name='helper', parent = stub2, stack=['AstFormatter', 'format'])
         # stub4 = Stub(kind='def', name='main')
-        for stub in (stub1, stub2, stub3,): # (stub1, stub2, stub3):
+        for stub in (stub1, stub2, stub3,):  # (stub1, stub2, stub3):
             found = st.find_stub(stub, root)
             id_found = found and id(found) or None
             if 0:
@@ -2931,7 +2978,7 @@ class TestMakeStubFiles(unittest.TestCase):
             def do_ClassDef(self, node: Node) -> str: ...
             def do_FunctionDef(self, node: Node) -> str: ...
         '''
-        g = LeoGlobals() # Use the g available to the script.
+        g = LeoGlobals()  # Use the g available to the script.
         st = StubTraverser(controller=g.NullObject())
         d, root = st.parse_stub_file(s, root_name='<root>')
         if 0:
@@ -3005,7 +3052,6 @@ class TestMakeStubFiles(unittest.TestCase):
         '''
         #@-<< new_stubs >>
         g = LeoGlobals() # Use the g available to the script.
-        # g.cls()
         st = StubTraverser(controller=g.NullObject())
         # dump('old_s', old_s)
         # dump('new_s', new_s)
@@ -3016,7 +3062,7 @@ class TestMakeStubFiles(unittest.TestCase):
             dump_dict('new_d', new_d)
             print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
             print(st.trace_stubs(new_root, header='trace_stubs(new_root)'))
-        if 0: # separate unit test. Passed.
+        if 0:  # separate unit test. Passed.
             aList = st.sort_stubs_by_hierarchy(new_root)
             dump_list(aList, 'after sort_stubs_by_hierarcy')
         new_stubs = new_d.values()
@@ -3025,16 +3071,13 @@ class TestMakeStubFiles(unittest.TestCase):
             print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
     #@+node:ekr.20210804112556.1: *3* test_stub_class
     def test_stub_class(self):
-
-        g = LeoGlobals() # Use the g available to the script.
-        # g.cls()
+        g = LeoGlobals()  # Use the g available to the script.
         # Test equality...
         stub1 = Stub(kind='def', name='foo')
         stub2 = Stub(kind='class', name='foo')
         stub3 = Stub(kind='def', name='bar')
         stub4 = Stub(kind='def', name='foo')
-        stub4.out_list = ['xyzzy']
-            # Contents of out_list must not affect equality!
+        stub4.out_list = ['xyzzy']  # Contents of out_list must not affect equality!
         aList = [stub1, stub3]
         self.assertNotEqual(stub1, stub2)
         self.assertNotEqual(stub1, stub3)
@@ -3056,6 +3099,23 @@ class TestMakeStubFiles(unittest.TestCase):
         self.assertEqual(stub_1.level(), 0)
         self.assertEqual(stub_2.level(), 1)
         self.assertEqual(stub_3.level(), 2)
+    #@+node:ekr.20160207115947.1: *3* test_truncate
+    def test_truncate(self):
+        table = (
+            ('abc',     'abc'),
+            ('abcd',    'abcd'),
+            ('abcde',   'abcde'),
+            ('abcdef',  'ab...'),
+            ('abcdefg', 'ab...'),
+        )
+        for s1, s2 in table:
+            got = truncate(s1, 5)
+            self.assertEqual(s2, got, msg=f"s1: {s1!r}")
+    #@+node:ekr.20160207115604.1: *4* truncate
+
+    def truncate(s, n):
+        '''Return s truncated to n characters.'''
+        return s if len(s) <= n else s[:n-3] + '...'
     #@-others
 #@-others
 g = LeoGlobals()
