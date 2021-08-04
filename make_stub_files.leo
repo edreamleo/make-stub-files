@@ -42,29 +42,6 @@
 <v t="ekr.20160214043351.1"><vh>rt.make_optional</vh></v>
 </v>
 </v>
-<v t="ekr.20160128104714.1"><vh>Files</vh>
-<v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
-<v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
-<v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
-<v t="ekr.20160128104639.1"><vh>@clean msf.cfg</vh></v>
-<v t="ekr.20160330201030.1"><vh>@clean PKG-INFO.TXT</vh></v>
-<v t="ekr.20160211110739.1"><vh>@clean README.md</vh>
-<v t="ekr.20160211110807.1"><vh>Overview</vh></v>
-<v t="ekr.20160211113019.1"><vh>Quick start</vh></v>
-<v t="ekr.20160211110810.1"><vh>Command-line arguments</vh></v>
-<v t="ekr.20160211110810.2"><vh>The configuration file</vh>
-<v t="ekr.20160211111807.1"><vh>Patterns</vh></v>
-<v t="ekr.20160211111823.1"><vh>[Global]</vh></v>
-<v t="ekr.20160211111839.1"><vh>[Def Name Patterns]</vh></v>
-<v t="ekr.20160211111901.1"><vh>[General Patterns]</vh></v>
-</v>
-<v t="ekr.20160211110810.3"><vh>Why this script is important</vh></v>
-<v t="ekr.20160211110811.1"><vh>Summary</vh></v>
-</v>
-<v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
-<v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
-</v>
-<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
 <v t="ekr.20180706073205.1"><vh>Recent Code</vh>
 <v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
 <v t="ekr.20180901050914.1"><vh>Changed...</vh>
@@ -196,30 +173,121 @@
 <v t="ekr.20160318141204.21"></v>
 </v>
 </v>
+<v t="ekr.20160128104714.1"><vh>Files</vh>
+<v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
+<v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
+<v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
+<v t="ekr.20160128104639.1"><vh>@clean msf.cfg</vh></v>
+<v t="ekr.20160330201030.1"><vh>@clean PKG-INFO.TXT</vh></v>
+<v t="ekr.20160211110739.1"><vh>@clean README.md</vh>
+<v t="ekr.20160211110807.1"><vh>Overview</vh></v>
+<v t="ekr.20160211113019.1"><vh>Quick start</vh></v>
+<v t="ekr.20160211110810.1"><vh>Command-line arguments</vh></v>
+<v t="ekr.20160211110810.2"><vh>The configuration file</vh>
+<v t="ekr.20160211111807.1"><vh>Patterns</vh></v>
+<v t="ekr.20160211111823.1"><vh>[Global]</vh></v>
+<v t="ekr.20160211111839.1"><vh>[Def Name Patterns]</vh></v>
+<v t="ekr.20160211111901.1"><vh>[General Patterns]</vh></v>
+</v>
+<v t="ekr.20160211110810.3"><vh>Why this script is important</vh></v>
+<v t="ekr.20160211110811.1"><vh>Summary</vh></v>
+</v>
+<v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
+<v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
+</v>
+<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
+<v t="ekr.20160318141204.2"><vh> &lt;&lt; imports &gt;&gt; (make_stub_files.py)</vh></v>
 <v t="ekr.20210803131439.1"><vh>=== #10: unit tests</vh>
+<v t="ekr.20210804104214.1"><vh>--- no longer used</vh>
+<v t="ekr.20160318141204.130"><vh>msf.run_all_unit_tests</vh></v>
+<v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
+</v>
 <v t="ekr.20210804020706.1"><vh>@button coverage</vh></v>
 <v t="ekr.20210804060105.1"><vh>@button unitttest</vh></v>
 <v t="ekr.20210804021331.1"><vh>@button msf</vh></v>
-<v t="ekr.20210803060400.1"><vh>--- old unit tests</vh>
-<v t="ekr.20160318141204.195"><vh>class TestClass</vh>
+<v t="ekr.20210804070157.1"><vh>--- command-line</vh>
+<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
+<v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
+<v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
+<v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
+<v t="ekr.20160318141204.135"><vh>msf.find_pattern_ops</vh></v>
+<v t="ekr.20160318141204.136"><vh>msf.get_config_string</vh></v>
+<v t="ekr.20160318141204.137"><vh>msf.init_parser</vh></v>
+<v t="ekr.20160318141204.138"><vh>msf.is_section_name</vh></v>
+<v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
+<v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
+</v>
+</v>
+<v t="ekr.20160318141204.125"><vh>class Controller</vh>
+<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
+<v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
+<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
+<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.132"></v>
+</v>
+<v t="ekr.20210803060400.1"><vh>--- testing</vh>
+<v t="ekr.20160630100214.1"><vh>@@@clean test.py</vh></v>
+<v t="ekr.20160128154715.1"><vh>@@@clean test/test_msf.py</vh>
+<v t="ekr.20160128190252.1"><vh>setUp</vh></v>
+<v t="ekr.20160128190112.1"><vh>test_pattern_class</vh></v>
+<v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
+</v>
+<v t="ekr.20160206165656.1"><vh>@@@clean test/test.py</vh></v>
+<v t="ekr.20160318141204.195"><vh>class TestClass (not used)</vh>
 <v t="ekr.20160318141204.196"><vh>parse_group (Guido)</vh></v>
 <v t="ekr.20160318141204.197"><vh>return_all</vh></v>
 <v t="ekr.20160318141204.198"><vh>return_array</vh></v>
 <v t="ekr.20160318141204.199"><vh>return_list</vh></v>
 <v t="ekr.20160318141204.200"><vh>return_two_lists (fails)</vh></v>
 </v>
+</v>
+</v>
 <v t="ekr.20160206171945.1"><vh>OLDUnit tests</vh>
 <v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
 <v t="ekr.20160318141204.5"><vh>merge_types (not used)</vh></v>
 </v>
-<v t="ekr.20160206110004.1"><vh>@test Pattern class</vh>
-<v t="ekr.20160206104634.1"><vh>  utility functions</vh>
-<v t="ekr.20160210083825.1"><vh>dump</vh></v>
-<v t="ekr.20160210141342.1"><vh>dump_dict</vh></v>
-<v t="ekr.20160210141651.1"><vh>dump_list</vh></v>
-<v t="ekr.20160126153212.100"><vh>main</vh></v>
-<v t="ekr.20160206120522.1"><vh>pdb</vh></v>
-<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
+<v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
+<v t="ekr.20160318141204.116"><vh>class ReduceTypes</vh>
+<v t="ekr.20160318141204.117"><vh>rt.ctor</vh></v>
+<v t="ekr.20160318141204.118"><vh>rt.is_known_type</vh></v>
+<v t="ekr.20160318141204.119"><vh>rt.reduce_collection</vh></v>
+<v t="ekr.20160318141204.120"><vh>rt.reduce_numbers</vh></v>
+<v t="ekr.20160318141204.121"><vh>rt.reduce_types</vh></v>
+<v t="ekr.20160318141204.122"><vh>rt.reduce_unknowns</vh></v>
+<v t="ekr.20160318141204.123"><vh>rt.show</vh></v>
+<v t="ekr.20160318141204.124"><vh>rt.split_types</vh></v>
+</v>
+</v>
+<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
+<v t="ekr.20160318141204.102"><vh>class Pattern</vh>
+<v t="ekr.20160318141204.103"><vh>pattern.ctor</vh></v>
+<v t="ekr.20160318141204.104"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
+<v t="ekr.20160318141204.105"><vh>pattern.str &amp; repr</vh></v>
+<v t="ekr.20160318141204.106"><vh>pattern.is_balanced</vh></v>
+<v t="ekr.20160318141204.107"><vh>pattern.is_regex</vh></v>
+<v t="ekr.20160318141204.108"><vh>pattern.all_matches &amp; helpers</vh>
+<v t="ekr.20160318141204.109"><vh>pattern.full_balanced_match</vh></v>
+<v t="ekr.20160318141204.110"></v>
+</v>
+<v t="ekr.20160318141204.111"><vh>pattern.match (trace-matches)</vh></v>
+<v t="ekr.20160318141204.112"><vh>pattern.match_entire_string</vh></v>
+<v t="ekr.20160318141204.113"><vh>pattern.replace &amp; helpers</vh>
+<v t="ekr.20160318141204.114"><vh>pattern.replace_balanced</vh></v>
+<v t="ekr.20160318141204.115"><vh>pattern.replace_regex</vh></v>
+</v>
+</v>
+<v t="ekr.20160318141204.116"></v>
+</v>
+<v t="ekr.20160207162818.1"><vh>@test split_types</vh>
+<v t="ekr.20160318141204.116"></v>
+</v>
+<v t="ekr.20160210145128.1"><vh>@test st.find_stub &amp; find_parent_stub</vh>
+<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (@test st.find/parent_stub)</vh></v>
+<v t="ekr.20160210164250.1"><vh>&lt;&lt; define s &gt;&gt; (@test st.find/parent_stub)</vh></v>
+<v t="ekr.20160211050346.4"><vh>base classes</vh>
+<v t="ekr.20160318141204.14"></v>
+<v t="ekr.20160318141204.90"><vh>class AstArgFormatter (AstFormatter)</vh>
+<v t="ekr.20160318141204.91"><vh>sf.Constants &amp; Name</vh></v>
 </v>
 <v t="ekr.20160318141204.92"><vh>class LeoGlobals</vh>
 <v t="ekr.20160318141204.93"><vh>class NullObject (Python Cookbook)</vh></v>
@@ -240,52 +308,6 @@
 <v t="ekr.20160318141204.100"><vh>g.splitLines</vh></v>
 <v t="ekr.20160318141204.101"><vh>g.trace</vh></v>
 </v>
-<v t="ekr.20160318141204.102"><vh>class Pattern</vh>
-<v t="ekr.20160318141204.103"><vh>pattern.ctor</vh></v>
-<v t="ekr.20160318141204.104"><vh>pattern.__eq__, __ne__, __hash__</vh></v>
-<v t="ekr.20160318141204.105"><vh>pattern.str &amp; repr</vh></v>
-<v t="ekr.20160318141204.106"><vh>pattern.is_balanced</vh></v>
-<v t="ekr.20160318141204.107"><vh>pattern.is_regex</vh></v>
-<v t="ekr.20160318141204.108"><vh>pattern.all_matches &amp; helpers</vh>
-<v t="ekr.20160318141204.109"><vh>pattern.full_balanced_match</vh></v>
-<v t="ekr.20160318141204.110"></v>
-</v>
-<v t="ekr.20160318141204.111"><vh>pattern.match (trace-matches)</vh></v>
-<v t="ekr.20160318141204.112"><vh>pattern.match_entire_string</vh></v>
-<v t="ekr.20160318141204.113"><vh>pattern.replace &amp; helpers</vh>
-<v t="ekr.20160318141204.114"><vh>pattern.replace_balanced</vh></v>
-<v t="ekr.20160318141204.115"><vh>pattern.replace_regex</vh></v>
-</v>
-</v>
-</v>
-<v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
-<v t="ekr.20160318141204.116"><vh>class ReduceTypes</vh>
-<v t="ekr.20160318141204.117"><vh>rt.ctor</vh></v>
-<v t="ekr.20160318141204.118"><vh>rt.is_known_type</vh></v>
-<v t="ekr.20160318141204.119"><vh>rt.reduce_collection</vh></v>
-<v t="ekr.20160318141204.120"><vh>rt.reduce_numbers</vh></v>
-<v t="ekr.20160318141204.121"><vh>rt.reduce_types</vh></v>
-<v t="ekr.20160318141204.122"><vh>rt.reduce_unknowns</vh></v>
-<v t="ekr.20160318141204.123"><vh>rt.show</vh></v>
-<v t="ekr.20160318141204.124"><vh>rt.split_types</vh></v>
-</v>
-</v>
-<v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
-<v t="ekr.20160318141204.102"></v>
-<v t="ekr.20160318141204.116"></v>
-</v>
-<v t="ekr.20160207162818.1"><vh>@test split_types</vh>
-<v t="ekr.20160318141204.116"></v>
-</v>
-<v t="ekr.20160210145128.1"><vh>@test st.find_stub &amp; find_parent_stub</vh>
-<v t="ekr.20160203075612.1"><vh> &lt;&lt; imports &gt;&gt; (@test st.find/parent_stub)</vh></v>
-<v t="ekr.20160210164250.1"><vh>&lt;&lt; define s &gt;&gt; (@test st.find/parent_stub)</vh></v>
-<v t="ekr.20160211050346.4"><vh>base classes</vh>
-<v t="ekr.20160318141204.14"></v>
-<v t="ekr.20160318141204.90"><vh>class AstArgFormatter (AstFormatter)</vh>
-<v t="ekr.20160318141204.91"><vh>sf.Constants &amp; Name</vh></v>
-</v>
-<v t="ekr.20160318141204.92"></v>
 <v t="ekr.20160318141204.147"></v>
 </v>
 <v t="ekr.20160318141204.141"><vh>class Stub</vh>
@@ -338,7 +360,14 @@
 <v t="ekr.20160203075612.1"></v>
 <v t="ekr.20160210081628.1"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
 <v t="ekr.20160210144515.1"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
-<v t="ekr.20160206104634.1"></v>
+<v t="ekr.20160206104634.1"><vh>  utility functions</vh>
+<v t="ekr.20160210083825.1"><vh>dump</vh></v>
+<v t="ekr.20160210141342.1"><vh>dump_dict</vh></v>
+<v t="ekr.20160210141651.1"><vh>dump_list</vh></v>
+<v t="ekr.20160126153212.100"><vh>main</vh></v>
+<v t="ekr.20160206120522.1"><vh>pdb</vh></v>
+<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
+</v>
 <v t="ekr.20160211050346.4"></v>
 <v t="ekr.20160318141204.141"></v>
 <v t="ekr.20160318141204.169"></v>
@@ -355,39 +384,8 @@
 <v t="ekr.20180901044640.1"><vh>@test bug2 non-empty</vh></v>
 <v t="ekr.20180901051603.1"><vh>@test bug3</vh></v>
 </v>
-<v t="ekr.20160630100214.1"><vh>@@@clean test.py</vh></v>
-<v t="ekr.20160128154715.1"><vh>@@@clean test/test_msf.py</vh>
-<v t="ekr.20160128190252.1"><vh>setUp</vh></v>
-<v t="ekr.20160128190112.1"><vh>test_pattern_class</vh></v>
-<v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
-</v>
-<v t="ekr.20160206165656.1"><vh>@@@clean test/test.py</vh></v>
-</v>
-<v t="ekr.20210804071509.1"><vh>--- classes</vh>
-<v t="ekr.20160318141204.125"><vh>class Controller</vh>
-<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
-<v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
-<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
-<v t="ekr.20160318141204.130"><vh>msf.run_all_unit_tests</vh></v>
-<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
-<v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
-<v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
-<v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160318141204.135"><vh>msf.find_pattern_ops</vh></v>
-<v t="ekr.20160318141204.136"><vh>msf.get_config_string</vh></v>
-<v t="ekr.20160318141204.137"><vh>msf.init_parser</vh></v>
-<v t="ekr.20160318141204.138"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
-<v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
-</v>
-</v>
-</v>
-<v t="ekr.20210804070157.1"><vh>--- recent</vh>
-<v t="ekr.20160318141204.131"></v>
-<v t="ekr.20160318141204.132"></v>
-<v t="ekr.20160318141204.136"></v>
-</v>
+<v t="ekr.20210803055042.1"><vh>class TestMSB(unittest.TestCase)</vh>
+<v t="ekr.20210804103146.1"><vh>test.test_pattern_class</vh></v>
 </v>
 </vnodes>
 <tnodes>
@@ -1020,49 +1018,6 @@ unittest.TextTestRunner(verbosity=0).run(suite)
 </t>
 <t tx="ekr.20160206104634.1">
 # Top-level functions</t>
-<t tx="ekr.20160206110004.1">@others
-import re
-g = LeoGlobals() # Use the g available to the script.
-table = (
-    # s,  Pattern.find_s, Pattern.repl_s, expected
-    # Passed...
-    ('aabbcc', '(a+)(b+)(c+)$', r'\3\2\1', 'ccbbaa'),
-    ('[str]', r'\[str\]$', 'xxx', 'xxx'), # Guido bug.
-    ('s3', r's[1-3]?\b$', 'str', 'str'), # lengthening bug.
-    ('s', 's', 'str', 'str'),
-    ('abc', 'abc', 'ABC', 'ABC'),
-    ('str(str)', 'str(*)', 'str', 'str'),
-    ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
-    ('(int,str)', '(*)', 'Tuple[*]', 'Tuple[int,str]'), # Guido bug 2.
-    ('abcxyz', 'abc*', 'xxx', 'xxx'), # New test for trailing *.
-    ('list(self.regex.finditer(str))','list(*)','List[*]',
-     'List[self.regex.finditer(str)]'),
-)
-for s, find, repl, expected in table:
-    pattern = Pattern(find, repl)
-    result = pattern.match_entire_string(s)
-    assert result, (result, s, find, repl, expected)
-    aList = pattern.all_matches(s)
-    assert len(aList) == 1, aList
-    found, s2 = pattern.match(s)
-    assert found, 'after pattern.match(s)'
-    assert s2 == expected, (s, pattern, 'expected', expected, 'got', s2)
-p1 = Pattern('abc','xyz')
-p2 = Pattern('abc','xyz')
-p3 = Pattern('abc','pdq')
-assert p1 == p2
-assert p1 != p3
-assert p2 != p3
-aSet = set()
-aSet.add(p1)
-assert p1 in aSet
-assert p2 in aSet
-assert p3 not in aSet
-assert list(aSet) == [p1] == [p2]
-aSet.add(p3)
-assert p1.match_entire_string('abc')
-assert not p1.match_entire_string('abcx')
-</t>
 <t tx="ekr.20160206120522.1">
 def pdb(self):
     '''Invoke a debugger during unit testing.'''
@@ -1117,7 +1072,7 @@ str.isspace(*): str
 str[*]: str
 sum(*): number
 </t>
-<t tx="ekr.20160206165656.1">'''A test file containing code that caused mypy errors.'''
+<t tx="ekr.20160206165656.1">"""A test file containing code that caused mypy errors."""
 
 def is_known_type(s):
     '''
@@ -2594,16 +2549,7 @@ def make_stub_file(self, fn):
     StubTraverser(controller=self).run(node)
 </t>
 <t tx="ekr.20160318141204.129">def run(self):
-    '''
-    Make stub files for all files.
-    Do nothing if the output directory does not exist.
-    '''
-    if self.enable_unit_tests:
-        self.run_all_unit_tests()
-    if not self.files:
-        if not self.enable_unit_tests:
-            print('no input files')
-        return
+    """Make stubs for all files."""
     for fn in self.files:
         self.make_stub_file(fn)
 </t>
@@ -2676,7 +2622,8 @@ def make_stub_file(self, fn):
             sys.exit(1)
     if args.force_pyx:
         print('--force-pyx: .pyx files will be parsed as regular python, cython syntax is not supported')
-    self.files = args.files</t>
+    self.files = args.files
+</t>
 <t tx="ekr.20160318141204.132">def scan_options(self):
     '''Set all configuration-related ivars.'''
     if self.verbose:
@@ -3772,7 +3719,7 @@ def munge_arg(self, s):
     assert len(raw_returns) == len(reduced_returns)
     lws = '\n' + ' ' * 4
     n = len(raw_returns)
-    known = all([is_known_type(e) for e in reduced_returns])
+    known = all(is_known_type(e) for e in reduced_returns)
     empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
     tail = ': ...' if empty else ':'
     if not known or self.verbose:
@@ -3864,6 +3811,34 @@ def return_array(self):
 <t tx="ekr.20160318141204.199">
 def return_list(self, a):
     return [a]
+</t>
+<t tx="ekr.20160318141204.2">import argparse
+import ast
+from collections import OrderedDict
+    # Requires Python 2.7 or above. Without OrderedDict
+    # the configparser will give random order for patterns.
+try:
+    import ConfigParser as configparser  # Python 2
+except ImportError:
+    import configparser  # Python 3
+import glob
+import os
+import re
+import subprocess
+import sys
+import time
+import types
+import unittest
+try:
+    import StringIO as io  # Python 2
+except ImportError:
+    import io  # Python 3
+###
+    # # Third party imports.
+    # try:
+        # import pytest
+    # except Exception:
+        # pytest = None  # type:ignore
 </t>
 <t tx="ekr.20160318141204.20"># 2: ClassDef(identifier name, expr* bases,
 #             stmt* body, expr* decorator_list)
@@ -4974,6 +4949,9 @@ toString = objToString
         if wait: proc.communicate()
 </t>
 <t tx="ekr.20200402143651.1"></t>
+<t tx="ekr.20210803055042.1">class TestMakeStubFiles(unittest.TestCase):
+    """Unit tests for make_stub_files"""
+    @others</t>
 <t tx="ekr.20210803060400.1"></t>
 <t tx="ekr.20210803131252.1">@language rest
 @wrap
@@ -5017,6 +4995,48 @@ test = '' # Run all tests.
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210804070157.1"></t>
-<t tx="ekr.20210804071509.1"></t>
+<t tx="ekr.20210804103146.1">def test_pattern_class(self):
+    g = LeoGlobals() # Use the g available to the script.
+    table = (
+        # s,  Pattern.find_s, Pattern.repl_s, expected
+        ('aabbcc', '(a+)(b+)(c+)$', r'\3\2\1', 'ccbbaa'),
+        ('[str]', r'\[str\]$', 'xxx', 'xxx'), # Guido bug.
+        ('s3', r's[1-3]?\b$', 'str', 'str'), # lengthening bug.
+        ('s', 's', 'str', 'str'),
+        ('abc', 'abc', 'ABC', 'ABC'),
+        ('str(str)', 'str(*)', 'str', 'str'),
+        ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
+        ('(int,str)', '(*)', 'Tuple[*]', 'Tuple[int,str]'), # Guido bug 2.
+        ('abcxyz', 'abc*', 'xxx', 'xxx'), # New test for trailing *.
+        ('list(self.regex.finditer(str))','list(*)','List[*]',
+         'List[self.regex.finditer(str)]'),
+    )
+    for s, find, repl, expected in table:
+        pattern = Pattern(find, repl)
+        result = pattern.match_entire_string(s)
+        self.assertTrue(result, msg=repr(s))
+        aList = pattern.all_matches(s)
+        self.assertTrue(len(aList) == 1, msg=repr(aList))
+        found, s2 = pattern.match(s)
+        self.assertTrue(found, msg=f"after pattern.match({s!r})")
+        assert s2 == expected, (s, pattern, 'expected', expected, 'got', s2)
+    p1 = Pattern('abc','xyz')
+    p2 = Pattern('abc','xyz')
+    p3 = Pattern('abc','pdq')
+    self.assertEqual(p1, p2)
+    self.assertNotEqual(p1, p3)
+    self.assertNotEqual(p2, p3)
+    aSet = set()
+    aSet.add(p1)
+    self.assertTrue(p1 in aSet)
+    self.assertTrue(p2 in aSet)
+    self.assertFalse(p3 in aSet)
+    self.assertEqual(list(aSet), [p1])
+    self.assertEqual(list(aSet), [p2])
+    aSet.add(p3)
+    self.assertTrue(p1.match_entire_string('abc'))
+    self.assertFalse(p1.match_entire_string('abcx'))
+</t>
+<t tx="ekr.20210804104214.1"></t>
 </tnodes>
 </leo_file>

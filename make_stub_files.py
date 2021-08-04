@@ -34,11 +34,12 @@ try:
     import StringIO as io  # Python 2
 except ImportError:
     import io  # Python 3
-# Third party imports.
-try:
-    import pytest
-except Exception:
-    pytest = None  # type:ignore
+###
+    # # Third party imports.
+    # try:
+        # import pytest
+    # except Exception:
+        # pytest = None  # type:ignore
 #@-<< imports >>
 isPython3 = sys.version_info >= (3, 0, 0)
 #@+others
@@ -105,7 +106,8 @@ def main():
     controller = Controller()
     controller.scan_command_line()
     controller.scan_options()
-    controller.run()
+    for fn in controller.files:
+        controller.make_stub_file(fn)
 #@+node:ekr.20160318141204.12: *3* pdb
 def pdb(self):
     '''Invoke a debugger during unit testing.'''
@@ -998,29 +1000,6 @@ class Controller:
         # Process s.
         node = ast.parse(s, filename=fn, mode='exec')
         StubTraverser(controller=self).run(node)
-    #@+node:ekr.20160318141204.129: *3* msf.run
-    def run(self):
-        '''
-        Make stub files for all files.
-        Do nothing if the output directory does not exist.
-        '''
-        if self.enable_unit_tests:
-            self.run_all_unit_tests()
-        if not self.files:
-            if not self.enable_unit_tests:
-                print('no input files')
-            return
-        for fn in self.files:
-            self.make_stub_file(fn)
-    #@+node:ekr.20160318141204.130: *3* msf.run_all_unit_tests
-    def run_all_unit_tests(self):
-        '''Run all unit tests in the make_stub_files/test directory.'''
-        import unittest
-        loader = unittest.TestLoader()
-        suite = loader.discover(os.path.abspath('.'),
-                                pattern='test*.py',
-                                top_level_dir=None)
-        unittest.TextTestRunner(verbosity=1).run(suite)
     #@+node:ekr.20160318141204.131: *3* msf.scan_command_line
     def scan_command_line(self):
         '''Set ivars from command-line arguments.'''
@@ -2763,7 +2742,7 @@ class StubTraverser(ast.NodeVisitor):
         assert len(raw_returns) == len(reduced_returns)
         lws = '\n' + ' ' * 4
         n = len(raw_returns)
-        known = all([is_known_type(e) for e in reduced_returns])
+        known = all(is_known_type(e) for e in reduced_returns)
         empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
         tail = ': ...' if empty else ':'
         if not known or self.verbose:
@@ -2814,7 +2793,53 @@ class StubTraverser(ast.NodeVisitor):
         self.returns.append(node)
             # New: return the entire node, not node.value.
     #@-others
-#@+node:ekr.20210803055042.1: ** class Test(unittest.testCase)
+#@+node:ekr.20210803055042.1: ** class TestMSB(unittest.TestCase)
+class TestMakeStubFiles(unittest.TestCase):
+    """Unit tests for make_stub_files"""
+    #@+others
+    #@+node:ekr.20210804103146.1: *3* test.test_pattern_class
+    def test_pattern_class(self):
+        g = LeoGlobals() # Use the g available to the script.
+        table = (
+            # s,  Pattern.find_s, Pattern.repl_s, expected
+            ('aabbcc', '(a+)(b+)(c+)$', r'\3\2\1', 'ccbbaa'),
+            ('[str]', r'\[str\]$', 'xxx', 'xxx'), # Guido bug.
+            ('s3', r's[1-3]?\b$', 'str', 'str'), # lengthening bug.
+            ('s', 's', 'str', 'str'),
+            ('abc', 'abc', 'ABC', 'ABC'),
+            ('str(str)', 'str(*)', 'str', 'str'),
+            ('[whatever]', '[*]', 'List[*]', 'List[whatever]'), # * on the RHS.
+            ('(int,str)', '(*)', 'Tuple[*]', 'Tuple[int,str]'), # Guido bug 2.
+            ('abcxyz', 'abc*', 'xxx', 'xxx'), # New test for trailing *.
+            ('list(self.regex.finditer(str))','list(*)','List[*]',
+             'List[self.regex.finditer(str)]'),
+        )
+        for s, find, repl, expected in table:
+            pattern = Pattern(find, repl)
+            result = pattern.match_entire_string(s)
+            self.assertTrue(result, msg=repr(s))
+            aList = pattern.all_matches(s)
+            self.assertTrue(len(aList) == 1, msg=repr(aList))
+            found, s2 = pattern.match(s)
+            self.assertTrue(found, msg=f"after pattern.match({s!r})")
+            assert s2 == expected, (s, pattern, 'expected', expected, 'got', s2)
+        p1 = Pattern('abc','xyz')
+        p2 = Pattern('abc','xyz')
+        p3 = Pattern('abc','pdq')
+        self.assertEqual(p1, p2)
+        self.assertNotEqual(p1, p3)
+        self.assertNotEqual(p2, p3)
+        aSet = set()
+        aSet.add(p1)
+        self.assertTrue(p1 in aSet)
+        self.assertTrue(p2 in aSet)
+        self.assertFalse(p3 in aSet)
+        self.assertEqual(list(aSet), [p1])
+        self.assertEqual(list(aSet), [p2])
+        aSet.add(p3)
+        self.assertTrue(p1.match_entire_string('abc'))
+        self.assertFalse(p1.match_entire_string('abcx'))
+    #@-others
 #@-others
 g = LeoGlobals()
 g_input_file_name = None
