@@ -12,7 +12,7 @@
 <v t="ekr.20160207182535.1"><vh>@bool preload-find-pattern = False</vh></v>
 </v>
 <v t="ekr.20160207105647.1"><vh>Scripts</vh>
-<v t="ekr.20210804025215.1"><vh>@button backup</vh></v>
+<v t="ekr.20210804025215.1"><vh>@@@button backup</vh></v>
 <v t="ekr.20160206095102.1"><vh>@@@button write-unit-tests</vh>
 <v t="ekr.20160206095102.2"><vh>&lt;&lt; docstring &gt;&gt; (write-unit-tests)</vh></v>
 <v t="ekr.20160206101802.3"><vh>class TestWriter</vh>
@@ -389,10 +389,13 @@
 <v t="ekr.20210803140525.1"><vh>COPY NEW msf.scan_command_line</vh></v>
 <v t="ekr.20160318141204.132"></v>
 </v>
-<v t="ekr.20210804020706.1"><vh>@button test-msf</vh></v>
+<v t="ekr.20210804020706.1"><vh>@button coverage</vh></v>
+<v t="ekr.20210804060105.1"><vh>@button unitttest</vh></v>
 <v t="ekr.20160318141204.11"><vh>main</vh></v>
 <v t="ekr.20210804021331.1"><vh>@button msf</vh></v>
 <v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.132"></v>
+<v t="ekr.20160318141204.136"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -780,6 +783,8 @@ test/*.pyc
 __pycache__/
 .mypy_cache/
 .cache/
+.coverage
+htmlcov/
 </t>
 <t tx="ekr.20160131174909.1">@language rest
 @wrap
@@ -2240,23 +2245,8 @@ __str__ = __repr__
     '''
     controller = Controller()
     controller.scan_command_line()
-    ### To do: allow args for tests.
-    if controller.enable_coverage_tests:
-        if pytest:
-            pytest.main(args=[
-                '--cov-report=html',
-                '--cov-report=term-missing',
-                '--cov=make_stub_files',
-                __file__,
-            ])
-        else:
-            print('Can not import pytest')
-    elif controller.enable_unit_tests:
-        sys.argv = [__file__]
-        unittest.main()
-    else:
-        controller.scan_options()
-        controller.run()
+    controller.scan_options()
+    controller.run()
 </t>
 <t tx="ekr.20160318141204.110">def match_balanced(self, delim, s, i):
     '''
@@ -2585,10 +2575,7 @@ __str__ = __repr__
 </t>
 <t tx="ekr.20160318141204.127">def finalize(self, fn):
     '''Finalize and regularize a filename.'''
-    fn = os.path.expanduser(fn)
-    fn = os.path.abspath(fn)
-    fn = os.path.normpath(fn)
-    return fn
+    return os.path.normpath(os.path.abspath(os.path.expanduser(fn)))
 </t>
 <t tx="ekr.20160318141204.128">directory_warning_given = False
 
@@ -2659,17 +2646,12 @@ def make_stub_file(self, fn):
 </t>
 <t tx="ekr.20160318141204.131">def scan_command_line(self):
     '''Set ivars from command-line arguments.'''
-    description='Create stub files'
-    usage = '\n'.join([
-        '',
-        '    make_stub_files.py [options] file1, file2, ...',
-        '    make_stub_files.py --py-cov [ARGS]',
-        '    make_stub_files.py --test [ARGS]',
-    ])
     # The parser implements the --help option.
+    description='make_stub_file: Create stub (.pyi) files from python files'
+    usage = 'make_stub_files.py [options] file1, file2, ...'
     parser = argparse.ArgumentParser(description=description, usage=usage)
     add = parser.add_argument
-    add('files', metavar='FILE', type=str, nargs='?',  ### Was '+'
+    add('files', metavar='FILE', type=str, nargs='+',
         help='input files')
     add('-c', '--config', dest='fn', metavar='FILE',
         help='full path to configuration file')
@@ -2679,13 +2661,8 @@ def make_stub_file(self, fn):
         help='force the parsing of .pyx files')
     add('-o', '--overwrite', action='store_true', default=False,
         help='overwrite existing stub (.pyi) files')
-    add('-p', '--py-cov', action='store_true', default=False,
-        help='run coverage tests, then exit')
     add('-s', '--silent', action='store_true', default=False,
         help='run without messages')
-    ### add('-t', '--test', action='store_true', default=False,
-    add('-t', '--test', dest='unittest_args', metavar='unittest args', type=str, nargs='?',
-        help='run unit tests, then exit')
     add('--trace-matches', action='store_true', default=False,
         help='trace Pattern.matches')
     add('--trace-patterns', action='store_true', default=False,
@@ -2700,27 +2677,23 @@ def make_stub_file(self, fn):
         help='verbose output in .pyi file')
     add('-w', '--warn', action='store_true', default=False,
         help='warn about unannotated args')
-    # Parse the options
-    ### options, args = parser.parse_args()
+    # Parse.
     args = parser.parse_args()
-    options = args
-    # Handle the options...
-    self.enable_unit_tests = options.test
-    self.enable_coverage_tests = options.py_cov
-    self.overwrite = options.overwrite
-    self.silent = options.silent
-    self.trace_matches = options.trace_matches
-    self.trace_patterns = options.trace_patterns
-    self.trace_reduce = options.trace_reduce
-    self.trace_visitors = options.trace_visitors
-    self.update_flag = options.update
-    self.verbose = options.verbose
-    self.warn = options.warn
-    self.force_pyx = options.force_pyx
-    if options.fn:
-        self.config_fn = options.fn
-    if options.dir:
-        dir_ = options.dir and options.dir.strip()
+    # Handle the args...
+    self.overwrite = args.overwrite
+    self.silent = args.silent
+    self.trace_matches = args.trace_matches
+    self.trace_patterns = args.trace_patterns
+    self.trace_reduce = args.trace_reduce
+    self.trace_visitors = args.trace_visitors
+    self.update_flag = args.update
+    self.verbose = args.verbose
+    self.warn = args.warn
+    self.force_pyx = args.force_pyx
+    if args.fn:
+        self.config_fn = args.fn
+    if args.dir:
+        dir_ = args.dir and args.dir.strip()
         dir_ = self.finalize(dir_)
         g.trace('dir', dir_)
         if os.path.exists(dir_):
@@ -2729,21 +2702,14 @@ def make_stub_file(self, fn):
             print('--dir: directory does not exist: %s' % dir_)
             print('exiting')
             sys.exit(1)
-    if options.force_pyx:
+    if args.force_pyx:
         print('--force-pyx: .pyx files will be parsed as regular python, cython syntax is not supported')
-    self.files = args.files
-    g.trace('self.files', self.files)
-    g.trace('unittest_args', args.unittest_args)
-    # # If any files remain, set self.files.
-    # if args:
-        # args = [self.finalize(z) for z in args]
-        # if args:
-            # self.files = args
-</t>
+    self.files = args.files</t>
 <t tx="ekr.20160318141204.132">def scan_options(self):
     '''Set all configuration-related ivars.'''
     if self.verbose:
-        g.trace('config file: %s' % self.config_fn)
+        print('')
+        print(f"configuration file: {self.config_fn}")
     if not self.config_fn:
         return
     self.parser = parser = self.create_parser()
@@ -2752,41 +2718,56 @@ def make_stub_file(self, fn):
     if self.files:
         files_source = 'command-line'
         files = self.files
+        if isinstance(files, str):
+            files = [files]
     elif parser.has_section('Global'):
         files_source = 'config file'
         files = parser.get('Global', 'files')
         files = [z.strip() for z in files.split('\n') if z.strip()]
     else:
         return
-    files2 = []
-    for z in files:
-        files2.extend(glob.glob(self.finalize(z)))
-    self.files = [z for z in files2 if z and os.path.exists(z)]
     if self.verbose:
-        print('Files (from %s)...\n' % files_source)
-        for z in self.files:
-            print(z)
-        print('')
+        print(f"Files (from {files_source})...")
+    files2 = []
+    not_found = []
+    for z in files:
+        # 2021/08/04: Warn if z does not exist.
+        files3 = glob.glob(self.finalize(z))
+        if files3:
+            if self.verbose:
+                for z in files3:
+                    print(f"  {z}")
+            files2.extend(files3)
+        else:
+            not_found.append(z)
+    if not_found:
+        print('Not found...')
+        for z in not_found:
+            print(f"  {z}")
+    self.files = files2
     if 'output_directory' in parser.options('Global'):
         s = parser.get('Global', 'output_directory').strip()
         output_dir = self.finalize(s)
         if os.path.exists(output_dir):
             self.output_directory = output_dir
             if self.verbose:
-                print('output directory: %s\n' % output_dir)
+                print(f"output directory: {output_dir}")
         else:
-            print('output directory not found: %s\n' % output_dir)
+            print(f"output directory not found: {output_dir}")
             self.output_directory = None  # inhibit run().
     if 'prefix_lines' in parser.options('Global'):
         prefix = parser.get('Global', 'prefix_lines')
         prefix_lines = prefix.split('\n')
             # The parser does not preserve leading whitespace.
         self.prefix_lines = [z for z in prefix_lines if z.strip()]
-        if self.verbose:
-            print('Prefix lines...\n')
-            for z in self.prefix_lines:
-                print('  %s' % z)
-            print('')
+        # Annoying
+        # if self.verbose:
+            # print('Prefix lines...\n')
+            # for z in self.prefix_lines:
+                # print('  %s' % z)
+            # print('')
+    if self.verbose:
+        print('')
     self.def_patterns = self.scan_patterns('Def Name Patterns')
     self.general_patterns = self.scan_patterns('General Patterns')
     self.make_patterns_dict()
@@ -2864,16 +2845,12 @@ def make_stub_file(self, fn):
     return ops
 </t>
 <t tx="ekr.20160318141204.136">def get_config_string(self):
-
+    """Read the configuration file."""
     fn = self.finalize(self.config_fn)
     if os.path.exists(fn):
-        if self.verbose:
-            print('\nconfiguration file: %s\n' % fn)
-        f = open(fn, 'r')
-        s = f.read()
-        f.close()
-        return s
-    print('\nconfiguration file not found: %s' % fn)
+        with open(fn, 'r') as f:
+            return f.read()
+    print(f"\nconfiguration file not found: {fn}")
     return ''
 
 </t>
@@ -5233,24 +5210,21 @@ https://github.com/edreamleo/make-stub-files/issues/13
             self.files = args
 </t>
 <t tx="ekr.20210804020706.1">g.cls()
-if 0:
-    command = r"python -m pytest --cov-report html --cov-report term-missing --cov make_stub_files make_stub_files.py"
-else:  # Unit test.
-    test = '' # Run all tests.
-    command = f"python -m unittest make_stub_files{test}"
+command = r"python -m pytest --cov-report html --cov-report term-missing --cov make_stub_files make_stub_files.py"
 g.execute_shell_commands(command, trace=False)
 </t>
 <t tx="ekr.20210804021331.1">g.cls()
+"""Run make_stub_files with the given set of arguments."""
 cfg = r'c:\users\Edward~1\make_stub_files.cfg'
 msf = 'make_stub_files.py'
 src = 'make_stub_files.py'
-#
-if 1: # unit test
-    command = f"python {msf} -t msf"
-else: # Run msf
-    command = f"python {msf} -c {cfg} -o -v {src}"
+command = f"python {msf} -c {cfg} -o -v {src}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210804025215.1">c.backup_helper(sub_dir='MakeStubFiles')
 </t>
+<t tx="ekr.20210804060105.1">g.cls()
+test = '' # Run all tests.
+command = f"python -m unittest make_stub_files{test}"
+g.execute_shell_commands(command, trace=False)</t>
 </tnodes>
 </leo_file>
