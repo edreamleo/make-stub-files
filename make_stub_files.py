@@ -2778,7 +2778,7 @@ class StubTraverser(ast.NodeVisitor):
 class TestMakeStubFiles(unittest.TestCase):
     """Unit tests for make_stub_files"""
     #@+others
-    #@+node:ekr.20180901040718.1: *3* test_bug2_empty (rewritten)
+    #@+node:ekr.20180901040718.1: *3* test_bug2_empty
     def test_bug2_empty(self):
         # https://github.com/edreamleo/make-stub-files/issues/2
         tag = 'test_bug2_empty'
@@ -2792,26 +2792,37 @@ class TestMakeStubFiles(unittest.TestCase):
         # Allocate a StringIo file for output_stubs.
         st.output_file = io.StringIO()
         st.output_stubs(st.parent_stub)
-        s = st.output_file.getvalue()
-        lines = g.splitLines(s)
         # Test.
+        lines = g.splitLines(st.output_file.getvalue())
         expected = ['class InvalidTag(Exception): ...\n']
         self.assertEqual(lines, expected)
-    #@+node:ekr.20180901044640.1: *3* test_bug2_non_empty (revise)
+    #@+node:ekr.20180901044640.1: *3* test_bug2_non_empty
     def test_bug2_non_empty(self):
         # https://github.com/edreamleo/make-stub-files/issues/2
-        commands = [
-            # 'cls',
-            'python make_stub_files.py -o -s bug2a.py',
+        tag = 'test_bug2_non_empty'
+        s = (
+            'class NonEmptyClass:\n'
+            '\n'
+            '    def spam():\n'
+            '        pass\n'
+        )
+        expected = [
+            'class NonEmptyClass:\n',
+            '    def spam() -> None: ...\n',
         ]
-        g.execute_shell_commands(commands, trace=True)
-        with open('bug2a.pyi') as f:
-            s = f.read()
-        lines = g.splitLines(s)
-        expected = 'class NonEmptyClass:\n'
-        got = lines[1]
-        self.assertEqual(got, expected)
-    #@+node:ekr.20180901051603.1: *3* test_bug3 (FAILS) (revise)
+        controller = Controller()
+        node = ast.parse(s, filename=tag, mode='exec')
+        st = StubTraverser(controller=controller)
+        # From StubTraverser.run.
+        st.parent_stub = Stub(kind='root', name='<new-stubs>')
+        st.visit(node)
+        # Allocate a StringIo file for output_stubs.
+        st.output_file = io.StringIO()
+        st.output_stubs(st.parent_stub)
+        # Test.
+        lines = g.splitLines(st.output_file.getvalue())
+        self.assertEqual(lines, expected)
+    #@+node:ekr.20180901051603.1: *3* test_bug3 (FAILS)
     def test_bug3(self):
         # https://github.com/edreamleo/make-stub-files/issues/3
         commands = [
