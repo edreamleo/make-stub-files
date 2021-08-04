@@ -52,19 +52,6 @@ def is_known_type(s):
     '''
     return ReduceTypes().is_known_type(s)
 
-#@+node:ekr.20160318141204.5: *3* merge_types (not used)
-def merge_types(a1, a2):
-    '''
-    a1 and a2 may be strings or lists.
-    return a list containing both of them, flattened, without duplicates.
-    '''
-    # Only useful if visitors could return either lists or strings.
-    assert a1 is not None
-    assert a2 is not None
-    r1 = a1 if isinstance(a1, (list, tuple)) else [a1]
-    r2 = a2 if isinstance(a2, (list, tuple)) else [a2]
-    return sorted(set(r1 + r2))
-
 #@+node:ekr.20160318141204.6: *3* reduce_types
 def reduce_types(aList, name=None, trace=False):
     '''
@@ -2797,7 +2784,7 @@ class StubTraverser(ast.NodeVisitor):
 class TestMakeStubFiles(unittest.TestCase):
     """Unit tests for make_stub_files"""
     #@+others
-    #@+node:ekr.20210804103146.1: *3* test.test_pattern_class
+    #@+node:ekr.20210804103146.1: *3* test_pattern_class
     def test_pattern_class(self):
         g = LeoGlobals() # Use the g available to the script.
         table = (
@@ -2839,6 +2826,19 @@ class TestMakeStubFiles(unittest.TestCase):
         aSet.add(p3)
         self.assertTrue(p1.match_entire_string('abc'))
         self.assertFalse(p1.match_entire_string('abcx'))
+    #@+node:ekr.20210804105256.1: *3* test_reduce_numbers
+    def test_reduce_numbers(self):
+        a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
+        table = (
+            ([i,i],     [i]),
+            ([i],       [i]),
+            ([f, i],    [f]),
+            ([c, i],    [c]),
+            ([l, a],    [a, l]),
+        )
+        for aList, expected in table:
+            got = ReduceTypes().reduce_numbers(aList)
+            self.assertEqual(expected, got, msg=repr(aList))
     #@-others
 #@-others
 g = LeoGlobals()

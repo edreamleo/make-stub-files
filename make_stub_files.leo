@@ -201,6 +201,8 @@
 <v t="ekr.20210804104214.1"><vh>--- no longer used</vh>
 <v t="ekr.20160318141204.130"><vh>msf.run_all_unit_tests</vh></v>
 <v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
+<v t="ekr.20160207051429.1"><vh>@@@test merge_types</vh></v>
+<v t="ekr.20160318141204.5"><vh>merge_types (not used)</vh></v>
 </v>
 <v t="ekr.20210804020706.1"><vh>@button coverage</vh></v>
 <v t="ekr.20210804060105.1"><vh>@button unitttest</vh></v>
@@ -243,21 +245,6 @@
 </v>
 </v>
 <v t="ekr.20160206171945.1"><vh>OLDUnit tests</vh>
-<v t="ekr.20160207051429.1"><vh>@test merge_types</vh>
-<v t="ekr.20160318141204.5"><vh>merge_types (not used)</vh></v>
-</v>
-<v t="ekr.20160206170515.1"><vh>@test reduce_numbers</vh>
-<v t="ekr.20160318141204.116"><vh>class ReduceTypes</vh>
-<v t="ekr.20160318141204.117"><vh>rt.ctor</vh></v>
-<v t="ekr.20160318141204.118"><vh>rt.is_known_type</vh></v>
-<v t="ekr.20160318141204.119"><vh>rt.reduce_collection</vh></v>
-<v t="ekr.20160318141204.120"><vh>rt.reduce_numbers</vh></v>
-<v t="ekr.20160318141204.121"><vh>rt.reduce_types</vh></v>
-<v t="ekr.20160318141204.122"><vh>rt.reduce_unknowns</vh></v>
-<v t="ekr.20160318141204.123"><vh>rt.show</vh></v>
-<v t="ekr.20160318141204.124"><vh>rt.split_types</vh></v>
-</v>
-</v>
 <v t="ekr.20160206173343.1"><vh>@test reduce_types</vh>
 <v t="ekr.20160318141204.102"><vh>class Pattern</vh>
 <v t="ekr.20160318141204.103"><vh>pattern.ctor</vh></v>
@@ -276,7 +263,16 @@
 <v t="ekr.20160318141204.115"><vh>pattern.replace_regex</vh></v>
 </v>
 </v>
-<v t="ekr.20160318141204.116"></v>
+<v t="ekr.20160318141204.116"><vh>class ReduceTypes</vh>
+<v t="ekr.20160318141204.117"><vh>rt.ctor</vh></v>
+<v t="ekr.20160318141204.118"><vh>rt.is_known_type</vh></v>
+<v t="ekr.20160318141204.119"><vh>rt.reduce_collection</vh></v>
+<v t="ekr.20160318141204.120"><vh>rt.reduce_numbers</vh></v>
+<v t="ekr.20160318141204.121"><vh>rt.reduce_types</vh></v>
+<v t="ekr.20160318141204.122"><vh>rt.reduce_unknowns</vh></v>
+<v t="ekr.20160318141204.123"><vh>rt.show</vh></v>
+<v t="ekr.20160318141204.124"><vh>rt.split_types</vh></v>
+</v>
 </v>
 <v t="ekr.20160207162818.1"><vh>@test split_types</vh>
 <v t="ekr.20160318141204.116"></v>
@@ -385,7 +381,8 @@
 <v t="ekr.20180901051603.1"><vh>@test bug3</vh></v>
 </v>
 <v t="ekr.20210803055042.1"><vh>class TestMSB(unittest.TestCase)</vh>
-<v t="ekr.20210804103146.1"><vh>test.test_pattern_class</vh></v>
+<v t="ekr.20210804103146.1"><vh>test_pattern_class</vh></v>
+<v t="ekr.20210804105256.1"><vh>test_reduce_numbers</vh></v>
 </v>
 </vnodes>
 <tnodes>
@@ -1202,19 +1199,6 @@ def optional_any2(a):
         return a
     else:
         return
-</t>
-<t tx="ekr.20160206170515.1">a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
-table = (
-    ([i,i],     [i]),
-    ([i],       [i]),
-    ([f, i],    [f]),
-    ([c, i],    [c]),
-    ([l, a],    [a, l]),
-)
-@others
-for aList, expected in table:
-    got = ReduceTypes().reduce_numbers(aList)
-    assert expected == got,  (aList, 'expected:', expected, 'got', got)
 </t>
 <t tx="ekr.20160206171945.1">@language rest
 
@@ -5038,5 +5022,18 @@ g.execute_shell_commands(command, trace=False)</t>
     self.assertFalse(p1.match_entire_string('abcx'))
 </t>
 <t tx="ekr.20210804104214.1"></t>
+<t tx="ekr.20210804105256.1">def test_reduce_numbers(self):
+    a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
+    table = (
+        ([i,i],     [i]),
+        ([i],       [i]),
+        ([f, i],    [f]),
+        ([c, i],    [c]),
+        ([l, a],    [a, l]),
+    )
+    for aList, expected in table:
+        got = ReduceTypes().reduce_numbers(aList)
+        self.assertEqual(expected, got, msg=repr(aList))
+</t>
 </tnodes>
 </leo_file>
