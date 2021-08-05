@@ -208,7 +208,12 @@
 <v t="ekr.20210804020706.1"><vh>@button coverage</vh></v>
 <v t="ekr.20210804060105.1"><vh>@button unitttest</vh></v>
 <v t="ekr.20210804021331.1"><vh>@button msf</vh></v>
-<v t="ekr.20210804070157.1"><vh>--- command-line</vh>
+<v t="ekr.20210804215428.1"><vh>--- Classes</vh>
+<v t="ekr.20160318141204.14"></v>
+<v t="ekr.20160318141204.125"><vh>class Controller</vh>
+<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
+<v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
+<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
 <v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
@@ -221,52 +226,6 @@
 <v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
 </v>
 </v>
-<v t="ekr.20160318141204.125"><vh>class Controller</vh>
-<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
-<v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
-<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.131"></v>
-<v t="ekr.20160318141204.132"></v>
-</v>
-<v t="ekr.20210803060400.1"><vh>--- testing</vh>
-<v t="ekr.20160630100214.1"><vh>@@@clean test.py</vh></v>
-<v t="ekr.20160128154715.1"><vh>@@@clean test/test_msf.py</vh>
-<v t="ekr.20160128190252.1"><vh>setUp</vh></v>
-<v t="ekr.20160128190112.1"><vh>test_pattern_class</vh></v>
-<v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
-</v>
-<v t="ekr.20160206165656.1"><vh>@@@clean test/test.py</vh></v>
-<v t="ekr.20160318141204.195"><vh>class TestClass (not used)</vh>
-<v t="ekr.20160318141204.196"><vh>parse_group (Guido)</vh></v>
-<v t="ekr.20160318141204.197"><vh>return_all</vh></v>
-<v t="ekr.20160318141204.198"><vh>return_array</vh></v>
-<v t="ekr.20160318141204.199"><vh>return_list</vh></v>
-<v t="ekr.20160318141204.200"><vh>return_two_lists (fails)</vh></v>
-</v>
-</v>
-<v t="ekr.20210804161223.1"><vh>--- revised tests</vh>
-<v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
-<v t="ekr.20180901044640.1"><vh>test_bug2_non_empty</vh></v>
-</v>
-</v>
-<v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
-<v t="ekr.20180901040718.1"></v>
-<v t="ekr.20180901044640.1"></v>
-<v t="ekr.20180901051603.1"><vh>test_bug3 (FAILS)</vh></v>
-<v t="ekr.20210804103146.1"><vh>test_pattern_class</vh></v>
-<v t="ekr.20210804105256.1"><vh>test_reduce_numbers</vh></v>
-<v t="ekr.20210804111613.1"><vh>test_reduce_types</vh></v>
-<v t="ekr.20210804111803.1"><vh>test_split_types</vh></v>
-<v t="ekr.20210804111915.1"><vh>test_st_find</vh></v>
-<v t="ekr.20210804112211.1"><vh>test_st_flatten_stubs</vh></v>
-<v t="ekr.20210804112405.1"><vh>test_st_merge_stubs</vh>
-<v t="ekr.20210804112405.3"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
-<v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
-</v>
-<v t="ekr.20210804112556.1"><vh>test_stub_class</vh></v>
-<v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
-</v>
-<v t="ekr.20180901051603.1"></v>
 <v t="ekr.20160318141204.141"><vh>class Stub</vh>
 <v t="ekr.20160318141204.142"><vh>stub.ctor</vh></v>
 <v t="ekr.20160318141204.143"><vh>stub.__eq__ and __ne__</vh></v>
@@ -305,10 +264,50 @@
 </v>
 <v t="ekr.20160318141204.194"><vh>st.visit_Return</vh></v>
 </v>
-<v t="ekr.20160318141204.187"></v>
-<v t="ekr.20160318141204.188"></v>
-<v t="ekr.20160318141204.17"></v>
-<v t="ekr.20160318141204.14"></v>
+<v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
+<v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
+<v t="ekr.20180901044640.1"><vh>test_bug2_non_empty</vh></v>
+<v t="ekr.20180901051603.1"><vh>test_bug3</vh></v>
+<v t="ekr.20210804103146.1"><vh>test_pattern_class</vh></v>
+<v t="ekr.20210804105256.1"><vh>test_reduce_numbers</vh></v>
+<v t="ekr.20210804111613.1"><vh>test_reduce_types</vh></v>
+<v t="ekr.20210804111803.1"><vh>test_split_types</vh></v>
+<v t="ekr.20210804111915.1"><vh>test_st_find</vh></v>
+<v t="ekr.20210804112211.1"><vh>test_st_flatten_stubs</vh></v>
+<v t="ekr.20210804112405.1"><vh>test_st_merge_stubs</vh>
+<v t="ekr.20210804112405.3"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
+<v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
+</v>
+<v t="ekr.20210804112556.1"><vh>test_stub_class</vh></v>
+<v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
+</v>
+</v>
+<v t="ekr.20210804070157.1"><vh>--- command-line</vh>
+<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.132"></v>
+</v>
+<v t="ekr.20210803060400.1"><vh>--- testing</vh>
+<v t="ekr.20160630100214.1"><vh>@@@clean test.py</vh></v>
+<v t="ekr.20160128154715.1"><vh>@@@clean test/test_msf.py</vh>
+<v t="ekr.20160128190252.1"><vh>setUp</vh></v>
+<v t="ekr.20160128190112.1"><vh>test_pattern_class</vh></v>
+<v t="ekr.20160128190224.1"><vh>test_is_known_type</vh></v>
+</v>
+<v t="ekr.20160206165656.1"><vh>@@@clean test/test.py</vh></v>
+<v t="ekr.20160318141204.195"><vh>class TestClass (not used)</vh>
+<v t="ekr.20160318141204.196"><vh>parse_group (Guido)</vh></v>
+<v t="ekr.20160318141204.197"><vh>return_all</vh></v>
+<v t="ekr.20160318141204.198"><vh>return_array</vh></v>
+<v t="ekr.20160318141204.199"><vh>return_list</vh></v>
+<v t="ekr.20160318141204.200"><vh>return_two_lists (fails)</vh></v>
+</v>
+</v>
+<v t="ekr.20210804161223.1"><vh>--- revised tests</vh>
+<v t="ekr.20180901040718.1"></v>
+<v t="ekr.20180901044640.1"></v>
+<v t="ekr.20180901051603.1"></v>
+</v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -4247,6 +4246,8 @@ c.redraw()
 </t>
 <t tx="ekr.20210804161223.1"># Found 3 marked nodes</t>
 <t tx="ekr.20210804214511.1">def do_Constant(self, node):  # #13
-    return repr(node.value)</t>
+    return repr(node.value)
+</t>
+<t tx="ekr.20210804215428.1"></t>
 </tnodes>
 </leo_file>

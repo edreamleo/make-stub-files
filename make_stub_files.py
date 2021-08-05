@@ -2824,7 +2824,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         # Test.
         lines = g.splitLines(st.output_file.getvalue())
         self.assertEqual(lines, expected)
-    #@+node:ekr.20180901051603.1: *3* test_bug3 (FAILS)
+    #@+node:ekr.20180901051603.1: *3* test_bug3
     def test_bug3(self):
         # https://github.com/edreamleo/make-stub-files/issues/3
         tag = 'test_bug3'
