@@ -47,7 +47,6 @@
 <v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
 <v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
 <v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
-<v t="ekr.20160128104639.1"><vh>@clean msf.cfg</vh></v>
 <v t="ekr.20160330201030.1"><vh>@clean PKG-INFO.TXT</vh></v>
 <v t="ekr.20160211110739.1"><vh>@clean README.md</vh>
 <v t="ekr.20160211110807.1"><vh>Overview</vh></v>
@@ -62,10 +61,9 @@
 <v t="ekr.20160211110810.3"><vh>Why this script is important</vh></v>
 <v t="ekr.20160211110811.1"><vh>Summary</vh></v>
 </v>
-<v t="ekr.20160206165507.1"><vh>@clean test.cfg</vh></v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
-</v>
 <v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
+</v>
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh></v>
 <v t="ekr.20210803131439.1"><vh>=== #10, #11, #13: bug and unit tests</vh>
 <v t="ekr.20210804153200.1"><vh>script convert-at-test</vh></v>
@@ -293,20 +291,6 @@
 <v t="ekr.20210804214511.1"></v>
 </v>
 </v>
-<v t="ekr.20210805055204.1"><vh>Found:.cfg</vh>
-<v t="ekr.20160128102557.1"></v>
-<v t="ekr.20160126153220.1"></v>
-<v t="ekr.20160128104639.1"></v>
-<v t="ekr.20160206165507.1"></v>
-<v t="ekr.20160207101607.1"></v>
-<v t="ekr.20160318141204.125"></v>
-</v>
-<v t="ekr.20210805055908.1"><vh>Found:'''</vh>
-<v t="ekr.20160207101607.1"></v>
-<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"></v>
-<v t="ekr.20160202064553.1"></v>
-<v t="ekr.20160202061118.1"></v>
-</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -495,107 +479,6 @@ str%str: str
 
 .*__name__: str
 </t>
-<t tx="ekr.20160128104639.1">@language config
-
-# A configuration file to make stubs for make_stub_files.py itself.
-
-[Global]
-
-files: make_stub_files.py
-    
-output_directory: .
-    
-prefix_lines:
-    from typing import Any, Dict, Optional, Sequence, Tuple, Union
-        # At present, I don't understand how to tell mypy about ast.Node
-        # import ast
-        # Node = ast.Node
-    Node = Any
-
-[Def Name Patterns]
-
-# The returns are inherent in the design of make_stub_files.py:
-AstFormatter.do_*: str
-StubFormatter.do_*: str
-StubTraverser.do_*: str
-
-# Test of regex pattern.
-.*__hash__$: int
-
-
-# Pattern.all_matches: Sequence
-# Pattern.full_balanced_match: Optional[int]
-# Pattern.match_balanced: int
-# Pattern.match_entire_string: bool
-# StandAloneMakeStubFile.scan_types: Dict[str, str]
-
-# StubTraverser.format_returns: str
-# StubTraverser.match_return_patterns: Tuple[bool,str]
-# StubTraverser.match_return_pattern: Optional[str]
-# StubTraverser.match_balanced: int
-
-[General Patterns]
-
-# Test of regex patterns
-.*\.endswith\(.*\)$: bool
-
-# Declarations of names...
-NotImplemented: bool
-a: str
-aList: List[Any]
-comments: str
-controller: StandAloneMakeStubFile
-find_s: str
-fn: str
-found: str
-general_patterns: List[Pattern]
-group: str
-i1: int
-i2: int
-i: int
-j1: int
-j2: int
-j: int
-n1: int
-n2: int
-n: int
-name: str
-ndots: int
-node: Node
-parser: optparse.OptionParser
-patterns: List
-repl_s: str
-s: str
-s1: str
-s2: str
-# s[1-2]?$: str
-strict: bool
-trace: bool
-
-# Known functions...
-all(*): bool
-any(*): bool
-int(*): int
-hash(*): int
-len(*): int
-os.path.basename(*): str
-os.sep.join(*): str
-repr(*): str
-sep.join(*): str
-self.__eq__(*): bool
-self.__ne__(*): bool
-self.__gt__(*): bool
-self.__lt__(*): bool
-sorted(*): str
-str%(*): str
-str.endswith(*): bool 
-str.join(*): str
-str.startswith(*): bool 
-r[*]: str
-# Put this in the code.
-str[*]: str
-
-</t>
 <t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128154715.1">import pdb
 import unittest
@@ -730,50 +613,6 @@ import unittest
 loader = unittest.TestLoader()
 suite = loader.loadTestsFromTestCase(test_msf.TestMakeStubFiles)
 unittest.TextTestRunner(verbosity=0).run(suite)
-</t>
-<t tx="ekr.20160206165507.1">@language config
-
-# A configuration file to make stubs for make_stub_files.py itself.
-
-[Global]
-
-files: test/test.py
-output_directory: ./test
-# prefix_lines:
-
-[Def Name Patterns]
-
-[General Patterns]
-
-# Declarations of names..
-a: Any
-s: str
-aList: List[Any]
-is_known_type(*): bool
-
-# Known functions...
-all(*): bool
-any(*): bool
-endswith(*): bool
-g.match_word(*): bool
-hash(*): int
-hasattr(*): bool
-int(*): int
-len(*): int
-os.path.basename(*): str
-os.sep.join(*): str
-repr(*): str
-sep.join(*): str
-self.__eq__(*): bool
-self.__ne__(*): bool
-self.__gt__(*): bool
-self.__lt__(*): bool
-sorted(*): str
-str%(*): str
-str.join(*): str
-str.isspace(*): str
-str[*]: str
-sum(*): number
 </t>
 <t tx="ekr.20160206165656.1">"""A test file containing code that caused mypy errors."""
 
@@ -1516,7 +1355,7 @@ def make_optional(self,r):
 def make_stub_file(self, fn):
     """
     Make a stub file in ~/stubs for all source files mentioned in the
-    [Source Files] section of ~/stubs/make_stub_files.cfg
+    [Source Files] section of the configuration file.
     """
     global g_input_file_name
     extension = fn[fn.rfind('.'):]
@@ -4085,15 +3924,5 @@ https://github.com/edreamleo/make-stub-files/issues/19
 @language python
 @nosearch
 </t>
-<t tx="ekr.20210805055204.1">@nosearch
-
-# Ignore Case, Head, Body
-
-# found 8 nodes</t>
-<t tx="ekr.20210805055908.1">@nosearch
-
-# Ignore Case, Head, Body
-
-# found 4 nodes</t>
 </tnodes>
 </leo_file>

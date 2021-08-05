@@ -947,7 +947,7 @@ class Controller:
     def make_stub_file(self, fn):
         """
         Make a stub file in ~/stubs for all source files mentioned in the
-        [Source Files] section of ~/stubs/make_stub_files.cfg
+        [Source Files] section of the configuration file.
         """
         global g_input_file_name
         extension = fn[fn.rfind('.'):]
