@@ -1,5 +1,5 @@
 
-This is the readme file for `make_stub_files.py`. This file explains what the script does, how it works and why it is important. After a brief overview, a step-by-step section will get you started. Full source code for the script is in its [github repository](https://github.com/edreamleo/make-stub-files). This script is in the public domain.
+This is the readme file for `make_stub_files.py`. This file explains what the script does, how it works and why it is important. After a brief overview, a step-by-step section will get you started. Full source code for make_stub_files.py is in its [github repository](https://github.com/edreamleo/make-stub-files). Everything is in the public domain.
 
 
 ### Overview
@@ -31,7 +31,7 @@ the script produces the stub:
 
     def foo(i: int, s: str) --> str: ...
 
-The `make_stub_files` script eliminates much of the drudgery of creating [python stub (.pyi) files](https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. This script should encourage more people to use mypy. Stub files can be used by people who use Python 2.x code bases.
+The `make_stub_files` script eliminates much of the drudgery of creating [python stub (.pyi) files](https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. Stub files can be used by people who use Python 2.x code bases.
 
 
 ### Quick Start
@@ -71,21 +71,28 @@ The `make_stub_files` script eliminates much of the drudgery of creating [python
 
 ### Command-line arguments
 
-    Usage: make_stub_files.py [options] file1, file2, ...
+    usage: make_stub_files.py [options] file1, file2, ...
+
+    make_stub_file: Create stub (.pyi) files from python files
     
-    Options:
-      -h, --help          show this help message and exit
-      -c FN, --config=FN  full path to configuration file
-      -d DIR, --dir=DIR   full path to the output directory
-      -o, --overwrite     overwrite existing stub (.pyi) files
-      -t, --test          run unit tests on startup
-      --trace-matches     trace Pattern.matches
-      --trace-patterns    trace pattern creation
-      --trace-reduce      trace st.reduce_types
-      --trace-visitors    trace visitor methods
-      -u, --update        update stubs in existing stub file
-      -v, --verbose       verbose output in .pyi file
-      -w, --warn          warn about unannotated args
+    positional arguments:
+      FILE                  input files
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c FILE, --config FILE
+                            full path to configuration file
+      -d DIR, --dir DIR     full path to the output directory
+      -f, --force-pyx       force the parsing of .pyx files
+      -o, --overwrite       overwrite existing stub (.pyi) files
+      -s, --silent          run without messages
+      --trace-matches       trace Pattern.matches
+      --trace-patterns      trace pattern creation
+      --trace-reduce        trace st.reduce_types
+      --trace-visitors      trace visitor methods
+      -u, --update          update stubs in existing stub file
+      -v, --verbose         verbose output in .pyi file
+      -w, --warn            warn about unannotated args
 
 *Note*: glob.glob wildcards can be used in file1, file2, ...
 
@@ -246,8 +253,6 @@ Stubs express design intentions and intuitions as well as types. Until now, ther
 
 Using mypy, we can be as specific as we like about types. We can simply annotate that d is a dict, or we can say that d is a dict whose keys are strings and whose values are executables with a union of possible signatures. Stubs are the easy way to play with type inference.
 
-Stub files clarify long-standing questions about types. To what extent *do* we understand types? How dynamic (RPython-like) *are* our programs? mypy will tell us where are stub files are dubious. Could we use type annotation to convert our programs to C? Not likely, but now there is a way to know where things get sticky.
-
 Finally, stubs can simplify the general type inference problem. Without type hints or annotations, the type of everything depends on the type of everything else. Stubs could allow robust, maybe even complete, type inference to be done locally. Stubs help mypy to work faster.
 
 ### Summary
@@ -260,3 +265,4 @@ One could imagine a similar insert_annotations script that would inject function
 
 Edward K. Ream  
 January 25 to February 15, 2016
+Revised, August 5, 2021.

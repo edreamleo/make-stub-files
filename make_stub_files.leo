@@ -46,9 +46,10 @@
 <v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
 </v>
 <v t="ekr.20210805061823.1"><vh>To do</vh>
-<v t="ekr.20210805054028.1"><vh>=== #19: revise readme.md</vh></v>
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh></v>
 </v>
+<v t="ekr.20210805054028.1"><vh>=== #19: revise readme.md</vh></v>
+<v t="ekr.20160211110739.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -287,9 +288,9 @@ You don't need to know anything about type inference.
 
 ### High level description
 
-This is, truly, a *very* simple script. Indeed, this is just a modified code formatter. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes. (See [below](#traversers) for details). This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**, as defined by Pep 484.
+This script is a modified code formatter. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes. (See [below](#traversers) for details). This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**, as defined by Pep 484.
 
-The StubFormatter visitors do most of the work of type reduction. They are simple because they delegate type reduction to the following helpers:
+The StubFormatter visitors do most of the work of type reduction. They delegate type reduction to the following helpers:
 
 1. **`ReduceTypes.reduce_types(aList)`** reduces a *list* of 0 or more types to a *string* representing a type hint. It returns 'Any' for unknown types. At the top of the traversal, StubTraverser.do_FunctionDef also calls reduce_types (via helpers) on the list of all return expressions.
 
@@ -315,7 +316,7 @@ In short, visitors are hardly more complex than the corresponding AstFormatter m
 
 ### Examples
 
-The previous section is really you should need to know about this program.  However, a few examples may make this script's operation clearer. The --trace-matches and --trace-reduce switches turn on detailed traces that show exactly when and where reductions happen, and what the resulting type hints are. These traces are the truth.  Believe them, not words here.
+A few examples may make this script's operation clearer. The --trace-matches and --trace-reduce switches turn on detailed traces that show exactly when and where reductions happen, and what the resulting type hints are. These traces are the truth.  Believe them, not words here.
 
 Given the file truncate.py:
 
@@ -331,7 +332,7 @@ The script produces this output with the --verbose option in effect:
         
 Here is the output with --trace-reduce --trace-matches in effect:
 
-    make_stub_files.py -c msf.cfg truncate.py -v -o --trace-reduce --trace-matches
+    make_stub_files.py -c make_stub_files.cfg truncate.py -v -o --trace-reduce --trace-matches
     
     callers                     pattern                types ==&gt; hint    
     =======                     =======         ========================
@@ -339,7 +340,7 @@ Here is the output with --trace-reduce --trace-matches in effect:
     match_all:    do_Subscript  str[*]: str      str[:number] ==&gt; str
     reduce_types: do_IfExp                               str] ==&gt; str
 
-Finally, here is *part* of the result of tracing make_stub_files.py itself:
+Finally, here is *part* of the result of tracing make_stub_files.py itself::
 
           context                   pattern                                                          types ==&gt; hint    
     =============================== ================ =========================================================================
@@ -366,7 +367,7 @@ Finally, here is *part* of the result of tracing make_stub_files.py itself:
     reduce_types: get_import_names                                                                 [result] ==&gt; ? Any
     reduce_types: kind                                                            [Node.__class__.__name__] ==&gt; ? Any
     
-This trace contains pretty much everything you need to know about pattern matching and type reduction.
+This trace contains all essential data concerning pattern matching and type reduction.
 
 Enable tracing in various visitors if you need more data.
 
@@ -393,37 +394,33 @@ This class works just like the StubFormatter class except that does *not* apply 
 
 ### Unit testing
 
-The easy way to do unit testing is from within Leo:
+August, 2021: make_stub_files.py now contains traditional unit tests.  See the TestMakeStubFiles class.
 
-- Alt-6 runs all unit tests in @test nodes.
-- Alt-5 runs all *marked* @test nodes. Super convenient while developing code.
-
-The `@button write-unit-test` script writes all @test nodes to `make_stub_files/test`.
-
-The `--test` option runs all test files in `make_stub_files/test`.
-
-The following also runs all test files in `make_stub_files/test`:
+Run these unit tests with:
 
     cd make_stub_files
-    python -m unittest discover -s test
+    python -m unittest make_stub_files
+    
+Run coverage tests with:
+
+    cd make_stub_files
+    python -m pytest --cov-report html --cov-report term-missing --cov make_stub_files make_stub_files.py
 
 &lt;a name="summary"/&gt;
 ### Summary
 
-This script is a straightforward tree traversal. Or so it seems to me.
+make_stub_files.py is a straightforward tree traversal. Or so it seems to me.
 Please feel free to ask questions.
 
 Edward K. Ream  
-edreamleo@gmail.com  
-(608) 886-5730
-</t>
+edreamleo@gmail.com</t>
 <t tx="ekr.20160207181637.1"></t>
 <t tx="ekr.20160207181648.1"></t>
 <t tx="ekr.20160207182535.1"></t>
 <t tx="ekr.20160211110739.1">@language rest
 @wrap
 
-This is the readme file for `make_stub_files.py`. This file explains what the script does, how it works and why it is important. After a brief overview, a step-by-step section will get you started. Full source code for the script is in its [github repository](https://github.com/edreamleo/make-stub-files). This script is in the public domain.
+This is the readme file for `make_stub_files.py`. This file explains what the script does, how it works and why it is important. After a brief overview, a step-by-step section will get you started. Full source code for make_stub_files.py is in its [github repository](https://github.com/edreamleo/make-stub-files). Everything is in the public domain.
 
 @others
 </t>
@@ -457,27 +454,34 @@ the script produces the stub:
 
     def foo(i: int, s: str) --&gt; str: ...
 
-The `make_stub_files` script eliminates much of the drudgery of creating [python stub (.pyi) files](https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. This script should encourage more people to use mypy. Stub files can be used by people who use Python 2.x code bases.
+The `make_stub_files` script eliminates much of the drudgery of creating [python stub (.pyi) files](https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. Stub files can be used by people who use Python 2.x code bases.
 
 </t>
 <t tx="ekr.20160211110810.1">
 ### Command-line arguments
 
-    Usage: make_stub_files.py [options] file1, file2, ...
+    usage: make_stub_files.py [options] file1, file2, ...
+
+    make_stub_file: Create stub (.pyi) files from python files
     
-    Options:
-      -h, --help          show this help message and exit
-      -c FN, --config=FN  full path to configuration file
-      -d DIR, --dir=DIR   full path to the output directory
-      -o, --overwrite     overwrite existing stub (.pyi) files
-      -t, --test          run unit tests on startup
-      --trace-matches     trace Pattern.matches
-      --trace-patterns    trace pattern creation
-      --trace-reduce      trace st.reduce_types
-      --trace-visitors    trace visitor methods
-      -u, --update        update stubs in existing stub file
-      -v, --verbose       verbose output in .pyi file
-      -w, --warn          warn about unannotated args
+    positional arguments:
+      FILE                  input files
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c FILE, --config FILE
+                            full path to configuration file
+      -d DIR, --dir DIR     full path to the output directory
+      -f, --force-pyx       force the parsing of .pyx files
+      -o, --overwrite       overwrite existing stub (.pyi) files
+      -s, --silent          run without messages
+      --trace-matches       trace Pattern.matches
+      --trace-patterns      trace pattern creation
+      --trace-reduce        trace st.reduce_types
+      --trace-visitors      trace visitor methods
+      -u, --update          update stubs in existing stub file
+      -v, --verbose         verbose output in .pyi file
+      -w, --warn            warn about unannotated args
 
 *Note*: glob.glob wildcards can be used in file1, file2, ...
 </t>
@@ -498,8 +502,6 @@ Stubs express design intentions and intuitions as well as types. Until now, ther
 
 Using mypy, we can be as specific as we like about types. We can simply annotate that d is a dict, or we can say that d is a dict whose keys are strings and whose values are executables with a union of possible signatures. Stubs are the easy way to play with type inference.
 
-Stub files clarify long-standing questions about types. To what extent *do* we understand types? How dynamic (RPython-like) *are* our programs? mypy will tell us where are stub files are dubious. Could we use type annotation to convert our programs to C? Not likely, but now there is a way to know where things get sticky.
-
 Finally, stubs can simplify the general type inference problem. Without type hints or annotations, the type of everything depends on the type of everything else. Stubs could allow robust, maybe even complete, type inference to be done locally. Stubs help mypy to work faster.
 </t>
 <t tx="ekr.20160211110811.1">
@@ -513,6 +515,7 @@ One could imagine a similar insert_annotations script that would inject function
 
 Edward K. Ream  
 January 25 to February 15, 2016
+Revised, August 5, 2021.
 </t>
 <t tx="ekr.20160211111807.1">
 #### Patterns
@@ -756,7 +759,7 @@ g.execute_shell_commands(command, trace=False)
 cfg = r'c:\users\Edward~1\make_stub_files.cfg'
 msf = 'make_stub_files.py'
 src = 'make_stub_files.py'
-command = f"python {msf} -c {cfg} -o -v {src}"
+command = f"python {msf} -c {cfg} -o -v {src} -h"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210804060105.1">g.cls()
 test = '' # '.TestMakeStubFiles.test_bug3' # Run all tests.

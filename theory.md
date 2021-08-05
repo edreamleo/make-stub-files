@@ -15,9 +15,9 @@ You don't need to know anything about type inference.
 
 ### High level description
 
-This is, truly, a *very* simple script. Indeed, this is just a modified code formatter. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes. (See [below](#traversers) for details). This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**, as defined by Pep 484.
+This script is a modified code formatter. This script traverses the incoming ast tree *once* from the top down, generating results from the bottom up. There is only a *single* traversal, composed of four traversal classes. (See [below](#traversers) for details). This traversal produces a stub for every class and def line. To do this, it **replaces expressions with type hints**. In other words, the goal is to **reduce** expressions to **known types**, as defined by Pep 484.
 
-The StubFormatter visitors do most of the work of type reduction. They are simple because they delegate type reduction to the following helpers:
+The StubFormatter visitors do most of the work of type reduction. They delegate type reduction to the following helpers:
 
 1. **`ReduceTypes.reduce_types(aList)`** reduces a *list* of 0 or more types to a *string* representing a type hint. It returns 'Any' for unknown types. At the top of the traversal, StubTraverser.do_FunctionDef also calls reduce_types (via helpers) on the list of all return expressions.
 
@@ -43,7 +43,7 @@ In short, visitors are hardly more complex than the corresponding AstFormatter m
 
 ### Examples
 
-The previous section is really you should need to know about this program.  However, a few examples may make this script's operation clearer. The --trace-matches and --trace-reduce switches turn on detailed traces that show exactly when and where reductions happen, and what the resulting type hints are. These traces are the truth.  Believe them, not words here.
+A few examples may make this script's operation clearer. The --trace-matches and --trace-reduce switches turn on detailed traces that show exactly when and where reductions happen, and what the resulting type hints are. These traces are the truth.  Believe them, not words here.
 
 Given the file truncate.py:
 
@@ -59,7 +59,7 @@ The script produces this output with the --verbose option in effect:
         
 Here is the output with --trace-reduce --trace-matches in effect:
 
-    make_stub_files.py -c msf.cfg truncate.py -v -o --trace-reduce --trace-matches
+    make_stub_files.py -c make_stub_files.cfg truncate.py -v -o --trace-reduce --trace-matches
     
     callers                     pattern                types ==> hint    
     =======                     =======         ========================
@@ -67,7 +67,7 @@ Here is the output with --trace-reduce --trace-matches in effect:
     match_all:    do_Subscript  str[*]: str      str[:number] ==> str
     reduce_types: do_IfExp                               str] ==> str
 
-Finally, here is *part* of the result of tracing make_stub_files.py itself:
+Finally, here is *part* of the result of tracing make_stub_files.py itself::
 
           context                   pattern                                                          types ==> hint    
     =============================== ================ =========================================================================
@@ -94,7 +94,7 @@ Finally, here is *part* of the result of tracing make_stub_files.py itself:
     reduce_types: get_import_names                                                                 [result] ==> ? Any
     reduce_types: kind                                                            [Node.__class__.__name__] ==> ? Any
     
-This trace contains pretty much everything you need to know about pattern matching and type reduction.
+This trace contains all essential data concerning pattern matching and type reduction.
 
 Enable tracing in various visitors if you need more data.
 
@@ -121,26 +121,23 @@ This class works just like the StubFormatter class except that does *not* apply 
 
 ### Unit testing
 
-The easy way to do unit testing is from within Leo:
+August, 2021: make_stub_files.py now contains traditional unit tests.  See the TestMakeStubFiles class.
 
-- Alt-6 runs all unit tests in @test nodes.
-- Alt-5 runs all *marked* @test nodes. Super convenient while developing code.
-
-The `@button write-unit-test` script writes all @test nodes to `make_stub_files/test`.
-
-The `--test` option runs all test files in `make_stub_files/test`.
-
-The following also runs all test files in `make_stub_files/test`:
+Run these unit tests with:
 
     cd make_stub_files
-    python -m unittest discover -s test
+    python -m unittest make_stub_files
+    
+Run coverage tests with:
+
+    cd make_stub_files
+    python -m pytest --cov-report html --cov-report term-missing --cov make_stub_files make_stub_files.py
 
 <a name="summary"/>
 ### Summary
 
-This script is a straightforward tree traversal. Or so it seems to me.
+make_stub_files.py is a straightforward tree traversal. Or so it seems to me.
 Please feel free to ask questions.
 
 Edward K. Ream  
-edreamleo@gmail.com  
-(608) 886-5730
+edreamleo@gmail.com
