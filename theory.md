@@ -48,7 +48,7 @@ The previous section is really you should need to know about this program.  Howe
 Given the file truncate.py:
 
     def truncate(s, n):
-        '''Return s truncated to n characters.'''
+        """Return s truncated to n characters."""
         return s if len(s) <= n else s[:n-3] + '...'
         
 The script produces this output with the --verbose option in effect:
