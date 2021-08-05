@@ -4,3 +4,5 @@ test/*.pyc
 __pycache__/
 .mypy_cache/
 .cache/
+.coverage
+htmlcov/
