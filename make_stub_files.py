@@ -59,6 +59,10 @@ def dump_list(title, aList):  # pragma: no cover
     for z in aList:
         print(z)
     print('')
+#@+node:ekr.20210805143805.1: *3* function: finalize
+def finalize(fn):
+    """Finalize and regularize a filename."""
+    return os.path.normpath(os.path.abspath(os.path.expanduser(fn)))
 #@+node:ekr.20160318141204.4: *3* function: is_known_type
 def is_known_type(s):
     """
@@ -925,10 +929,6 @@ class Controller:
         self.op_name_dict = self.make_op_name_dict()
         self.patterns_dict = {}
         self.regex_patterns = []
-    #@+node:ekr.20160318141204.127: *3* msf.finalize
-    def finalize(self, fn):
-        """Finalize and regularize a filename."""
-        return os.path.normpath(os.path.abspath(os.path.expanduser(fn)))
     #@+node:ekr.20160318141204.128: *3* msf.make_stub_file
     directory_warning_given = False
 
@@ -1025,7 +1025,7 @@ class Controller:
             self.config_fn = args.fn
         if args.dir:
             dir_ = args.dir and args.dir.strip()
-            dir_ = self.finalize(dir_)
+            dir_ = finalize(dir_)
             g.trace('dir', dir_)
             if os.path.exists(dir_):
                 self.output_directory = dir_
@@ -1064,7 +1064,7 @@ class Controller:
         not_found = []
         for z in files:
             # 2021/08/04: Warn if z does not exist.
-            files3 = glob.glob(self.finalize(z))
+            files3 = glob.glob(finalize(z))
             if files3:
                 if self.verbose:
                     for z in files3:
@@ -1079,7 +1079,7 @@ class Controller:
         self.files = files2
         if 'output_directory' in parser.options('Global'):
             s = parser.get('Global', 'output_directory').strip()
-            output_dir = self.finalize(s)
+            output_dir = finalize(s)
             if os.path.exists(output_dir):
                 self.output_directory = output_dir
                 if self.verbose:
@@ -1178,7 +1178,7 @@ class Controller:
     #@+node:ekr.20160318141204.136: *4* msf.get_config_string
     def get_config_string(self):
         """Read the configuration file."""
-        fn = self.finalize(self.config_fn)
+        fn = finalize(self.config_fn)
         if os.path.exists(fn):
             with open(fn, 'r') as f:
                 return f.read()
@@ -3090,24 +3090,11 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     #@+node:ekr.20210805093615.1: *3* test file: make_stub_files.py
     def test_file_msb(self):
         """Run make_stub_files on itself."""
-        if 1:
-            # f"python {msf} -c {cfg} -o -v {src}"
-            directory = os.path.dirname(__file__)
-            config_fn = os.path.normpath(os.path.abspath(os.path.expanduser('make_stub_files.cfg')))
-            sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
-            main()
-        else:  # Works: (Like main function)
-            controller = Controller()
-            # Set ivars instead of calling scan_command_line.
-            fn = __file__
-            directory = os.path.dirname(__file__)
-            controller.config_fn = controller.finalize(os.path.join(directory, 'make_stub_files.cfg'))
-            self.assertTrue(os.path.exists(controller.config_fn), msg=controller.config_fn)
-            controller.overwrite = True
-            # Go!
-            controller.scan_options()
-            for fn in controller.files:
-                controller.make_stub_file(fn)
+        # f"python {msf} -c {cfg} -o -v {src}"
+        directory = os.path.dirname(__file__)
+        config_fn = os.path.normpath(os.path.abspath(os.path.expanduser('make_stub_files.cfg')))
+        sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
+        main()
     #@+node:ekr.20210805093004.1: *3* test top-level functions
     #@+node:ekr.20160207115947.1: *4* test_truncate
     def test_truncate(self):

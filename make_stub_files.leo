@@ -54,6 +54,7 @@
 <v t="ekr.20160318141204.8"><vh>function: dump</vh></v>
 <v t="ekr.20160318141204.9"><vh>function: dump_dict</vh></v>
 <v t="ekr.20160318141204.10"><vh>function: dump_list</vh></v>
+<v t="ekr.20210805143805.1"><vh>function: finalize</vh></v>
 <v t="ekr.20160318141204.4"><vh>function: is_known_type</vh></v>
 <v t="ekr.20160318141204.11"><vh>function: main</vh></v>
 <v t="ekr.20160318141204.6"><vh>function: reduce_types</vh></v>
@@ -150,7 +151,6 @@
 </v>
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
-<v t="ekr.20160318141204.127"><vh>msf.finalize</vh></v>
 <v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
 <v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
@@ -224,6 +224,8 @@
 </v>
 <v t="ekr.20160318141204.194"><vh>st.visit_Return</vh></v>
 </v>
+</v>
+</v>
 <v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
 <v t="ekr.20210805090544.1"><vh>test issues...</vh>
 <v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
@@ -249,8 +251,6 @@
 <v t="ekr.20210805093615.1"><vh>test file: make_stub_files.py</vh></v>
 <v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
 <v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
-</v>
-</v>
 </v>
 </v>
 <v t="ekr.20210805093615.1"></v>
@@ -1372,10 +1372,6 @@ __str__ = __repr__
     self.patterns_dict = {}
     self.regex_patterns = []
 </t>
-<t tx="ekr.20160318141204.127">def finalize(self, fn):
-    """Finalize and regularize a filename."""
-    return os.path.normpath(os.path.abspath(os.path.expanduser(fn)))
-</t>
 <t tx="ekr.20160318141204.128">directory_warning_given = False
 
 def make_stub_file(self, fn):
@@ -1475,7 +1471,7 @@ def make_stub_file(self, fn):
         self.config_fn = args.fn
     if args.dir:
         dir_ = args.dir and args.dir.strip()
-        dir_ = self.finalize(dir_)
+        dir_ = finalize(dir_)
         g.trace('dir', dir_)
         if os.path.exists(dir_):
             self.output_directory = dir_
@@ -1514,7 +1510,7 @@ def make_stub_file(self, fn):
     not_found = []
     for z in files:
         # 2021/08/04: Warn if z does not exist.
-        files3 = glob.glob(self.finalize(z))
+        files3 = glob.glob(finalize(z))
         if files3:
             if self.verbose:
                 for z in files3:
@@ -1529,7 +1525,7 @@ def make_stub_file(self, fn):
     self.files = files2
     if 'output_directory' in parser.options('Global'):
         s = parser.get('Global', 'output_directory').strip()
-        output_dir = self.finalize(s)
+        output_dir = finalize(s)
         if os.path.exists(output_dir):
             self.output_directory = output_dir
             if self.verbose:
@@ -1628,7 +1624,7 @@ def make_stub_file(self, fn):
 </t>
 <t tx="ekr.20160318141204.136">def get_config_string(self):
     """Read the configuration file."""
-    fn = self.finalize(self.config_fn)
+    fn = finalize(self.config_fn)
     if os.path.exists(fn):
         with open(fn, 'r') as f:
             return f.read()
@@ -3228,7 +3224,7 @@ src = 'make_stub_files.py'
 command = f"python {msf} -c {cfg} -o -v {src} -h"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210804060105.1">g.cls()
-if 1:  # Run one test.
+if 0:  # Run one test.
     test = '.TestMakeStubFiles.test_file_msb'
 else:  # Run all tests.
     test = ''
@@ -3539,25 +3535,15 @@ Cover:
 <t tx="ekr.20210805093004.1"></t>
 <t tx="ekr.20210805093615.1">def test_file_msb(self):
     """Run make_stub_files on itself."""
-    if 1:
-        # f"python {msf} -c {cfg} -o -v {src}"
-        directory = os.path.dirname(__file__)
-        config_fn = os.path.normpath(os.path.abspath(os.path.expanduser('make_stub_files.cfg')))
-        sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
-        main()
-    else:  # Works: (Like main function)
-        controller = Controller()
-        # Set ivars instead of calling scan_command_line.
-        fn = __file__
-        directory = os.path.dirname(__file__)
-        controller.config_fn = controller.finalize(os.path.join(directory, 'make_stub_files.cfg'))
-        self.assertTrue(os.path.exists(controller.config_fn), msg=controller.config_fn)
-        controller.overwrite = True
-        # Go!
-        controller.scan_options()
-        for fn in controller.files:
-            controller.make_stub_file(fn)
-</t>
+    # f"python {msf} -c {cfg} -o -v {src}"
+    directory = os.path.dirname(__file__)
+    config_fn = os.path.normpath(os.path.abspath(os.path.expanduser('make_stub_files.cfg')))
+    sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
+    main()</t>
 <t tx="ekr.20210805102238.1"></t>
+<t tx="ekr.20210805143805.1">def finalize(fn):
+    """Finalize and regularize a filename."""
+    return os.path.normpath(os.path.abspath(os.path.expanduser(fn)))
+</t>
 </tnodes>
 </leo_file>
