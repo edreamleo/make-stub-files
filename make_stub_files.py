@@ -120,8 +120,7 @@ class AstFormatter:
         '''Format the node (or list of nodes) and its descendants.'''
         self.level = 0
         val = self.visit(node)
-        # pylint: disable=consider-using-ternary
-        return val and val.strip() or ''
+        return val.strip()  # val is a string.
     #@+node:ekr.20160318141204.18: *4* f.visit
     def visit(self, node):
         '''Return the formatted version of an Ast node, or list of Ast nodes.'''
@@ -131,14 +130,11 @@ class AstFormatter:
             return 'None'
         assert isinstance(node, ast.AST), node.__class__.__name__
         method_name = 'do_' + node.__class__.__name__
-        try:
-            method = getattr(self, method_name)
-        except AttributeError:
-            return ''
-
+        # 2021/08/04: We may as well fail here.
+        method = getattr(self, method_name)
         s = method(node)
         # assert type(s) == type('abc'), (node, type(s))
-        assert g.isString(s), type(s)
+        assert g.isString(s), s.__class__.__name__
         return s
     #@+node:ekr.20160318141204.19: *3* f.Contexts
 
@@ -345,6 +341,9 @@ class AstFormatter:
         # This is a keyword *arg*, not a Python keyword!
         return '%s=%s' % (node.arg, value)
 
+    #@+node:ekr.20210804214511.1: *4* f.Constant
+    def do_Constant(self, node):  # #13
+        return repr(node.value)
     #@+node:ekr.20160318141204.37: *4* f.comprehension
     def do_comprehension(self, node):
         result = []
@@ -2697,6 +2696,7 @@ class StubTraverser(ast.NodeVisitor):
         raw = [self.raw_format(z) for z in self.returns]
         # Allow StubFormatter.do_Return to do the hack.
         r = [self.format(z) for z in self.returns]
+        ### g.trace('1', raw, r)
         # Step 1: Return None if there are no return statements.
         if not [z for z in self.returns if z.value is not None]:
             empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
@@ -2705,10 +2705,12 @@ class StubTraverser(ast.NodeVisitor):
         # Step 2: [Def Name Patterns] override all other patterns.
         for pattern in self.def_patterns:
             found, s = pattern.match(name)
+            ### g.trace('2', found, name, pattern, s)
             if found:
                 return s + ': ...'
         # Step 3: remove recursive calls.
         raw, r = self.remove_recursive_calls(name, raw, r)
+        ### g.trace('3', raw, r)
         # Step 4: Calculate return types.
         return self.format_return_expressions(node, name, raw, r)
     #@+node:ekr.20160318141204.191: *5* st.format_return_expressions
@@ -3126,11 +3128,6 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         for s1, s2 in table:
             got = truncate(s1, 5)
             self.assertEqual(s2, got, msg=f"s1: {s1!r}")
-    #@+node:ekr.20160207115604.1: *4* truncate
-
-    def truncate(s, n):
-        '''Return s truncated to n characters.'''
-        return s if len(s) <= n else s[:n-3] + '...'
     #@-others
 #@-others
 g = LeoGlobals()

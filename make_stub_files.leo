@@ -68,6 +68,7 @@
 <v t="ekr.20160318141204.35"><vh>f.Call &amp; f.keyword</vh>
 <v t="ekr.20160318141204.36"><vh>f.keyword</vh></v>
 </v>
+<v t="ekr.20210804214511.1"><vh>f.Constant</vh></v>
 <v t="ekr.20160318141204.37"><vh>f.comprehension</vh></v>
 <v t="ekr.20160318141204.38"><vh>f.Dict</vh></v>
 <v t="ekr.20160318141204.39"><vh>f.Ellipsis</vh></v>
@@ -197,7 +198,7 @@
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 </v>
 <v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
-<v t="ekr.20210803131439.1"><vh>=== #10: unit tests</vh>
+<v t="ekr.20210803131439.1"><vh>=== #13: unit tests</vh>
 <v t="ekr.20210804104214.1"><vh>--- no longer used</vh>
 <v t="ekr.20160318141204.130"><vh>msf.run_all_unit_tests</vh></v>
 <v t="ekr.20160318141204.129"><vh>msf.run</vh></v>
@@ -263,11 +264,51 @@
 <v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
 </v>
 <v t="ekr.20210804112556.1"><vh>test_stub_class</vh></v>
-<v t="ekr.20160207115947.1"><vh>test_truncate</vh>
-<v t="ekr.20160207115604.1"><vh>truncate</vh></v>
-</v>
+<v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
 </v>
 <v t="ekr.20180901051603.1"></v>
+<v t="ekr.20160318141204.141"><vh>class Stub</vh>
+<v t="ekr.20160318141204.142"><vh>stub.ctor</vh></v>
+<v t="ekr.20160318141204.143"><vh>stub.__eq__ and __ne__</vh></v>
+<v t="ekr.20160318141204.144"><vh>stub.__hash__</vh></v>
+<v t="ekr.20160318141204.145"><vh>stub.__repr__and __str__</vh></v>
+<v t="ekr.20160318141204.146"><vh>stub.parents and level</vh></v>
+</v>
+<v t="ekr.20160318141204.169"><vh>class StubTraverser (ast.NodeVisitor)</vh>
+<v t="ekr.20160318141204.170"><vh>st.ctor</vh></v>
+<v t="ekr.20160318141204.171"></v>
+<v t="ekr.20160318141204.172"><vh>st.indent &amp; out</vh></v>
+<v t="ekr.20160318141204.173"><vh>st.run (main line) &amp; helpers</vh>
+<v t="ekr.20160318141204.174"><vh>st.output_stubs</vh></v>
+<v t="ekr.20160318141204.175"><vh>st.output_time_stamp</vh></v>
+<v t="ekr.20160318141204.176"><vh>st.update &amp; helpers</vh>
+<v t="ekr.20160318141204.177"><vh>st.get_stub_file</vh></v>
+<v t="ekr.20160318141204.178"><vh>st.parse_stub_file</vh></v>
+<v t="ekr.20160318141204.179"><vh>st.merge_stubs &amp; helpers</vh>
+<v t="ekr.20160318141204.180"><vh>st.check_delete</vh></v>
+<v t="ekr.20160318141204.181"><vh>st.flatten_stubs</vh></v>
+<v t="ekr.20160318141204.182"><vh>st.find_parent_stub</vh></v>
+<v t="ekr.20160318141204.183"><vh>st.find_stub</vh></v>
+<v t="ekr.20160318141204.184"><vh>st.sort_stubs_by_hierarchy</vh></v>
+</v>
+<v t="ekr.20160318141204.185"><vh>st.trace_stubs</vh></v>
+</v>
+</v>
+<v t="ekr.20160318141204.186"></v>
+<v t="ekr.20160318141204.187"><vh>st.visit_FunctionDef &amp; helpers</vh>
+<v t="ekr.20160318141204.188"></v>
+<v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
+<v t="ekr.20160318141204.192"><vh>st.get_def_name</vh></v>
+<v t="ekr.20160318141204.193"><vh>st.remove_recursive_calls</vh></v>
+</v>
+</v>
+<v t="ekr.20160318141204.194"><vh>st.visit_Return</vh></v>
+</v>
+<v t="ekr.20160318141204.187"></v>
+<v t="ekr.20160318141204.188"></v>
+<v t="ekr.20160318141204.17"></v>
+<v t="ekr.20160318141204.14"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153016.3"></t>
@@ -1219,11 +1260,6 @@ for p1 in c.all_unique_positions():
                 print(repr(p.b[:3]), p.h)
 print('done')
 </t>
-<t tx="ekr.20160207115604.1">
-def truncate(s, n):
-    '''Return s truncated to n characters.'''
-    return s if len(s) &lt;= n else s[:n-3] + '...'
-</t>
 <t tx="ekr.20160207115947.1">def test_truncate(self):
     table = (
         ('abc',     'abc'),
@@ -2027,6 +2063,60 @@ def make_stub_file(self, fn):
             print('')
     return aList
 </t>
+<t tx="ekr.20160318141204.141">class Stub:
+    '''
+    A class representing all the generated stub for a class or def.
+    stub.full_name should represent the complete context of a def.
+    '''
+    @others
+</t>
+<t tx="ekr.20160318141204.142">def __init__(self, kind, name, parent=None, stack=None):
+    '''Stub ctor. Equality depends only on full_name and kind.'''
+    self.children = []
+    self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
+    self.kind = kind
+    self.name = name
+    self.out_list = []
+    self.parent = parent
+    self.stack = stack  # StubTraverser.context_stack.
+    if stack:
+        assert stack[-1] == parent.name, (stack[-1], parent.name)
+    if parent:
+        assert isinstance(parent, Stub)
+        parent.children.append(self)
+</t>
+<t tx="ekr.20160318141204.143">def __eq__(self, obj):
+    '''
+    Stub.__eq__. Return whether two stubs refer to the same method.
+    Do *not* test parent links. That would interfere with --update logic.
+    '''
+    if isinstance(obj, Stub):
+        return self.full_name == obj.full_name and self.kind == obj.kind
+    return NotImplemented
+
+def __ne__(self, obj):
+    """Stub.__ne__"""
+    return not self.__eq__(obj)
+</t>
+<t tx="ekr.20160318141204.144">def __hash__(self):
+    '''Stub.__hash__. Equality depends *only* on full_name and kind.'''
+    return len(self.kind) + sum([ord(z) for z in self.full_name])
+</t>
+<t tx="ekr.20160318141204.145">def __repr__(self):
+    '''Stub.__repr__.'''
+    # return 'Stub: %s %s' % (id(self), self.full_name)
+    return 'Stub: %s\n%s' % (self.full_name, g.objToString(self.out_list))
+
+__str__ = __repr__
+</t>
+<t tx="ekr.20160318141204.146">def level(self):
+    '''Return the number of parents.'''
+    return len(self.parents())
+
+def parents(self):
+    '''Return a list of this stub's parents.'''
+    return self.full_name.split('.')[:-1]
+</t>
 <t tx="ekr.20160318141204.147">class StubFormatter(AstFormatter):
     '''
     Formats an ast.Node and its descendants,
@@ -2303,12 +2393,57 @@ def do_UnaryOp(self, node):
     assert s.startswith('return'), repr(s)
     return s[len('return') :].strip()
 </t>
+<t tx="ekr.20160318141204.169">class StubTraverser(ast.NodeVisitor):
+    '''
+    An ast.Node traverser class that outputs a stub for each class or def.
+    Names of visitors must start with visit_. The order of traversal does
+    not matter, because so few visitors do anything.
+    '''
+    @others
+</t>
 <t tx="ekr.20160318141204.17">def format(self, node):
     '''Format the node (or list of nodes) and its descendants.'''
     self.level = 0
     val = self.visit(node)
-    # pylint: disable=consider-using-ternary
-    return val and val.strip() or ''
+    return val.strip()  # val is a string.
+</t>
+<t tx="ekr.20160318141204.170">def __init__(self, controller):
+    '''Ctor for StubTraverser class.'''
+    self.controller = x = controller  # A Controller instance.
+    # Internal state ivars...
+    self.class_name_stack = []
+    self.class_defs_count = 0
+        # The number of defs seen for this class.
+    self.context_stack = []
+    sf = StubFormatter(controller=controller, traverser=self)
+    self.format = sf.format
+    self.arg_format = AstArgFormatter().format
+    self.level = 0
+    self.output_file = None
+    self.parent_stub = None
+    self.raw_format = AstFormatter().format
+    self.returns = []
+    self.stubs_dict = {}
+        # Keys are stub.full_name's.  Values are stubs.
+    self.warn_list = []
+    # Copies of controller ivars...
+    self.output_fn = x.output_fn
+    self.overwrite = x.overwrite
+    self.prefix_lines = x.prefix_lines
+    self.silent = x.silent
+    self.regex_patterns = x.regex_patterns
+    self.update_flag = x.update_flag
+    self.trace_matches = x.trace_matches
+    self.trace_patterns = x.trace_patterns
+    self.trace_reduce = x.trace_reduce
+    self.trace_visitors = x.trace_visitors
+    self.verbose = x.verbose
+    self.warn = x.warn
+    # Copies of controller patterns...
+    self.def_patterns = x.def_patterns
+    self.names_dict = x.names_dict
+    self.general_patterns = x.general_patterns
+    self.patterns_dict = x.patterns_dict
 </t>
 <t tx="ekr.20160318141204.171">def add_stub(self, d, stub):
     '''Add the stub to d, checking that it does not exist.'''
@@ -2321,6 +2456,186 @@ def do_UnaryOp(self, node):
     else:
         d[key] = stub
 </t>
+<t tx="ekr.20160318141204.172">def indent(self, s):
+    '''Return s, properly indented.'''
+    # This version of indent *is* used.
+    return '%s%s' % (' ' * 4 * self.level, s)
+
+def out(self, s):
+    '''Output the string to the console or the file.'''
+    s = self.indent(s)
+    if self.parent_stub:
+        self.parent_stub.out_list.append(s)
+    elif self.output_file:
+        self.output_file.write(s + '\n')
+    else:
+        print(s)
+</t>
+<t tx="ekr.20160318141204.173">def run(self, node):
+    '''StubTraverser.run: write the stubs in node's tree to self.output_fn.'''
+    fn = self.output_fn
+    dir_ = os.path.dirname(fn)
+    if os.path.exists(fn) and not self.overwrite:
+        print('file exists: %s' % fn)
+        return
+    if dir_ and not os.path.exists(dir_):
+        print('output directory not not found: %s' % dir_)
+        return
+    # Create parent_stub.out_list.
+    self.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
+    for z in self.prefix_lines or []:
+        self.parent_stub.out_list.append(z)
+    self.visit(node)
+    if self.update_flag:
+        self.parent_stub = self.update(fn, new_root=self.parent_stub)
+    # Output the stubs.
+    self.output_file = open(fn, 'w')
+    self.output_time_stamp()
+    self.output_stubs(self.parent_stub)
+    self.output_file.close()
+    self.output_file = None
+    self.parent_stub = None
+    if self.verbose:
+        print('wrote: %s' % fn)
+</t>
+<t tx="ekr.20160318141204.174">def output_stubs(self, stub):
+    '''Output this stub and all its descendants.'''
+    for s in stub.out_list or []:
+        # Indentation must be present when an item is added to stub.out_list.
+        if self.output_file:
+            self.output_file.write(s.rstrip() + '\n')
+        else:
+            print(s)
+    # Recursively print all children.
+    for child in stub.children:
+        self.output_stubs(child)
+</t>
+<t tx="ekr.20160318141204.175">def output_time_stamp(self):
+    '''Put a time-stamp in the output file.'''
+    if self.output_file:
+        self.output_file.write('# make_stub_files: %s\n' %
+            time.strftime("%a %d %b %Y at %H:%M:%S"))
+</t>
+<t tx="ekr.20160318141204.176">def update(self, fn, new_root):
+    '''
+    Merge the new_root tree with the old_root tree in fn (a .pyi file).
+
+    new_root is the root of the stub tree from the .py file.
+    old_root (read below) is the root of stub tree from the .pyi file.
+    
+    Return old_root, or new_root if there are any errors.
+    '''
+    s = self.get_stub_file(fn)
+    if not s or not s.strip():
+        return new_root
+    if '\t' in s:
+        # Tabs in stub files make it impossible to parse them reliably.
+        g.trace('Can not update stub files containing tabs.')
+        return new_root
+    # Read old_root from the .pyi file.
+    old_d, old_root = self.parse_stub_file(s, root_name='&lt;old-stubs&gt;')
+    if old_root:
+        # Merge new stubs into the old tree.
+        if 0:
+            print(self.trace_stubs(old_root, header='old_root'))
+            print(self.trace_stubs(new_root, header='new_root'))
+        print('***** updating stubs from %s *****' % fn)
+        self.merge_stubs(self.stubs_dict.values(), old_root, new_root)
+        # print(self.trace_stubs(old_root, header='updated_root'))
+        return old_root
+    return new_root
+</t>
+<t tx="ekr.20160318141204.177">def get_stub_file(self, fn):
+    '''Read the stub file into s.'''
+    if os.path.exists(fn):
+        try:
+            s = open(fn, 'r').read()
+        except Exception:
+            print('--update: error reading %s' % fn)
+            s = None
+        return s
+    print('--update: not found: %s' % fn)
+    return None
+</t>
+<t tx="ekr.20160318141204.178">def parse_stub_file(self, s, root_name):
+    '''
+    Parse s, the contents of a stub file, into a tree of Stubs.
+    
+    Parse by hand, so that --update can be run with Python 2.
+    '''
+    assert '\t' not in s
+    d = {}
+    root = Stub(kind='root', name=root_name)
+    indent_stack = [-1]  # To prevent the root from being popped.
+    stub_stack = [root]
+    lines = []
+    pat = re.compile(r'^([ ]*)(def|class)\s+([a-zA-Z_]+)(.*)')
+    for line in g.splitLines(s):
+        m = pat.match(line)
+        if m:
+            indent, kind, name = (len(m.group(1)), m.group(2), m.group(3))
+            old_indent = indent_stack[-1]
+            # Terminate any previous lines.
+            old_stub = stub_stack[-1]
+            old_stub.out_list.extend(lines)
+            lines = [line]
+            # Adjust the stacks.
+            if indent == old_indent:
+                stub_stack.pop()
+            elif indent &gt; old_indent:
+                indent_stack.append(indent)
+            else:  # indent &lt; old_indent
+                # The indent_stack can't underflow because
+                # indent &gt;= 0 and indent_stack[0] &lt; 0
+                assert indent &gt;= 0
+                while indent &lt;= indent_stack[-1]:
+                    indent_stack.pop()
+                    old_stub = stub_stack.pop()
+                    assert old_stub != root
+                indent_stack.append(indent)
+            # Create and push the new stub *after* adjusting the stacks.
+            assert stub_stack
+            parent = stub_stack[-1]
+            stack = [z.name for z in stub_stack[1:]]
+            parent = stub_stack[-1]
+            stub = Stub(kind, name, parent, stack)
+            self.add_stub(d, stub)
+            stub_stack.append(stub)
+        else:
+            parent = stub_stack[-1]
+            lines.append(line)
+    # Terminate the last stub.
+    old_stub = stub_stack[-1]
+    old_stub.out_list.extend(lines)
+    return d, root
+</t>
+<t tx="ekr.20160318141204.179">def merge_stubs(self, new_stubs, old_root, new_root, trace=False):
+    '''
+    Merge the new_stubs *list* into the old_root *tree*.
+    - new_stubs is a list of Stubs from the .py file.
+    - old_root is the root of the stubs from the .pyi file.
+    - new_root is the root of the stubs from the .py file.
+    '''
+    # Part 1: Delete old stubs do *not* exist in the *new* tree.
+    aList = self.check_delete(new_stubs, old_root, new_root, trace)
+        # Checks that all ancestors of deleted nodes will be deleted.
+    aList = list(reversed(self.sort_stubs_by_hierarchy(aList)))
+        # Sort old stubs so that children are deleted before parents.
+    for stub in aList:
+        if trace: g.trace('deleting  %s' % stub)
+        parent = self.find_parent_stub(stub, old_root) or old_root
+        parent.children.remove(stub)
+        assert not self.find_stub(stub, old_root), stub
+    # Part 2: Insert new stubs that *not* exist in the *old* tree.
+    aList = [z for z in new_stubs if not self.find_stub(z, old_root)]
+    aList = self.sort_stubs_by_hierarchy(aList)
+        # Sort new stubs so that parents are created before children.
+    for stub in aList:
+        if trace: g.trace('inserting %s' % stub)
+        parent = self.find_parent_stub(stub, old_root) or old_root
+        parent.children.append(stub)
+        assert self.find_stub(stub, old_root), stub
+</t>
 <t tx="ekr.20160318141204.18">def visit(self, node):
     '''Return the formatted version of an Ast node, or list of Ast nodes.'''
     if isinstance(node, (list, tuple)):
@@ -2329,15 +2644,99 @@ def do_UnaryOp(self, node):
         return 'None'
     assert isinstance(node, ast.AST), node.__class__.__name__
     method_name = 'do_' + node.__class__.__name__
-    try:
-        method = getattr(self, method_name)
-    except AttributeError:
-        return ''
-
+    # 2021/08/04: We may as well fail here.
+    method = getattr(self, method_name)
     s = method(node)
     # assert type(s) == type('abc'), (node, type(s))
-    assert g.isString(s), type(s)
+    assert g.isString(s), s.__class__.__name__
     return s
+</t>
+<t tx="ekr.20160318141204.180">def check_delete(self, new_stubs, old_root, new_root, trace):
+    '''Return a list of nodes that can be deleted.'''
+    old_stubs = self.flatten_stubs(old_root)
+    old_stubs.remove(old_root)
+    aList = [z for z in old_stubs if z not in new_stubs]
+    if trace:
+        dump_list('old_stubs', old_stubs)
+        dump_list('new_stubs', new_stubs)
+        dump_list('to-be-deleted stubs', aList)
+    delete_list = []
+    # Check that all parents of to-be-delete nodes will be deleted.
+    for z in aList:
+        z1 = z
+        for i in range(20):
+            z = z.parent
+            if not z:
+                g.trace('can not append: new root not found', z)
+                break
+            elif z == old_root:
+                delete_list.append(z1)
+                break
+            elif z not in aList:
+                g.trace("can not delete %s because of %s" % (z1, z))
+                break
+        else:
+            g.trace('can not happen: parent loop')
+    if trace:
+        dump_list('delete_list', delete_list)
+    return delete_list
+</t>
+<t tx="ekr.20160318141204.181">def flatten_stubs(self, root):
+    '''Return a flattened list of all stubs in root's tree.'''
+    aList = [root]
+    for child in root.children:
+        self.flatten_stubs_helper(child, aList)
+    return aList
+
+def flatten_stubs_helper(self, root, aList):
+    '''Append all stubs in root's tree to aList.'''
+    aList.append(root)
+    for child in root.children:
+        self.flatten_stubs_helper(child, aList)
+</t>
+<t tx="ekr.20160318141204.182">def find_parent_stub(self, stub, root):
+    '''Return stub's parent **in root's tree**.'''
+    return self.find_stub(stub.parent, root) if stub.parent else None
+</t>
+<t tx="ekr.20160318141204.183">def find_stub(self, stub, root):
+    '''Return the stub **in root's tree** that matches stub.'''
+    if stub == root:  # Must use Stub.__eq__!
+        return root  # not stub!
+    for child in root.children:
+        stub2 = self.find_stub(stub, child)
+        if stub2: return stub2
+    return None
+</t>
+<t tx="ekr.20160318141204.184">def sort_stubs_by_hierarchy(self, stubs1):
+    '''
+    Sort the list of Stubs so that parents appear before all their
+    descendants.
+    '''
+    stubs, result = stubs1[:], []
+    for i in range(50):
+        if stubs:
+            # Add all stubs with i parents to the results.
+            found = [z for z in stubs if z.level() == i]
+            result.extend(found)
+            for z in found:
+                stubs.remove(z)
+        else:
+            return result
+    g.trace('can not happen: unbounded stub levels.')
+    return []  # Abort the merge.
+</t>
+<t tx="ekr.20160318141204.185">def trace_stubs(self, stub, aList=None, header=None, level=-1):
+    '''Return a trace of the given stub and all its descendants.'''
+    indent = ' ' * 4 * max(0, level)
+    if level == -1:
+        aList = ['===== %s...\n' % (header) if header else '']
+    for s in stub.out_list:
+        aList.append('%s%s' % (indent, s.rstrip()))
+    for child in stub.children:
+        self.trace_stubs(child, level=level + 1, aList=aList)
+    if level == -1:
+        return '\n'.join(aList) + '\n'
+    return ''
 </t>
 <t tx="ekr.20160318141204.186"># 2: ClassDef(identifier name, expr* bases,
 #             stmt* body, expr* decorator_list)
@@ -2388,6 +2787,34 @@ def visit_ClassDef(self, node):
     self.context_stack.pop()
     self.class_name_stack.pop()
     self.level -= 1
+    self.parent_stub = old_stub
+</t>
+<t tx="ekr.20160318141204.187"># 2: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
+# 3: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list,
+#                expr? returns)
+
+def visit_FunctionDef(self, node):
+
+    # Create the stub in the old context.
+    old_stub = self.parent_stub
+    self.parent_stub = Stub('def', node.name, old_stub, self.context_stack)
+    self.add_stub(self.stubs_dict, self.parent_stub)
+    # Enter the new context.
+    self.returns = []
+    self.level += 1
+    self.context_stack.append(node.name)
+    for z in node.body:
+        self.visit(z)
+    self.context_stack.pop()
+    self.level -= 1
+    # Format *after* traversing
+    # if self.trace_matches or self.trace_reduce:
+        # if not self.class_name_stack:
+            # print('def %s\n' % node.name)
+    self.out('def %s(%s) -&gt; %s' % (
+        node.name,
+        self.format_arguments(node.args),
+        self.format_returns(node)))
     self.parent_stub = old_stub
 </t>
 <t tx="ekr.20160318141204.188"># arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
@@ -2441,6 +2868,97 @@ def munge_arg(self, s):
 </t>
 <t tx="ekr.20160318141204.19">
 # Contexts...
+</t>
+<t tx="ekr.20160318141204.190">def format_returns(self, node):
+    '''
+    Calculate the return type:
+    - Return None if there are no return statements.
+    - Patterns in [Def Name Patterns] override all other patterns.
+    - Otherwise, return a list of return values.
+    '''
+    name = self.get_def_name(node)
+    raw = [self.raw_format(z) for z in self.returns]
+    # Allow StubFormatter.do_Return to do the hack.
+    r = [self.format(z) for z in self.returns]
+    ### g.trace('1', raw, r)
+    # Step 1: Return None if there are no return statements.
+    if not [z for z in self.returns if z.value is not None]:
+        empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
+        tail = ': ...' if empty else ':'
+        return 'None' + tail
+    # Step 2: [Def Name Patterns] override all other patterns.
+    for pattern in self.def_patterns:
+        found, s = pattern.match(name)
+        ### g.trace('2', found, name, pattern, s)
+        if found:
+            return s + ': ...'
+    # Step 3: remove recursive calls.
+    raw, r = self.remove_recursive_calls(name, raw, r)
+    ### g.trace('3', raw, r)
+    # Step 4: Calculate return types.
+    return self.format_return_expressions(node, name, raw, r)
+</t>
+<t tx="ekr.20160318141204.191">def format_return_expressions(self, node, name, raw_returns, reduced_returns):
+    '''
+    aList is a list of maximally reduced return expressions.
+    For each expression e in Alist:
+    - If e is a single known type, add e to the result.
+    - Otherwise, add Any # e to the result.
+    Return the properly indented result.
+    '''
+    assert len(raw_returns) == len(reduced_returns)
+    lws = '\n' + ' ' * 4
+    n = len(raw_returns)
+    known = all(is_known_type(e) for e in reduced_returns)
+    empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
+    tail = ': ...' if empty else ':'
+    if not known or self.verbose:
+        # First, generate the return lines.
+        aList = []
+        for i in range(n):
+            e, raw = reduced_returns[i], raw_returns[i]
+            known = ' ' if is_known_type(e) else '?'
+            aList.append('# %s %s: %s' % (' ', i, raw))
+            aList.append('# %s %s: return %s' % (known, i, e))
+        results = ''.join([lws + self.indent(z) for z in aList])
+        # Put the return lines in their proper places.
+        if known:
+            s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
+            return s + tail + results
+        return 'Any' + tail + results
+    s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
+    return s + tail
+</t>
+<t tx="ekr.20160318141204.192">def get_def_name(self, node):
+    '''Return the representaion of a function or method name.'''
+    if self.class_name_stack:
+        name = '%s.%s' % (self.class_name_stack[-1], node.name)
+        # All ctors should return None
+        if node.name == '__init__':
+            name = 'None'
+    else:
+        name = node.name
+    return name
+</t>
+<t tx="ekr.20160318141204.193">def remove_recursive_calls(self, name, raw, reduced):
+    '''Remove any recursive calls to name from both lists.'''
+    # At present, this works *only* if the return is nothing but the recursive call.
+    assert len(raw) == len(reduced)
+    pattern = Pattern('%s(*)' % name)
+    n = len(reduced)
+    raw_result, reduced_result = [], []
+    for i in range(n):
+        if pattern.match_entire_string(reduced[i]):
+            pass
+        else:
+            raw_result.append(raw[i])
+            reduced_result.append(reduced[i])
+    return raw_result, reduced_result
+</t>
+<t tx="ekr.20160318141204.194">def visit_Return(self, node):
+
+    self.returns.append(node)
+        # New: return the entire node, not node.value.
 </t>
 <t tx="ekr.20160318141204.195">
 
@@ -3387,11 +3905,13 @@ class UnsupportedAlgorithm(Exception):
     st.output_stubs(st.parent_stub)
     # Test.
     lines = g.splitLines(st.output_file.getvalue())
-    self.assertEqual(lines, expected)</t>
+    self.assertEqual(lines, expected)
+</t>
 <t tx="ekr.20200402143651.1"></t>
 <t tx="ekr.20210803055042.1">class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     """Unit tests for make_stub_files.py"""
-    @others</t>
+    @others
+</t>
 <t tx="ekr.20210803060400.1"></t>
 <t tx="ekr.20210803131252.1">@language rest
 @wrap
@@ -3405,7 +3925,6 @@ https://github.com/edreamleo/make-stub-files/issues/13
 
 https://github.com/edreamleo/make-stub-files/issues/13
 
-*** Remove all bug*.pyi files.
 *** Fix failing unit test.
 *** Create coverage tests.
 
@@ -3429,7 +3948,7 @@ g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210804025215.1">c.backup_helper(sub_dir='MakeStubFiles')
 </t>
 <t tx="ekr.20210804060105.1">g.cls()
-test = '.TestMakeStubFiles.test_bug3' # Run all tests.
+test = '' # '.TestMakeStubFiles.test_bug3' # Run all tests.
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210804070157.1"></t>
@@ -3727,5 +4246,7 @@ while p:
 c.redraw()
 </t>
 <t tx="ekr.20210804161223.1"># Found 3 marked nodes</t>
+<t tx="ekr.20210804214511.1">def do_Constant(self, node):  # #13
+    return repr(node.value)</t>
 </tnodes>
 </leo_file>
