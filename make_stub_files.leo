@@ -25,24 +25,6 @@
 <v t="ekr.20160214043351.1"><vh>rt.make_optional</vh></v>
 </v>
 </v>
-<v t="ekr.20180706073205.1"><vh>To do</vh>
-<v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
-<v t="ekr.20180901050914.1"><vh>Changed...</vh>
-<v t="ekr.20160318141204.186"><vh>st.visit_ClassDef</vh></v>
-<v t="ekr.20160318141204.20"><vh>f.ClassDef (make_stub_files)</vh></v>
-</v>
-</v>
-<v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh>
-<v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
-<v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
-</v>
-</v>
-<v t="ekr.20200402143651.1"><vh>----- errors</vh>
-<v t="ekr.20160318141204.171"><vh>st.add_stub</vh></v>
-<v t="ekr.20160318141204.110"><vh>pattern.match_balanced</vh></v>
-</v>
-<v t="ekr.20210805054028.1"><vh>=== #19: revise readme.md</vh></v>
-</v>
 <v t="ekr.20160128104714.1"><vh>Files</vh>
 <v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
 <v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
@@ -64,6 +46,23 @@
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 <v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e362e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
 </v>
+<v t="ekr.20180706073205.1"><vh>To do</vh>
+<v t="ekr.20180706071540.1"><vh>#2: Fails to generate valid stubs for empty classes</vh>
+<v t="ekr.20180901050914.1"><vh>Changed...</vh>
+<v t="ekr.20160318141204.186"><vh>st.visit_ClassDef</vh></v>
+<v t="ekr.20160318141204.20"><vh>f.ClassDef (make_stub_files)</vh></v>
+</v>
+</v>
+<v t="ekr.20180831102536.1"><vh>#3: Creates duplicate annotations for function arguments that are already annotated</vh>
+<v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
+<v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
+</v>
+</v>
+<v t="ekr.20200402143651.1"><vh>----- errors</vh>
+<v t="ekr.20160318141204.171"><vh>st.add_stub</vh></v>
+<v t="ekr.20160318141204.110"><vh>pattern.match_balanced</vh></v>
+</v>
+<v t="ekr.20210805054028.1"><vh>=== #19: revise readme.md</vh></v>
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh></v>
 <v t="ekr.20210803131439.1"><vh>=== #10, #11, #13: bug and unit tests</vh>
 <v t="ekr.20210804153200.1"><vh>script convert-at-test</vh></v>
@@ -289,6 +288,7 @@
 <v t="ekr.20210805051331.1"><vh>--- the bug fix</vh>
 <v t="ekr.20160318141204.18"></v>
 <v t="ekr.20210804214511.1"></v>
+</v>
 </v>
 </v>
 </vnodes>
@@ -3585,8 +3585,6 @@ class UnsupportedAlgorithm(Exception):
 https://github.com/edreamleo/make-stub-files/issues/10
 https://github.com/edreamleo/make-stub-files/issues/11
 https://github.com/edreamleo/make-stub-files/issues/13
-
-- Why are there two .cfg files??
 
 @language python
 @nosearch</t>
