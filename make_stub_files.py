@@ -162,12 +162,12 @@ class AstFormatter:
         name = node.name  # Only a plain string is valid.
         bases = [self.visit(z) for z in node.bases] if node.bases else []
         if getattr(node, 'keywords', None):  # Python 3
-            for keyword in node.keywords:
+            for keyword in node.keywords:  ###
                 bases.append('%s=%s' % (keyword.arg, self.visit(keyword.value)))
         if getattr(node, 'starargs', None):  # Python 3
-            bases.append('*%s', self.visit(node.starargs))
+            bases.append('*%s', self.visit(node.starargs))  ###
         if getattr(node, 'kwargs', None):  # Python 3
-            bases.append('*%s', self.visit(node.kwargs))
+            bases.append('*%s', self.visit(node.kwargs))  ###
         #
         # Fix issue #2: look ahead to see if there are any functions in this class.
         empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
@@ -186,14 +186,13 @@ class AstFormatter:
 
     #@+node:ekr.20160318141204.21: *4* f.FunctionDef
     # 2: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
-    # 3: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list,
-    #                expr? returns)
+    # 3: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
 
     def do_FunctionDef(self, node):
         """Format a FunctionDef node."""
         result = []
         if node.decorator_list:
-            for z in node.decorator_list:
+            for z in node.decorator_list:  ###
                 result.append('@%s\n' % self.visit(z))
         name = node.name  # Only a plain string is valid.
         args = self.visit(node.args) if node.args else ''
@@ -238,7 +237,7 @@ class AstFormatter:
     #@+node:ekr.20160318141204.27: *4* f.Expression
     def do_Expression(self, node):
         """An inner expression: do not indent."""
-        return '%s\n' % self.visit(node.body)
+        return '%s\n' % self.visit(node.body)  ###
 
     #@+node:ekr.20160318141204.28: *4* f.GeneratorExp
     def do_GeneratorExp(self, node):
@@ -281,7 +280,7 @@ class AstFormatter:
         # Assign default values to the last args.
         args2 = []
         n_plain = len(args) - len(defaults)
-        for i in range(len(args)):
+        for i in range(len(args)):  ###
             if i < n_plain:
                 args2.append(args[i])
             else:
@@ -290,7 +289,7 @@ class AstFormatter:
             args = [self.visit(z) for z in node.kwonlyargs]
             defaults = [self.visit(z) for z in node.kw_defaults]
             n_plain = len(args) - len(defaults)
-            for i in range(len(args)):
+            for i in range(len(args)):  ###
                 if i < n_plain:
                     args2.append(args[i])
                 else:
@@ -323,7 +322,7 @@ class AstFormatter:
             node.attr)  # Don't visit node.attr: it is always a string.
 
     #@+node:ekr.20160318141204.34: *4* f.Bytes
-    def do_Bytes(self, node):  # Python 3.x only.
+    def do_Bytes(self, node):  # pragma: no cover (obsolete)
         return str(node.s)
 
     #@+node:ekr.20160318141204.35: *4* f.Call & f.keyword
@@ -334,11 +333,11 @@ class AstFormatter:
         args = [self.visit(z) for z in node.args]
         for z in node.keywords:
             # Calls f.do_keyword.
-            args.append(self.visit(z))
+            args.append(self.visit(z))  ###
         if getattr(node, 'starargs', None):
-            args.append('*%s' % (self.visit(node.starargs)))
+            args.append('*%s' % (self.visit(node.starargs)))  ###
         if getattr(node, 'kwargs', None):
-            args.append('**%s' % (self.visit(node.kwargs)))
+            args.append('**%s' % (self.visit(node.kwargs)))  ###
         args = [z for z in args if z]  # Kludge: Defensive coding.
         return '%s(%s)' % (func, ','.join(args))
 
@@ -356,7 +355,7 @@ class AstFormatter:
 
         ### g.trace(node.value, node.value.__class__.__name__)
         if node.value.__class__.__name__ == 'ellipsis':
-            return '...'
+            return '...'  ###
         return repr(node.value)
     #@+node:ekr.20160318141204.37: *4* f.comprehension
     def do_comprehension(self, node):
@@ -390,15 +389,15 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.39: *4* f.Ellipsis
-    def do_Ellipsis(self, node):
+    def do_Ellipsis(self, node):  # pragma: no cover (obsolete)
         return '...'
     #@+node:ekr.20160318141204.40: *4* f.ExtSlice
     def do_ExtSlice(self, node):
-        return ':'.join([self.visit(z) for z in node.dims])
+        return ':'.join([self.visit(z) for z in node.dims])  ###
 
     #@+node:ekr.20160318141204.41: *4* f.Index
     def do_Index(self, node):
-        return self.visit(node.value)
+        return self.visit(node.value)  ###
 
     #@+node:ekr.20210806005225.1: *4* f.FormattedValue & JoinedStr
     # FormattedValue(expr value, int? conversion, expr? format_spec)
@@ -431,7 +430,7 @@ class AstFormatter:
     def do_Name(self, node):
         return node.id
 
-    def do_NameConstant(self, node):  # Python 3 only.
+    def do_NameConstant(self, node):  # pragma: no cover (obsolete)
         s = repr(node.value)
         return 'bool' if s in ('True', 'False') else s
 
@@ -451,9 +450,8 @@ class AstFormatter:
         if getattr(node, 'upper', None) is not None:
             upper = self.visit(node.upper)
         if getattr(node, 'step', None) is not None:
-            step = self.visit(node.step)
-        if step:
-            return '%s:%s:%s' % (lower, upper, step)
+            step = self.visit(node.step) ###
+            return '%s:%s:%s' % (lower, upper, step) ###
         return '%s:%s' % (lower, upper)
 
     #@+node:ekr.20160318141204.48: *4* f.Str
@@ -556,12 +554,12 @@ class AstFormatter:
 
     #@+node:ekr.20160318141204.62: *4* f.Continue
     def do_Continue(self, node):
-        return self.indent('continue\n')
+        return self.indent('continue\n')  ###
 
     #@+node:ekr.20160318141204.63: *4* f.Delete
     def do_Delete(self, node):
-        targets = [self.visit(z) for z in node.targets]
-        return self.indent('del %s\n' % ','.join(targets))
+        targets = [self.visit(z) for z in node.targets]  ###
+        return self.indent('del %s\n' % ','.join(targets))  ###
 
     #@+node:ekr.20160318141204.64: *4* f.ExceptHandler
     def do_ExceptHandler(self, node):
@@ -569,8 +567,8 @@ class AstFormatter:
         result.append(self.indent('except'))
         if getattr(node, 'type', None):
             result.append(' %s' % self.visit(node.type))
-        if getattr(node, 'name', None):
-            if isinstance(node.name, ast.AST):
+        if getattr(node, 'name', None):  ###
+            if isinstance(node.name, ast.AST):  
                 result.append(' as %s' % self.visit(node.name))
             else:
                 result.append(' as %s' % node.name)  # Python 3.x.
@@ -653,7 +651,7 @@ class AstFormatter:
             if self.kind(ast2) == 'alias':
                 data = ast2.name, ast2.asname
                 result.append(data)
-            else:
+            else:  # pragma: no cover (defensive)
                 print('unsupported kind in Import.names list', self.kind(ast2))
         return result
 
@@ -662,7 +660,7 @@ class AstFormatter:
         names = []
         for fn, asname in self.get_import_names(node):
             if asname:
-                names.append('%s as %s' % (fn, asname))
+                names.append('%s as %s' % (fn, asname))  ###
             else:
                 names.append(fn)
         return self.indent('from %s import %s\n' % (
@@ -672,8 +670,7 @@ class AstFormatter:
     # Nonlocal(identifier* names)
 
     def do_Nonlocal(self, node):
-
-        return self.indent('nonlocal %s\n' % ', '.join(node.names))
+        return self.indent('nonlocal %s\n' % ', '.join(node.names))  ###
     #@+node:ekr.20160318141204.73: *4* f.Pass
     def do_Pass(self, node):
         return self.indent('pass\n')
@@ -691,7 +688,7 @@ class AstFormatter:
             ','.join(vals)))
 
     #@+node:ekr.20160318141204.75: *4* f.Raise
-    def do_Raise(self, node):
+    def do_Raise(self, node):  ###
         args = []
         for attr in ('type', 'inst', 'tback'):
             if getattr(node, attr, None) is not None:
@@ -712,8 +709,7 @@ class AstFormatter:
     # Starred(expr value, expr_context ctx)
 
     def do_Starred(self, node):
-
-        return '*' + self.visit(node.value)
+        return '*' + self.visit(node.value)  ###
     #@+node:ekr.20160318141204.79: *4* f.Try (Python 3)
     # Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
 
@@ -728,7 +724,7 @@ class AstFormatter:
         if node.handlers:
             for z in node.handlers:
                 result.append(self.visit(z))
-        if node.orelse:
+        if node.orelse:  ###
             result.append(self.indent('else:\n'))
             for z in node.orelse:
                 self.level += 1
@@ -784,7 +780,7 @@ class AstFormatter:
             self.level += 1
             result.append(self.visit(z))
             self.level -= 1
-        if node.orelse:
+        if node.orelse:  ###
             result.append('else:\n')
             for z in node.orelse:
                 self.level += 1
@@ -804,8 +800,8 @@ class AstFormatter:
         result.append(self.indent('with '))
         vars_list = []
         if getattr(node, 'context_expression', None):
-            result.append(self.visit(node.context_expresssion))
-        if getattr(node, 'optional_vars', None):
+            result.append(self.visit(node.context_expresssion))  ###
+        if getattr(node, 'optional_vars', None):  ###
             try:
                 for z in node.optional_vars:
                     vars_list.append(self.visit(z))
@@ -816,9 +812,9 @@ class AstFormatter:
                 result.append(self.visit(item.context_expr))
                 if getattr(item, 'optional_vars', None):
                     try:
-                        for z in item.optional_vars:
+                        for z in item.optional_vars: # pragma: no cover (expect TypeError)
                             vars_list.append(self.visit(z))
-                    except TypeError:  # Not iterable.
+                    except TypeError:
                         vars_list.append(self.visit(item.optional_vars))
         result.append(','.join(vars_list))
         result.append(':\n')
@@ -829,7 +825,7 @@ class AstFormatter:
         result.append('\n')
         return ''.join(result)
     #@+node:ekr.20160318141204.84: *4* f.Yield
-    def do_Yield(self, node):
+    def do_Yield(self, node):  ###
         if getattr(node, 'value', None):
             return self.indent('yield %s\n' % (
                 self.visit(node.value)))
@@ -838,9 +834,7 @@ class AstFormatter:
     # YieldFrom(expr value)
 
     def do_YieldFrom(self, node):
-
-        return self.indent('yield from %s\n' % (
-            self.visit(node.value)))
+        return self.indent(f"yield from {self.visit(node.value)}\n")  ###
     #@+node:ekr.20160318141204.86: *3* f.Utils
 
     # Utils...
@@ -922,7 +916,7 @@ class AstArgFormatter(AstFormatter):
     def do_BoolOp(self, node):  # pragma: no cover (Python 2.x only)
         return 'bool'
 
-    def do_Bytes(self, node):    # pragma: no cover (obsolete)
+    def do_Bytes(self, node):  # pragma: no cover (obsolete)
         return 'bytes'
 
     def do_Name(self, node):  # pragma: no cover (python 2)
@@ -1183,7 +1177,7 @@ class Controller:
     def find_pattern_ops(self, pattern):
         """Return a list of operators in pattern.find_s."""
         trace = False or self.trace_patterns
-        if pattern.is_regex():
+        if pattern.is_regex():  ###
             # Add the pattern to the regex patterns list.
             g.trace(pattern)
             self.regex_patterns.append(pattern)
@@ -1214,8 +1208,9 @@ class Controller:
         # Handle the keys9 list very carefully.
         for op in keys9:
             target = ' %s ' % op
-            if s.find(target) > -1:
-                ops.append(op)
+            ### if s.find(target) > -1:
+            if target in s:
+                ops.append(op)  ###
                 break  # Only one match allowed.
         if trace and ops: g.trace(s1, ops)
         return ops
@@ -1275,12 +1270,12 @@ class Controller:
                 # Enter the name in self.names_dict.
                 name = pattern.find_s
                 # Special case for 'number'
-                if name == 'number':
+                if name == 'number':  ###
                     aList = self.patterns_dict.get('Num', [])
                     aList.append(pattern)
                     self.patterns_dict['Num'] = aList
                 elif name in self.names_dict:
-                    g.trace('duplicate pattern', pattern)
+                    g.trace('duplicate pattern', pattern)  # pragma: no cover (user error)
                 else:
                     self.names_dict[name] = pattern.repl_s
         if 0:
@@ -1307,13 +1302,13 @@ class Controller:
                 value = parser.get(section_name, key)
                 # A kludge: strip leading \\ from patterns.
                 if key.startswith(r'\\'):
-                    key = '[' + key[2:]
+                    key = '[' + key[2:]  ###
                 if key in seen:
-                    g.trace('duplicate key', key)
+                    g.trace('duplicate key', key)  # pragma: no cover (user error)
                 else:
                     seen.add(key)
                     aList.append(Pattern(key, value))
-            if trace:
+            if trace:  # pragma: no cover
                 g.trace('%s...\n' % section_name)
                 for z in aList:
                     print(z)
@@ -1705,7 +1700,7 @@ class Pattern:
         m = self.regex.match(s)
         return m and m.group(0) == s
     #@+node:ekr.20160318141204.113: *3* pattern.replace & helpers
-    def replace(self, m, s):
+    def replace(self, m, s):  ###
         """Perform any kind of replacement."""
         if self.is_balanced():
             start, end = m
@@ -1780,14 +1775,14 @@ class ReduceTypes:
             if s2 == s:
                 return True
             if Pattern(s2 + '(*)', s).match_entire_string(s):
-                return True
-        if s.startswith('[') and s.endswith(']'):
+                return True  ###
+        if s.startswith('[') and s.endswith(']'):  ###
             inner = s[1:-1]
             return self.is_known_type(inner) if inner else True
-        if s.startswith('(') and s.endswith(')'):
+        if s.startswith('(') and s.endswith(')'):  ###
             inner = s[1:-1]
             return self.is_known_type(inner) if inner else True
-        if s.startswith('{') and s.endswith('}'):
+        if s.startswith('{') and s.endswith('}'):  ###
             return True
         table = (
             # Pep 484: https://www.python.org/dev/peps/pep-0484/
@@ -2087,7 +2082,7 @@ class StubFormatter(AstFormatter):
         """This represents a string constant."""
         return 'str'
     #@+node:ekr.20160318141204.155: *4* sf.Dict
-    def do_Dict(self, node):
+    def do_Dict(self, node):  ###
         result = []
         keys = [self.visit(z) for z in node.keys]
         values = [self.visit(z) for z in node.values]
@@ -2099,7 +2094,7 @@ class StubFormatter(AstFormatter):
                 items.append('%s:%s' % (keys[i], values[i]))
             result.append(', '.join(items))
             result.append('}')
-        else:
+        else:  # pragma: no cover (defensive)
             print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
                 repr(keys), repr(values)))
         return 'Dict[%s]' % ''.join(result) if result else 'Dict'
@@ -3189,7 +3184,9 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     #@+node:ekr.20210805093615.1: *3* test file: make_stub_files.py
     def test_file_msb(self):
         """Run make_stub_files on itself."""
-        if 1:
+        if 0:
+            self.skipTest('Prevents proper coverage data')
+        elif 1:
             # Actually creates stubs.
             # f"python {msf} -c {cfg} -o -v {src}"
             directory = os.path.dirname(__file__)
