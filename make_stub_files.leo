@@ -50,17 +50,10 @@
 <v t="ekr.20160318141204.12"><vh>function: pdb</vh></v>
 <v t="ekr.20210806132036.1"><vh>&lt;&lt; define description &gt;&gt;</vh></v>
 </v>
-<v t="ekr.20210805085843.1"><vh>top-level functions</vh>
-<v t="ekr.20160318141204.8"><vh>function: dump</vh></v>
-<v t="ekr.20160318141204.9"><vh>function: dump_dict</vh></v>
-<v t="ekr.20160318141204.10"><vh>function: dump_list</vh></v>
-<v t="ekr.20210805143805.1"><vh>function: finalize</vh></v>
-<v t="ekr.20160318141204.4"><vh>function: is_known_type</vh></v>
-<v t="ekr.20160318141204.11"><vh>function: main</vh></v>
-<v t="ekr.20160318141204.6"><vh>function: reduce_types</vh></v>
-<v t="ekr.20160318141204.13"><vh>function: truncate</vh></v>
-</v>
 <v t="ekr.20210805061637.1"></v>
+<v t="ekr.20210806134651.1"><vh>--- recent</vh>
+<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
+</v>
 <v t="ekr.20210806010517.1"><vh>--- visitors</vh>
 <v t="ekr.20160318141204.31"><vh>f.arguments</vh></v>
 <v t="ekr.20160318141204.20"><vh>f.ClassDef</vh></v>
@@ -165,7 +158,7 @@
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
 <v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
+<v t="ekr.20160318141204.131"></v>
 <v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
@@ -294,7 +287,6 @@
 </v>
 </v>
 </v>
-<v t="ekr.20210805144859.1"></v>
 <v t="ekr.20210806081329.1"><vh>--- missing tests</vh>
 <v t="ekr.20160318141204.31"></v>
 <v t="ekr.20160318141204.64"></v>
@@ -327,7 +319,7 @@
 <v t="ekr.20160318141204.194"></v>
 </v>
 <v t="ekr.20210805090943.1"></v>
-<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20210805144859.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -996,13 +988,6 @@ the config file.
 
         make_stub_files -c myConfigFile.cfg -o
 </t>
-<t tx="ekr.20160318141204.10">def dump_list(title, aList):  # pragma: no cover
-    """Dump a list with a header."""
-    dump(title)
-    for z in aList:
-        print(z)
-    print('')
-</t>
 <t tx="ekr.20160318141204.102">class Pattern:
     """
     A class representing regex or balanced patterns.
@@ -1110,17 +1095,6 @@ __str__ = __repr__
         assert progress &lt; i
     found = i &lt;= len(s) and j == len(pattern)
     return i if found else None
-</t>
-<t tx="ekr.20160318141204.11">def main():  # pragma: no cover
-    """
-    The driver for the stand-alone version of make-stub-files.
-    All options come from the configuration file.
-    """
-    controller = Controller()
-    controller.scan_command_line()
-    controller.scan_options()
-    for fn in controller.files:
-        controller.make_stub_file(fn)
 </t>
 <t tx="ekr.20160318141204.110">def match_balanced(self, delim, s, i):
     """
@@ -1497,10 +1471,6 @@ def make_stub_file(self, fn):  # pragma: no cover
     # Process s.
     node = ast.parse(s, filename=fn, mode='exec')
     StubTraverser(controller=self).run(node)
-</t>
-<t tx="ekr.20160318141204.13">def truncate(s, n):
-    """Return s truncated to n characters."""
-    return s if len(s) &lt;= n else s[: n - 3] + '...'
 </t>
 <t tx="ekr.20160318141204.131">def scan_command_line(self):  # pragma: no cover
     """Set ivars from command-line arguments."""
@@ -2907,14 +2877,6 @@ def do_keyword(self, node):
 <t tx="ekr.20160318141204.39">def do_Ellipsis(self, node):  # pragma: no cover (obsolete)
     return '...'
 </t>
-<t tx="ekr.20160318141204.4">def is_known_type(s):
-    """
-    Return True if s is nothing but a single known type.
-    Recursively test inner types in square brackets.
-    """
-    return ReduceTypes().is_known_type(s)
-
-</t>
 <t tx="ekr.20160318141204.40">def do_ExtSlice(self, node):
     return ':'.join([self.visit(z) for z in node.dims])  ###
 
@@ -3064,15 +3026,6 @@ def do_Subscript(self, node):
     return self.indent('%s = %s\n' % (
         '='.join([self.visit(z) for z in node.targets]),
         self.visit(node.value)))
-
-</t>
-<t tx="ekr.20160318141204.6">def reduce_types(aList, name=None, trace=False):
-    """
-    Return a string containing the reduction of all types in aList.
-    The --trace-reduce option sets trace=True.
-    If present, name is the function name or class_name.method_name.
-    """
-    return ReduceTypes(aList, name, trace).reduce_types()
 
 </t>
 <t tx="ekr.20160318141204.60">def do_AugAssign(self, node):
@@ -3271,12 +3224,6 @@ def do_Try(self, node):  # Python 3
             self.level -= 1
     return ''.join(result)
 </t>
-<t tx="ekr.20160318141204.8">def dump(title, s=None):  # pragma: no cover
-    if s:
-        print('===== %s...\n%s\n' % (title, s.rstrip()))
-    else:
-        print('===== %s...\n' % title)
-</t>
 <t tx="ekr.20160318141204.80">def do_TryExcept(self, node):  # pragma: no cover (python 2)
     result = []
     result.append(self.indent('try:\n'))
@@ -3434,14 +3381,6 @@ def op_name(self, node, strict=True):
     name = d.get(self.kind(node), '&lt;%s&gt;' % node.__class__.__name__)
     if strict: assert name, self.kind(node)
     return name
-</t>
-<t tx="ekr.20160318141204.9">def dump_dict(title, d):  # pragma: no cover
-    """Dump a dictionary with a header."""
-    dump(title)
-    for z in sorted(d):
-        print('%30s %s' % (z, d.get(z)))
-    print('')
-
 </t>
 <t tx="ekr.20160318141204.90">class AstArgFormatter(AstFormatter):
     """
@@ -3895,7 +3834,6 @@ https://github.com/edreamleo/make-stub-files/issues/18
 <t tx="ekr.20210805061637.1"></t>
 <t tx="ekr.20210805061856.1"></t>
 <t tx="ekr.20210805061902.1"></t>
-<t tx="ekr.20210805085843.1"></t>
 <t tx="ekr.20210805090003.1"></t>
 <t tx="ekr.20210805090544.1"></t>
 <t tx="ekr.20210805090943.1">def test_ast_formatter_class(self):
@@ -3953,10 +3891,6 @@ https://github.com/edreamleo/make-stub-files/issues/18
             controller.make_stub_file(fn)
 </t>
 <t tx="ekr.20210805102238.1"></t>
-<t tx="ekr.20210805143805.1">def finalize(fn):
-    """Finalize and regularize a filename."""
-    return os.path.normpath(os.path.abspath(os.path.expanduser(fn)))
-</t>
 <t tx="ekr.20210805144859.1"># A sequence of possibly multi-line strings.
 
 # All tests should match the expected formatted output.
@@ -4014,5 +3948,6 @@ converts all strings to "str". This preprocessing simplifies pattern matching.
 See README.md for examples.
 """
 )</t>
+<t tx="ekr.20210806134651.1"></t>
 </tnodes>
 </leo_file>
