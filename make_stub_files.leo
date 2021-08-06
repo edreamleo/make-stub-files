@@ -49,7 +49,6 @@
 <v t="ekr.20210805090003.1"><vh>--- no longer used</vh>
 <v t="ekr.20160318141204.12"><vh>function: pdb</vh></v>
 </v>
-<v t="ekr.20210805061637.1"></v>
 <v t="ekr.20210805085843.1"><vh>top-level functions</vh>
 <v t="ekr.20160318141204.8"><vh>function: dump</vh></v>
 <v t="ekr.20160318141204.9"><vh>function: dump_dict</vh></v>
@@ -61,91 +60,6 @@
 <v t="ekr.20160318141204.13"><vh>function: truncate</vh></v>
 </v>
 <v t="ekr.20210805102238.1"><vh>--- classes</vh>
-<v t="ekr.20160318141204.14"><vh> class AstFormatter</vh>
-<v t="ekr.20160318141204.15"><vh> f.Entries</vh>
-<v t="ekr.20160318141204.17"><vh>f.format</vh></v>
-<v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
-</v>
-<v t="ekr.20160318141204.19"><vh>f.Contexts</vh>
-<v t="ekr.20160318141204.20"><vh>f.ClassDef (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.21"><vh>f.FunctionDef (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.22"><vh>f.Interactive</vh></v>
-<v t="ekr.20160318141204.23"><vh>f.Module</vh></v>
-<v t="ekr.20160318141204.24"><vh>f.Lambda</vh></v>
-</v>
-<v t="ekr.20160318141204.25"><vh>f.Expressions</vh>
-<v t="ekr.20160318141204.26"><vh>f.Expr</vh></v>
-<v t="ekr.20160318141204.27"><vh>f.Expression</vh></v>
-<v t="ekr.20160318141204.28"><vh>f.GeneratorExp</vh></v>
-<v t="ekr.20160318141204.29"><vh>f.ctx nodes</vh></v>
-</v>
-<v t="ekr.20160318141204.30"><vh>f.Operands</vh>
-<v t="ekr.20160318141204.31"><vh>f.arguments (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.32"><vh>f.arg (Python3 only) (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.33"><vh>f.Attribute</vh></v>
-<v t="ekr.20160318141204.34"><vh>f.Bytes</vh></v>
-<v t="ekr.20160318141204.35"><vh>f.Call &amp; f.keyword</vh>
-<v t="ekr.20160318141204.36"><vh>f.keyword</vh></v>
-</v>
-<v t="ekr.20210804214511.1"><vh>f.Constant</vh></v>
-<v t="ekr.20160318141204.37"><vh>f.comprehension</vh></v>
-<v t="ekr.20160318141204.38"><vh>f.Dict</vh></v>
-<v t="ekr.20160318141204.39"><vh>f.Ellipsis</vh></v>
-<v t="ekr.20160318141204.40"><vh>f.ExtSlice</vh></v>
-<v t="ekr.20160318141204.41"><vh>f.Index</vh></v>
-<v t="ekr.20160318141204.42"><vh>f.List</vh></v>
-<v t="ekr.20160318141204.43"><vh>f.ListComp</vh></v>
-<v t="ekr.20160318141204.44"><vh>f.Name &amp; NameConstant</vh></v>
-<v t="ekr.20160318141204.45"><vh>f.Num</vh></v>
-<v t="ekr.20160318141204.46"><vh>f.Repr</vh></v>
-<v t="ekr.20160318141204.47"><vh>f.Slice</vh></v>
-<v t="ekr.20160318141204.48"><vh>f.Str</vh></v>
-<v t="ekr.20160318141204.49"><vh>f.Subscript</vh></v>
-<v t="ekr.20160318141204.50"><vh>f.Tuple</vh></v>
-</v>
-<v t="ekr.20160318141204.51"><vh>f.Operators</vh>
-<v t="ekr.20160318141204.52"><vh>f.BinOp</vh></v>
-<v t="ekr.20160318141204.53"><vh>f.BoolOp</vh></v>
-<v t="ekr.20160318141204.54"><vh>f.Compare</vh></v>
-<v t="ekr.20160318141204.55"><vh>f.UnaryOp</vh></v>
-<v t="ekr.20160318141204.56"><vh>f.ifExp (ternary operator)</vh></v>
-</v>
-<v t="ekr.20160318141204.57"><vh>f.Statements</vh>
-<v t="ekr.20160318141204.58"><vh>f.Assert</vh></v>
-<v t="ekr.20160318141204.59"><vh>f.Assign</vh></v>
-<v t="ekr.20160318141204.60"><vh>f.AugAssign</vh></v>
-<v t="ekr.20160318141204.61"><vh>f.Break</vh></v>
-<v t="ekr.20160318141204.62"><vh>f.Continue</vh></v>
-<v t="ekr.20160318141204.63"><vh>f.Delete</vh></v>
-<v t="ekr.20160318141204.64"><vh>f.ExceptHandler</vh></v>
-<v t="ekr.20160318141204.65"><vh>f.Exec</vh></v>
-<v t="ekr.20160318141204.66"><vh>f.For</vh></v>
-<v t="ekr.20160318141204.67"><vh>f.Global</vh></v>
-<v t="ekr.20160318141204.68"><vh>f.If</vh></v>
-<v t="ekr.20160318141204.69"><vh>f.Import &amp; helper</vh>
-<v t="ekr.20160318141204.70"><vh>f.get_import_names</vh></v>
-</v>
-<v t="ekr.20160318141204.71"><vh>f.ImportFrom</vh></v>
-<v t="ekr.20160318141204.72"><vh>f.Nonlocal (Python 3)</vh></v>
-<v t="ekr.20160318141204.73"><vh>f.Pass</vh></v>
-<v t="ekr.20160318141204.74"><vh>f.Print</vh></v>
-<v t="ekr.20160318141204.75"><vh>f.Raise</vh></v>
-<v t="ekr.20160318141204.76"><vh>f.Return</vh></v>
-<v t="ekr.20160318141204.77"><vh>f.Starred (Python 3)</vh></v>
-<v t="ekr.20160318141204.79"><vh>f.Try (Python 3)</vh></v>
-<v t="ekr.20160318141204.80"><vh>f.TryExcept</vh></v>
-<v t="ekr.20160318141204.81"><vh>f.TryFinally</vh></v>
-<v t="ekr.20160318141204.82"><vh>f.While</vh></v>
-<v t="ekr.20160318141204.83"><vh>f.With (make_stub_files)</vh></v>
-<v t="ekr.20160318141204.84"><vh>f.Yield</vh></v>
-<v t="ekr.20160318141204.85"><vh>f.YieldFrom (Python 3)</vh></v>
-</v>
-<v t="ekr.20160318141204.86"><vh>f.Utils</vh>
-<v t="ekr.20160318141204.87"><vh>f.kind</vh></v>
-<v t="ekr.20160318141204.88"><vh>f.indent</vh></v>
-<v t="ekr.20160318141204.89"><vh>f.op_name</vh></v>
-</v>
-</v>
 <v t="ekr.20160318141204.90"><vh>class AstArgFormatter (AstFormatter)</vh>
 <v t="ekr.20160318141204.91"><vh>sf.Constants &amp; Name</vh></v>
 </v>
@@ -226,13 +140,114 @@
 </v>
 </v>
 </v>
+<v t="ekr.20210805061637.1"></v>
+<v t="ekr.20160318141204.14"><vh> class AstFormatter</vh>
+<v t="ekr.20160318141204.15"><vh> f.Entries</vh>
+<v t="ekr.20160318141204.17"><vh>f.format</vh></v>
+<v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
+</v>
+<v t="ekr.20160318141204.19"><vh>f.Contexts</vh>
+<v t="ekr.20160318141204.20"><vh>f.ClassDef</vh></v>
+<v t="ekr.20160318141204.21"><vh>f.FunctionDef</vh></v>
+<v t="ekr.20160318141204.22"><vh>f.Interactive</vh></v>
+<v t="ekr.20160318141204.23"><vh>f.Module</vh></v>
+<v t="ekr.20160318141204.24"><vh>f.Lambda</vh></v>
+</v>
+<v t="ekr.20160318141204.25"><vh>f.Expressions</vh>
+<v t="ekr.20160318141204.26"><vh>f.Expr</vh></v>
+<v t="ekr.20160318141204.27"><vh>f.Expression</vh></v>
+<v t="ekr.20160318141204.28"><vh>f.GeneratorExp</vh></v>
+<v t="ekr.20160318141204.29"><vh>f.ctx nodes</vh></v>
+</v>
+<v t="ekr.20160318141204.30"><vh>f.Operands</vh>
+<v t="ekr.20160318141204.31"><vh>f.arguments</vh></v>
+<v t="ekr.20160318141204.32"><vh>f.arg (Python3 only) (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.33"><vh>f.Attribute</vh></v>
+<v t="ekr.20160318141204.34"><vh>f.Bytes</vh></v>
+<v t="ekr.20160318141204.35"><vh>f.Call &amp; f.keyword</vh>
+<v t="ekr.20160318141204.36"><vh>f.keyword</vh></v>
+</v>
+<v t="ekr.20210804214511.1"><vh>f.Constant</vh></v>
+<v t="ekr.20160318141204.37"><vh>f.comprehension</vh></v>
+<v t="ekr.20160318141204.38"><vh>f.Dict</vh></v>
+<v t="ekr.20160318141204.39"><vh>f.Ellipsis</vh></v>
+<v t="ekr.20160318141204.40"><vh>f.ExtSlice</vh></v>
+<v t="ekr.20160318141204.41"><vh>f.Index</vh></v>
+<v t="ekr.20210806005225.1"><vh>f.FormattedValue &amp; JoinedStr</vh></v>
+<v t="ekr.20160318141204.42"><vh>f.List</vh></v>
+<v t="ekr.20160318141204.43"><vh>f.ListComp</vh></v>
+<v t="ekr.20160318141204.44"><vh>f.Name &amp; NameConstant</vh></v>
+<v t="ekr.20160318141204.45"><vh>f.Num</vh></v>
+<v t="ekr.20160318141204.46"><vh>f.Repr</vh></v>
+<v t="ekr.20160318141204.47"><vh>f.Slice</vh></v>
+<v t="ekr.20160318141204.48"><vh>f.Str</vh></v>
+<v t="ekr.20160318141204.49"><vh>f.Subscript</vh></v>
+<v t="ekr.20160318141204.50"><vh>f.Tuple</vh></v>
+</v>
+<v t="ekr.20160318141204.51"><vh>f.Operators</vh>
+<v t="ekr.20160318141204.52"><vh>f.BinOp</vh></v>
+<v t="ekr.20160318141204.53"><vh>f.BoolOp</vh></v>
+<v t="ekr.20160318141204.54"><vh>f.Compare</vh></v>
+<v t="ekr.20160318141204.55"><vh>f.UnaryOp</vh></v>
+<v t="ekr.20160318141204.56"><vh>f.ifExp (ternary operator)</vh></v>
+</v>
+<v t="ekr.20160318141204.57"><vh>f.Statements</vh>
+<v t="ekr.20160318141204.58"><vh>f.Assert</vh></v>
+<v t="ekr.20160318141204.59"><vh>f.Assign</vh></v>
+<v t="ekr.20160318141204.60"><vh>f.AugAssign</vh></v>
+<v t="ekr.20160318141204.61"><vh>f.Break</vh></v>
+<v t="ekr.20160318141204.62"><vh>f.Continue</vh></v>
+<v t="ekr.20160318141204.63"><vh>f.Delete</vh></v>
+<v t="ekr.20160318141204.64"><vh>f.ExceptHandler</vh></v>
+<v t="ekr.20160318141204.65"><vh>f.Exec</vh></v>
+<v t="ekr.20160318141204.66"><vh>f.For</vh></v>
+<v t="ekr.20160318141204.67"><vh>f.Global</vh></v>
+<v t="ekr.20160318141204.68"><vh>f.If</vh></v>
+<v t="ekr.20160318141204.69"><vh>f.Import &amp; helper</vh>
+<v t="ekr.20160318141204.70"><vh>f.get_import_names</vh></v>
+</v>
+<v t="ekr.20160318141204.71"><vh>f.ImportFrom</vh></v>
+<v t="ekr.20160318141204.72"><vh>f.Nonlocal (Python 3)</vh></v>
+<v t="ekr.20160318141204.73"><vh>f.Pass</vh></v>
+<v t="ekr.20160318141204.74"><vh>f.Print</vh></v>
+<v t="ekr.20160318141204.75"><vh>f.Raise</vh></v>
+<v t="ekr.20160318141204.76"><vh>f.Return</vh></v>
+<v t="ekr.20160318141204.77"><vh>f.Starred (Python 3)</vh></v>
+<v t="ekr.20160318141204.79"><vh>f.Try (Python 3)</vh></v>
+<v t="ekr.20160318141204.80"><vh>f.TryExcept</vh></v>
+<v t="ekr.20160318141204.81"><vh>f.TryFinally</vh></v>
+<v t="ekr.20160318141204.82"><vh>f.While</vh></v>
+<v t="ekr.20160318141204.83"><vh>f.With (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.84"><vh>f.Yield</vh></v>
+<v t="ekr.20160318141204.85"><vh>f.YieldFrom (Python 3)</vh></v>
+</v>
+<v t="ekr.20160318141204.86"><vh>f.Utils</vh>
+<v t="ekr.20160318141204.87"><vh>f.kind</vh></v>
+<v t="ekr.20160318141204.88"><vh>f.indent</vh></v>
+<v t="ekr.20160318141204.89"><vh>f.op_name</vh></v>
+</v>
+</v>
+<v t="ekr.20210806010517.1"><vh>--- visitors</vh>
+<v t="ekr.20160318141204.31"></v>
+<v t="ekr.20160318141204.20"></v>
+<v t="ekr.20210804214511.1"></v>
+<v t="ekr.20160318141204.91"></v>
+<v t="ekr.20160318141204.17"></v>
+<v t="ekr.20160318141204.21"></v>
+<v t="ekr.20160318141204.49"></v>
+<v t="ekr.20160318141204.50"></v>
+<v t="ekr.20160318141204.18"></v>
+</v>
 <v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
 <v t="ekr.20210805090544.1"><vh>test issues...</vh>
 <v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
 <v t="ekr.20180901044640.1"><vh>test_bug2_non_empty</vh></v>
 <v t="ekr.20180901051603.1"><vh>test_bug3</vh></v>
 </v>
-<v t="ekr.20210805090943.1"><vh>test class AstFormatter...</vh></v>
+<v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
+<v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt;</vh></v>
+</v>
+<v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
 <v t="ekr.20210805091045.1"><vh>test class ReduceTypes (mostly complete)</vh>
 <v t="ekr.20210804105256.1"><vh>test_reduce_numbers</vh></v>
 <v t="ekr.20210804111613.1"><vh>test_reduce_types</vh></v>
@@ -253,6 +268,9 @@
 <v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
 </v>
 </v>
+<v t="ekr.20210805090943.1"></v>
+<v t="ekr.20210805144859.1"></v>
+<v t="ekr.20160318141204.11"></v>
 <v t="ekr.20210805093615.1"></v>
 </vnodes>
 <tnodes>
@@ -1039,6 +1057,7 @@ __str__ = __repr__
     controller.scan_command_line()
     controller.scan_options()
     for fn in controller.files:
+        g.trace('=====', fn)
         controller.make_stub_file(fn)
 </t>
 <t tx="ekr.20160318141204.110">def match_balanced(self, delim, s, i):
@@ -1414,6 +1433,7 @@ def make_stub_file(self, fn):
     self.output_fn = os.path.normpath(out_fn)
     #
     # Process s.
+    g.trace(len(s), fn)
     node = ast.parse(s, filename=fn, mode='exec')
     StubTraverser(controller=self).run(node)
 </t>
@@ -1421,7 +1441,7 @@ def make_stub_file(self, fn):
     """Return s truncated to n characters."""
     return s if len(s) &lt;= n else s[: n - 3] + '...'
 </t>
-<t tx="ekr.20160318141204.131">def scan_command_line(self):
+<t tx="ekr.20160318141204.131">def scan_command_line(self):  # pragma: no cover
     """Set ivars from command-line arguments."""
     # The parser implements the --help option.
     description='make_stub_file: Create stub (.pyi) files from python files'
@@ -1705,6 +1725,7 @@ def make_stub_file(self, fn):
     This does not have to be perfect, but it should be close.
     """
     # pylint: disable=consider-using-enumerate
+
     @others
 </t>
 <t tx="ekr.20160318141204.140">def scan_patterns(self, section_name):
@@ -1746,7 +1767,7 @@ def make_stub_file(self, fn):
     """Format the node (or list of nodes) and its descendants."""
     self.level = 0
     val = self.visit(node)
-    return val.strip()  # val is a string.
+    return val ###.strip()  # val is a string.
 </t>
 <t tx="ekr.20160318141204.170">def __init__(self, controller):
     """Ctor for StubTraverser class."""
@@ -1980,23 +2001,29 @@ def out(self, s):  # pragma: no cover
     """Return the formatted version of an Ast node, or list of Ast nodes."""
     tag = 'AstFormatter.visit'
     name = node.__class__.__name__
+    trace = False ###
+    if trace: g.trace(name) ###
     if isinstance(node, (list, tuple)):
-        return ','.join([self.visit(z) for z in node])
+        return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
     if node is None:
-        return 'None'
+        return 'None'  # pragma: no cover
     if not isinstance(node, ast.AST):
-        # #13: Insert an error comment directly into the output.
-        return f"\n#{tag}: not an AST node: {name}\n"
+        # #13:
+        assert False, f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
+        # Insert an error comment directly into the output.
+        # return f"\n#{tag}: not an AST node: {name}\n"  
     method_name = 'do_' + node.__class__.__name__
     # #13: *Never* ignore missing visitors!
     method = getattr(self, method_name, None)
     if method:
         s = method(node)
         assert g.isString(s), s.__class__.__name__
+        if trace: g.trace(name,  '==&gt;', s) ###
         return s
-    # #13: Insert an error comment directly into the output.
-    return f"\n#{tag}: no visitor: do_{name}\n"
-</t>
+    #13:
+    assert False, f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover
+    # Insert an error comment directly into the output.
+    #f"\n#{tag}: no visitor: do_{name}\n"</t>
 <t tx="ekr.20160318141204.180">def check_delete(self, new_stubs, old_root, new_root, trace):
     """Return a list of nodes that can be deleted."""
     old_stubs = self.flatten_stubs(old_root)
@@ -2273,8 +2300,9 @@ def munge_arg(self, s):
             s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
             return s + tail + results
         return 'Any' + tail + results
-    s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
-    return s + tail
+    # Coverage tests use verbose option.
+    s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)  # pragma: no cover
+    return s + tail  # pragma: no cover
 </t>
 <t tx="ekr.20160318141204.192">def get_def_name(self, node):
     """Return the representaion of a function or method name."""
@@ -2358,7 +2386,9 @@ def do_FunctionDef(self, node):
     args = self.visit(node.args) if node.args else ''
     if getattr(node, 'returns', None):  # Python 3.
         returns = self.visit(node.returns)
-        result.append(self.indent('def %s(%s): -&gt; %s\n' % (name, args, returns)))
+        # Bug found by unit test.
+        ### g.trace('returns', returns)
+        result.append(self.indent('def %s(%s) -&gt; %s:\n' % (name, args, returns)))
     else:
         result.append(self.indent('def %s(%s):\n' % (name, args)))
     for z in node.body:
@@ -2368,7 +2398,7 @@ def do_FunctionDef(self, node):
     return ''.join(result)
 
 </t>
-<t tx="ekr.20160318141204.22">def do_Interactive(self, node):
+<t tx="ekr.20160318141204.22">def do_Interactive(self, node):  # pragma: no cover (will never be used)
     for z in node.body:
         self.visit(z)
 
@@ -2405,19 +2435,19 @@ def do_FunctionDef(self, node):
     return '&lt;gen %s for %s&gt;' % (elt, ','.join(gens))
 
 </t>
-<t tx="ekr.20160318141204.29">def do_AugLoad(self, node):
+<t tx="ekr.20160318141204.29">def do_AugLoad(self, node):  # pragma: no cover (defensive)
     return 'AugLoad'
 
-def do_Del(self, node):
+def do_Del(self, node):  # pragma: no cover (defensive)
     return 'Del'
 
-def do_Load(self, node):
+def do_Load(self, node):  # pragma: no cover (defensive)
     return 'Load'
 
-def do_Param(self, node):
+def do_Param(self, node):  # pragma: no cover (defensive)
     return 'Param'
 
-def do_Store(self, node):
+def do_Store(self, node):  # pragma: no cover (defensive)
     return 'Store'
 </t>
 <t tx="ekr.20160318141204.30">
@@ -2457,13 +2487,13 @@ def do_arguments(self, node):
         if vararg: args2.append('*' + self.visit(vararg))
         kwarg = getattr(node, 'kwarg', None)
         if kwarg: args2.append('**' + self.visit(kwarg))
-    else:
+    else:  # pragma: no cover
         # Add the vararg and kwarg names.
         name = getattr(node, 'vararg', None)
         if name: args2.append('*' + name)
         name = getattr(node, 'kwarg', None)
         if name: args2.append('**' + name)
-    return ','.join(args2)
+    return ', '.join(args2)
 </t>
 <t tx="ekr.20160318141204.32"># 3: arg = (identifier arg, expr? annotation)
 
@@ -2534,7 +2564,7 @@ def do_keyword(self, node):
         result.append('}')
         # result.append(',\n'.join(items))
         # result.append('\n}' if keys else '}')
-    else:
+    else:  # pragma: no cover (defensive)
         print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
             repr(keys), repr(values)))
     return ''.join(result)
@@ -2542,7 +2572,6 @@ def do_keyword(self, node):
 </t>
 <t tx="ekr.20160318141204.39">def do_Ellipsis(self, node):
     return '...'
-
 </t>
 <t tx="ekr.20160318141204.4">def is_known_type(s):
     """
@@ -2583,7 +2612,7 @@ def do_NameConstant(self, node):  # Python 3 only.
     return 'bool' if s in ('True', 'False') else s
 
 </t>
-<t tx="ekr.20160318141204.45">def do_Num(self, node):
+<t tx="ekr.20160318141204.45">def do_Num(self, node):  # pragma: no cover (obsolete)
     return repr(node.n)
 
 </t>
@@ -2604,16 +2633,25 @@ def do_NameConstant(self, node):  # Python 3 only.
     return '%s:%s' % (lower, upper)
 
 </t>
-<t tx="ekr.20160318141204.48">def do_Str(self, node):
+<t tx="ekr.20160318141204.48">def do_Str(self, node):  # pragma: no cover (obsolete)
     """This represents a string constant."""
     return repr(node.s)
 
 </t>
 <t tx="ekr.20160318141204.49"># Subscript(expr value, slice slice, expr_context ctx)
 
+in_subscript = False
+
 def do_Subscript(self, node):
-    value = self.visit(node.value)
-    the_slice = self.visit(node.slice)
+    
+    # A hack, for do_Tuple.
+    old_in_subscript = self.in_subscript
+    try:
+        self.in_subscript = True
+        value = self.visit(node.value)
+        the_slice = self.visit(node.slice)
+    finally:
+        self.in_subscript = old_in_subscript
     return '%s[%s]' % (value, the_slice)
 
 </t>
@@ -2631,8 +2669,8 @@ def do_Subscript(self, node):
 
 </t>
 <t tx="ekr.20160318141204.50">def do_Tuple(self, node):
-    elts = [self.visit(z) for z in node.elts]
-    return '(%s)' % ', '.join(elts)
+    elts_s = ', '.join(self.visit(z) for z in node.elts)
+    return elts_s if self.in_subscript else '(%s)' % elts_s
 </t>
 <t tx="ekr.20160318141204.51">
 # Operators...
@@ -2660,7 +2698,7 @@ def do_Subscript(self, node):
     if len(ops) == len(comps):
         for i in range(len(ops)):
             result.append('%s%s' % (ops[i], comps[i]))
-    else:
+    else:  # pragma: no cover (defensive)
         print('can not happen: ops', repr(ops), 'comparators', repr(comps))
     return ''.join(result)
 
@@ -2690,7 +2728,7 @@ def do_Subscript(self, node):
 
 </t>
 <t tx="ekr.20160318141204.59">def do_Assign(self, node):
-    return self.indent('%s=%s\n' % (
+    return self.indent('%s = %s\n' % (
         '='.join([self.visit(z) for z in node.targets]),
         self.visit(node.value)))
 
@@ -2908,7 +2946,7 @@ def do_Try(self, node):  # Python 3
     else:
         print('===== %s...\n' % title)
 </t>
-<t tx="ekr.20160318141204.80">def do_TryExcept(self, node):
+<t tx="ekr.20160318141204.80">def do_TryExcept(self, node):  # pragma: no cover (python 2)
     result = []
     result.append(self.indent('try:\n'))
     for z in node.body:
@@ -2927,7 +2965,7 @@ def do_Try(self, node):  # Python 3
     return ''.join(result)
 
 </t>
-<t tx="ekr.20160318141204.81">def do_TryFinally(self, node):
+<t tx="ekr.20160318141204.81">def do_TryFinally(self, node):  # pragma: no cover (python 2)
     result = []
     result.append(self.indent('try:\n'))
     for z in node.body:
@@ -3085,21 +3123,28 @@ def op_name(self, node, strict=True):
 </t>
 <t tx="ekr.20160318141204.91"># Return generic markers to allow better pattern matches.
 
+def do_Contant(self, node):
+    ### Experimental.
+    name = node.value.__class__.__name__
+    if name == 'ellipsis':
+        return '...'
+    return name
+
 def do_BoolOp(self, node):  # pragma: no cover (Python 2.x only)
     return 'bool'
 
-def do_Bytes(self, node):  # Python 3.x only.
-    return 'bytes'  # return str(node.s)
+def do_Bytes(self, node):    # pragma: no cover (obsolete)
+    return 'bytes'
 
-def do_Name(self, node):
+def do_Name(self, node):  # pragma: no cover (python 2)
     return 'bool' if node.id in ('True', 'False') else node.id
 
-def do_Num(self, node):
-    return 'number'  # return repr(node.n)
+def do_Num(self, node):  # pragma: no cover (python 2)
+    return 'number'
 
-def do_Str(self, node):
+def do_Str(self, node):  # pragma: no cover (python 2)
     """This represents a string constant."""
-    return 'str'  # return repr(node.s)
+    return 'str'
 </t>
 <t tx="ekr.20160330201030.1">Metadata-Version: 1.0
 Name: make_stub_files
@@ -3225,7 +3270,8 @@ command = f"python {msf} -c {cfg} -o -v {src} -h"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210804060105.1">g.cls()
 if 0:  # Run one test.
-    test = '.TestMakeStubFiles.test_file_msb'
+    # test = '.TestMakeStubFiles.test_file_msb'
+    test = '.TestMakeStubFiles.test_ast_formatter_class'
 else:  # Run all tests.
     test = ''
 command = f"python -m unittest make_stub_files{test}"
@@ -3504,6 +3550,10 @@ while p:
 c.redraw()
 </t>
 <t tx="ekr.20210804214511.1">def do_Constant(self, node):  # #13
+
+    ### g.trace(node.value, node.value.__class__.__name__)
+    if node.value.__class__.__name__ == 'ellipsis':
+        return '...'
     return repr(node.value)
 </t>
 <t tx="ekr.20210805053830.1">@language rest
@@ -3529,21 +3579,94 @@ Cover:
 <t tx="ekr.20210805085843.1"></t>
 <t tx="ekr.20210805090003.1"></t>
 <t tx="ekr.20210805090544.1"></t>
-<t tx="ekr.20210805090943.1"></t>
+<t tx="ekr.20210805090943.1">def test_ast_formatter_class(self):
+    tag = 'test_ast_formatter_class'
+    formatter = AstFormatter()
+    tests = [
+    &lt;&lt; define tests &gt;&gt;
+    ]
+    # We *can* assume that sources are in the form of the expected output,
+    # because the input serves only to create nodes.
+    for i, source in enumerate(tests):
+        filename = f"{tag}: test {i}"
+        source = textwrap.dedent(source)
+        expected_s = textwrap.dedent(source)
+        node = ast.parse(source, filename=filename, mode='exec')
+        result_s = formatter.format(node)
+        lines = g.splitLines(result_s)
+        expected = g.splitLines(expected_s)
+        if 0:
+            g.printObj(expected, tag='expected')
+            g.printObj(lines, tag='lines')
+        else:
+            self.assertEqual(expected, lines, msg=f"{tag}: {i}") ### {g.objToString(source)}")
+</t>
 <t tx="ekr.20210805091045.1"></t>
 <t tx="ekr.20210805092921.1"></t>
 <t tx="ekr.20210805093004.1"></t>
 <t tx="ekr.20210805093615.1">def test_file_msb(self):
     """Run make_stub_files on itself."""
-    # f"python {msf} -c {cfg} -o -v {src}"
-    directory = os.path.dirname(__file__)
-    config_fn = os.path.normpath(os.path.abspath(os.path.expanduser('make_stub_files.cfg')))
-    sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
-    main()</t>
+    if 1:
+        # Actually creates stubs.
+        # f"python {msf} -c {cfg} -o -v {src}"
+        directory = os.path.dirname(__file__)
+        config_fn = os.path.normpath(os.path.abspath(os.path.expanduser('make_stub_files.cfg')))
+        sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
+        main()
+    else: # Works: (Like main function)
+        controller = Controller()
+        # Set ivars instead of calling scan_command_line.
+        fn = __file__
+        directory = os.path.dirname(__file__)
+        controller.config_fn = finalize(os.path.join(directory, 'make_stub_files.cfg'))
+        assert os.path.exists(controller.config_fn), controller.config_fn
+        controller.overwrite = True
+        # Go!
+        controller.scan_options()
+        for fn in controller.files:
+            controller.make_stub_file(fn)</t>
 <t tx="ekr.20210805102238.1"></t>
 <t tx="ekr.20210805143805.1">def finalize(fn):
     """Finalize and regularize a filename."""
     return os.path.normpath(os.path.abspath(os.path.expanduser(fn)))
 </t>
+<t tx="ekr.20210805144859.1"># A sequence of possibly multi-line strings.
+
+# All tests should match the expected formatted output.
+
+"""\
+class AstFormatter:
+    def format(self, node: Node) -&gt; Union[Any, str]:
+        pass
+""",
+# Constants...
+'a = 1\n',
+'b = 2.5\n',
+'c = False\n',
+'d = None\n',
+
+   
+</t>
+<t tx="ekr.20210806005225.1"># FormattedValue(expr value, int? conversion, expr? format_spec)
+
+def do_FormattedValue(self, node):
+    ### Experimental: need unit tests.
+    return self.visit(node.value)
+    
+def do_JoinedStr(self, node):
+    ### Experimental: need unit tests.
+    return "%s" % ''.join(self.visit(z) for z in node.values or [])
+
+    </t>
+<t tx="ekr.20210806010517.1"></t>
+<t tx="ekr.20210806011736.1">def test_ast_formatter_class_on_file(self):
+    # Use the source of *this* file as a single test.
+    filename = __file__
+    formatter = AstFormatter()
+    with open(filename, 'r') as f:
+        source = f.read()
+    node = ast.parse(source, filename=filename, mode='exec')
+    result_s = formatter.format(node)
+    assert result_s</t>
 </tnodes>
 </leo_file>

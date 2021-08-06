@@ -27,6 +27,7 @@ import os
 import re
 import subprocess
 import sys
+import textwrap
 import time
 import types
 import unittest
@@ -81,6 +82,7 @@ def main():
     controller.scan_command_line()
     controller.scan_options()
     for fn in controller.files:
+        g.trace('=====', fn)
         controller.make_stub_file(fn)
 #@+node:ekr.20160318141204.6: *3* function: reduce_types
 def reduce_types(aList, name=None, trace=False):
@@ -103,6 +105,7 @@ class AstFormatter:
     This does not have to be perfect, but it should be close.
     """
     # pylint: disable=consider-using-enumerate
+
     #@+others
     #@+node:ekr.20160318141204.15: *3*  f.Entries
 
@@ -112,32 +115,39 @@ class AstFormatter:
         """Format the node (or list of nodes) and its descendants."""
         self.level = 0
         val = self.visit(node)
-        return val.strip()  # val is a string.
+        return val ###.strip()  # val is a string.
     #@+node:ekr.20160318141204.18: *4* f.visit
     def visit(self, node):
         """Return the formatted version of an Ast node, or list of Ast nodes."""
         tag = 'AstFormatter.visit'
         name = node.__class__.__name__
+        trace = False ###
+        if trace: g.trace(name) ###
         if isinstance(node, (list, tuple)):
-            return ','.join([self.visit(z) for z in node])
+            return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
         if node is None:
-            return 'None'
+            return 'None'  # pragma: no cover
         if not isinstance(node, ast.AST):
-            # #13: Insert an error comment directly into the output.
-            return f"\n#{tag}: not an AST node: {name}\n"
+            # #13:
+            assert False, f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
+            # Insert an error comment directly into the output.
+            # return f"\n#{tag}: not an AST node: {name}\n"  
         method_name = 'do_' + node.__class__.__name__
         # #13: *Never* ignore missing visitors!
         method = getattr(self, method_name, None)
         if method:
             s = method(node)
             assert g.isString(s), s.__class__.__name__
+            if trace: g.trace(name,  '==>', s) ###
             return s
-        # #13: Insert an error comment directly into the output.
-        return f"\n#{tag}: no visitor: do_{name}\n"
+        #13:
+        assert False, f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover
+        # Insert an error comment directly into the output.
+        #f"\n#{tag}: no visitor: do_{name}\n"
     #@+node:ekr.20160318141204.19: *3* f.Contexts
 
     # Contexts...
-    #@+node:ekr.20160318141204.20: *4* f.ClassDef (make_stub_files)
+    #@+node:ekr.20160318141204.20: *4* f.ClassDef
     # 2: ClassDef(identifier name, expr* bases,
     #             stmt* body, expr* decorator_list)
     # 3: ClassDef(identifier name, expr* bases,
@@ -174,7 +184,7 @@ class AstFormatter:
             self.level -= 1
         return ''.join(result)
 
-    #@+node:ekr.20160318141204.21: *4* f.FunctionDef (make_stub_files)
+    #@+node:ekr.20160318141204.21: *4* f.FunctionDef
     # 2: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
     # 3: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list,
     #                expr? returns)
@@ -189,7 +199,9 @@ class AstFormatter:
         args = self.visit(node.args) if node.args else ''
         if getattr(node, 'returns', None):  # Python 3.
             returns = self.visit(node.returns)
-            result.append(self.indent('def %s(%s): -> %s\n' % (name, args, returns)))
+            # Bug found by unit test.
+            ### g.trace('returns', returns)
+            result.append(self.indent('def %s(%s) -> %s:\n' % (name, args, returns)))
         else:
             result.append(self.indent('def %s(%s):\n' % (name, args)))
         for z in node.body:
@@ -199,7 +211,7 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.22: *4* f.Interactive
-    def do_Interactive(self, node):
+    def do_Interactive(self, node):  # pragma: no cover (will never be used)
         for z in node.body:
             self.visit(z)
 
@@ -236,25 +248,25 @@ class AstFormatter:
         return '<gen %s for %s>' % (elt, ','.join(gens))
 
     #@+node:ekr.20160318141204.29: *4* f.ctx nodes
-    def do_AugLoad(self, node):
+    def do_AugLoad(self, node):  # pragma: no cover (defensive)
         return 'AugLoad'
 
-    def do_Del(self, node):
+    def do_Del(self, node):  # pragma: no cover (defensive)
         return 'Del'
 
-    def do_Load(self, node):
+    def do_Load(self, node):  # pragma: no cover (defensive)
         return 'Load'
 
-    def do_Param(self, node):
+    def do_Param(self, node):  # pragma: no cover (defensive)
         return 'Param'
 
-    def do_Store(self, node):
+    def do_Store(self, node):  # pragma: no cover (defensive)
         return 'Store'
     #@+node:ekr.20160318141204.30: *3* f.Operands
 
     # Operands...
 
-    #@+node:ekr.20160318141204.31: *4* f.arguments (make_stub_files)
+    #@+node:ekr.20160318141204.31: *4* f.arguments
     # 2: arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
     # 3: arguments = (arg*  args, arg? vararg,
     #                arg* kwonlyargs, expr* kw_defaults,
@@ -288,13 +300,13 @@ class AstFormatter:
             if vararg: args2.append('*' + self.visit(vararg))
             kwarg = getattr(node, 'kwarg', None)
             if kwarg: args2.append('**' + self.visit(kwarg))
-        else:
+        else:  # pragma: no cover
             # Add the vararg and kwarg names.
             name = getattr(node, 'vararg', None)
             if name: args2.append('*' + name)
             name = getattr(node, 'kwarg', None)
             if name: args2.append('**' + name)
-        return ','.join(args2)
+        return ', '.join(args2)
     #@+node:ekr.20160318141204.32: *4* f.arg (Python3 only) (make_stub_files)
     # 3: arg = (identifier arg, expr? annotation)
 
@@ -341,6 +353,10 @@ class AstFormatter:
 
     #@+node:ekr.20210804214511.1: *4* f.Constant
     def do_Constant(self, node):  # #13
+
+        ### g.trace(node.value, node.value.__class__.__name__)
+        if node.value.__class__.__name__ == 'ellipsis':
+            return '...'
         return repr(node.value)
     #@+node:ekr.20160318141204.37: *4* f.comprehension
     def do_comprehension(self, node):
@@ -368,7 +384,7 @@ class AstFormatter:
             result.append('}')
             # result.append(',\n'.join(items))
             # result.append('\n}' if keys else '}')
-        else:
+        else:  # pragma: no cover (defensive)
             print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
                 repr(keys), repr(values)))
         return ''.join(result)
@@ -376,7 +392,6 @@ class AstFormatter:
     #@+node:ekr.20160318141204.39: *4* f.Ellipsis
     def do_Ellipsis(self, node):
         return '...'
-
     #@+node:ekr.20160318141204.40: *4* f.ExtSlice
     def do_ExtSlice(self, node):
         return ':'.join([self.visit(z) for z in node.dims])
@@ -385,6 +400,18 @@ class AstFormatter:
     def do_Index(self, node):
         return self.visit(node.value)
 
+    #@+node:ekr.20210806005225.1: *4* f.FormattedValue & JoinedStr
+    # FormattedValue(expr value, int? conversion, expr? format_spec)
+
+    def do_FormattedValue(self, node):
+        ### Experimental: need unit tests.
+        return self.visit(node.value)
+        
+    def do_JoinedStr(self, node):
+        ### Experimental: need unit tests.
+        return "%s" % ''.join(self.visit(z) for z in node.values or [])
+
+        
     #@+node:ekr.20160318141204.42: *4* f.List
     def do_List(self, node):
         # Not used: list context.
@@ -409,7 +436,7 @@ class AstFormatter:
         return 'bool' if s in ('True', 'False') else s
 
     #@+node:ekr.20160318141204.45: *4* f.Num
-    def do_Num(self, node):
+    def do_Num(self, node):  # pragma: no cover (obsolete)
         return repr(node.n)
 
     #@+node:ekr.20160318141204.46: *4* f.Repr
@@ -430,22 +457,31 @@ class AstFormatter:
         return '%s:%s' % (lower, upper)
 
     #@+node:ekr.20160318141204.48: *4* f.Str
-    def do_Str(self, node):
+    def do_Str(self, node):  # pragma: no cover (obsolete)
         """This represents a string constant."""
         return repr(node.s)
 
     #@+node:ekr.20160318141204.49: *4* f.Subscript
     # Subscript(expr value, slice slice, expr_context ctx)
 
+    in_subscript = False
+
     def do_Subscript(self, node):
-        value = self.visit(node.value)
-        the_slice = self.visit(node.slice)
+        
+        # A hack, for do_Tuple.
+        old_in_subscript = self.in_subscript
+        try:
+            self.in_subscript = True
+            value = self.visit(node.value)
+            the_slice = self.visit(node.slice)
+        finally:
+            self.in_subscript = old_in_subscript
         return '%s[%s]' % (value, the_slice)
 
     #@+node:ekr.20160318141204.50: *4* f.Tuple
     def do_Tuple(self, node):
-        elts = [self.visit(z) for z in node.elts]
-        return '(%s)' % ', '.join(elts)
+        elts_s = ', '.join(self.visit(z) for z in node.elts)
+        return elts_s if self.in_subscript else '(%s)' % elts_s
     #@+node:ekr.20160318141204.51: *3* f.Operators
 
     # Operators...
@@ -473,7 +509,7 @@ class AstFormatter:
         if len(ops) == len(comps):
             for i in range(len(ops)):
                 result.append('%s%s' % (ops[i], comps[i]))
-        else:
+        else:  # pragma: no cover (defensive)
             print('can not happen: ops', repr(ops), 'comparators', repr(comps))
         return ''.join(result)
 
@@ -503,7 +539,7 @@ class AstFormatter:
 
     #@+node:ekr.20160318141204.59: *4* f.Assign
     def do_Assign(self, node):
-        return self.indent('%s=%s\n' % (
+        return self.indent('%s = %s\n' % (
             '='.join([self.visit(z) for z in node.targets]),
             self.visit(node.value)))
 
@@ -706,7 +742,7 @@ class AstFormatter:
                 self.level -= 1
         return ''.join(result)
     #@+node:ekr.20160318141204.80: *4* f.TryExcept
-    def do_TryExcept(self, node):
+    def do_TryExcept(self, node):  # pragma: no cover (python 2)
         result = []
         result.append(self.indent('try:\n'))
         for z in node.body:
@@ -725,7 +761,7 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.81: *4* f.TryFinally
-    def do_TryFinally(self, node):
+    def do_TryFinally(self, node):  # pragma: no cover (python 2)
         result = []
         result.append(self.indent('try:\n'))
         for z in node.body:
@@ -876,21 +912,28 @@ class AstArgFormatter(AstFormatter):
     #@+node:ekr.20160318141204.91: *3* sf.Constants & Name
     # Return generic markers to allow better pattern matches.
 
+    def do_Contant(self, node):
+        ### Experimental.
+        name = node.value.__class__.__name__
+        if name == 'ellipsis':
+            return '...'
+        return name
+
     def do_BoolOp(self, node):  # pragma: no cover (Python 2.x only)
         return 'bool'
 
-    def do_Bytes(self, node):  # Python 3.x only.
-        return 'bytes'  # return str(node.s)
+    def do_Bytes(self, node):    # pragma: no cover (obsolete)
+        return 'bytes'
 
-    def do_Name(self, node):
+    def do_Name(self, node):  # pragma: no cover (python 2)
         return 'bool' if node.id in ('True', 'False') else node.id
 
-    def do_Num(self, node):
-        return 'number'  # return repr(node.n)
+    def do_Num(self, node):  # pragma: no cover (python 2)
+        return 'number'
 
-    def do_Str(self, node):
+    def do_Str(self, node):  # pragma: no cover (python 2)
         """This represents a string constant."""
-        return 'str'  # return repr(node.s)
+        return 'str'
     #@-others
 #@+node:ekr.20160318141204.125: ** class Controller
 class Controller:
@@ -972,10 +1015,11 @@ class Controller:
         self.output_fn = os.path.normpath(out_fn)
         #
         # Process s.
+        g.trace(len(s), fn)
         node = ast.parse(s, filename=fn, mode='exec')
         StubTraverser(controller=self).run(node)
     #@+node:ekr.20160318141204.131: *3* msf.scan_command_line
-    def scan_command_line(self):
+    def scan_command_line(self):  # pragma: no cover
         """Set ivars from command-line arguments."""
         # The parser implements the --help option.
         description='make_stub_file: Create stub (.pyi) files from python files'
@@ -2026,17 +2070,22 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.154: *4* sf.Constants: Bytes, Num, Str
     # Return generic markers to allow better pattern matches.
 
-    def do_Bytes(self, node):  # Python 3.x only.
-        return 'bytes'  # return str(node.s)
+    def do_Contant(self, node):
+        ### Experimental.
+        name = node.value.__class__.__name__
+        if name == 'ellipsis':
+            return '...'
+        return name
 
-    def do_Num(self, node):
-        # make_patterns_dict treats 'number' as a special case.
-        # return self.names_dict.get('number', 'number')
-        return 'number'  # return repr(node.n)
+    def do_Bytes(self, node):  # pragma: no cover (obsolete)
+        return 'bytes'
 
-    def do_Str(self, node):
+    def do_Num(self, node):  # pragma: no cover (obsolete)
+        return 'number'
+
+    def do_Str(self, node):  # pragma: no cover (obsolete)
         """This represents a string constant."""
-        return 'str'  # return repr(node.s)
+        return 'str'
     #@+node:ekr.20160318141204.155: *4* sf.Dict
     def do_Dict(self, node):
         result = []
@@ -2068,7 +2117,7 @@ class StubFormatter(AstFormatter):
         d = self.names_dict
         name = d.get(node.id, node.id)
         s = 'bool' if name in ('True', 'False') else name
-        if False and node.id not in self.seen_names:
+        if False and node.id not in self.seen_names:  # pragma: no cover 
             self.seen_names.append(node.id)
             if d.get(node.id):
                 g.trace(node.id, '==>', d.get(node.id))
@@ -2728,8 +2777,9 @@ class StubTraverser(ast.NodeVisitor):
                 s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
                 return s + tail + results
             return 'Any' + tail + results
-        s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
-        return s + tail
+        # Coverage tests use verbose option.
+        s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)  # pragma: no cover
+        return s + tail  # pragma: no cover
     #@+node:ekr.20160318141204.192: *5* st.get_def_name
     def get_def_name(self, node):
         """Return the representaion of a function or method name."""
@@ -2836,7 +2886,56 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         # Test.
         lines = g.splitLines(st.output_file.getvalue())
         self.assertEqual(lines, expected)
-    #@+node:ekr.20210805090943.1: *3* test class AstFormatter...
+    #@+node:ekr.20210805090943.1: *3* test_ast_formatter_class
+    def test_ast_formatter_class(self):
+        tag = 'test_ast_formatter_class'
+        formatter = AstFormatter()
+        tests = [
+        #@+<< define tests >>
+        #@+node:ekr.20210805144859.1: *4* << define tests >>
+        # A sequence of possibly multi-line strings.
+
+        # All tests should match the expected formatted output.
+
+        """\
+        class AstFormatter:
+            def format(self, node: Node) -> Union[Any, str]:
+                pass
+        """,
+        # Constants...
+        'a = 1\n',
+        'b = 2.5\n',
+        'c = False\n',
+        'd = None\n',
+
+           
+        #@-<< define tests >>
+        ]
+        # We *can* assume that sources are in the form of the expected output,
+        # because the input serves only to create nodes.
+        for i, source in enumerate(tests):
+            filename = f"{tag}: test {i}"
+            source = textwrap.dedent(source)
+            expected_s = textwrap.dedent(source)
+            node = ast.parse(source, filename=filename, mode='exec')
+            result_s = formatter.format(node)
+            lines = g.splitLines(result_s)
+            expected = g.splitLines(expected_s)
+            if 0:
+                g.printObj(expected, tag='expected')
+                g.printObj(lines, tag='lines')
+            else:
+                self.assertEqual(expected, lines, msg=f"{tag}: {i}") ### {g.objToString(source)}")
+    #@+node:ekr.20210806011736.1: *3* test_ast_formatter_class_on_file
+    def test_ast_formatter_class_on_file(self):
+        # Use the source of *this* file as a single test.
+        filename = __file__
+        formatter = AstFormatter()
+        with open(filename, 'r') as f:
+            source = f.read()
+        node = ast.parse(source, filename=filename, mode='exec')
+        result_s = formatter.format(node)
+        assert result_s
     #@+node:ekr.20210805091045.1: *3* test class ReduceTypes (mostly complete)
     #@+node:ekr.20210804105256.1: *4* test_reduce_numbers
     def test_reduce_numbers(self):
@@ -3090,11 +3189,25 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     #@+node:ekr.20210805093615.1: *3* test file: make_stub_files.py
     def test_file_msb(self):
         """Run make_stub_files on itself."""
-        # f"python {msf} -c {cfg} -o -v {src}"
-        directory = os.path.dirname(__file__)
-        config_fn = os.path.normpath(os.path.abspath(os.path.expanduser('make_stub_files.cfg')))
-        sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
-        main()
+        if 1:
+            # Actually creates stubs.
+            # f"python {msf} -c {cfg} -o -v {src}"
+            directory = os.path.dirname(__file__)
+            config_fn = os.path.normpath(os.path.abspath(os.path.expanduser('make_stub_files.cfg')))
+            sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
+            main()
+        else: # Works: (Like main function)
+            controller = Controller()
+            # Set ivars instead of calling scan_command_line.
+            fn = __file__
+            directory = os.path.dirname(__file__)
+            controller.config_fn = finalize(os.path.join(directory, 'make_stub_files.cfg'))
+            assert os.path.exists(controller.config_fn), controller.config_fn
+            controller.overwrite = True
+            # Go!
+            controller.scan_options()
+            for fn in controller.files:
+                controller.make_stub_file(fn)
     #@+node:ekr.20210805093004.1: *3* test top-level functions
     #@+node:ekr.20160207115947.1: *4* test_truncate
     def test_truncate(self):
