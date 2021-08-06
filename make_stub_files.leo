@@ -293,7 +293,6 @@
 </v>
 </v>
 </v>
-<v t="ekr.20210805090943.1"></v>
 <v t="ekr.20210805144859.1"></v>
 <v t="ekr.20210806081329.1"><vh>--- missing tests</vh>
 <v t="ekr.20160318141204.31"></v>
@@ -326,6 +325,7 @@
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.194"></v>
 </v>
+<v t="ekr.20210805090943.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -710,8 +710,15 @@ edreamleo@gmail.com</t>
 
 This is the readme file for `make_stub_files.py`. This file explains what the script does, how it works and why it is important. After a brief overview, a step-by-step section will get you started. Full source code for make_stub_files.py is in its [github repository](https://github.com/edreamleo/make-stub-files). Everything is in the public domain.
 
-@others
-</t>
+Before reading further, please be aware of two other tools that create mypy stubs:
+
+- [MonkeyType](https://monkeytype.readthedocs.io/en/latest/index.html) (Python 3),
+- [PyAnnotate](https://github.com/dropbox/pyannotate),
+- [stubgen](https://mypy.readthedocs.io/en/stable/stubgen.html).
+
+stubgen produces only minimal stubs, but MonkeyType and PyAnnotate are worth serious consideration.
+
+@others</t>
 <t tx="ekr.20160211110807.1">
 ### Overview
 
@@ -3880,15 +3887,7 @@ c.redraw()
 @wrap
 https://github.com/edreamleo/make-stub-files/issues/18
 
-Cover:
-
-- function: is_known_type
-- Run on make_stub_files.py **itself**.
-- AstFormatter.
-- AstStubFormatter.
-- Pattern.replace.
-- ReduceTypes.is_known_type.
-- StubTraverer.update
+- Much better description in usage message.
 
 @language python
 @nosearch
@@ -3900,13 +3899,16 @@ Cover:
 <t tx="ekr.20210805090003.1"></t>
 <t tx="ekr.20210805090544.1"></t>
 <t tx="ekr.20210805090943.1">def test_ast_formatter_class(self):
+    """Test the output of all AstFormatter visitors.
+    
+    We *can* assume that sources are in the form of the expected output,
+    because the input source serves only to create the ast tree.
+    """
     tag = 'test_ast_formatter_class'
     formatter = AstFormatter()
     tests = [
     &lt;&lt; define tests &gt;&gt;
     ]
-    # We *can* assume that sources are in the form of the expected output,
-    # because the input source serves only to create the ast tree.
     for i, source in enumerate(tests):
         filename = f"{tag}: test {i}"
         source = textwrap.dedent(source)

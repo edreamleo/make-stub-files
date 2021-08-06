@@ -1,6 +1,14 @@
 
 This is the readme file for `make_stub_files.py`. This file explains what the script does, how it works and why it is important. After a brief overview, a step-by-step section will get you started. Full source code for make_stub_files.py is in its [github repository](https://github.com/edreamleo/make-stub-files). Everything is in the public domain.
 
+Before reading further, please be aware of two other tools that create mypy stubs:
+
+- [MonkeyType](https://monkeytype.readthedocs.io/en/latest/index.html) (Python 3),
+- [PyAnnotate](https://github.com/dropbox/pyannotate),
+- [stubgen](https://mypy.readthedocs.io/en/stable/stubgen.html).
+
+stubgen produces only minimal stubs, but MonkeyType and PyAnnotate are worth serious consideration.
+
 
 ### Overview
 

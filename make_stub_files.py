@@ -2880,6 +2880,11 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         self.assertEqual(lines, expected)
     #@+node:ekr.20210805090943.1: *3* test_ast_formatter_class
     def test_ast_formatter_class(self):
+        """Test the output of all AstFormatter visitors.
+        
+        We *can* assume that sources are in the form of the expected output,
+        because the input source serves only to create the ast tree.
+        """
         tag = 'test_ast_formatter_class'
         formatter = AstFormatter()
         tests = [
@@ -2903,8 +2908,6 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
            
         #@-<< define tests >>
         ]
-        # We *can* assume that sources are in the form of the expected output,
-        # because the input source serves only to create the ast tree.
         for i, source in enumerate(tests):
             filename = f"{tag}: test {i}"
             source = textwrap.dedent(source)
