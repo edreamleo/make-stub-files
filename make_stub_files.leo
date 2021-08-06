@@ -54,26 +54,15 @@
 <v t="ekr.20210806134651.1"><vh>--- recent</vh>
 <v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
 </v>
-<v t="ekr.20210806010517.1"><vh>--- visitors</vh>
-<v t="ekr.20160318141204.31"><vh>f.arguments</vh></v>
-<v t="ekr.20160318141204.20"><vh>f.ClassDef</vh></v>
-<v t="ekr.20210804214511.1"><vh>f.Constant</vh></v>
-<v t="ekr.20160318141204.91"><vh>sf.Constants &amp; Name</vh></v>
-<v t="ekr.20160318141204.17"><vh>f.format</vh></v>
-<v t="ekr.20160318141204.21"><vh>f.FunctionDef</vh></v>
-<v t="ekr.20160318141204.49"><vh>f.Subscript</vh></v>
-<v t="ekr.20160318141204.50"><vh>f.Tuple</vh></v>
-<v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
-</v>
 <v t="ekr.20210805102238.1"><vh>--- classes</vh>
 <v t="ekr.20160318141204.14"><vh> class AstFormatter</vh>
 <v t="ekr.20160318141204.15"><vh> f.Entries</vh>
-<v t="ekr.20160318141204.17"></v>
-<v t="ekr.20160318141204.18"></v>
+<v t="ekr.20160318141204.17"><vh>f.format</vh></v>
+<v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
 </v>
 <v t="ekr.20160318141204.19"><vh>f.Contexts</vh>
-<v t="ekr.20160318141204.20"></v>
-<v t="ekr.20160318141204.21"></v>
+<v t="ekr.20160318141204.20"><vh>f.ClassDef</vh></v>
+<v t="ekr.20160318141204.21"><vh>f.FunctionDef</vh></v>
 <v t="ekr.20160318141204.22"><vh>f.Interactive</vh></v>
 <v t="ekr.20160318141204.23"><vh>f.Module</vh></v>
 <v t="ekr.20160318141204.24"><vh>f.Lambda</vh></v>
@@ -85,14 +74,14 @@
 <v t="ekr.20160318141204.29"><vh>f.ctx nodes</vh></v>
 </v>
 <v t="ekr.20160318141204.30"><vh>f.Operands</vh>
-<v t="ekr.20160318141204.31"></v>
+<v t="ekr.20160318141204.31"><vh>f.arguments</vh></v>
 <v t="ekr.20160318141204.32"><vh>f.arg (Python3 only) (make_stub_files)</vh></v>
 <v t="ekr.20160318141204.33"><vh>f.Attribute</vh></v>
 <v t="ekr.20160318141204.34"><vh>f.Bytes</vh></v>
 <v t="ekr.20160318141204.35"><vh>f.Call &amp; f.keyword</vh>
 <v t="ekr.20160318141204.36"><vh>f.keyword</vh></v>
 </v>
-<v t="ekr.20210804214511.1"></v>
+<v t="ekr.20210804214511.1"><vh>f.Constant</vh></v>
 <v t="ekr.20160318141204.37"><vh>f.comprehension</vh></v>
 <v t="ekr.20160318141204.38"><vh>f.Dict</vh></v>
 <v t="ekr.20160318141204.39"><vh>f.Ellipsis</vh></v>
@@ -106,8 +95,8 @@
 <v t="ekr.20160318141204.46"><vh>f.Repr</vh></v>
 <v t="ekr.20160318141204.47"><vh>f.Slice</vh></v>
 <v t="ekr.20160318141204.48"><vh>f.Str</vh></v>
-<v t="ekr.20160318141204.49"></v>
-<v t="ekr.20160318141204.50"></v>
+<v t="ekr.20160318141204.49"><vh>f.Subscript</vh></v>
+<v t="ekr.20160318141204.50"><vh>f.Tuple</vh></v>
 </v>
 <v t="ekr.20160318141204.51"><vh>f.Operators</vh>
 <v t="ekr.20160318141204.52"><vh>f.BinOp</vh></v>
@@ -153,7 +142,7 @@
 </v>
 </v>
 <v t="ekr.20160318141204.90"><vh>class AstArgFormatter (AstFormatter)</vh>
-<v t="ekr.20160318141204.91"></v>
+<v t="ekr.20160318141204.91"><vh>sf.Constants &amp; Name</vh></v>
 </v>
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
@@ -255,6 +244,9 @@
 </v>
 <v t="ekr.20160318141204.194"><vh>st.visit_Return</vh></v>
 </v>
+</v>
+<v t="ekr.20210806161202.1"><vh>test: class syntax</vh></v>
+</v>
 <v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
 <v t="ekr.20210805090544.1"><vh>test issues...</vh>
 <v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
@@ -282,10 +274,24 @@
 </v>
 <v t="ekr.20210805093615.1"><vh>test file: make_stub_files.py</vh></v>
 <v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
+<v t="ekr.20210806153836.1"><vh>test_finalize</vh></v>
+<v t="ekr.20210806154007.1"><vh>test_is_known_type</vh></v>
 <v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
 </v>
 </v>
+<v t="ekr.20210805090943.1"></v>
+<v t="ekr.20210805144859.1"></v>
+<v t="ekr.20210806162349.1"><vh>--- changed visitors</vh>
+<v t="ekr.20160318141204.20"></v>
 </v>
+<v t="ekr.20210806010517.1"><vh>--- visitors</vh>
+<v t="ekr.20210804214511.1"></v>
+<v t="ekr.20160318141204.91"></v>
+<v t="ekr.20160318141204.17"></v>
+<v t="ekr.20160318141204.21"></v>
+<v t="ekr.20160318141204.49"></v>
+<v t="ekr.20160318141204.50"></v>
+<v t="ekr.20160318141204.18"></v>
 </v>
 <v t="ekr.20210806081329.1"><vh>--- missing tests</vh>
 <v t="ekr.20160318141204.31"></v>
@@ -318,8 +324,8 @@
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.194"></v>
 </v>
-<v t="ekr.20210805090943.1"></v>
-<v t="ekr.20210805144859.1"></v>
+<v t="ekr.20210806163439.1"><vh>COPY tog.arguments</vh></v>
+<v t="ekr.20160318141204.31"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -2306,29 +2312,26 @@ def out(self, s):  # pragma: no cover
     """Return the formatted version of an Ast node, or list of Ast nodes."""
     tag = 'AstFormatter.visit'
     name = node.__class__.__name__
-    trace = False ###
-    if trace: g.trace(name) ###
+    # g.trace(name) ###
     if isinstance(node, (list, tuple)):
         return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
     if node is None:
         return 'None'  # pragma: no cover
     if not isinstance(node, ast.AST):
-        # #13:
-        assert False, f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
-        # Insert an error comment directly into the output.
-        # return f"\n#{tag}: not an AST node: {name}\n"  
+        # #13: Insert an error comment directly into the output.
+        return f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
+        # assert False, f"\n#{tag}: not an AST node: {name}\n"
     method_name = 'do_' + node.__class__.__name__
     # #13: *Never* ignore missing visitors!
     method = getattr(self, method_name, None)
     if method:
         s = method(node)
         assert g.isString(s), s.__class__.__name__
-        if trace: g.trace(name,  '==&gt;', s) ###
+        # g.trace(name,  '==&gt;', s) ###
         return s
-    #13:
-    assert False, f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover
-    # Insert an error comment directly into the output.
-    #f"\n#{tag}: no visitor: do_{name}\n"
+    # #13: Insert an error comment directly into the output.
+    return f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover (defensive)
+    # assert False, f"\n#{tag}: no visitor: do_{name}\n"
 </t>
 <t tx="ekr.20160318141204.180">def check_delete(self, new_stubs, old_root, new_root, trace):
     """Return a list of nodes that can be deleted."""
@@ -2640,36 +2643,27 @@ def munge_arg(self, s):
     self.returns.append(node)
         # New: return the entire node, not node.value.
 </t>
-<t tx="ekr.20160318141204.20"># 2: ClassDef(identifier name, expr* bases,
-#             stmt* body, expr* decorator_list)
-# 3: ClassDef(identifier name, expr* bases,
-#             keyword* keywords, expr? starargs, expr? kwargs
-#             stmt* body, expr* decorator_list)
-#
-# keyword arguments supplied to call (NULL identifier for **kwargs)
-# keyword = (identifier? arg, expr value)
+<t tx="ekr.20160318141204.20"># 2: ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
+# 3: ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
 
 def do_ClassDef(self, node):
     result = []
     name = node.name  # Only a plain string is valid.
     bases = [self.visit(z) for z in node.bases] if node.bases else []
+    if getattr(node, 'decorator_list', None):  # Python 3
+        for decorator in node.decorator_list:
+            result.append(f"@{self.visit(decorator)}\n")  # Bug fix: 2021/08/06.
     if getattr(node, 'keywords', None):  # Python 3
-        for keyword in node.keywords:  ###
+        for keyword in node.keywords:
             bases.append('%s=%s' % (keyword.arg, self.visit(keyword.value)))
-    if getattr(node, 'starargs', None):  # Python 3
-        bases.append('*%s', self.visit(node.starargs))  ###
-    if getattr(node, 'kwargs', None):  # Python 3
-        bases.append('*%s', self.visit(node.kwargs))  ###
-    #
     # Fix issue #2: look ahead to see if there are any functions in this class.
     empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
     tail = ' ...' if empty else ''
     if bases:
         result.append(
-            self.indent('class %s(%s):%s\n' % (name, ','.join(bases), tail)))
+            self.indent('class %s(%s):%s\n' % (name, ', '.join(bases), tail)))
     else:
-        result.append(self.indent('class %s:%s\n' % (name, tail)))
-            # Fix #2
+        result.append(self.indent('class %s:%s\n' % (name, tail)))  # Fix #2
     for z in node.body:
         self.level += 1
         result.append(self.visit(z))
@@ -2727,9 +2721,9 @@ def do_FunctionDef(self, node):
     return self.indent('%s\n' % self.visit(node.value))
 
 </t>
-<t tx="ekr.20160318141204.27">def do_Expression(self, node):
-    """An inner expression: do not indent."""
-    return '%s\n' % self.visit(node.body)  ###
+<t tx="ekr.20160318141204.27">def do_Expression(self, node):  # pragma: no cover (never used)
+    """An expression context"""
+    return '%s\n' % self.visit(node.body)
 
 </t>
 <t tx="ekr.20160318141204.28">def do_GeneratorExp(self, node):
@@ -2759,9 +2753,16 @@ def do_Store(self, node):  # pragma: no cover (defensive)
 
 </t>
 <t tx="ekr.20160318141204.31"># 2: arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
-# 3: arguments = (arg*  args, arg? vararg,
-#                arg* kwonlyargs, expr* kw_defaults,
-#                arg? kwarg, expr* defaults)
+
+###
+    # 3: OLD arguments = (arg*  args, arg? vararg,
+    #                arg* kwonlyargs, expr* kw_defaults,
+    #                arg? kwarg, expr* defaults)
+
+# 3: arguments = (
+#       arg* posonlyargs, arg* args, arg? vararg, arg* kwonlyargs,
+#       expr* kw_defaults, arg? kwarg, expr* defaults
+# )
 
 def do_arguments(self, node):
     """Format the arguments node."""
@@ -2777,26 +2778,31 @@ def do_arguments(self, node):
             args2.append(args[i])
         else:
             args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
-    if isPython3:
-        args = [self.visit(z) for z in node.kwonlyargs]
-        defaults = [self.visit(z) for z in node.kw_defaults]
-        n_plain = len(args) - len(defaults)
-        for i in range(len(args)):  ###
-            if i &lt; n_plain:
-                args2.append(args[i])
-            else:
-                args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
-        # Add the vararg and kwarg expressions.
-        vararg = getattr(node, 'vararg', None)
-        if vararg: args2.append('*' + self.visit(vararg))
-        kwarg = getattr(node, 'kwarg', None)
-        if kwarg: args2.append('**' + self.visit(kwarg))
-    else:  # pragma: no cover
+    if not isPython3:  # pragma: no cover
         # Add the vararg and kwarg names.
         name = getattr(node, 'vararg', None)
-        if name: args2.append('*' + name)
+        if name:
+            args2.append('*' + name)
         name = getattr(node, 'kwarg', None)
-        if name: args2.append('**' + name)
+        if name:
+            args2.append('**' + name)
+        return ', '.join(args2)
+    #
+    args = [self.visit(z) for z in node.kwonlyargs]
+    defaults = [self.visit(z) for z in node.kw_defaults]
+    n_plain = len(args) - len(defaults)
+    for i in range(len(args)):  ###
+        if i &lt; n_plain:
+            args2.append(args[i])
+        else:
+            args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
+    # Add the vararg and kwarg expressions.
+    vararg = getattr(node, 'vararg', None)
+    if vararg:
+        args2.append('*' + self.visit(vararg))
+    kwarg = getattr(node, 'kwarg', None)
+    if kwarg:
+        args2.append('**' + self.visit(kwarg))
     return ', '.join(args2)
 </t>
 <t tx="ekr.20160318141204.32"># 3: arg = (identifier arg, expr? annotation)
@@ -3839,18 +3845,25 @@ https://github.com/edreamleo/make-stub-files/issues/18
 <t tx="ekr.20210805090943.1">def test_ast_formatter_class(self):
     """Test the output of all AstFormatter visitors.
     
-    We *can* assume that sources are in the form of the expected output,
-    because the input source serves only to create the ast tree.
+    We can *usually assume that sources are in the form of the expected
+    output, because the input source serves only to create the ast tree.
+    
+    However, there are a few special cases for which the stub is not valid python.
     """
     tag = 'test_ast_formatter_class'
     formatter = AstFormatter()
     tests = [
     &lt;&lt; define tests &gt;&gt;
     ]
-    for i, source in enumerate(tests):
+    for i, source_data in enumerate(tests):
         filename = f"{tag}: test {i}"
-        source = textwrap.dedent(source)
-        expected_s = textwrap.dedent(source)
+        if isinstance(source_data, str):
+            source = textwrap.dedent(source_data)
+            expected_s = textwrap.dedent(source)
+        else:
+            source, expected = source_data
+            source = textwrap.dedent(source)
+            expected_s = textwrap.dedent(expected)
         node = ast.parse(source, filename=filename, mode='exec')
         result_s = formatter.format(node)
         lines = g.splitLines(result_s)
@@ -3900,11 +3913,45 @@ class AstFormatter:
     def format(self, node: Node) -&gt; Union[Any, str]:
         pass
 """,
-# Constants...
-'a = 1\n',
-'b = 2.5\n',
-'c = False\n',
-'d = None\n',
+# Constant...
+"""\
+a = 1
+b = 2.5
+c = False
+d = None
+""",
+# ClassDef...
+(
+"""\
+@class_decorator
+class TestClass(str, base2=int):
+    pass
+""",
+"""\
+@class_decorator
+class TestClass(str, base2=int): ...
+    pass
+""",
+),
+# FunctionDef...
+"""\
+@function_decorator
+def f():
+    pass
+""",
+### Not yet.
+    # From PEP 570...
+    # """\
+    # def pos_only_arg(arg, /):
+        # pass
+    # """,
+    # """\
+    # def kwd_only_arg(*, arg):
+        # pass
+    # def combined_example(pos_only, /, standard, *, kwd_only):
+        # pass
+    # """,
+
 
    
 </t>
@@ -3949,5 +3996,77 @@ See README.md for examples.
 """
 )</t>
 <t tx="ekr.20210806134651.1"></t>
+<t tx="ekr.20210806153836.1">def test_finalize(self):
+    result = finalize(__file__)
+    self.assertEqual(result, __file__)
+</t>
+<t tx="ekr.20210806154007.1">def test_is_known_type(self):
+    self.assertTrue(is_known_type('str'))
+</t>
+<t tx="ekr.20210806161202.1">class T(base=None):
+    pass
+    
+T(base=str)
+print(T)</t>
+<t tx="ekr.20210806162349.1"></t>
+<t tx="ekr.20210806163439.1"># arguments = (
+#       arg* posonlyargs, arg* args, arg? vararg, arg* kwonlyargs,
+#       expr* kw_defaults, arg? kwarg, expr* defaults
+# )
+
+def do_arguments(self, node):
+    """Arguments to ast.Function or ast.Lambda, **not** ast.Call."""
+    #
+    # No need to generate commas anywhere below.
+    #
+    # Let block. Some fields may not exist pre Python 3.8.
+    n_plain = len(node.args) - len(node.defaults)
+    posonlyargs = getattr(node, 'posonlyargs', [])  # type:ignore
+    vararg = getattr(node, 'vararg', None)
+    kwonlyargs = getattr(node, 'kwonlyargs', [])  # type:ignore
+    kw_defaults = getattr(node, 'kw_defaults', [])  # type:ignore
+    kwarg = getattr(node, 'kwarg', None)
+    if 0:
+        g.printObj(ast.dump(node.vararg) if node.vararg else 'None', tag='node.vararg')
+        g.printObj([ast.dump(z) for z in node.args], tag='node.args')
+        g.printObj([ast.dump(z) for z in node.defaults], tag='node.defaults')
+        g.printObj([ast.dump(z) for z in posonlyargs], tag='node.posonlyargs')
+        g.printObj([ast.dump(z) for z in kwonlyargs], tag='kwonlyargs')
+        g.printObj([ast.dump(z) if z else 'None' for z in kw_defaults], tag='kw_defaults')
+    # 1. Sync the position-only args.
+    if posonlyargs:
+        for n, z in enumerate(posonlyargs):
+            # g.trace('pos-only', ast.dump(z))
+            yield from self.gen(z)
+        yield from self.gen_op('/')
+    # 2. Sync all args.
+    for i, z in enumerate(node.args):
+        yield from self.gen(z)
+        if i &gt;= n_plain:
+            yield from self.gen_op('=')
+            yield from self.gen(node.defaults[i - n_plain])
+    # 3. Sync the vararg.
+    if vararg:
+        # g.trace('vararg', ast.dump(vararg))
+        yield from self.gen_op('*')
+        yield from self.gen(vararg)
+    # 4. Sync the keyword-only args.
+    if kwonlyargs:
+        if not vararg:
+            yield from self.gen_op('*')
+        for n, z in enumerate(kwonlyargs):
+            # g.trace('keyword-only', ast.dump(z))
+            yield from self.gen(z)
+            val = kw_defaults[n]
+            if val is not None:
+                yield from self.gen_op('=')
+                yield from self.gen(val)
+    # 5. Sync the kwarg.
+    if kwarg:
+        # g.trace('kwarg', ast.dump(kwarg))
+        yield from self.gen_op('**')
+        yield from self.gen(kwarg)
+
+</t>
 </tnodes>
 </leo_file>

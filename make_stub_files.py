@@ -120,63 +120,51 @@ class AstFormatter:
         """Return the formatted version of an Ast node, or list of Ast nodes."""
         tag = 'AstFormatter.visit'
         name = node.__class__.__name__
-        trace = False ###
-        if trace: g.trace(name) ###
+        # g.trace(name) ###
         if isinstance(node, (list, tuple)):
             return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
         if node is None:
             return 'None'  # pragma: no cover
         if not isinstance(node, ast.AST):
-            # #13:
-            assert False, f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
-            # Insert an error comment directly into the output.
-            # return f"\n#{tag}: not an AST node: {name}\n"  
+            # #13: Insert an error comment directly into the output.
+            return f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
+            # assert False, f"\n#{tag}: not an AST node: {name}\n"
         method_name = 'do_' + node.__class__.__name__
         # #13: *Never* ignore missing visitors!
         method = getattr(self, method_name, None)
         if method:
             s = method(node)
             assert g.isString(s), s.__class__.__name__
-            if trace: g.trace(name,  '==>', s) ###
+            # g.trace(name,  '==>', s) ###
             return s
-        #13:
-        assert False, f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover
-        # Insert an error comment directly into the output.
-        #f"\n#{tag}: no visitor: do_{name}\n"
+        # #13: Insert an error comment directly into the output.
+        return f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover (defensive)
+        # assert False, f"\n#{tag}: no visitor: do_{name}\n"
     #@+node:ekr.20160318141204.19: *3* f.Contexts
 
     # Contexts...
     #@+node:ekr.20160318141204.20: *4* f.ClassDef
-    # 2: ClassDef(identifier name, expr* bases,
-    #             stmt* body, expr* decorator_list)
-    # 3: ClassDef(identifier name, expr* bases,
-    #             keyword* keywords, expr? starargs, expr? kwargs
-    #             stmt* body, expr* decorator_list)
-    #
-    # keyword arguments supplied to call (NULL identifier for **kwargs)
-    # keyword = (identifier? arg, expr value)
+    # 2: ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
+    # 3: ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
 
     def do_ClassDef(self, node):
         result = []
         name = node.name  # Only a plain string is valid.
         bases = [self.visit(z) for z in node.bases] if node.bases else []
+        if getattr(node, 'decorator_list', None):  # Python 3
+            for decorator in node.decorator_list:
+                result.append(f"@{self.visit(decorator)}\n")  # Bug fix: 2021/08/06.
         if getattr(node, 'keywords', None):  # Python 3
-            for keyword in node.keywords:  ###
+            for keyword in node.keywords:
                 bases.append('%s=%s' % (keyword.arg, self.visit(keyword.value)))
-        if getattr(node, 'starargs', None):  # Python 3
-            bases.append('*%s', self.visit(node.starargs))  ###
-        if getattr(node, 'kwargs', None):  # Python 3
-            bases.append('*%s', self.visit(node.kwargs))  ###
-        #
         # Fix issue #2: look ahead to see if there are any functions in this class.
         empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
         tail = ' ...' if empty else ''
         if bases:
             result.append(
-                self.indent('class %s(%s):%s\n' % (name, ','.join(bases), tail)))
+                self.indent('class %s(%s):%s\n' % (name, ', '.join(bases), tail)))
         else:
-            result.append(self.indent('class %s:%s\n' % (name, tail)))
-                # Fix #2
+            result.append(self.indent('class %s:%s\n' % (name, tail)))  # Fix #2
         for z in node.body:
             self.level += 1
             result.append(self.visit(z))
@@ -234,9 +222,9 @@ class AstFormatter:
         return self.indent('%s\n' % self.visit(node.value))
 
     #@+node:ekr.20160318141204.27: *4* f.Expression
-    def do_Expression(self, node):
-        """An inner expression: do not indent."""
-        return '%s\n' % self.visit(node.body)  ###
+    def do_Expression(self, node):  # pragma: no cover (never used)
+        """An expression context"""
+        return '%s\n' % self.visit(node.body)
 
     #@+node:ekr.20160318141204.28: *4* f.GeneratorExp
     def do_GeneratorExp(self, node):
@@ -266,9 +254,16 @@ class AstFormatter:
 
     #@+node:ekr.20160318141204.31: *4* f.arguments
     # 2: arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
-    # 3: arguments = (arg*  args, arg? vararg,
-    #                arg* kwonlyargs, expr* kw_defaults,
-    #                arg? kwarg, expr* defaults)
+
+    ###
+        # 3: OLD arguments = (arg*  args, arg? vararg,
+        #                arg* kwonlyargs, expr* kw_defaults,
+        #                arg? kwarg, expr* defaults)
+
+    # 3: arguments = (
+    #       arg* posonlyargs, arg* args, arg? vararg, arg* kwonlyargs,
+    #       expr* kw_defaults, arg? kwarg, expr* defaults
+    # )
 
     def do_arguments(self, node):
         """Format the arguments node."""
@@ -284,26 +279,31 @@ class AstFormatter:
                 args2.append(args[i])
             else:
                 args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
-        if isPython3:
-            args = [self.visit(z) for z in node.kwonlyargs]
-            defaults = [self.visit(z) for z in node.kw_defaults]
-            n_plain = len(args) - len(defaults)
-            for i in range(len(args)):  ###
-                if i < n_plain:
-                    args2.append(args[i])
-                else:
-                    args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
-            # Add the vararg and kwarg expressions.
-            vararg = getattr(node, 'vararg', None)
-            if vararg: args2.append('*' + self.visit(vararg))
-            kwarg = getattr(node, 'kwarg', None)
-            if kwarg: args2.append('**' + self.visit(kwarg))
-        else:  # pragma: no cover
+        if not isPython3:  # pragma: no cover
             # Add the vararg and kwarg names.
             name = getattr(node, 'vararg', None)
-            if name: args2.append('*' + name)
+            if name:
+                args2.append('*' + name)
             name = getattr(node, 'kwarg', None)
-            if name: args2.append('**' + name)
+            if name:
+                args2.append('**' + name)
+            return ', '.join(args2)
+        #
+        args = [self.visit(z) for z in node.kwonlyargs]
+        defaults = [self.visit(z) for z in node.kw_defaults]
+        n_plain = len(args) - len(defaults)
+        for i in range(len(args)):  ###
+            if i < n_plain:
+                args2.append(args[i])
+            else:
+                args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
+        # Add the vararg and kwarg expressions.
+        vararg = getattr(node, 'vararg', None)
+        if vararg:
+            args2.append('*' + self.visit(vararg))
+        kwarg = getattr(node, 'kwarg', None)
+        if kwarg:
+            args2.append('**' + self.visit(kwarg))
         return ', '.join(args2)
     #@+node:ekr.20160318141204.32: *4* f.arg (Python3 only) (make_stub_files)
     # 3: arg = (identifier arg, expr? annotation)
@@ -2882,8 +2882,10 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     def test_ast_formatter_class(self):
         """Test the output of all AstFormatter visitors.
         
-        We *can* assume that sources are in the form of the expected output,
-        because the input source serves only to create the ast tree.
+        We can *usually assume that sources are in the form of the expected
+        output, because the input source serves only to create the ast tree.
+        
+        However, there are a few special cases for which the stub is not valid python.
         """
         tag = 'test_ast_formatter_class'
         formatter = AstFormatter()
@@ -2899,19 +2901,58 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             def format(self, node: Node) -> Union[Any, str]:
                 pass
         """,
-        # Constants...
-        'a = 1\n',
-        'b = 2.5\n',
-        'c = False\n',
-        'd = None\n',
+        # Constant...
+        """\
+        a = 1
+        b = 2.5
+        c = False
+        d = None
+        """,
+        # ClassDef...
+        (
+        """\
+        @class_decorator
+        class TestClass(str, base2=int):
+            pass
+        """,
+        """\
+        @class_decorator
+        class TestClass(str, base2=int): ...
+            pass
+        """,
+        ),
+        # FunctionDef...
+        """\
+        @function_decorator
+        def f():
+            pass
+        """,
+        ### Not yet.
+            # From PEP 570...
+            # """\
+            # def pos_only_arg(arg, /):
+                # pass
+            # """,
+            # """\
+            # def kwd_only_arg(*, arg):
+                # pass
+            # def combined_example(pos_only, /, standard, *, kwd_only):
+                # pass
+            # """,
+
 
            
         #@-<< define tests >>
         ]
-        for i, source in enumerate(tests):
+        for i, source_data in enumerate(tests):
             filename = f"{tag}: test {i}"
-            source = textwrap.dedent(source)
-            expected_s = textwrap.dedent(source)
+            if isinstance(source_data, str):
+                source = textwrap.dedent(source_data)
+                expected_s = textwrap.dedent(source)
+            else:
+                source, expected = source_data
+                source = textwrap.dedent(source)
+                expected_s = textwrap.dedent(expected)
             node = ast.parse(source, filename=filename, mode='exec')
             result_s = formatter.format(node)
             lines = g.splitLines(result_s)
@@ -3208,6 +3249,13 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             for fn in controller.files:
                 controller.make_stub_file(fn)
     #@+node:ekr.20210805093004.1: *3* test top-level functions
+    #@+node:ekr.20210806153836.1: *4* test_finalize
+    def test_finalize(self):
+        result = finalize(__file__)
+        self.assertEqual(result, __file__)
+    #@+node:ekr.20210806154007.1: *4* test_is_known_type
+    def test_is_known_type(self):
+        self.assertTrue(is_known_type('str'))
     #@+node:ekr.20160207115947.1: *4* test_truncate
     def test_truncate(self):
         table = (
