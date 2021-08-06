@@ -39,7 +39,7 @@ the script produces the stub:
 
     def foo(i: int, s: str) --> str: ...
 
-The `make_stub_files` script eliminates much of the drudgery of creating [python stub (.pyi) files](https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. Stub files can be used by people who use Python 2.x code bases.
+`make_stub_files` eliminates much of the drudgery of creating [python stub (.pyi) files](https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. Stub files can be used by people who use Python 2.x code bases.
 
 
 ### Quick Start

@@ -48,6 +48,7 @@
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh>
 <v t="ekr.20210805090003.1"><vh>--- no longer used</vh>
 <v t="ekr.20160318141204.12"><vh>function: pdb</vh></v>
+<v t="ekr.20210806132036.1"><vh>&lt;&lt; define description &gt;&gt;</vh></v>
 </v>
 <v t="ekr.20210805085843.1"><vh>top-level functions</vh>
 <v t="ekr.20160318141204.8"><vh>function: dump</vh></v>
@@ -326,6 +327,7 @@
 <v t="ekr.20160318141204.194"></v>
 </v>
 <v t="ekr.20210805090943.1"></v>
+<v t="ekr.20160318141204.131"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -749,7 +751,7 @@ the script produces the stub:
 
     def foo(i: int, s: str) --&gt; str: ...
 
-The `make_stub_files` script eliminates much of the drudgery of creating [python stub (.pyi) files](https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. Stub files can be used by people who use Python 2.x code bases.
+`make_stub_files` eliminates much of the drudgery of creating [python stub (.pyi) files](https://www.python.org/dev/peps/pep-0484/#stub-files) from python source files. Stub files can be used by people who use Python 2.x code bases.
 
 </t>
 <t tx="ekr.20160211110810.1">
@@ -1503,7 +1505,7 @@ def make_stub_file(self, fn):  # pragma: no cover
 <t tx="ekr.20160318141204.131">def scan_command_line(self):  # pragma: no cover
     """Set ivars from command-line arguments."""
     # The parser implements the --help option.
-    description='make_stub_file: Create stub (.pyi) files from python files'
+    description = 'Create stub (.pyi) files using patterns, not type inference.'
     usage = 'make_stub_files.py [options] file1, file2, ...'
     parser = argparse.ArgumentParser(description=description, usage=usage)
     add = parser.add_argument
@@ -3887,8 +3889,6 @@ c.redraw()
 @wrap
 https://github.com/edreamleo/make-stub-files/issues/18
 
-- Much better description in usage message.
-
 @language python
 @nosearch
 </t>
@@ -3998,5 +3998,21 @@ def do_JoinedStr(self, node):
     assert result_s
 </t>
 <t tx="ekr.20210806081329.1"></t>
+<t tx="ekr.20210806132036.1">@pagewidth 90
+
+description = textwrap.dedent("""\
+
+make_stub_files: Create stubs (.pyi files) using patterns, not type inference.
+
+make_stub_files applies patterns to argument names and the text of return expressions and
+creates annotations when the patterns match. (Return expressions are the text of whatever
+follows the "return" keyword.)
+
+Before applying patterns, make_stub_files removes comments from return expressions and
+converts all strings to "str". This preprocessing simplifies pattern matching.
+
+See README.md for examples.
+"""
+)</t>
 </tnodes>
 </leo_file>

@@ -1014,7 +1014,7 @@ class Controller:
     def scan_command_line(self):  # pragma: no cover
         """Set ivars from command-line arguments."""
         # The parser implements the --help option.
-        description='make_stub_file: Create stub (.pyi) files from python files'
+        description = 'Create stub (.pyi) files using patterns, not type inference.'
         usage = 'make_stub_files.py [options] file1, file2, ...'
         parser = argparse.ArgumentParser(description=description, usage=usage)
         add = parser.add_argument
