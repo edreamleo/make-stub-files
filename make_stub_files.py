@@ -2904,7 +2904,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         #@-<< define tests >>
         ]
         # We *can* assume that sources are in the form of the expected output,
-        # because the input serves only to create nodes.
+        # because the input source serves only to create the ast tree.
         for i, source in enumerate(tests):
             filename = f"{tag}: test {i}"
             source = textwrap.dedent(source)
@@ -2917,7 +2917,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
                 g.printObj(expected, tag='expected')
                 g.printObj(lines, tag='lines')
             else:
-                self.assertEqual(expected, lines, msg=f"{tag}: {i}") ### {g.objToString(source)}")
+                self.assertEqual(expected, lines, msg=f"{tag}: {i}")
     #@+node:ekr.20210806011736.1: *3* test_ast_formatter_class_on_file
     def test_ast_formatter_class_on_file(self):
         # Use the source of *this* file as a single test.

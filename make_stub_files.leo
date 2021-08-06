@@ -3906,7 +3906,7 @@ Cover:
     &lt;&lt; define tests &gt;&gt;
     ]
     # We *can* assume that sources are in the form of the expected output,
-    # because the input serves only to create nodes.
+    # because the input source serves only to create the ast tree.
     for i, source in enumerate(tests):
         filename = f"{tag}: test {i}"
         source = textwrap.dedent(source)
@@ -3919,7 +3919,7 @@ Cover:
             g.printObj(expected, tag='expected')
             g.printObj(lines, tag='lines')
         else:
-            self.assertEqual(expected, lines, msg=f"{tag}: {i}") ### {g.objToString(source)}")
+            self.assertEqual(expected, lines, msg=f"{tag}: {i}")
 </t>
 <t tx="ekr.20210805091045.1"></t>
 <t tx="ekr.20210805092921.1"></t>
