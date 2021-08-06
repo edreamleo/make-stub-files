@@ -73,7 +73,7 @@ def is_known_type(s):
     return ReduceTypes().is_known_type(s)
 
 #@+node:ekr.20160318141204.11: *3* function: main
-def main():
+def main():  # pragma: no cover
     """
     The driver for the stand-alone version of make-stub-files.
     All options come from the configuration file.
@@ -82,7 +82,6 @@ def main():
     controller.scan_command_line()
     controller.scan_options()
     for fn in controller.files:
-        g.trace('=====', fn)
         controller.make_stub_file(fn)
 #@+node:ekr.20160318141204.6: *3* function: reduce_types
 def reduce_types(aList, name=None, trace=False):
@@ -969,19 +968,19 @@ class Controller:
     #@+node:ekr.20160318141204.128: *3* msf.make_stub_file
     directory_warning_given = False
 
-    def make_stub_file(self, fn):
+    def make_stub_file(self, fn):  # pragma: no cover
         """
         Make a stub file in ~/stubs for all source files mentioned in the
         [Source Files] section of the configuration file.
         """
         global g_input_file_name
         extension = fn[fn.rfind('.'):]
-        if not extension == '.py' and not (self.force_pyx and extension == '.pyx'):  # pragma: no cover
+        if not extension == '.py' and not (self.force_pyx and extension == '.pyx'):  
             print('not a python file', fn)
             return
         #
         # Read the input file.
-        if not os.path.exists(fn):  # pragma: no cover
+        if not os.path.exists(fn):
             print('not found', fn)
             return
         # Set g_input_file_name for error messages.
@@ -989,14 +988,14 @@ class Controller:
         try:
             with open(fn, 'r') as f:
                 s = f.read()
-        except UnicodeDecodeError:  # pragma: no cover
+        except UnicodeDecodeError:
             # Python 3 only, try utf-8 encoding.
             with open(fn, 'r', encoding='utf-8') as f:
                 s = f.read()
         #
         # Compute the output file name.
         if self.output_directory:
-            if not os.path.exists(self.output_directory):  # pragma: no cover
+            if not os.path.exists(self.output_directory):
                 if not self.directory_warning_given:
                     self.directory_warning_given = True
                     print('output directory not found:', repr(self.output_directory))
@@ -1005,11 +1004,10 @@ class Controller:
             out_fn = os.path.join(self.output_directory, base_fn)
             out_fn = out_fn[:-len(extension)] + '.pyi'
         else:
-            out_fn = fn[:-len(extension)] + '.pyi'  # pragma: no cover
+            out_fn = fn[:-len(extension)] + '.pyi'
         self.output_fn = os.path.normpath(out_fn)
         #
         # Process s.
-        g.trace(len(s), fn)
         node = ast.parse(s, filename=fn, mode='exec')
         StubTraverser(controller=self).run(node)
     #@+node:ekr.20160318141204.131: *3* msf.scan_command_line
@@ -1075,12 +1073,12 @@ class Controller:
             print('--force-pyx: .pyx files will be parsed as regular python, cython syntax is not supported')
         self.files = args.files
     #@+node:ekr.20160318141204.132: *3* msf.scan_options & helpers
-    def scan_options(self):
+    def scan_options(self):  # pragma: no cover
         """Set all configuration-related ivars."""
         if self.verbose:
             print('')
             print(f"configuration file: {self.config_fn}")
-        if not self.config_fn:  # pragma: no cover
+        if not self.config_fn:
             return
         self.parser = parser = self.create_parser()
         s = self.get_config_string()
@@ -1088,29 +1086,29 @@ class Controller:
         if self.files:
             files_source = 'command-line'
             files = self.files
-            if isinstance(files, str):  # pragma: no cover
+            if isinstance(files, str):
                 files = [files]
-        elif parser.has_section('Global'):  # pragma: no cover
+        elif parser.has_section('Global'):
             files_source = 'config file'
             files = parser.get('Global', 'files')
             files = [z.strip() for z in files.split('\n') if z.strip()]
-        else:  # pragma: no cover
+        else:
             return
-        if self.verbose:  # pragma: no cover
+        if self.verbose:
             print(f"Files (from {files_source})...")
         files2 = []
         not_found = []
         for z in files:
-            # 2021/08/04: Warn if z does not exist.
+            # Warn if z does not exist.
             files3 = glob.glob(finalize(z))
             if files3:
                 if self.verbose:
                     for z in files3:
                         print(f"  {z}")
                 files2.extend(files3)
-            else:  # pragma: no cover
+            else:
                 not_found.append(z)
-        if not_found:  # pragma: no cover
+        if not_found:
             print('Not found...')
             for z in not_found:
                 print(f"  {z}")
@@ -1122,7 +1120,7 @@ class Controller:
                 self.output_directory = output_dir
                 if self.verbose:
                     print(f"output directory: {output_dir}")
-            else:  # pragma: no cover
+            else:
                 print(f"output directory not found: {output_dir}")
                 self.output_directory = None  # inhibit run().
         if 'prefix_lines' in parser.options('Global'):
@@ -1131,11 +1129,11 @@ class Controller:
                 # The parser does not preserve leading whitespace.
             self.prefix_lines = [z for z in prefix_lines if z.strip()]
             # Annoying
-            # if self.verbose:
-                # print('Prefix lines...\n')
-                # for z in self.prefix_lines:
-                    # print('  %s' % z)
-                # print('')
+                # if self.verbose:
+                    # print('Prefix lines...\n')
+                    # for z in self.prefix_lines:
+                        # print('  %s' % z)
+                    # print('')
         if self.verbose:
             print('')
         self.def_patterns = self.scan_patterns('Def Name Patterns')
@@ -1167,14 +1165,14 @@ class Controller:
             d[op] = ['Compare',]
         return d
     #@+node:ekr.20160318141204.134: *4* msf.create_parser
-    def create_parser(self):
+    def create_parser(self):  # pragma: no cover
         """Create a RawConfigParser and return it."""
         parser = configparser.RawConfigParser(dict_type=OrderedDict)
             # Requires Python 2.7
         parser.optionxform = str
         return parser
     #@+node:ekr.20160318141204.135: *4* msf.find_pattern_ops
-    def find_pattern_ops(self, pattern):
+    def find_pattern_ops(self, pattern):  ###
         """Return a list of operators in pattern.find_s."""
         trace = False or self.trace_patterns
         if pattern.is_regex():  ###
@@ -1215,14 +1213,14 @@ class Controller:
         if trace and ops: g.trace(s1, ops)
         return ops
     #@+node:ekr.20160318141204.136: *4* msf.get_config_string
-    def get_config_string(self):
+    def get_config_string(self):  # pragma: no cover
         """Read the configuration file."""
         fn = finalize(self.config_fn)
         if os.path.exists(fn):
             with open(fn, 'r') as f:
                 return f.read()
-        print(f"\nconfiguration file not found: {fn}")  # pragma: no cover
-        return ''  # pragma: no cover
+        print(f"\nconfiguration file not found: {fn}")
+        return ''
 
     #@+node:ekr.20160318141204.137: *4* msf.init_parser
     def init_parser(self, s):  # pragma: no cover
@@ -1241,7 +1239,7 @@ class Controller:
         file_object = io.StringIO(s)
         self.parser.read_file(file_object)
     #@+node:ekr.20160318141204.138: *4* msf.is_section_name
-    def is_section_name(self, s):
+    def is_section_name(self, s):  ###
 
         def munge(s):
             return s.strip().lower().replace(' ', '')
@@ -1254,7 +1252,7 @@ class Controller:
                     return True
         return False
     #@+node:ekr.20160318141204.139: *4* msf.make_patterns_dict
-    def make_patterns_dict(self):
+    def make_patterns_dict(self):  ###
         """Assign all patterns to the appropriate ast.Node."""
         for pattern in self.general_patterns:
             ops = self.find_pattern_ops(pattern)
@@ -1291,7 +1289,7 @@ class Controller:
                     print('  ' + repr(pattern))
         # Note: retain self.general_patterns for use in argument lists.
     #@+node:ekr.20160318141204.140: *4* msf.scan_patterns
-    def scan_patterns(self, section_name):
+    def scan_patterns(self, section_name):  ###
         """Parse the config section into a list of patterns, preserving order."""
         trace = False or self.trace_patterns
         parser = self.parser
@@ -1674,7 +1672,7 @@ class Pattern:
         print('%20s: unmatched %s in %s' % (g_input_file_name, delim, s))  # pragma: no cover
         return len(s) + 1  # pragma: no cover
     #@+node:ekr.20160318141204.111: *3* pattern.match (trace-matches)
-    def match(self, s, trace=False):
+    def match(self, s, trace=False):  ###
         """
         Perform the match on the entire string if possible.
         Return (found, new s)
@@ -2017,7 +2015,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.149: *3* sf.match_all
     matched_d = {}
 
-    def match_all(self, node, s, trace=False):
+    def match_all(self, node, s, trace=False):  ###
         """Match all the patterns for the given node."""
         trace = trace or self.trace_matches
         # verbose = True
@@ -2062,7 +2060,7 @@ class StubFormatter(AstFormatter):
             # self.attrs_seen.append(s2)
             # g.trace(s, '==>', s2)
         return s2 or s
-    #@+node:ekr.20160318141204.154: *4* sf.Constants: Bytes, Num, Str
+    #@+node:ekr.20160318141204.154: *4* sf.Constants: Constant, Bytes, Num, Str
     # Return generic markers to allow better pattern matches.
 
     def do_Contant(self, node):
@@ -2099,7 +2097,7 @@ class StubFormatter(AstFormatter):
                 repr(keys), repr(values)))
         return 'Dict[%s]' % ''.join(result) if result else 'Dict'
     #@+node:ekr.20160318141204.156: *4* sf.List
-    def do_List(self, node):
+    def do_List(self, node):  ###
         """StubFormatter.List."""
         elts = [self.visit(z) for z in node.elts]
         elts = [z for z in elts if z]  # Defensive.
@@ -2120,7 +2118,7 @@ class StubFormatter(AstFormatter):
                 g.trace('**not found**', node.id)
         return s
     #@+node:ekr.20160318141204.158: *4* sf.Tuple
-    def do_Tuple(self, node):
+    def do_Tuple(self, node):   ###
         """StubFormatter.Tuple."""
         elts = [self.visit(z) for z in node.elts]
         return 'Tuple[%s]' % ', '.join(elts)
@@ -2129,7 +2127,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.160: *4* sf.BinOp
     # BinOp(expr left, operator op, expr right)
 
-    def do_BinOp(self, node):
+    def do_BinOp(self, node):  ###
         """StubFormatter.BinOp visitor."""
         trace = self.trace_reduce
         numbers = ['number', 'complex', 'float', 'long', 'int',]
@@ -2172,7 +2170,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.162: *4* sf.Call & sf.keyword
     # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
-    def do_Call(self, node):
+    def do_Call(self, node):  ###
         """StubFormatter.Call visitor."""
         func = self.visit(node.func)
         args = [self.visit(z) for z in node.args]
@@ -2198,7 +2196,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.163: *5* sf.keyword
     # keyword = (identifier arg, expr value)
 
-    def do_keyword(self, node):
+    def do_keyword(self, node):  ###
         # node.arg is a string.
         value = self.visit(node.value)
         # This is a keyword *arg*, not a Python keyword!
@@ -2206,7 +2204,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.164: *4* sf.Compare
     # Compare(expr left, cmpop* ops, expr* comparators)
 
-    def do_Compare(self, node):
+    def do_Compare(self, node):  ###
         """
         StubFormatter ast.Compare visitor for these ops:
         '==', '!=', '<', '<=', '>', '>=', 'is', 'is not', 'in', 'not in',
@@ -2218,7 +2216,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.165: *4* sf.IfExp
     # If(expr test, stmt* body, stmt* orelse)
 
-    def do_IfExp(self, node):
+    def do_IfExp(self, node):  ###
         """StubFormatterIfExp (ternary operator)."""
         trace = self.trace_reduce
         aList = [
@@ -2232,7 +2230,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.166: *4* sf.Subscript
     # Subscript(expr value, slice slice, expr_context ctx)
 
-    def do_Subscript(self, node):
+    def do_Subscript(self, node):  ###
         """StubFormatter.Subscript."""
         s = '%s[%s]' % (
             self.visit(node.value),
@@ -2243,7 +2241,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.167: *4* sf.UnaryOp
     # UnaryOp(unaryop op, expr operand)
 
-    def do_UnaryOp(self, node):
+    def do_UnaryOp(self, node):  ###
         """StubFormatter.UnaryOp for unary +, -, ~ and 'not' operators."""
         op = self.op_name(node.op)
         if op.strip() == 'not':
@@ -2373,13 +2371,13 @@ class StubTraverser(ast.NodeVisitor):
         for child in stub.children:
             self.output_stubs(child)
     #@+node:ekr.20160318141204.175: *4* st.output_time_stamp
-    def output_time_stamp(self):
+    def output_time_stamp(self):  ###
         """Put a time-stamp in the output file."""
         if self.output_file:
             self.output_file.write('# make_stub_files: %s\n' %
                 time.strftime("%a %d %b %Y at %H:%M:%S"))
     #@+node:ekr.20160318141204.176: *4* st.update & helpers
-    def update(self, fn, new_root):  ### To do: cover.
+    def update(self, fn, new_root):  ###
         """
         Merge the new_root tree with the old_root tree in fn (a .pyi file).
 
@@ -2596,7 +2594,7 @@ class StubTraverser(ast.NodeVisitor):
     # keyword arguments supplied to call (NULL identifier for **kwargs)
     # keyword = (identifier? arg, expr value)
 
-    def visit_ClassDef(self, node):  ### To do: cover.
+    def visit_ClassDef(self, node):  ###
 
         # Create the stub in the old context.
         old_stub = self.parent_stub
@@ -2668,7 +2666,7 @@ class StubTraverser(ast.NodeVisitor):
     #@+node:ekr.20160318141204.188: *4* st.format_arguments & helper
     # arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
 
-    def format_arguments(self, node):
+    def format_arguments(self, node):  ###
         """
         Format the arguments node.
         Similar to AstFormat.do_arguments, but it is not a visitor!
@@ -2705,7 +2703,7 @@ class StubTraverser(ast.NodeVisitor):
         if s == 'self':
             return s
         for pattern in self.general_patterns:
-            if pattern.match_entire_string(s):
+            if pattern.match_entire_string(s):  ###
                 return '%s: %s' % (s, pattern.repl_s)
         if self.warn and s not in self.warn_list:  # pragma: no cover
             self.warn_list.append(s)
@@ -2715,7 +2713,7 @@ class StubTraverser(ast.NodeVisitor):
             return s
         return s + ': Any'
     #@+node:ekr.20160318141204.190: *4* st.format_returns & helpers
-    def format_returns(self, node):
+    def format_returns(self, node):  ###
         """
         Calculate the return type:
         - Return None if there are no return statements.
@@ -2744,7 +2742,7 @@ class StubTraverser(ast.NodeVisitor):
         # Step 4: Calculate return types.
         return self.format_return_expressions(node, name, raw, r)
     #@+node:ekr.20160318141204.191: *5* st.format_return_expressions
-    def format_return_expressions(self, node, name, raw_returns, reduced_returns):
+    def format_return_expressions(self, node, name, raw_returns, reduced_returns):  ###
         """
         aList is a list of maximally reduced return expressions.
         For each expression e in Alist:
@@ -2784,10 +2782,10 @@ class StubTraverser(ast.NodeVisitor):
             if node.name == '__init__':
                 name = 'None'
         else:
-            name = node.name
+            name = node.name  ###
         return name
     #@+node:ekr.20160318141204.193: *5* st.remove_recursive_calls
-    def remove_recursive_calls(self, name, raw, reduced):
+    def remove_recursive_calls(self, name, raw, reduced):  ###
         """Remove any recursive calls to name from both lists."""
         # At present, this works *only* if the return is nothing but the recursive call.
         assert len(raw) == len(reduced)
@@ -2802,8 +2800,7 @@ class StubTraverser(ast.NodeVisitor):
                 reduced_result.append(reduced[i])
         return raw_result, reduced_result
     #@+node:ekr.20160318141204.194: *3* st.visit_Return
-    def visit_Return(self, node):
-
+    def visit_Return(self, node):  ###
         self.returns.append(node)
             # New: return the entire node, not node.value.
     #@-others
@@ -3184,7 +3181,9 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     #@+node:ekr.20210805093615.1: *3* test file: make_stub_files.py
     def test_file_msb(self):
         """Run make_stub_files on itself."""
-        if 0:
+        if 1:
+            # This test is was only briefly useful.
+            # In general, this test masks proper testing.
             self.skipTest('Prevents proper coverage data')
         elif 1:
             # Actually creates stubs.
