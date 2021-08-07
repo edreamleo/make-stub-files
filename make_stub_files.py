@@ -2189,7 +2189,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.164: *4* sf.Compare
     # Compare(expr left, cmpop* ops, expr* comparators)
 
-    def do_Compare(self, node):  ###
+    def do_Compare(self, node):
         """
         StubFormatter ast.Compare visitor for these ops:
         '==', '!=', '<', '<=', '>', '>=', 'is', 'is not', 'in', 'not in',
@@ -3231,14 +3231,14 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             """,
             ),
             # Test 3: Compare
-            # (
-            # """\
-            # print(a in b)
-            # """,
-            # """\
-            # print(bool)
-            # """
-            # ),
+            (
+            """\
+            print(a in b)
+            """,
+            """\
+            print(bool)
+            """
+            ),
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):
