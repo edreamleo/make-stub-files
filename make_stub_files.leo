@@ -327,8 +327,6 @@
 </v>
 <v t="ekr.20210803055042.1"></v>
 <v t="ekr.20210807105711.1"><vh>--- to do: StubFormatter</vh>
-<v t="ekr.20160318141204.162"></v>
-<v t="ekr.20160318141204.155"></v>
 <v t="ekr.20160318141204.165"></v>
 <v t="ekr.20160318141204.156"></v>
 <v t="ekr.20160318141204.149"></v>
@@ -337,7 +335,9 @@
 <v t="ekr.20160318141204.167"></v>
 </v>
 <v t="ekr.20210807133118.1"></v>
-<v t="ekr.20160318141204.164"></v>
+<v t="ekr.20160318141204.35"></v>
+<v t="ekr.20160318141204.162"></v>
+<v t="ekr.20160318141204.155"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1894,22 +1894,22 @@ def do_Num(self, node):  # pragma: no cover (obsolete)
 def do_Str(self, node):  # pragma: no cover (obsolete)
     """This represents a string constant."""
     return 'str'</t>
-<t tx="ekr.20160318141204.155">def do_Dict(self, node):  ###
-    result = []
+<t tx="ekr.20160318141204.155">def do_Dict(self, node):
     keys = [self.visit(z) for z in node.keys]
     values = [self.visit(z) for z in node.values]
-    if len(keys) == len(values):
-        result.append('{')
-        items = []
-        # pylint: disable=consider-using-enumerate
-        for i in range(len(keys)):
-            items.append('%s:%s' % (keys[i], values[i]))
-        result.append(', '.join(items))
-        result.append('}')
-    else:  # pragma: no cover (defensive)
-        print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
-            repr(keys), repr(values)))
-    return 'Dict[%s]' % ''.join(result) if result else 'Dict'
+    if len(keys) != len(values):  # pragma: no cover (defensive)
+        message = (
+            f"Error: sf.Dict: len(keys) {len(keys)} != len(values) {len(values)}\n"
+            f"keys: {keys!r}, vals: {values!r}")
+        print(message)
+        return message
+    if not keys:
+        return 'Dict'
+    result = []
+    # pylint: disable=consider-using-enumerate
+    for i in range(len(keys)):
+        result.append('%s:%s' % (keys[i], values[i]))
+    return ('Dict[%s]' % ', '.join(result))
 </t>
 <t tx="ekr.20160318141204.156">def do_List(self, node):  ###
     """StubFormatter.List."""
@@ -1984,7 +1984,7 @@ def do_BoolOp(self, node):  # pragma: no cover (Python 2.x only)
 </t>
 <t tx="ekr.20160318141204.162"># Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
-def do_Call(self, node):  ###
+def do_Call(self, node):
     """StubFormatter.Call visitor."""
     func = self.visit(node.func)
     args = [self.visit(z) for z in node.args]
@@ -4134,6 +4134,28 @@ print(a in b)
 print(bool)
 """
 ),
+# Test 4: Call.
+(
+"""\
+dict()
+""",
+"""\
+Dict
+"""
+),
+# Test 5: Dict
+(
+"""\
+a = {}
+b = {'1': 1}
+""",
+"""\
+a = Dict
+b = Dict[str:int]
+""",
+)
+
+
 </t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.

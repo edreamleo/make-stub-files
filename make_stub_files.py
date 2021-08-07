@@ -2065,22 +2065,22 @@ class StubFormatter(AstFormatter):
         """This represents a string constant."""
         return 'str'
     #@+node:ekr.20160318141204.155: *4* sf.Dict
-    def do_Dict(self, node):  ###
-        result = []
+    def do_Dict(self, node):
         keys = [self.visit(z) for z in node.keys]
         values = [self.visit(z) for z in node.values]
-        if len(keys) == len(values):
-            result.append('{')
-            items = []
-            # pylint: disable=consider-using-enumerate
-            for i in range(len(keys)):
-                items.append('%s:%s' % (keys[i], values[i]))
-            result.append(', '.join(items))
-            result.append('}')
-        else:  # pragma: no cover (defensive)
-            print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
-                repr(keys), repr(values)))
-        return 'Dict[%s]' % ''.join(result) if result else 'Dict'
+        if len(keys) != len(values):  # pragma: no cover (defensive)
+            message = (
+                f"Error: sf.Dict: len(keys) {len(keys)} != len(values) {len(values)}\n"
+                f"keys: {keys!r}, vals: {values!r}")
+            print(message)
+            return message
+        if not keys:
+            return 'Dict'
+        result = []
+        # pylint: disable=consider-using-enumerate
+        for i in range(len(keys)):
+            result.append('%s:%s' % (keys[i], values[i]))
+        return ('Dict[%s]' % ', '.join(result))
     #@+node:ekr.20160318141204.156: *4* sf.List
     def do_List(self, node):  ###
         """StubFormatter.List."""
@@ -2155,7 +2155,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.162: *4* sf.Call & sf.keyword
     # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
-    def do_Call(self, node):  ###
+    def do_Call(self, node):
         """StubFormatter.Call visitor."""
         func = self.visit(node.func)
         args = [self.visit(z) for z in node.args]
@@ -3239,6 +3239,28 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             print(bool)
             """
             ),
+            # Test 4: Call.
+            (
+            """\
+            dict()
+            """,
+            """\
+            Dict
+            """
+            ),
+            # Test 5: Dict
+            (
+            """\
+            a = {}
+            b = {'1': 1}
+            """,
+            """\
+            a = Dict
+            b = Dict[str:int]
+            """,
+            )
+
+
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):
