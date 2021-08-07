@@ -2082,7 +2082,7 @@ class StubFormatter(AstFormatter):
             result.append('%s:%s' % (keys[i], values[i]))
         return ('Dict[%s]' % ', '.join(result))
     #@+node:ekr.20160318141204.156: *4* sf.List
-    def do_List(self, node):  ###
+    def do_List(self, node):
         """StubFormatter.List."""
         elts = [self.visit(z) for z in node.elts]
         elts = [z for z in elts if z]  # Defensive.
@@ -2103,7 +2103,7 @@ class StubFormatter(AstFormatter):
                 g.trace('**not found**', node.id)
         return s
     #@+node:ekr.20160318141204.158: *4* sf.Tuple
-    def do_Tuple(self, node):   ###
+    def do_Tuple(self, node):
         """StubFormatter.Tuple."""
         elts = [self.visit(z) for z in node.elts]
         return 'Tuple[%s]' % ', '.join(elts)
@@ -2167,7 +2167,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.165: *4* sf.IfExp
     # If(expr test, stmt* body, stmt* orelse)
 
-    def do_IfExp(self, node):  ###
+    def do_IfExp(self, node):
         """StubFormatterIfExp (ternary operator)."""
         trace = self.trace_reduce
         aList = [
@@ -3179,11 +3179,10 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         traverser = StubTraverser(controller)
         formatter = StubFormatter(controller, traverser)
         if 0:  # For debugging.
-            tests = ["""\
-                def yield_test():
-                    yield 1
-                """
-            ]
+            tests = [(
+                "a = ['1', 2]\n",
+                "a = List[str, int]\n",
+            )]
         else:
             tests = [
             #@+<< define tests >>
@@ -3257,11 +3256,21 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             print(Dict[a, b])
             """
             ),
-            # Test ifExp
+            # Test 6: ifExp
             (
             "print(1 if True else 2)\n",
             "print(int)\n",
-            )
+            ),
+            # Test 7: List
+            (
+            "a = ['1', 2]\n",
+            "a = List[str, int]\n",
+            ),
+            # Test 8: Tuple
+            (
+            "a = ('1', 2)\n",
+            "a = Tuple[str, int]\n",
+            ),
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):

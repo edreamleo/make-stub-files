@@ -327,14 +327,41 @@
 </v>
 <v t="ekr.20210803055042.1"></v>
 <v t="ekr.20210807105711.1"><vh>--- to do: StubFormatter</vh>
-<v t="ekr.20160318141204.165"></v>
-<v t="ekr.20160318141204.156"></v>
 <v t="ekr.20160318141204.149"></v>
 <v t="ekr.20160318141204.166"></v>
-<v t="ekr.20160318141204.158"></v>
 <v t="ekr.20160318141204.167"></v>
 </v>
 <v t="ekr.20210807133118.1"></v>
+<v t="ekr.20210807152233.1"><vh>git diff HEAD </vh>
+<v t="ekr.20210807152233.20"><vh>make_stub_files.py</vh>
+<v t="ekr.20210807152233.25"><vh>Changed</vh>
+<v t="ekr.20210807152233.26"><vh>f.visit</vh>
+<v t="ekr.20210807152233.27"><vh>Old:f.visit</vh></v>
+<v t="ekr.20160318141204.18"></v>
+</v>
+<v t="ekr.20210807152233.28"><vh>sf.List</vh>
+<v t="ekr.20210807152233.29"><vh>Old:sf.List</vh></v>
+<v t="ekr.20160318141204.156"></v>
+</v>
+<v t="ekr.20210807152233.30"><vh>sf.Tuple</vh>
+<v t="ekr.20210807152233.31"><vh>Old:sf.Tuple</vh></v>
+<v t="ekr.20160318141204.158"></v>
+</v>
+<v t="ekr.20210807152233.32"><vh>sf.IfExp</vh>
+<v t="ekr.20210807152233.33"><vh>Old:sf.IfExp</vh></v>
+<v t="ekr.20160318141204.165"></v>
+</v>
+<v t="ekr.20210807152233.34"><vh>test_stub_formatter_class</vh>
+<v t="ekr.20210807152233.35"><vh>Old:test_stub_formatter_class</vh></v>
+<v t="ekr.20210807133118.1"></v>
+</v>
+<v t="ekr.20210807152234.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh>
+<v t="ekr.20210807152234.2"><vh>Old:&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
+<v t="ekr.20210807133228.1"></v>
+</v>
+</v>
+</v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1908,7 +1935,7 @@ def do_Str(self, node):  # pragma: no cover (obsolete)
         result.append('%s:%s' % (keys[i], values[i]))
     return ('Dict[%s]' % ', '.join(result))
 </t>
-<t tx="ekr.20160318141204.156">def do_List(self, node):  ###
+<t tx="ekr.20160318141204.156">def do_List(self, node):
     """StubFormatter.List."""
     elts = [self.visit(z) for z in node.elts]
     elts = [z for z in elts if z]  # Defensive.
@@ -1929,7 +1956,7 @@ def do_Name(self, node):
             g.trace('**not found**', node.id)
     return s
 </t>
-<t tx="ekr.20160318141204.158">def do_Tuple(self, node):   ###
+<t tx="ekr.20160318141204.158">def do_Tuple(self, node):
     """StubFormatter.Tuple."""
     elts = [self.visit(z) for z in node.elts]
     return 'Tuple[%s]' % ', '.join(elts)
@@ -2020,7 +2047,7 @@ def do_Compare(self, node):
 </t>
 <t tx="ekr.20160318141204.165"># If(expr test, stmt* body, stmt* orelse)
 
-def do_IfExp(self, node):  ###
+def do_IfExp(self, node):
     """StubFormatterIfExp (ternary operator)."""
     trace = self.trace_reduce
     aList = [
@@ -4052,11 +4079,10 @@ print(T)</t>
     traverser = StubTraverser(controller)
     formatter = StubFormatter(controller, traverser)
     if 0:  # For debugging.
-        tests = ["""\
-            def yield_test():
-                yield 1
-            """
-        ]
+        tests = [(
+            "a = ['1', 2]\n",
+            "a = List[str, int]\n",
+        )]
     else:
         tests = [
         &lt;&lt; define tests &gt;&gt;
@@ -4148,11 +4174,21 @@ print(*args, **kwargs)
 print(Dict[a, b])
 """
 ),
-# Test ifExp
+# Test 6: ifExp
 (
 "print(1 if True else 2)\n",
 "print(int)\n",
-)
+),
+# Test 7: List
+(
+"a = ['1', 2]\n",
+"a = List[str, int]\n",
+),
+# Test 8: Tuple
+(
+"a = ('1', 2)\n",
+"a = Tuple[str, int]\n",
+),
 </t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.
@@ -4203,5 +4239,358 @@ d = None
 </t>
 <t tx="ekr.20210807145722.1"></t>
 <t tx="ekr.20210807151105.1"></t>
+<t tx="ekr.20210807152233.1">@ignore
+@nosearch
+HEAD=94ebd92</t>
+<t tx="ekr.20210807152233.20">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -120,7 +120,7 @@
+         """Return the formatted version of an Ast node, or list of Ast nodes."""
+         tag = 'AstFormatter.visit'
+         name = node.__class__.__name__
+-        ### g.trace(name) ###
++        g.trace(name) ###
+         if isinstance(node, (list, tuple)):
+             return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
+         if node is None:
+@@ -2082,7 +2082,7 @@
+             result.append('%s:%s' % (keys[i], values[i]))
+         return ('Dict[%s]' % ', '.join(result))
+     #@+node:ekr.20160318141204.156: *4* sf.List
+-    def do_List(self, node):  ###
++    def do_List(self, node):
+         """StubFormatter.List."""
+         elts = [self.visit(z) for z in node.elts]
+         elts = [z for z in elts if z]  # Defensive.
+@@ -2103,7 +2103,7 @@
+                 g.trace('**not found**', node.id)
+         return s
+     #@+node:ekr.20160318141204.158: *4* sf.Tuple
+-    def do_Tuple(self, node):   ###
++    def do_Tuple(self, node):
+         """StubFormatter.Tuple."""
+         elts = [self.visit(z) for z in node.elts]
+         return 'Tuple[%s]' % ', '.join(elts)
+@@ -2167,7 +2167,7 @@
+     #@+node:ekr.20160318141204.165: *4* sf.IfExp
+     # If(expr test, stmt* body, stmt* orelse)
+ 
+-    def do_IfExp(self, node):  ###
++    def do_IfExp(self, node):
+         """StubFormatterIfExp (ternary operator)."""
+         trace = self.trace_reduce
+         aList = [
+@@ -3179,11 +3179,10 @@
+         traverser = StubTraverser(controller)
+         formatter = StubFormatter(controller, traverser)
+         if 0:  # For debugging.
+-            tests = ["""\
+-                def yield_test():
+-                    yield 1
+-                """
+-            ]
++            tests = [(
++                "a = ['1', 2]\n",
++                "a = List[str, int]\n",
++            )]
+         else:
+             tests = [
+             #@+&lt;&lt; define tests &gt;&gt;
+@@ -3257,11 +3256,21 @@
+             print(Dict[a, b])
+             """
+             ),
+-            # Test ifExp
++            # Test 6: ifExp
+             (
+             "print(1 if True else 2)\n",
+             "print(int)\n",
+-            )
++            ),
++            # Test 7: List
++            (
++            "a = ['1', 2]\n",
++            "a = List[str, int]\n",
++            ),
++            # Test 8: Tuple
++            (
++            "a = ('1', 2)\n",
++            "a = Tuple[str, int]\n",
++            ),
+             #@-&lt;&lt; define tests &gt;&gt;
+             ]
+         for i, source_data in enumerate(tests):
+@language python
+</t>
+<t tx="ekr.20210807152233.25"></t>
+<t tx="ekr.20210807152233.26">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -2,7 +2,7 @@
+     """Return the formatted version of an Ast node, or list of Ast nodes."""
+     tag = 'AstFormatter.visit'
+     name = node.__class__.__name__
+-    ### g.trace(name) ###
++    g.trace(name) ###
+     if isinstance(node, (list, tuple)):
+         return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
+     if node is None:
+@language python
+</t>
+<t tx="ekr.20210807152233.27">def visit(self, node):
+    """Return the formatted version of an Ast node, or list of Ast nodes."""
+    tag = 'AstFormatter.visit'
+    name = node.__class__.__name__
+    ### g.trace(name) ###
+    if isinstance(node, (list, tuple)):
+        return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
+    if node is None:
+        return 'None'  # pragma: no cover
+    if not isinstance(node, ast.AST):
+        # #13: Insert an error comment directly into the output.
+        return f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
+        # assert False, f"\n#{tag}: not an AST node: {name}\n"
+    method_name = 'do_' + node.__class__.__name__
+    # #13: *Never* ignore missing visitors!
+    method = getattr(self, method_name, None)
+    if method:
+        s = method(node)
+        assert g.isString(s), s.__class__.__name__
+        # g.trace(name,  '==&gt;', s) ###
+        return s
+    # #13: Insert an error comment directly into the output.
+    return f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover (defensive)
+    # assert False, f"\n#{tag}: no visitor: do_{name}\n"
+</t>
+<t tx="ekr.20210807152233.28">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -1,4 +1,4 @@
+-def do_List(self, node):  ###
++def do_List(self, node):
+     """StubFormatter.List."""
+     elts = [self.visit(z) for z in node.elts]
+     elts = [z for z in elts if z]  # Defensive.
+@language python
+</t>
+<t tx="ekr.20210807152233.29">def do_List(self, node):  ###
+    """StubFormatter.List."""
+    elts = [self.visit(z) for z in node.elts]
+    elts = [z for z in elts if z]  # Defensive.
+    return 'List[%s]' % ', '.join(elts) if elts else 'List'
+</t>
+<t tx="ekr.20210807152233.30">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -1,4 +1,4 @@
+-def do_Tuple(self, node):   ###
++def do_Tuple(self, node):
+     """StubFormatter.Tuple."""
+     elts = [self.visit(z) for z in node.elts]
+     return 'Tuple[%s]' % ', '.join(elts)
+@language python
+</t>
+<t tx="ekr.20210807152233.31">def do_Tuple(self, node):   ###
+    """StubFormatter.Tuple."""
+    elts = [self.visit(z) for z in node.elts]
+    return 'Tuple[%s]' % ', '.join(elts)
+</t>
+<t tx="ekr.20210807152233.32">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -1,6 +1,6 @@
+ # If(expr test, stmt* body, stmt* orelse)
+ 
+-def do_IfExp(self, node):  ###
++def do_IfExp(self, node):
+     """StubFormatterIfExp (ternary operator)."""
+     trace = self.trace_reduce
+     aList = [
+@language python
+</t>
+<t tx="ekr.20210807152233.33"># If(expr test, stmt* body, stmt* orelse)
+
+def do_IfExp(self, node):  ###
+    """StubFormatterIfExp (ternary operator)."""
+    trace = self.trace_reduce
+    aList = [
+        self.match_all(node, self.visit(node.body)),
+        self.match_all(node, self.visit(node.orelse)),
+    ]
+    s = reduce_types(aList, trace=trace)
+    s = self.match_all(node, s)
+    self.trace_visitor(node, 'if', s)
+    return s
+</t>
+<t tx="ekr.20210807152233.34">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -4,11 +4,10 @@
+     traverser = StubTraverser(controller)
+     formatter = StubFormatter(controller, traverser)
+     if 0:  # For debugging.
+-        tests = ["""\
+-            def yield_test():
+-                yield 1
+-            """
+-        ]
++        tests = [(
++            "a = ['1', 2]\n",
++            "a = List[str, int]\n",
++        )]
+     else:
+         tests = [
+         &lt;&lt; define tests &gt;&gt;
+@language python
+</t>
+<t tx="ekr.20210807152233.35">def test_stub_formatter_class(self):
+    
+    controller = Controller()
+    traverser = StubTraverser(controller)
+    formatter = StubFormatter(controller, traverser)
+    if 0:  # For debugging.
+        tests = ["""\
+            def yield_test():
+                yield 1
+            """
+        ]
+    else:
+        tests = [
+        &lt;&lt; define tests &gt;&gt;
+        ]
+    for i, source_data in enumerate(tests):
+        filename = f"test {i+1}"
+        if isinstance(source_data, str):
+            source = textwrap.dedent(source_data)
+            expected_s = textwrap.dedent(source)
+        else:
+            source, expected = source_data
+            source = textwrap.dedent(source)
+            expected_s = textwrap.dedent(expected)
+        node = ast.parse(source, filename=filename, mode='exec')
+        try:
+            result_s = formatter.format(node)
+        except Exception:
+            self.fail(filename)
+        lines = g.splitLines(result_s)
+        expected = g.splitLines(expected_s)
+        self.assertEqual(expected, lines, msg=filename)
+</t>
+<t tx="ekr.20210807152234.1">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -67,8 +67,18 @@
+ print(Dict[a, b])
+ """
+ ),
+-# Test ifExp
++# Test 6: ifExp
+ (
+ "print(1 if True else 2)\n",
+ "print(int)\n",
+-)
++),
++# Test 7: List
++(
++"a = ['1', 2]\n",
++"a = List[str, int]\n",
++),
++# Test 8: Tuple
++(
++"a = ('1', 2)\n",
++"a = Tuple[str, int]\n",
++),
+@language python
+</t>
+<t tx="ekr.20210807152234.2"># Tests are either a single string, or a tuple: (source, expected).
+
+# Test 1: Constant.
+(
+"""\
+a = 1
+b = 2.5
+c = False
+d = None
+s = "abc"
+""",
+"""\
+a = int
+b = float
+c = bool
+d = None
+s = str
+"""
+),
+# Test 2: Attribute.
+"print(a.b)\n",
+# Test 3: BinOp.
+(
+"""\
+print(1 + 2)
+print(3 + 4.1)
+print('s' + a)
+print(a + b)
+""",
+"""\
+print(int)
+print(float)
+print(str)
+print(a+b)
+""",
+),
+# Test 3: Compare
+(
+"""\
+print(a in b)
+""",
+"""\
+print(bool)
+"""
+),
+# Test 4: Dict
+(
+"""\
+a = {}
+b = {'1': 1}
+c = dict()
+""",
+"""\
+a = Dict
+b = Dict[str:int]
+c = Dict
+""",
+),
+# Test 5: Call
+(
+"""\
+print(*args, **kwargs)
+print(dict(a, b))
+""",
+"""\
+print(*args, **kwargs)
+print(Dict[a, b])
+"""
+),
+# Test ifExp
+(
+"print(1 if True else 2)\n",
+"print(int)\n",
+)
+</t>
 </tnodes>
 </leo_file>
