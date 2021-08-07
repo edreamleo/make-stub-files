@@ -3257,6 +3257,11 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             print(Dict[a, b])
             """
             ),
+            # Test ifExp
+            (
+            "print(1 if True else 2)\n",
+            "print(int)\n",
+            )
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):

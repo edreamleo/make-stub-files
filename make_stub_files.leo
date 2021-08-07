@@ -301,8 +301,8 @@
 <v t="ekr.20160318141204.84"></v>
 <v t="ekr.20160318141204.85"></v>
 </v>
+<v t="ekr.20210807151105.1"><vh>--- changed StubFormatter visitors</vh></v>
 </v>
-<v t="ekr.20210807133351.1"></v>
 <v t="ekr.20210807105513.1"><vh>--- To do: ###</vh>
 <v t="ekr.20210807105645.1"><vh>--- msf</vh>
 <v t="ekr.20160318141204.135"></v>
@@ -335,8 +335,6 @@
 <v t="ekr.20160318141204.167"></v>
 </v>
 <v t="ekr.20210807133118.1"></v>
-<v t="ekr.20160318141204.35"></v>
-<v t="ekr.20160318141204.162"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -4150,6 +4148,11 @@ print(*args, **kwargs)
 print(Dict[a, b])
 """
 ),
+# Test ifExp
+(
+"print(1 if True else 2)\n",
+"print(int)\n",
+)
 </t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.
@@ -4199,5 +4202,6 @@ d = None
 )
 </t>
 <t tx="ekr.20210807145722.1"></t>
+<t tx="ekr.20210807151105.1"></t>
 </tnodes>
 </leo_file>
