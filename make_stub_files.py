@@ -680,7 +680,6 @@ class AstFormatter:
     #@+node:ekr.20160318141204.75: *4* f.Raise
     def do_Raise(self, node):
         args = []
-        g.trace(node)
         for attr in (
             'exc', 'cause',  # python 3
             'type', 'inst', 'tback'  # python 2
@@ -768,13 +767,12 @@ class AstFormatter:
     #@+node:ekr.20160318141204.82: *4* f.While
     def do_While(self, node):
         result = []
-        result.append(self.indent('while %s:\n' % (
-            self.visit(node.test))))
+        result.append(self.indent('while %s:\n' % self.visit(node.test)))
         for z in node.body:
             self.level += 1
             result.append(self.visit(z))
             self.level -= 1
-        if node.orelse:  ###
+        if node.orelse:
             result.append('else:\n')
             for z in node.orelse:
                 self.level += 1
@@ -785,17 +783,18 @@ class AstFormatter:
     #@+node:ekr.20160318141204.83: *4* f.With
     # 2:  With(expr context_expr, expr? optional_vars,
     #          stmt* body)
+    # withitem = (expr context_expr, expr? optional_vars)
+
     # 3:  With(withitem* items,
     #          stmt* body)
-    # withitem = (expr context_expr, expr? optional_vars)
 
     def do_With(self, node):
         result = []
         result.append(self.indent('with '))
         vars_list = []
-        if getattr(node, 'context_expression', None):
-            result.append(self.visit(node.context_expresssion))  ###
-        if getattr(node, 'optional_vars', None):  ###
+        if getattr(node, 'context_expression', None):  # pragma: no cover (python 2)
+            result.append(self.visit(node.context_expresssion))
+        if getattr(node, 'optional_vars', None):  # pragma: no cover (python 2)
             try:
                 for z in node.optional_vars:
                     vars_list.append(self.visit(z))
@@ -804,19 +803,20 @@ class AstFormatter:
         if getattr(node, 'items', None):  # Python 3.
             for item in node.items:
                 result.append(self.visit(item.context_expr))
+                result.append(' as ')
                 if getattr(item, 'optional_vars', None):
                     try:
                         for z in item.optional_vars: # pragma: no cover (expect TypeError)
                             vars_list.append(self.visit(z))
                     except TypeError:
                         vars_list.append(self.visit(item.optional_vars))
+                    
         result.append(','.join(vars_list))
         result.append(':\n')
         for z in node.body:
             self.level += 1
             result.append(self.visit(z))
             self.level -= 1
-        result.append('\n')
         return ''.join(result)
     #@+node:ekr.20160318141204.84: *4* f.Yield
     def do_Yield(self, node):  ###
@@ -2953,17 +2953,29 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             finally:
                 print('finally')
             """,
-            # Test 13: ImportFrom
+            # Test 13: ImportFrom.
             "from a import b as c\n",
-            # Test 14: Nonlocal
+            # Test 14: Nonlocal.
             """\
             def nonlocal_test():
                 nonlocal a
             """,
-            # Test 15: Raise
+            # Test 15: Raise.
             """\
             raise Exception('spam', 'eggs')
             raise
+            """,
+            # Test 16: While.
+            """\
+            while True:
+                print(True)
+            else:
+                print('else')
+            """,
+            # Test 17: With.
+            """\
+            with open(f, 'r') as f:
+                f.read()
             """,
             #@-<< define tests >>
             ]

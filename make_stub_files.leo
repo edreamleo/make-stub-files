@@ -318,19 +318,18 @@
 <v t="ekr.20160318141204.18"></v>
 <v t="ekr.20160318141204.91"></v>
 <v t="ekr.20160318141204.75"></v>
+<v t="ekr.20160318141204.83"></v>
 </v>
 <v t="ekr.20210804060105.1"></v>
 <v t="ekr.20210805090943.1"></v>
 <v t="ekr.20210805144859.1"></v>
 <v t="ekr.20210807105513.1"><vh>--- To do: ###</vh>
-<v t="ekr.20210807105747.1"><vh>AstFormatter</vh>
+<v t="ekr.20210807105747.1"><vh>--- AstFormatter</vh>
 <v t="ekr.20160318141204.63"></v>
 <v t="ekr.20160318141204.47"></v>
 <v t="ekr.20160318141204.77"></v>
 <v t="ekr.20160318141204.79"></v>
 <v t="ekr.20160318141204.18"></v>
-<v t="ekr.20160318141204.82"></v>
-<v t="ekr.20160318141204.83"></v>
 <v t="ekr.20160318141204.84"></v>
 <v t="ekr.20160318141204.85"></v>
 </v>
@@ -3222,7 +3221,6 @@ def do_Nonlocal(self, node):
 </t>
 <t tx="ekr.20160318141204.75">def do_Raise(self, node):
     args = []
-    g.trace(node)
     for attr in (
         'exc', 'cause',  # python 3
         'type', 'inst', 'tback'  # python 2
@@ -3310,13 +3308,12 @@ def do_Try(self, node):  # Python 3
 </t>
 <t tx="ekr.20160318141204.82">def do_While(self, node):
     result = []
-    result.append(self.indent('while %s:\n' % (
-        self.visit(node.test))))
+    result.append(self.indent('while %s:\n' % self.visit(node.test)))
     for z in node.body:
         self.level += 1
         result.append(self.visit(z))
         self.level -= 1
-    if node.orelse:  ###
+    if node.orelse:
         result.append('else:\n')
         for z in node.orelse:
             self.level += 1
@@ -3327,17 +3324,18 @@ def do_Try(self, node):  # Python 3
 </t>
 <t tx="ekr.20160318141204.83"># 2:  With(expr context_expr, expr? optional_vars,
 #          stmt* body)
+# withitem = (expr context_expr, expr? optional_vars)
+
 # 3:  With(withitem* items,
 #          stmt* body)
-# withitem = (expr context_expr, expr? optional_vars)
 
 def do_With(self, node):
     result = []
     result.append(self.indent('with '))
     vars_list = []
-    if getattr(node, 'context_expression', None):
-        result.append(self.visit(node.context_expresssion))  ###
-    if getattr(node, 'optional_vars', None):  ###
+    if getattr(node, 'context_expression', None):  # pragma: no cover (python 2)
+        result.append(self.visit(node.context_expresssion))
+    if getattr(node, 'optional_vars', None):  # pragma: no cover (python 2)
         try:
             for z in node.optional_vars:
                 vars_list.append(self.visit(z))
@@ -3346,19 +3344,20 @@ def do_With(self, node):
     if getattr(node, 'items', None):  # Python 3.
         for item in node.items:
             result.append(self.visit(item.context_expr))
+            result.append(' as ')
             if getattr(item, 'optional_vars', None):
                 try:
                     for z in item.optional_vars: # pragma: no cover (expect TypeError)
                         vars_list.append(self.visit(z))
                 except TypeError:
                     vars_list.append(self.visit(item.optional_vars))
+                
     result.append(','.join(vars_list))
     result.append(':\n')
     for z in node.body:
         self.level += 1
         result.append(self.visit(z))
         self.level -= 1
-    result.append('\n')
     return ''.join(result)
 </t>
 <t tx="ekr.20160318141204.84">def do_Yield(self, node):  ###
@@ -4009,17 +4008,29 @@ else:
 finally:
     print('finally')
 """,
-# Test 13: ImportFrom
+# Test 13: ImportFrom.
 "from a import b as c\n",
-# Test 14: Nonlocal
+# Test 14: Nonlocal.
 """\
 def nonlocal_test():
     nonlocal a
 """,
-# Test 15: Raise
+# Test 15: Raise.
 """\
 raise Exception('spam', 'eggs')
 raise
+""",
+# Test 16: While.
+"""\
+while True:
+    print(True)
+else:
+    print('else')
+""",
+# Test 17: With.
+"""\
+with open(f, 'r') as f:
+    f.read()
 """,</t>
 <t tx="ekr.20210806005225.1"># FormattedValue(expr value, int? conversion, expr? format_spec)
 
