@@ -114,13 +114,13 @@ class AstFormatter:
         """Format the node (or list of nodes) and its descendants."""
         self.level = 0
         val = self.visit(node)
-        return val ###.strip()  # val is a string.
+        return val  # val is a string.
     #@+node:ekr.20160318141204.18: *4* f.visit
     def visit(self, node):
         """Return the formatted version of an Ast node, or list of Ast nodes."""
         tag = 'AstFormatter.visit'
         name = node.__class__.__name__
-        # g.trace(name) ###
+        ### g.trace(name) ###
         if isinstance(node, (list, tuple)):
             return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
         if node is None:
@@ -179,14 +179,13 @@ class AstFormatter:
         """Format a FunctionDef node."""
         result = []
         if node.decorator_list:
-            for z in node.decorator_list:  ###
+            for z in node.decorator_list:
                 result.append('@%s\n' % self.visit(z))
         name = node.name  # Only a plain string is valid.
         args = self.visit(node.args) if node.args else ''
         if getattr(node, 'returns', None):  # Python 3.
             returns = self.visit(node.returns)
             # Bug found by unit test.
-            ### g.trace('returns', returns)
             result.append(self.indent('def %s(%s) -> %s:\n' % (name, args, returns)))
         else:
             result.append(self.indent('def %s(%s):\n' % (name, args)))
@@ -391,12 +390,12 @@ class AstFormatter:
     def do_Ellipsis(self, node):  # pragma: no cover (obsolete)
         return '...'
     #@+node:ekr.20160318141204.40: *4* f.ExtSlice
-    def do_ExtSlice(self, node):
-        return ':'.join([self.visit(z) for z in node.dims])  ###
+    def do_ExtSlice(self, node):  # pragma: no cover (deprecated)
+        return ':'.join([self.visit(z) for z in node.dims])
 
     #@+node:ekr.20160318141204.41: *4* f.Index
-    def do_Index(self, node):
-        return self.visit(node.value)  ###
+    def do_Index(self, node):  # pragma: no cover (python 2)
+        return self.visit(node.value)
 
     #@+node:ekr.20210806005225.1: *4* f.FormattedValue & JoinedStr
     # FormattedValue(expr value, int? conversion, expr? format_spec)
@@ -553,7 +552,7 @@ class AstFormatter:
 
     #@+node:ekr.20160318141204.62: *4* f.Continue
     def do_Continue(self, node):
-        return self.indent('continue\n')  ###
+        return self.indent('continue\n')
 
     #@+node:ekr.20160318141204.63: *4* f.Delete
     def do_Delete(self, node):
@@ -2882,14 +2881,14 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     def test_ast_formatter_class(self):
         formatter = AstFormatter()
         if 0:  # For debugging.
-            tests = ['print(*args, **kwargs)\n']
+            tests = ["print(s[0:1:2])\n",]
         else:
             tests = [
             #@+<< define tests >>
             #@+node:ekr.20210805144859.1: *4* << define tests >> (test_ast_formatter_class)
             # Tests are either a single string, or a tuple: (source, expected).
 
-            # Test 1.
+            # Test 1. Class.
             """\
             class AstFormatter:
                 def format(self, node: Node) -> Union[Any, str]:
@@ -2936,8 +2935,28 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             def combined_example(pos_only, /, standard, *, kwd_only):
                 pass
             """,
-            # Test 8: Call
+            # Test 8: Call.
             "print(*args, **kwargs)\n",
+            # Test 9: Slices: Python 3.9 does not use ExtSlice.
+            "print(s[0:1:2])\n",
+            # Test 10: Continue.
+            """\
+            while 1:
+                continue
+            """,
+            # Test 11: Delete.
+            "del a\n",
+            # Test 12: ExceptHandler.
+            """\
+            try:
+                pass
+            except Exception as e:
+                print('oops')
+            else:
+                print('else')
+            finally:
+                print('finally')
+            """,
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):

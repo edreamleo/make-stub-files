@@ -277,12 +277,6 @@
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.194"></v>
 </v>
-<v t="ekr.20210806162349.1"><vh>--- changed visitors</vh>
-<v t="ekr.20160318141204.31"></v>
-<v t="ekr.20160318141204.35"></v>
-<v t="ekr.20160318141204.20"></v>
-<v t="ekr.20210804214511.1"></v>
-</v>
 <v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
 <v t="ekr.20210805090544.1"><vh>test issues...</vh>
 <v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
@@ -316,15 +310,16 @@
 </v>
 </v>
 </v>
-<v t="ekr.20210805090943.1"></v>
-<v t="ekr.20210806010517.1"><vh>--- visitors</vh>
-<v t="ekr.20160318141204.91"></v>
-<v t="ekr.20160318141204.17"></v>
-<v t="ekr.20160318141204.21"></v>
-<v t="ekr.20160318141204.49"></v>
-<v t="ekr.20160318141204.50"></v>
+<v t="ekr.20210806162349.1"><vh>--- changed visitors</vh>
+<v t="ekr.20160318141204.31"></v>
+<v t="ekr.20160318141204.35"></v>
+<v t="ekr.20160318141204.20"></v>
+<v t="ekr.20210804214511.1"></v>
 <v t="ekr.20160318141204.18"></v>
+<v t="ekr.20160318141204.91"></v>
 </v>
+<v t="ekr.20210804060105.1"></v>
+<v t="ekr.20210805090943.1"></v>
 <v t="ekr.20210805144859.1"></v>
 </vnodes>
 <tnodes>
@@ -2078,7 +2073,7 @@ def do_UnaryOp(self, node):  ###
     """Format the node (or list of nodes) and its descendants."""
     self.level = 0
     val = self.visit(node)
-    return val ###.strip()  # val is a string.
+    return val  # val is a string.
 </t>
 <t tx="ekr.20160318141204.170">def __init__(self, controller):
     """Ctor for StubTraverser class."""
@@ -2312,7 +2307,7 @@ def out(self, s):  # pragma: no cover
     """Return the formatted version of an Ast node, or list of Ast nodes."""
     tag = 'AstFormatter.visit'
     name = node.__class__.__name__
-    # g.trace(name) ###
+    ### g.trace(name) ###
     if isinstance(node, (list, tuple)):
         return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
     if node is None:
@@ -2678,14 +2673,13 @@ def do_FunctionDef(self, node):
     """Format a FunctionDef node."""
     result = []
     if node.decorator_list:
-        for z in node.decorator_list:  ###
+        for z in node.decorator_list:
             result.append('@%s\n' % self.visit(z))
     name = node.name  # Only a plain string is valid.
     args = self.visit(node.args) if node.args else ''
     if getattr(node, 'returns', None):  # Python 3.
         returns = self.visit(node.returns)
         # Bug found by unit test.
-        ### g.trace('returns', returns)
         result.append(self.indent('def %s(%s) -&gt; %s:\n' % (name, args, returns)))
     else:
         result.append(self.indent('def %s(%s):\n' % (name, args)))
@@ -2887,12 +2881,12 @@ def do_keyword(self, node):
 <t tx="ekr.20160318141204.39">def do_Ellipsis(self, node):  # pragma: no cover (obsolete)
     return '...'
 </t>
-<t tx="ekr.20160318141204.40">def do_ExtSlice(self, node):
-    return ':'.join([self.visit(z) for z in node.dims])  ###
+<t tx="ekr.20160318141204.40">def do_ExtSlice(self, node):  # pragma: no cover (deprecated)
+    return ':'.join([self.visit(z) for z in node.dims])
 
 </t>
-<t tx="ekr.20160318141204.41">def do_Index(self, node):
-    return self.visit(node.value)  ###
+<t tx="ekr.20160318141204.41">def do_Index(self, node):  # pragma: no cover (python 2)
+    return self.visit(node.value)
 
 </t>
 <t tx="ekr.20160318141204.42">def do_List(self, node):
@@ -3050,7 +3044,7 @@ def do_Subscript(self, node):
 
 </t>
 <t tx="ekr.20160318141204.62">def do_Continue(self, node):
-    return self.indent('continue\n')  ###
+    return self.indent('continue\n')
 
 </t>
 <t tx="ekr.20160318141204.63">def do_Delete(self, node):
@@ -3845,7 +3839,7 @@ https://github.com/edreamleo/make-stub-files/issues/18
 <t tx="ekr.20210805090943.1">def test_ast_formatter_class(self):
     formatter = AstFormatter()
     if 0:  # For debugging.
-        tests = ['print(*args, **kwargs)\n']
+        tests = ["print(s[0:1:2])\n",]
     else:
         tests = [
         &lt;&lt; define tests &gt;&gt;
@@ -3900,7 +3894,7 @@ https://github.com/edreamleo/make-stub-files/issues/18
 <t tx="ekr.20210805102238.1"></t>
 <t tx="ekr.20210805144859.1"># Tests are either a single string, or a tuple: (source, expected).
 
-# Test 1.
+# Test 1. Class.
 """\
 class AstFormatter:
     def format(self, node: Node) -&gt; Union[Any, str]:
@@ -3947,9 +3941,28 @@ def kwd_only_arg(*, arg, arg2=None):
 def combined_example(pos_only, /, standard, *, kwd_only):
     pass
 """,
-# Test 8: Call
+# Test 8: Call.
 "print(*args, **kwargs)\n",
-</t>
+# Test 9: Slices: Python 3.9 does not use ExtSlice.
+"print(s[0:1:2])\n",
+# Test 10: Continue.
+"""\
+while 1:
+    continue
+""",
+# Test 11: Delete.
+"del a\n",
+# Test 12: ExceptHandler.
+"""\
+try:
+    pass
+except Exception as e:
+    print('oops')
+else:
+    print('else')
+finally:
+    print('finally')
+""",</t>
 <t tx="ekr.20210806005225.1"># FormattedValue(expr value, int? conversion, expr? format_spec)
 
 def do_FormattedValue(self, node):
@@ -3962,7 +3975,6 @@ def do_JoinedStr(self, node):
 
     
 </t>
-<t tx="ekr.20210806010517.1"></t>
 <t tx="ekr.20210806011736.1">def test_ast_formatter_class_on_file(self):
     # Use the source of *this* file as a single test.
     filename = __file__
