@@ -331,36 +331,34 @@ class AstFormatter:
         return str(node.s)
 
     #@+node:ekr.20160318141204.35: *4* f.Call & f.keyword
-    # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
+    # 2: Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
+    # 3: Call(expr func, expr* args, keyword* keywords)
 
     def do_Call(self, node):
         func = self.visit(node.func)
         args = [self.visit(z) for z in node.args]
         for z in node.keywords:
             # Calls f.do_keyword.
-            args.append(self.visit(z))  ###
-        if getattr(node, 'starargs', None):
-            args.append('*%s' % (self.visit(node.starargs)))  ###
-        if getattr(node, 'kwargs', None):
-            args.append('**%s' % (self.visit(node.kwargs)))  ###
-        args = [z for z in args if z]  # Kludge: Defensive coding.
-        return '%s(%s)' % (func, ','.join(args))
+            args.append(self.visit(z))
+        if not isPython3: # pragma: no cover (python 2)
+            if getattr(node, 'starargs', None):
+                args.append('*%s' % (self.visit(node.starargs)))  
+            if getattr(node, 'kwargs', None):
+                args.append('**%s' % (self.visit(node.kwargs))) # pragma: no cover (python 2)
+            args = [z for z in args if z]  # Kludge: Defensive coding.
+        return '%s(%s)' % (func, ', '.join(args))
 
     #@+node:ekr.20160318141204.36: *5* f.keyword
     # keyword = (identifier arg, expr value)
 
     def do_keyword(self, node):
+        """Handle keyword *arg*, not a Python keyword!"""
         # node.arg is a string.
         value = self.visit(node.value)
-        # This is a keyword *arg*, not a Python keyword!
-        return '%s=%s' % (node.arg, value)
+        return '%s=%s' % (node.arg, value) if node.arg else '**%s' % value
 
     #@+node:ekr.20210804214511.1: *4* f.Constant
     def do_Constant(self, node):  # #13
-
-        ### g.trace(node.value, node.value.__class__.__name__)
-        if node.value.__class__.__name__ == 'ellipsis':
-            return '...'  ###
         return repr(node.value)
     #@+node:ekr.20160318141204.37: *4* f.comprehension
     def do_comprehension(self, node):
@@ -379,20 +377,16 @@ class AstFormatter:
         keys = [self.visit(z) for z in node.keys]
         values = [self.visit(z) for z in node.values]
         if len(keys) == len(values):
-            # result.append('{\n' if keys else '{')
             result.append('{')
             items = []
             for i in range(len(keys)):
                 items.append('%s:%s' % (keys[i], values[i]))
             result.append(', '.join(items))
             result.append('}')
-            # result.append(',\n'.join(items))
-            # result.append('\n}' if keys else '}')
         else:  # pragma: no cover (defensive)
             print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
                 repr(keys), repr(values)))
         return ''.join(result)
-
     #@+node:ekr.20160318141204.39: *4* f.Ellipsis
     def do_Ellipsis(self, node):  # pragma: no cover (obsolete)
         return '...'
@@ -2886,69 +2880,68 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         self.assertEqual(lines, expected)
     #@+node:ekr.20210805090943.1: *3* test_ast_formatter_class
     def test_ast_formatter_class(self):
-        # We can *usually assume that sources are in the form of the expected
-        # output, because the input source serves only to create the ast tree.
-        # However, there are a few special cases for which the stub is not valid python.
-        tag = 'test_ast_formatter_class'
         formatter = AstFormatter()
-        tests = [
-        #@+<< define tests >>
-        #@+node:ekr.20210805144859.1: *4* << define tests >>
-        # A sequence of possibly multi-line strings.
+        if 0:  # For debugging.
+            tests = ['print(*args, **kwargs)\n']
+        else:
+            tests = [
+            #@+<< define tests >>
+            #@+node:ekr.20210805144859.1: *4* << define tests >> (test_ast_formatter_class)
+            # Tests are either a single string, or a tuple: (source, expected).
 
-        # All tests should match the expected formatted output.
-
-        # Test 1.
-        """\
-        class AstFormatter:
-            def format(self, node: Node) -> Union[Any, str]:
+            # Test 1.
+            """\
+            class AstFormatter:
+                def format(self, node: Node) -> Union[Any, str]:
+                    pass
+            """,
+            # Test 2: Constant.
+            """\
+            a = 1
+            b = 2.5
+            c = False
+            d = None
+            """,
+            # Test 3: ClassDef
+            (
+            """\
+            @class_decorator
+            class TestClass(str, base2=int):
                 pass
-        """,
-        # Test 2: Constant.
-        """\
-        a = 1
-        b = 2.5
-        c = False
-        d = None
-        """,
-        # Test 3: ClassDef
-        (
-        """\
-        @class_decorator
-        class TestClass(str, base2=int):
-            pass
-        """,
-        """\
-        @class_decorator
-        class TestClass(str, base2=int): ...
-            pass
-        """,
-        ),
-        # Test 4: FunctionDef
-        """\
-        @function_decorator
-        def f():
-            pass
-        """,
-        # Test 5: Position-only arg.
-        """\
-        def pos_only_arg(arg, /):
-            pass
-        """,
-        # Test 6: Keyword-only arg.
-        """\
-        def kwd_only_arg(*, arg, arg2=None):
-            pass
-        """,
-        # Test 7: Position-only and keyword-only args.
-        """\
-        def combined_example(pos_only, /, standard, *, kwd_only):
-            pass
-        """,
-        #@-<< define tests >>
-        ]
+            """,
+            """\
+            @class_decorator
+            class TestClass(str, base2=int): ...
+                pass
+            """,
+            ),
+            # Test 4: FunctionDef
+            """\
+            @function_decorator
+            def f():
+                pass
+            """,
+            # Test 5: Position-only arg.
+            """\
+            def pos_only_arg(arg, /):
+                pass
+            """,
+            # Test 6: Keyword-only arg.
+            """\
+            def kwd_only_arg(*, arg, arg2=None):
+                pass
+            """,
+            # Test 7: Position-only and keyword-only args.
+            """\
+            def combined_example(pos_only, /, standard, *, kwd_only):
+                pass
+            """,
+            # Test 8: Call
+            "print(*args, **kwargs)\n",
+            #@-<< define tests >>
+            ]
         for i, source_data in enumerate(tests):
-            filename = f"{tag}: test {i+1}"
+            filename = f"test {i+1}"
             if isinstance(source_data, str):
                 source = textwrap.dedent(source_data)
                 expected_s = textwrap.dedent(source)
@@ -2960,14 +2953,10 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             try:
                 result_s = formatter.format(node)
             except Exception:
-                self.fail(f"{tag}: {i}")
+                self.fail(filename)
             lines = g.splitLines(result_s)
             expected = g.splitLines(expected_s)
-            if 0:
-                g.printObj(expected, tag='expected')
-                g.printObj(lines, tag='lines')
-            else:
-                self.assertEqual(expected, lines, msg=f"test {i+1}")
+            self.assertEqual(expected, lines, msg=filename)
     #@+node:ekr.20210806011736.1: *3* test_ast_formatter_class_on_file
     def test_ast_formatter_class_on_file(self):
         # Use the source of *this* file as a single test.

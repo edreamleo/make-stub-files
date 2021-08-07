@@ -51,9 +51,6 @@
 <v t="ekr.20210806132036.1"><vh>&lt;&lt; define description &gt;&gt;</vh></v>
 </v>
 <v t="ekr.20210805061637.1"></v>
-<v t="ekr.20210806134651.1"><vh>--- recent</vh>
-<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
-</v>
 <v t="ekr.20210805102238.1"><vh>--- classes</vh>
 <v t="ekr.20160318141204.14"><vh> class AstFormatter</vh>
 <v t="ekr.20160318141204.15"><vh> f.Entries</vh>
@@ -147,7 +144,7 @@
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
 <v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
@@ -246,52 +243,8 @@
 </v>
 </v>
 <v t="ekr.20210806161202.1"><vh>test: class syntax</vh></v>
-</v>
-<v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
-<v t="ekr.20210805090544.1"><vh>test issues...</vh>
-<v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
-<v t="ekr.20180901044640.1"><vh>test_bug2_non_empty</vh></v>
-<v t="ekr.20180901051603.1"><vh>test_bug3</vh></v>
-</v>
-<v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
-<v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt;</vh></v>
-</v>
-<v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
-<v t="ekr.20210805091045.1"><vh>test class ReduceTypes (mostly complete)</vh>
-<v t="ekr.20210804105256.1"><vh>test_reduce_numbers</vh></v>
-<v t="ekr.20210804111613.1"><vh>test_reduce_types</vh></v>
-<v t="ekr.20210804111803.1"><vh>test_split_types</vh></v>
-</v>
-<v t="ekr.20210804103146.1"><vh>test class Pattern (mostly complete)</vh></v>
-<v t="ekr.20210804112556.1"><vh>test class Stub (complete)</vh></v>
-<v t="ekr.20210805092921.1"><vh>test class StubTraverser</vh>
-<v t="ekr.20210804111915.1"><vh>test_st_find</vh></v>
-<v t="ekr.20210804112211.1"><vh>test_st_flatten_stubs</vh></v>
-<v t="ekr.20210804112405.1"><vh>test_st_merge_stubs</vh>
-<v t="ekr.20210804112405.3"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
-<v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
-</v>
-</v>
-<v t="ekr.20210805093615.1"><vh>test file: make_stub_files.py</vh></v>
-<v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
-<v t="ekr.20210806153836.1"><vh>test_finalize</vh></v>
-<v t="ekr.20210806154007.1"><vh>test_is_known_type</vh></v>
-<v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
-</v>
-</v>
-<v t="ekr.20210805090943.1"></v>
-<v t="ekr.20210805144859.1"></v>
-<v t="ekr.20210806162349.1"><vh>--- changed visitors</vh>
-<v t="ekr.20160318141204.20"></v>
-</v>
-<v t="ekr.20210806010517.1"><vh>--- visitors</vh>
-<v t="ekr.20210804214511.1"></v>
-<v t="ekr.20160318141204.91"></v>
-<v t="ekr.20160318141204.17"></v>
-<v t="ekr.20160318141204.21"></v>
-<v t="ekr.20160318141204.49"></v>
-<v t="ekr.20160318141204.50"></v>
-<v t="ekr.20160318141204.18"></v>
+<v t="ekr.20210806134651.1"><vh>--- recent</vh>
+<v t="ekr.20160318141204.131"></v>
 </v>
 <v t="ekr.20210806081329.1"><vh>--- missing tests</vh>
 <v t="ekr.20160318141204.31"></v>
@@ -324,8 +277,55 @@
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.194"></v>
 </v>
-<v t="ekr.20210806164116.1"><vh>***** rewrite f.args</vh></v>
+<v t="ekr.20210806162349.1"><vh>--- changed visitors</vh>
 <v t="ekr.20160318141204.31"></v>
+<v t="ekr.20160318141204.35"></v>
+<v t="ekr.20160318141204.20"></v>
+<v t="ekr.20210804214511.1"></v>
+</v>
+<v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
+<v t="ekr.20210805090544.1"><vh>test issues...</vh>
+<v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
+<v t="ekr.20180901044640.1"><vh>test_bug2_non_empty</vh></v>
+<v t="ekr.20180901051603.1"><vh>test_bug3</vh></v>
+</v>
+<v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
+<v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
+</v>
+<v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
+<v t="ekr.20210805091045.1"><vh>test class ReduceTypes (mostly complete)</vh>
+<v t="ekr.20210804105256.1"><vh>test_reduce_numbers</vh></v>
+<v t="ekr.20210804111613.1"><vh>test_reduce_types</vh></v>
+<v t="ekr.20210804111803.1"><vh>test_split_types</vh></v>
+</v>
+<v t="ekr.20210804103146.1"><vh>test class Pattern (mostly complete)</vh></v>
+<v t="ekr.20210804112556.1"><vh>test class Stub (complete)</vh></v>
+<v t="ekr.20210805092921.1"><vh>test class StubTraverser</vh>
+<v t="ekr.20210804111915.1"><vh>test_st_find</vh></v>
+<v t="ekr.20210804112211.1"><vh>test_st_flatten_stubs</vh></v>
+<v t="ekr.20210804112405.1"><vh>test_st_merge_stubs</vh>
+<v t="ekr.20210804112405.3"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
+<v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
+</v>
+</v>
+<v t="ekr.20210805093615.1"><vh>test file: make_stub_files.py</vh></v>
+<v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
+<v t="ekr.20210806153836.1"><vh>test_finalize</vh></v>
+<v t="ekr.20210806154007.1"><vh>test_is_known_type</vh></v>
+<v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
+</v>
+</v>
+</v>
+<v t="ekr.20210805090943.1"></v>
+<v t="ekr.20210806010517.1"><vh>--- visitors</vh>
+<v t="ekr.20160318141204.91"></v>
+<v t="ekr.20160318141204.17"></v>
+<v t="ekr.20160318141204.21"></v>
+<v t="ekr.20160318141204.49"></v>
+<v t="ekr.20160318141204.50"></v>
+<v t="ekr.20160318141204.18"></v>
+</v>
+<v t="ekr.20210805144859.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -2830,29 +2830,31 @@ def do_Attribute(self, node):
     return str(node.s)
 
 </t>
-<t tx="ekr.20160318141204.35"># Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
+<t tx="ekr.20160318141204.35"># 2: Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
+# 3: Call(expr func, expr* args, keyword* keywords)
 
 def do_Call(self, node):
     func = self.visit(node.func)
     args = [self.visit(z) for z in node.args]
     for z in node.keywords:
         # Calls f.do_keyword.
-        args.append(self.visit(z))  ###
-    if getattr(node, 'starargs', None):
-        args.append('*%s' % (self.visit(node.starargs)))  ###
-    if getattr(node, 'kwargs', None):
-        args.append('**%s' % (self.visit(node.kwargs)))  ###
-    args = [z for z in args if z]  # Kludge: Defensive coding.
-    return '%s(%s)' % (func, ','.join(args))
+        args.append(self.visit(z))
+    if not isPython3: # pragma: no cover (python 2)
+        if getattr(node, 'starargs', None):
+            args.append('*%s' % (self.visit(node.starargs)))  
+        if getattr(node, 'kwargs', None):
+            args.append('**%s' % (self.visit(node.kwargs))) # pragma: no cover (python 2)
+        args = [z for z in args if z]  # Kludge: Defensive coding.
+    return '%s(%s)' % (func, ', '.join(args))
 
 </t>
 <t tx="ekr.20160318141204.36"># keyword = (identifier arg, expr value)
 
 def do_keyword(self, node):
+    """Handle keyword *arg*, not a Python keyword!"""
     # node.arg is a string.
     value = self.visit(node.value)
-    # This is a keyword *arg*, not a Python keyword!
-    return '%s=%s' % (node.arg, value)
+    return '%s=%s' % (node.arg, value) if node.arg else '**%s' % value
 
 </t>
 <t tx="ekr.20160318141204.37">def do_comprehension(self, node):
@@ -2871,20 +2873,16 @@ def do_keyword(self, node):
     keys = [self.visit(z) for z in node.keys]
     values = [self.visit(z) for z in node.values]
     if len(keys) == len(values):
-        # result.append('{\n' if keys else '{')
         result.append('{')
         items = []
         for i in range(len(keys)):
             items.append('%s:%s' % (keys[i], values[i]))
         result.append(', '.join(items))
         result.append('}')
-        # result.append(',\n'.join(items))
-        # result.append('\n}' if keys else '}')
     else:  # pragma: no cover (defensive)
         print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
             repr(keys), repr(values)))
     return ''.join(result)
-
 </t>
 <t tx="ekr.20160318141204.39">def do_Ellipsis(self, node):  # pragma: no cover (obsolete)
     return '...'
@@ -3830,14 +3828,10 @@ while p:
 c.redraw()
 </t>
 <t tx="ekr.20210804214511.1">def do_Constant(self, node):  # #13
-
-    ### g.trace(node.value, node.value.__class__.__name__)
-    if node.value.__class__.__name__ == 'ellipsis':
-        return '...'  ###
     return repr(node.value)
 </t>
 <t tx="ekr.20210805053830.1">@language rest
-@wrap
+
 https://github.com/edreamleo/make-stub-files/issues/18
 
 @language python
@@ -3849,16 +3843,15 @@ https://github.com/edreamleo/make-stub-files/issues/18
 <t tx="ekr.20210805090003.1"></t>
 <t tx="ekr.20210805090544.1"></t>
 <t tx="ekr.20210805090943.1">def test_ast_formatter_class(self):
-    # We can *usually assume that sources are in the form of the expected
-    # output, because the input source serves only to create the ast tree.
-    # However, there are a few special cases for which the stub is not valid python.
-    tag = 'test_ast_formatter_class'
     formatter = AstFormatter()
-    tests = [
-    &lt;&lt; define tests &gt;&gt;
-    ]
+    if 0:  # For debugging.
+        tests = ['print(*args, **kwargs)\n']
+    else:
+        tests = [
+        &lt;&lt; define tests &gt;&gt;
+        ]
     for i, source_data in enumerate(tests):
-        filename = f"{tag}: test {i+1}"
+        filename = f"test {i+1}"
         if isinstance(source_data, str):
             source = textwrap.dedent(source_data)
             expected_s = textwrap.dedent(source)
@@ -3870,14 +3863,10 @@ https://github.com/edreamleo/make-stub-files/issues/18
         try:
             result_s = formatter.format(node)
         except Exception:
-            self.fail(f"{tag}: {i}")
+            self.fail(filename)
         lines = g.splitLines(result_s)
         expected = g.splitLines(expected_s)
-        if 0:
-            g.printObj(expected, tag='expected')
-            g.printObj(lines, tag='lines')
-        else:
-            self.assertEqual(expected, lines, msg=f"test {i+1}")
+        self.assertEqual(expected, lines, msg=filename)
 </t>
 <t tx="ekr.20210805091045.1"></t>
 <t tx="ekr.20210805092921.1"></t>
@@ -3909,9 +3898,7 @@ https://github.com/edreamleo/make-stub-files/issues/18
             controller.make_stub_file(fn)
 </t>
 <t tx="ekr.20210805102238.1"></t>
-<t tx="ekr.20210805144859.1"># A sequence of possibly multi-line strings.
-
-# All tests should match the expected formatted output.
+<t tx="ekr.20210805144859.1"># Tests are either a single string, or a tuple: (source, expected).
 
 # Test 1.
 """\
@@ -3960,6 +3947,8 @@ def kwd_only_arg(*, arg, arg2=None):
 def combined_example(pos_only, /, standard, *, kwd_only):
     pass
 """,
+# Test 8: Call
+"print(*args, **kwargs)\n",
 </t>
 <t tx="ekr.20210806005225.1"># FormattedValue(expr value, int? conversion, expr? format_spec)
 
@@ -4015,6 +4004,5 @@ See README.md for examples.
 T(base=str)
 print(T)</t>
 <t tx="ekr.20210806162349.1"></t>
-<t tx="ekr.20210806164116.1"></t>
 </tnodes>
 </leo_file>
