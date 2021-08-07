@@ -255,7 +255,7 @@
 <v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
 </v>
 <v t="ekr.20210807133723.1"><vh>test_ast_arg_formatter_class</vh>
-<v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
+<v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_arg_formatter_class)</vh></v>
 </v>
 <v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
 <v t="ekr.20210805091045.1"><vh>test class ReduceTypes (mostly complete)</vh>
@@ -4128,108 +4128,20 @@ g.execute_shell_commands(command, trace=False)</t>
 </t>
 <t tx="ekr.20210807133723.2"># Tests are either a single string, or a tuple: (source, expected).
 
-# Test 1: Constant.
 (
-    """\
+"""\
 a = 1
 b = 2.5
 c = False
 d = None
 """,
-    """\
+"""\
 a = int
 b = float
 c = bool
 d = None
-    """,
+""",
 )
-# # Test 3: ClassDef
-# (
-# """\
-# @class_decorator
-# class TestClass(str, base2=int):
-    # pass
-# """,
-# """\
-# @class_decorator
-# class TestClass(str, base2=int): ...
-    # pass
-# """,
-# ),
-# # Test 4: FunctionDef
-# """\
-# @function_decorator
-# def f():
-    # pass
-# """,
-# # Test 5: Position-only arg.
-# """\
-# def pos_only_arg(arg, /):
-    # pass
-# """,
-# # Test 6: Keyword-only arg.
-# """\
-# def kwd_only_arg(*, arg, arg2=None):
-    # pass
-# """,
-# # Test 7: Position-only and keyword-only args.
-# """\
-# def combined_example(pos_only, /, standard, *, kwd_only):
-    # pass
-# """,
-# # Test 8: Call.
-# "print(*args, **kwargs)\n",
-# # Test 9: Slices: Python 3.9 does not use ExtSlice.
-# "print(s[0:1:2])\n",
-# # Test 10: Continue.
-# """\
-# while 1:
-    # continue
-# """,
-# # Test 11: Delete.
-# "del a\n",
-# # Test 12: ExceptHandler.
-# """\
-# try:
-    # pass
-# except Exception as e:
-    # print('oops')
-# else:
-    # print('else')
-# finally:
-    # print('finally')
-# """,
-# # Test 13: ImportFrom.
-# "from a import b as c\n",
-# # Test 14: Nonlocal.
-# """\
-# def nonlocal_test():
-    # nonlocal a
-# """,
-# # Test 15: Raise.
-# """\
-# raise Exception('spam', 'eggs')
-# raise
-# """,
-# # Test 16: While.
-# """\
-# while True:
-    # print(True)
-# else:
-    # print('else')
-# """,
-# # Test 17: With.
-# """\
-# with open(f, 'r') as f:
-    # f.read()
-# """,
-# # Test 18: Yield and YieldFrom.
-# """\
-# def yield_test():
-    # yield 1
-    # yield from z
-    # yield
-# """,
 </t>
 </tnodes>
 </leo_file>
