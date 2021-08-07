@@ -14,6 +14,7 @@
 <v t="ekr.20210805061637.1"><vh>buttons</vh>
 <v t="ekr.20210804020706.1"><vh>@button coverage</vh></v>
 <v t="ekr.20210804060105.1"><vh>@button unitttest</vh></v>
+<v t="ekr.20210807133351.1"><vh>@button unitttest1</vh></v>
 <v t="ekr.20210804021331.1"><vh>@button msf</vh></v>
 </v>
 </v>
@@ -142,7 +143,7 @@
 </v>
 </v>
 <v t="ekr.20160318141204.90"><vh>class AstArgFormatter (AstFormatter)</vh>
-<v t="ekr.20160318141204.91"><vh>sf.Constants &amp; Name</vh></v>
+<v t="ekr.20160318141204.91"><vh>arg_formatter.Constants &amp; Name</vh></v>
 </v>
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
@@ -253,6 +254,9 @@
 <v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
 <v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
 </v>
+<v t="ekr.20210807133723.1"><vh>test_ast_arg_formatter_class</vh>
+<v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
+</v>
 <v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
 <v t="ekr.20210805091045.1"><vh>test class ReduceTypes (mostly complete)</vh>
 <v t="ekr.20210804105256.1"><vh>test_reduce_numbers</vh></v>
@@ -261,6 +265,9 @@
 </v>
 <v t="ekr.20210804103146.1"><vh>test class Pattern (mostly complete)</vh></v>
 <v t="ekr.20210804112556.1"><vh>test class Stub (complete)</vh></v>
+<v t="ekr.20210807133118.1"><vh>test_stub_formatter_class</vh>
+<v t="ekr.20210807133228.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
+</v>
 <v t="ekr.20210805092921.1"><vh>test class StubTraverser</vh>
 <v t="ekr.20210804111915.1"><vh>test_st_find</vh></v>
 <v t="ekr.20210804112211.1"><vh>test_st_flatten_stubs</vh></v>
@@ -295,6 +302,7 @@
 <v t="ekr.20160318141204.85"></v>
 </v>
 </v>
+<v t="ekr.20210807133351.1"></v>
 <v t="ekr.20210807105513.1"><vh>--- To do: ###</vh>
 <v t="ekr.20210807105645.1"><vh>--- msf</vh>
 <v t="ekr.20160318141204.135"></v>
@@ -307,7 +315,18 @@
 <v t="ekr.20160318141204.113"></v>
 </v>
 <v t="ekr.20160318141204.118"></v>
-<v t="ekr.20210807105711.1"><vh>--- StubFormatter</vh>
+<v t="ekr.20210807105731.1"><vh>--- StubTraverser</vh>
+<v t="ekr.20160318141204.188"></v>
+<v t="ekr.20160318141204.190"></v>
+<v t="ekr.20160318141204.189"></v>
+<v t="ekr.20160318141204.175"></v>
+<v t="ekr.20160318141204.176"></v>
+<v t="ekr.20160318141204.186"></v>
+<v t="ekr.20160318141204.194"></v>
+</v>
+</v>
+<v t="ekr.20210803055042.1"></v>
+<v t="ekr.20210807105711.1"><vh>--- to do: StubFormatter</vh>
 <v t="ekr.20160318141204.153"></v>
 <v t="ekr.20160318141204.160"></v>
 <v t="ekr.20160318141204.162"></v>
@@ -322,16 +341,9 @@
 <v t="ekr.20160318141204.158"></v>
 <v t="ekr.20160318141204.167"></v>
 </v>
-<v t="ekr.20210807105731.1"><vh>--- StubTraverser</vh>
-<v t="ekr.20160318141204.188"></v>
-<v t="ekr.20160318141204.190"></v>
-<v t="ekr.20160318141204.189"></v>
-<v t="ekr.20160318141204.175"></v>
-<v t="ekr.20160318141204.176"></v>
-<v t="ekr.20160318141204.186"></v>
-<v t="ekr.20160318141204.194"></v>
-</v>
-</v>
+<v t="ekr.20210807133118.1"></v>
+<v t="ekr.20210805090943.1"></v>
+<v t="ekr.20210807133723.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -2723,7 +2735,8 @@ def do_FunctionDef(self, node):
 </t>
 <t tx="ekr.20160318141204.26">def do_Expr(self, node):
     """An outer expression: must be indented."""
-    return self.indent('%s\n' % self.visit(node.value))</t>
+    return self.indent('%s\n' % self.visit(node.value))
+</t>
 <t tx="ekr.20160318141204.27">def do_Expression(self, node):  # pragma: no cover (never used)
     """An expression context"""
     return '%s\n' % self.visit(node.body)
@@ -3401,26 +3414,22 @@ def op_name(self, node, strict=True):
 </t>
 <t tx="ekr.20160318141204.91"># Return generic markers to allow better pattern matches.
 
-def do_Contant(self, node):
-    ### Experimental.
-    name = node.value.__class__.__name__
-    if name == 'ellipsis':
-        return '...'
-    return name
+def do_Constant(self, node):
+    return 'None' if node.value is None else node.value.__class__.__name__
 
-def do_BoolOp(self, node):  # pragma: no cover (Python 2.x only)
+def do_BoolOp(self, node):  # pragma: no cover (obsolete)
     return 'bool'
 
 def do_Bytes(self, node):  # pragma: no cover (obsolete)
     return 'bytes'
 
-def do_Name(self, node):  # pragma: no cover (python 2)
+def do_Name(self, node):  # pragma: no cover (obsolete)
     return 'bool' if node.id in ('True', 'False') else node.id
 
-def do_Num(self, node):  # pragma: no cover (python 2)
+def do_Num(self, node):  # pragma: no cover (obsolete)
     return 'number'
 
-def do_Str(self, node):  # pragma: no cover (python 2)
+def do_Str(self, node):  # pragma: no cover (obsolete)
     """This represents a string constant."""
     return 'str'
 </t>
@@ -3546,13 +3555,9 @@ msf = 'make_stub_files.py'
 src = 'make_stub_files.py'
 command = f"python {msf} -c {cfg} -o -v {src} -h"
 g.execute_shell_commands(command, trace=False)</t>
-<t tx="ekr.20210804060105.1">g.cls()
-if 0:  # Run one test.
-    # test = '.TestMakeStubFiles.test_file_msb'
-    test = '.TestMakeStubFiles.test_ast_formatter_class'
-else:  # Run all tests.
-    test = ''
-command = f"python -m unittest make_stub_files{test}"
+<t tx="ekr.20210804060105.1">"""Run all unit tests"""
+g.cls()
+command = f"python -m unittest make_stub_files"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210804103146.1">def test_pattern_class(self):
     g = LeoGlobals() # Use the g available to the script.
@@ -3849,7 +3854,7 @@ https://github.com/edreamleo/make-stub-files/issues/18
             def yield_test():
                 yield 1
             """
-    ]
+        ]
     else:
         tests = [
         &lt;&lt; define tests &gt;&gt;
@@ -4061,5 +4066,170 @@ print(T)</t>
 <t tx="ekr.20210807105711.1"></t>
 <t tx="ekr.20210807105731.1"></t>
 <t tx="ekr.20210807120326.1"></t>
+<t tx="ekr.20210807133118.1">def test_stub_formatter_class(self):
+    formatter = AstFormatter()
+    if 0:  # For debugging.
+        tests = ["""\
+            def yield_test():
+                yield 1
+            """
+        ]
+    else:
+        tests = [
+        &lt;&lt; define tests &gt;&gt;
+        ]
+    for i, source_data in enumerate(tests):
+        filename = f"test {i+1}"
+        if isinstance(source_data, str):
+            source = textwrap.dedent(source_data)
+            expected_s = textwrap.dedent(source)
+        else:
+            source, expected = source_data
+            source = textwrap.dedent(source)
+            expected_s = textwrap.dedent(expected)
+        node = ast.parse(source, filename=filename, mode='exec')
+        try:
+            result_s = formatter.format(node)
+        except Exception:
+            self.fail(filename)
+        lines = g.splitLines(result_s)
+        expected = g.splitLines(expected_s)
+        self.assertEqual(expected, lines, msg=filename)
+</t>
+<t tx="ekr.20210807133228.1"></t>
+<t tx="ekr.20210807133351.1">g.cls()
+# Run one test.
+# test = '.TestMakeStubFiles.test_stub_formatter_class'
+test = '.TestMakeStubFiles.test_ast_arg_formatter_class'
+command = f"python -m unittest make_stub_files{test}"
+g.execute_shell_commands(command, trace=False)</t>
+<t tx="ekr.20210807133723.1">def test_ast_arg_formatter_class(self):
+    formatter = AstArgFormatter()
+    tests = [
+        &lt;&lt; define tests &gt;&gt;
+    ]
+    for i, source_data in enumerate(tests):
+        filename = f"test {i+1}"
+        if isinstance(source_data, str):
+            source = textwrap.dedent(source_data)
+            expected_s = textwrap.dedent(source)
+        else:
+            source, expected = source_data
+            source = textwrap.dedent(source)
+            expected_s = textwrap.dedent(expected)
+        node = ast.parse(source, filename=filename, mode='exec')
+        try:
+            result_s = formatter.format(node)
+        except Exception:
+            self.fail(filename)
+        lines = g.splitLines(result_s)
+        expected = g.splitLines(expected_s)
+        self.assertEqual(expected, lines, msg=filename)
+</t>
+<t tx="ekr.20210807133723.2"># Tests are either a single string, or a tuple: (source, expected).
+
+# Test 1: Constant.
+(
+    """\
+a = 1
+b = 2.5
+c = False
+d = None
+""",
+    """\
+a = int
+b = float
+c = bool
+d = None
+    """,
+)
+# # Test 3: ClassDef
+# (
+# """\
+# @class_decorator
+# class TestClass(str, base2=int):
+    # pass
+# """,
+# """\
+# @class_decorator
+# class TestClass(str, base2=int): ...
+    # pass
+# """,
+# ),
+# # Test 4: FunctionDef
+# """\
+# @function_decorator
+# def f():
+    # pass
+# """,
+# # Test 5: Position-only arg.
+# """\
+# def pos_only_arg(arg, /):
+    # pass
+# """,
+# # Test 6: Keyword-only arg.
+# """\
+# def kwd_only_arg(*, arg, arg2=None):
+    # pass
+# """,
+# # Test 7: Position-only and keyword-only args.
+# """\
+# def combined_example(pos_only, /, standard, *, kwd_only):
+    # pass
+# """,
+# # Test 8: Call.
+# "print(*args, **kwargs)\n",
+# # Test 9: Slices: Python 3.9 does not use ExtSlice.
+# "print(s[0:1:2])\n",
+# # Test 10: Continue.
+# """\
+# while 1:
+    # continue
+# """,
+# # Test 11: Delete.
+# "del a\n",
+# # Test 12: ExceptHandler.
+# """\
+# try:
+    # pass
+# except Exception as e:
+    # print('oops')
+# else:
+    # print('else')
+# finally:
+    # print('finally')
+# """,
+# # Test 13: ImportFrom.
+# "from a import b as c\n",
+# # Test 14: Nonlocal.
+# """\
+# def nonlocal_test():
+    # nonlocal a
+# """,
+# # Test 15: Raise.
+# """\
+# raise Exception('spam', 'eggs')
+# raise
+# """,
+# # Test 16: While.
+# """\
+# while True:
+    # print(True)
+# else:
+    # print('else')
+# """,
+# # Test 17: With.
+# """\
+# with open(f, 'r') as f:
+    # f.read()
+# """,
+# # Test 18: Yield and YieldFrom.
+# """\
+# def yield_test():
+    # yield 1
+    # yield from z
+    # yield
+# """,
+</t>
 </tnodes>
 </leo_file>

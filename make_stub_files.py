@@ -894,29 +894,25 @@ class AstArgFormatter(AstFormatter):
     names of constants instead of actual values.
     """
     #@+others
-    #@+node:ekr.20160318141204.91: *3* sf.Constants & Name
+    #@+node:ekr.20160318141204.91: *3* arg_formatter.Constants & Name
     # Return generic markers to allow better pattern matches.
 
-    def do_Contant(self, node):
-        ### Experimental.
-        name = node.value.__class__.__name__
-        if name == 'ellipsis':
-            return '...'
-        return name
+    def do_Constant(self, node):
+        return 'None' if node.value is None else node.value.__class__.__name__
 
-    def do_BoolOp(self, node):  # pragma: no cover (Python 2.x only)
+    def do_BoolOp(self, node):  # pragma: no cover (obsolete)
         return 'bool'
 
     def do_Bytes(self, node):  # pragma: no cover (obsolete)
         return 'bytes'
 
-    def do_Name(self, node):  # pragma: no cover (python 2)
+    def do_Name(self, node):  # pragma: no cover (obsolete)
         return 'bool' if node.id in ('True', 'False') else node.id
 
-    def do_Num(self, node):  # pragma: no cover (python 2)
+    def do_Num(self, node):  # pragma: no cover (obsolete)
         return 'number'
 
-    def do_Str(self, node):  # pragma: no cover (python 2)
+    def do_Str(self, node):  # pragma: no cover (obsolete)
         """This represents a string constant."""
         return 'str'
     #@-others
@@ -2878,7 +2874,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
                 def yield_test():
                     yield 1
                 """
-        ]
+            ]
         else:
             tests = [
             #@+<< define tests >>
@@ -2987,6 +2983,135 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             """,
             #@-<< define tests >>
             ]
+        for i, source_data in enumerate(tests):
+            filename = f"test {i+1}"
+            if isinstance(source_data, str):
+                source = textwrap.dedent(source_data)
+                expected_s = textwrap.dedent(source)
+            else:
+                source, expected = source_data
+                source = textwrap.dedent(source)
+                expected_s = textwrap.dedent(expected)
+            node = ast.parse(source, filename=filename, mode='exec')
+            try:
+                result_s = formatter.format(node)
+            except Exception:
+                self.fail(filename)
+            lines = g.splitLines(result_s)
+            expected = g.splitLines(expected_s)
+            self.assertEqual(expected, lines, msg=filename)
+    #@+node:ekr.20210807133723.1: *3* test_ast_arg_formatter_class
+    def test_ast_arg_formatter_class(self):
+        formatter = AstArgFormatter()
+        tests = [
+            #@+<< define tests >>
+            #@+node:ekr.20210807133723.2: *4* << define tests >> (test_ast_formatter_class)
+            # Tests are either a single string, or a tuple: (source, expected).
+
+            # Test 1: Constant.
+            (
+                """\
+            a = 1
+            b = 2.5
+            c = False
+            d = None
+            """,
+                """\
+            a = int
+            b = float
+            c = bool
+            d = None
+                """,
+            )
+            # # Test 3: ClassDef
+            # (
+            # """\
+            # @class_decorator
+            # class TestClass(str, base2=int):
+                # pass
+            # """,
+            # """\
+            # @class_decorator
+            # class TestClass(str, base2=int): ...
+                # pass
+            # """,
+            # ),
+            # # Test 4: FunctionDef
+            # """\
+            # @function_decorator
+            # def f():
+                # pass
+            # """,
+            # # Test 5: Position-only arg.
+            # """\
+            # def pos_only_arg(arg, /):
+                # pass
+            # """,
+            # # Test 6: Keyword-only arg.
+            # """\
+            # def kwd_only_arg(*, arg, arg2=None):
+                # pass
+            # """,
+            # # Test 7: Position-only and keyword-only args.
+            # """\
+            # def combined_example(pos_only, /, standard, *, kwd_only):
+                # pass
+            # """,
+            # # Test 8: Call.
+            # "print(*args, **kwargs)\n",
+            # # Test 9: Slices: Python 3.9 does not use ExtSlice.
+            # "print(s[0:1:2])\n",
+            # # Test 10: Continue.
+            # """\
+            # while 1:
+                # continue
+            # """,
+            # # Test 11: Delete.
+            # "del a\n",
+            # # Test 12: ExceptHandler.
+            # """\
+            # try:
+                # pass
+            # except Exception as e:
+                # print('oops')
+            # else:
+                # print('else')
+            # finally:
+                # print('finally')
+            # """,
+            # # Test 13: ImportFrom.
+            # "from a import b as c\n",
+            # # Test 14: Nonlocal.
+            # """\
+            # def nonlocal_test():
+                # nonlocal a
+            # """,
+            # # Test 15: Raise.
+            # """\
+            # raise Exception('spam', 'eggs')
+            # raise
+            # """,
+            # # Test 16: While.
+            # """\
+            # while True:
+                # print(True)
+            # else:
+                # print('else')
+            # """,
+            # # Test 17: With.
+            # """\
+            # with open(f, 'r') as f:
+                # f.read()
+            # """,
+            # # Test 18: Yield and YieldFrom.
+            # """\
+            # def yield_test():
+                # yield 1
+                # yield from z
+                # yield
+            # """,
+            #@-<< define tests >>
+        ]
         for i, source_data in enumerate(tests):
             filename = f"test {i+1}"
             if isinstance(source_data, str):
@@ -3144,6 +3269,38 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         self.assertEqual(stub_1.level(), 0)
         self.assertEqual(stub_2.level(), 1)
         self.assertEqual(stub_3.level(), 2)
+    #@+node:ekr.20210807133118.1: *3* test_stub_formatter_class
+    def test_stub_formatter_class(self):
+        formatter = AstFormatter()
+        if 0:  # For debugging.
+            tests = ["""\
+                def yield_test():
+                    yield 1
+                """
+            ]
+        else:
+            tests = [
+            #@+<< define tests >>
+            #@+node:ekr.20210807133228.1: *4* << define tests >> (test_stub_formatter_class)
+            #@-<< define tests >>
+            ]
+        for i, source_data in enumerate(tests):
+            filename = f"test {i+1}"
+            if isinstance(source_data, str):
+                source = textwrap.dedent(source_data)
+                expected_s = textwrap.dedent(source)
+            else:
+                source, expected = source_data
+                source = textwrap.dedent(source)
+                expected_s = textwrap.dedent(expected)
+            node = ast.parse(source, filename=filename, mode='exec')
+            try:
+                result_s = formatter.format(node)
+            except Exception:
+                self.fail(filename)
+            lines = g.splitLines(result_s)
+            expected = g.splitLines(expected_s)
+            self.assertEqual(expected, lines, msg=filename)
     #@+node:ekr.20210805092921.1: *3* test class StubTraverser
     #@+node:ekr.20210804111915.1: *4* test_st_find
     def test_st_find(self):
