@@ -327,8 +327,6 @@
 </v>
 <v t="ekr.20210803055042.1"></v>
 <v t="ekr.20210807105711.1"><vh>--- to do: StubFormatter</vh>
-<v t="ekr.20160318141204.153"></v>
-<v t="ekr.20160318141204.160"></v>
 <v t="ekr.20160318141204.162"></v>
 <v t="ekr.20160318141204.164"></v>
 <v t="ekr.20160318141204.155"></v>
@@ -339,11 +337,44 @@
 <v t="ekr.20160318141204.158"></v>
 <v t="ekr.20160318141204.167"></v>
 </v>
-<v t="ekr.20210805090943.1"></v>
+<v t="ekr.20160318141204.160"></v>
 <v t="ekr.20210807133118.1"></v>
-<v t="ekr.20210807140347.1"><vh>Found:def do_Attribute</vh>
-<v t="ekr.20160318141204.33"></v>
-<v t="ekr.20160318141204.153"></v>
+<v t="ekr.20210807142423.1"><vh>git diff HEAD </vh>
+<v t="ekr.20210807142423.2"><vh>make_stub_files.leo</vh>
+<v t="ekr.20210807142423.7"><vh>Deleted</vh>
+<v t="ekr.20210807142423.8"><vh>Found:def do_Attribute</vh></v>
+</v>
+<v t="ekr.20210807142423.9"><vh>Changed</vh>
+<v t="ekr.20210807142423.10"><vh>sf.BinOp</vh>
+<v t="ekr.20210807142423.11"><vh>Old:sf.BinOp</vh></v>
+<v t="ekr.20160318141204.160"></v>
+</v>
+<v t="ekr.20210807142423.12"><vh>test_stub_formatter_class</vh>
+<v t="ekr.20210807142423.13"><vh>Old:test_stub_formatter_class</vh></v>
+<v t="ekr.20210807133118.1"></v>
+</v>
+<v t="ekr.20210807142423.14"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh>
+<v t="ekr.20210807142423.15"><vh>Old:&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
+<v t="ekr.20210807133228.1"></v>
+</v>
+</v>
+</v>
+<v t="ekr.20210807142423.16"><vh>make_stub_files.py</vh>
+<v t="ekr.20210807142423.21"><vh>Changed</vh>
+<v t="ekr.20210807142423.22"><vh>sf.BinOp</vh>
+<v t="ekr.20210807142423.23"><vh>Old:sf.BinOp</vh></v>
+<v t="ekr.20160318141204.160"></v>
+</v>
+<v t="ekr.20210807142423.24"><vh>test_stub_formatter_class</vh>
+<v t="ekr.20210807142423.25"><vh>Old:test_stub_formatter_class</vh></v>
+<v t="ekr.20210807133118.1"></v>
+</v>
+<v t="ekr.20210807142423.26"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh>
+<v t="ekr.20210807142423.27"><vh>Old:&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
+<v t="ekr.20210807133228.1"></v>
+</v>
+</v>
+</v>
 </v>
 </vnodes>
 <tnodes>
@@ -1948,16 +1979,16 @@ def do_Name(self, node):
 </t>
 <t tx="ekr.20160318141204.160"># BinOp(expr left, operator op, expr right)
 
-def do_BinOp(self, node):  ###
+def do_BinOp(self, node):
     """StubFormatter.BinOp visitor."""
     trace = self.trace_reduce
     numbers = ['number', 'complex', 'float', 'long', 'int',]
     op = self.op_name(node.op)
     lhs = self.visit(node.left)
     rhs = self.visit(node.right)
-    if op.strip() in ('is', 'is not', 'in', 'not in'):
+    if op.strip() in ('is', 'is not', 'in', 'not in'):  # pragma: no cover (python 2?)
         s = 'bool'
-    elif lhs == rhs:
+    elif lhs == rhs:  # pragma: no cover (python 2?)
         s = lhs
             # Perhaps not always right,
             # but it is correct for Tuple, List, Dict.
@@ -4113,10 +4144,34 @@ b = float
 c = bool
 d = None
 s = str
-""",
+"""
 ),
 # Test 2: Attribute.
 "print(a.b)\n",
+# Test 3: BinOp.
+(
+"""\
+print(1 + 2)
+print(3 + 4.1)
+print('s' + a)
+print(a + b)
+""",
+"""\
+print(int)
+print(float)
+print(str)
+print(a+b)
+""",
+),
+# Test 3: Compare
+# (
+# """\
+# print(a in b)
+# """,
+# """\
+# print(bool)
+# """
+# ),
 </t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.
@@ -4165,10 +4220,523 @@ d = None
 """,
 )
 </t>
-<t tx="ekr.20210807140347.1">@nosearch
+<t tx="ekr.20210807142423.1">@ignore
+@nosearch
+HEAD=2f879ac</t>
+<t tx="ekr.20210807142423.10">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -1,15 +1,15 @@
+ # BinOp(expr left, operator op, expr right)
+ 
+-def do_BinOp(self, node):  ###
++def do_BinOp(self, node):
+     """StubFormatter.BinOp visitor."""
+     trace = self.trace_reduce
+     numbers = ['number', 'complex', 'float', 'long', 'int',]
+     op = self.op_name(node.op)
+     lhs = self.visit(node.left)
+     rhs = self.visit(node.right)
+-    if op.strip() in ('is', 'is not', 'in', 'not in'):
++    if op.strip() in ('is', 'is not', 'in', 'not in'):  # pragma: no cover (python 2?)
+         s = 'bool'
+-    elif lhs == rhs:
++    elif lhs == rhs:  # pragma: no cover (python 2?)
+         s = lhs
+             # Perhaps not always right,
+             # but it is correct for Tuple, List, Dict.
+@language python
+</t>
+<t tx="ekr.20210807142423.11"># BinOp(expr left, operator op, expr right)
+
+def do_BinOp(self, node):  ###
+    """StubFormatter.BinOp visitor."""
+    trace = self.trace_reduce
+    numbers = ['number', 'complex', 'float', 'long', 'int',]
+    op = self.op_name(node.op)
+    lhs = self.visit(node.left)
+    rhs = self.visit(node.right)
+    if op.strip() in ('is', 'is not', 'in', 'not in'):
+        s = 'bool'
+    elif lhs == rhs:
+        s = lhs
+            # Perhaps not always right,
+            # but it is correct for Tuple, List, Dict.
+    elif lhs in numbers and rhs in numbers:
+        s = reduce_types([lhs, rhs], trace=trace)
+            # reduce_numbers would be wrong: it returns a list.
+    elif lhs == 'str' and op in '%+*':
+        # str + any implies any is a string.
+        s = 'str'
+    else:
+        # Fall back to the base-class behavior.
+        s = '%s%s%s' % (
+            self.visit(node.left),
+            op,
+            self.visit(node.right))
+    s = self.match_all(node, s)
+    self.trace_visitor(node, op, s)
+    return s
+</t>
+<t tx="ekr.20210807142423.12">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -15,6 +15,7 @@
+         ]
+     for i, source_data in enumerate(tests):
+         filename = f"test {i+1}"
++        g.trace(filename)
+         if isinstance(source_data, str):
+             source = textwrap.dedent(source_data)
+             expected_s = textwrap.dedent(source)
+@language python
+</t>
+<t tx="ekr.20210807142423.13">def test_stub_formatter_class(self):
+    
+    controller = Controller()
+    traverser = StubTraverser(controller)
+    formatter = StubFormatter(controller, traverser)
+    if 0:  # For debugging.
+        tests = ["""\
+            def yield_test():
+                yield 1
+            """
+        ]
+    else:
+        tests = [
+        &lt;&lt; define tests &gt;&gt;
+        ]
+    for i, source_data in enumerate(tests):
+        filename = f"test {i+1}"
+        if isinstance(source_data, str):
+            source = textwrap.dedent(source_data)
+            expected_s = textwrap.dedent(source)
+        else:
+            source, expected = source_data
+            source = textwrap.dedent(source)
+            expected_s = textwrap.dedent(expected)
+        node = ast.parse(source, filename=filename, mode='exec')
+        try:
+            result_s = formatter.format(node)
+        except Exception:
+            self.fail(filename)
+        lines = g.splitLines(result_s)
+        expected = g.splitLines(expected_s)
+        self.assertEqual(expected, lines, msg=filename)
+</t>
+<t tx="ekr.20210807142423.14">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -15,7 +15,31 @@
+ c = bool
+ d = None
+ s = str
+-""",
++"""
+ ),
+ # Test 2: Attribute.
+ "print(a.b)\n",
++# Test 3: BinOp.
++(
++"""\
++print(1 + 2)
++print(3 + 4.1)
++print('s' + a)
++print(a + b)
++""",
++"""\
++print(int)
++print(float)
++print(str)
++print(a+b)
++""",
++),
++# Test 3: Compare
++# (
++# """\
++# print(a in b)
++# """,
++# """\
++# print(bool)
++# """
++# ),
+@language python
+</t>
+<t tx="ekr.20210807142423.15"># Tests are either a single string, or a tuple: (source, expected).
+
+# Test 1: Constant.
+(
+"""\
+a = 1
+b = 2.5
+c = False
+d = None
+s = "abc"
+""",
+"""\
+a = int
+b = float
+c = bool
+d = None
+s = str
+""",
+),
+# Test 2: Attribute.
+"print(a.b)\n",
+</t>
+<t tx="ekr.20210807142423.16">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -2112,16 +2112,16 @@
+     #@+node:ekr.20160318141204.160: *4* sf.BinOp
+     # BinOp(expr left, operator op, expr right)
+ 
+-    def do_BinOp(self, node):  ###
++    def do_BinOp(self, node):
+         """StubFormatter.BinOp visitor."""
+         trace = self.trace_reduce
+         numbers = ['number', 'complex', 'float', 'long', 'int',]
+         op = self.op_name(node.op)
+         lhs = self.visit(node.left)
+         rhs = self.visit(node.right)
+-        if op.strip() in ('is', 'is not', 'in', 'not in'):
++        if op.strip() in ('is', 'is not', 'in', 'not in'):  # pragma: no cover (python 2?)
+             s = 'bool'
+-        elif lhs == rhs:
++        elif lhs == rhs:  # pragma: no cover (python 2?)
+             s = lhs
+                 # Perhaps not always right,
+                 # but it is correct for Tuple, List, Dict.
+@@ -3211,14 +3211,39 @@
+             c = bool
+             d = None
+             s = str
+-            """,
++            """
+             ),
+             # Test 2: Attribute.
+             "print(a.b)\n",
++            # Test 3: BinOp.
++            (
++            """\
++            print(1 + 2)
++            print(3 + 4.1)
++            print('s' + a)
++            print(a + b)
++            """,
++            """\
++            print(int)
++            print(float)
++            print(str)
++            print(a+b)
++            """,
++            ),
++            # Test 3: Compare
++            # (
++            # """\
++            # print(a in b)
++            # """,
++            # """\
++            # print(bool)
++            # """
++            # ),
+             #@-&lt;&lt; define tests &gt;&gt;
+             ]
+         for i, source_data in enumerate(tests):
+             filename = f"test {i+1}"
++            g.trace(filename)
+             if isinstance(source_data, str):
+                 source = textwrap.dedent(source_data)
+                 expected_s = textwrap.dedent(source)
+@language python
+</t>
+<t tx="ekr.20210807142423.2">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -327,8 +327,6 @@
+ &lt;/v&gt;
+ &lt;v t="ekr.20210803055042.1"&gt;&lt;/v&gt;
+ &lt;v t="ekr.20210807105711.1"&gt;&lt;vh&gt;--- to do: StubFormatter&lt;/vh&gt;
+-&lt;v t="ekr.20160318141204.153"&gt;&lt;/v&gt;
+-&lt;v t="ekr.20160318141204.160"&gt;&lt;/v&gt;
+ &lt;v t="ekr.20160318141204.162"&gt;&lt;/v&gt;
+ &lt;v t="ekr.20160318141204.164"&gt;&lt;/v&gt;
+ &lt;v t="ekr.20160318141204.155"&gt;&lt;/v&gt;
+@@ -339,12 +337,8 @@
+ &lt;v t="ekr.20160318141204.158"&gt;&lt;/v&gt;
+ &lt;v t="ekr.20160318141204.167"&gt;&lt;/v&gt;
+ &lt;/v&gt;
+-&lt;v t="ekr.20210805090943.1"&gt;&lt;/v&gt;
++&lt;v t="ekr.20160318141204.160"&gt;&lt;/v&gt;
+ &lt;v t="ekr.20210807133118.1"&gt;&lt;/v&gt;
+-&lt;v t="ekr.20210807140347.1"&gt;&lt;vh&gt;Found:def do_Attribute&lt;/vh&gt;
+-&lt;v t="ekr.20160318141204.33"&gt;&lt;/v&gt;
+-&lt;v t="ekr.20160318141204.153"&gt;&lt;/v&gt;
+-&lt;/v&gt;
+ &lt;/vnodes&gt;
+ &lt;tnodes&gt;
+ &lt;t tx="ekr.20160126153220.1"&gt;@language config
+@@ -1948,16 +1942,16 @@
+ &lt;/t&gt;
+ &lt;t tx="ekr.20160318141204.160"&gt;# BinOp(expr left, operator op, expr right)
+ 
+-def do_BinOp(self, node):  ###
++def do_BinOp(self, node):
+     """StubFormatter.BinOp visitor."""
+     trace = self.trace_reduce
+     numbers = ['number', 'complex', 'float', 'long', 'int',]
+     op = self.op_name(node.op)
+     lhs = self.visit(node.left)
+     rhs = self.visit(node.right)
+-    if op.strip() in ('is', 'is not', 'in', 'not in'):
++    if op.strip() in ('is', 'is not', 'in', 'not in'):  # pragma: no cover (python 2?)
+         s = 'bool'
+-    elif lhs == rhs:
++    elif lhs == rhs:  # pragma: no cover (python 2?)
+         s = lhs
+             # Perhaps not always right,
+             # but it is correct for Tuple, List, Dict.
+@@ -4080,6 +4074,7 @@
+         ]
+     for i, source_data in enumerate(tests):
+         filename = f"test {i+1}"
++        g.trace(filename)
+         if isinstance(source_data, str):
+             source = textwrap.dedent(source_data)
+             expected_s = textwrap.dedent(source)
+@@ -4113,10 +4108,34 @@
+ c = bool
+ d = None
+ s = str
+-""",
++"""
+ ),
+ # Test 2: Attribute.
+ "print(a.b)\n",
++# Test 3: BinOp.
++(
++"""\
++print(1 + 2)
++print(3 + 4.1)
++print('s' + a)
++print(a + b)
++""",
++"""\
++print(int)
++print(float)
++print(str)
++print(a+b)
++""",
++),
++# Test 3: Compare
++# (
++# """\
++# print(a in b)
++# """,
++# """\
++# print(bool)
++# """
++# ),
+ &lt;/t&gt;
+ &lt;t tx="ekr.20210807133351.1"&gt;g.cls()
+ # Run one test.
+@@ -4165,10 +4184,5 @@
+ """,
+ )
+ &lt;/t&gt;
+-&lt;t tx="ekr.20210807140347.1"&gt;@nosearch
+-
+-# Ignore Case, Head, Body
+-
+-# found 2 nodes&lt;/t&gt;
+ &lt;/tnodes&gt;
+ &lt;/leo_file&gt;
+@language python
+</t>
+<t tx="ekr.20210807142423.21"></t>
+<t tx="ekr.20210807142423.22">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -1,15 +1,15 @@
+ # BinOp(expr left, operator op, expr right)
+ 
+-def do_BinOp(self, node):  ###
++def do_BinOp(self, node):
+     """StubFormatter.BinOp visitor."""
+     trace = self.trace_reduce
+     numbers = ['number', 'complex', 'float', 'long', 'int',]
+     op = self.op_name(node.op)
+     lhs = self.visit(node.left)
+     rhs = self.visit(node.right)
+-    if op.strip() in ('is', 'is not', 'in', 'not in'):
++    if op.strip() in ('is', 'is not', 'in', 'not in'):  # pragma: no cover (python 2?)
+         s = 'bool'
+-    elif lhs == rhs:
++    elif lhs == rhs:  # pragma: no cover (python 2?)
+         s = lhs
+             # Perhaps not always right,
+             # but it is correct for Tuple, List, Dict.
+@language python
+</t>
+<t tx="ekr.20210807142423.23"># BinOp(expr left, operator op, expr right)
+
+def do_BinOp(self, node):  ###
+    """StubFormatter.BinOp visitor."""
+    trace = self.trace_reduce
+    numbers = ['number', 'complex', 'float', 'long', 'int',]
+    op = self.op_name(node.op)
+    lhs = self.visit(node.left)
+    rhs = self.visit(node.right)
+    if op.strip() in ('is', 'is not', 'in', 'not in'):
+        s = 'bool'
+    elif lhs == rhs:
+        s = lhs
+            # Perhaps not always right,
+            # but it is correct for Tuple, List, Dict.
+    elif lhs in numbers and rhs in numbers:
+        s = reduce_types([lhs, rhs], trace=trace)
+            # reduce_numbers would be wrong: it returns a list.
+    elif lhs == 'str' and op in '%+*':
+        # str + any implies any is a string.
+        s = 'str'
+    else:
+        # Fall back to the base-class behavior.
+        s = '%s%s%s' % (
+            self.visit(node.left),
+            op,
+            self.visit(node.right))
+    s = self.match_all(node, s)
+    self.trace_visitor(node, op, s)
+    return s
+</t>
+<t tx="ekr.20210807142423.24">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -15,6 +15,7 @@
+         ]
+     for i, source_data in enumerate(tests):
+         filename = f"test {i+1}"
++        g.trace(filename)
+         if isinstance(source_data, str):
+             source = textwrap.dedent(source_data)
+             expected_s = textwrap.dedent(source)
+@language python
+</t>
+<t tx="ekr.20210807142423.25">def test_stub_formatter_class(self):
+    
+    controller = Controller()
+    traverser = StubTraverser(controller)
+    formatter = StubFormatter(controller, traverser)
+    if 0:  # For debugging.
+        tests = ["""\
+            def yield_test():
+                yield 1
+            """
+        ]
+    else:
+        tests = [
+        &lt;&lt; define tests &gt;&gt;
+        ]
+    for i, source_data in enumerate(tests):
+        filename = f"test {i+1}"
+        if isinstance(source_data, str):
+            source = textwrap.dedent(source_data)
+            expected_s = textwrap.dedent(source)
+        else:
+            source, expected = source_data
+            source = textwrap.dedent(source)
+            expected_s = textwrap.dedent(expected)
+        node = ast.parse(source, filename=filename, mode='exec')
+        try:
+            result_s = formatter.format(node)
+        except Exception:
+            self.fail(filename)
+        lines = g.splitLines(result_s)
+        expected = g.splitLines(expected_s)
+        self.assertEqual(expected, lines, msg=filename)
+</t>
+<t tx="ekr.20210807142423.26">@ignore
+@nosearch
+@language patch
+--- HEAD
++++ uncommitted
+@@ -15,7 +15,31 @@
+ c = bool
+ d = None
+ s = str
+-""",
++"""
+ ),
+ # Test 2: Attribute.
+ "print(a.b)\n",
++# Test 3: BinOp.
++(
++"""\
++print(1 + 2)
++print(3 + 4.1)
++print('s' + a)
++print(a + b)
++""",
++"""\
++print(int)
++print(float)
++print(str)
++print(a+b)
++""",
++),
++# Test 3: Compare
++# (
++# """\
++# print(a in b)
++# """,
++# """\
++# print(bool)
++# """
++# ),
+@language python
+</t>
+<t tx="ekr.20210807142423.27"># Tests are either a single string, or a tuple: (source, expected).
+
+# Test 1: Constant.
+(
+"""\
+a = 1
+b = 2.5
+c = False
+d = None
+s = "abc"
+""",
+"""\
+a = int
+b = float
+c = bool
+d = None
+s = str
+""",
+),
+# Test 2: Attribute.
+"print(a.b)\n",
+</t>
+<t tx="ekr.20210807142423.7"></t>
+<t tx="ekr.20210807142423.8">@nosearch
 
 # Ignore Case, Head, Body
 
 # found 2 nodes</t>
+<t tx="ekr.20210807142423.9"></t>
 </tnodes>
 </leo_file>

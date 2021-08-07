@@ -2112,16 +2112,16 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.160: *4* sf.BinOp
     # BinOp(expr left, operator op, expr right)
 
-    def do_BinOp(self, node):  ###
+    def do_BinOp(self, node):
         """StubFormatter.BinOp visitor."""
         trace = self.trace_reduce
         numbers = ['number', 'complex', 'float', 'long', 'int',]
         op = self.op_name(node.op)
         lhs = self.visit(node.left)
         rhs = self.visit(node.right)
-        if op.strip() in ('is', 'is not', 'in', 'not in'):
+        if op.strip() in ('is', 'is not', 'in', 'not in'):  # pragma: no cover (python 2?)
             s = 'bool'
-        elif lhs == rhs:
+        elif lhs == rhs:  # pragma: no cover (python 2?)
             s = lhs
                 # Perhaps not always right,
                 # but it is correct for Tuple, List, Dict.
@@ -3211,10 +3211,34 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             c = bool
             d = None
             s = str
-            """,
+            """
             ),
             # Test 2: Attribute.
             "print(a.b)\n",
+            # Test 3: BinOp.
+            (
+            """\
+            print(1 + 2)
+            print(3 + 4.1)
+            print('s' + a)
+            print(a + b)
+            """,
+            """\
+            print(int)
+            print(float)
+            print(str)
+            print(a+b)
+            """,
+            ),
+            # Test 3: Compare
+            # (
+            # """\
+            # print(a in b)
+            # """,
+            # """\
+            # print(bool)
+            # """
+            # ),
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):
