@@ -2181,7 +2181,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.166: *4* sf.Subscript
     # Subscript(expr value, slice slice, expr_context ctx)
 
-    def do_Subscript(self, node):  ###
+    def do_Subscript(self, node):
         """StubFormatter.Subscript."""
         s = '%s[%s]' % (
             self.visit(node.value),
@@ -3271,7 +3271,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             "a = ('1', 2)\n",
             "a = Tuple[str, int]\n",
             ),
-            # Test 9: Unary ops.
+            # Test 9: UnaryOp.
             (
             """\
             a = -b
@@ -3282,6 +3282,11 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             c = bool
             """
             ),
+            # Test 10: Subscript.
+            (
+            "a = b[1:2:3]\n",
+            "a = b[int:int:int]\n"
+            )
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):

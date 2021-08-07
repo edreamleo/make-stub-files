@@ -301,7 +301,9 @@
 <v t="ekr.20160318141204.84"></v>
 <v t="ekr.20160318141204.85"></v>
 </v>
-<v t="ekr.20210807151105.1"><vh>--- changed StubFormatter visitors</vh></v>
+<v t="ekr.20210807151105.1"><vh>--- changed StubFormatter visitors</vh>
+<v t="ekr.20160318141204.167"></v>
+</v>
 </v>
 <v t="ekr.20210807105513.1"><vh>--- To do: ###</vh>
 <v t="ekr.20210807105645.1"><vh>--- msf</vh>
@@ -328,9 +330,7 @@
 <v t="ekr.20210803055042.1"></v>
 <v t="ekr.20210807105711.1"><vh>--- to do: StubFormatter</vh>
 <v t="ekr.20160318141204.149"></v>
-<v t="ekr.20160318141204.166"></v>
 </v>
-<v t="ekr.20160318141204.167"></v>
 <v t="ekr.20210807133118.1"></v>
 </vnodes>
 <tnodes>
@@ -2031,7 +2031,7 @@ def do_IfExp(self, node):
 </t>
 <t tx="ekr.20160318141204.166"># Subscript(expr value, slice slice, expr_context ctx)
 
-def do_Subscript(self, node):  ###
+def do_Subscript(self, node):
     """StubFormatter.Subscript."""
     s = '%s[%s]' % (
         self.visit(node.value),
@@ -4159,7 +4159,7 @@ print(Dict[a, b])
 "a = ('1', 2)\n",
 "a = Tuple[str, int]\n",
 ),
-# Test 9: Unary ops.
+# Test 9: UnaryOp.
 (
 """\
 a = -b
@@ -4170,6 +4170,11 @@ a = -b
 c = bool
 """
 ),
+# Test 10: Subscript.
+(
+"a = b[1:2:3]\n",
+"a = b[int:int:int]\n"
+)
 </t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.
