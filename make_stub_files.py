@@ -2051,15 +2051,17 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.154: *4* sf.Constants: Constant, Bytes, Num, Str
     # Return generic markers to allow better pattern matches.
 
-    def do_Contant(self, node):
-        ### Experimental.
-        name = node.value.__class__.__name__
-        if name == 'ellipsis':
-            return '...'
-        return name
+    def do_Constant(self, node):
+        return 'None' if node.value is None else node.value.__class__.__name__
+
+    def do_BoolOp(self, node):  # pragma: no cover (obsolete)
+        return 'bool'
 
     def do_Bytes(self, node):  # pragma: no cover (obsolete)
         return 'bytes'
+
+    def do_Name(self, node):  # pragma: no cover (obsolete)
+        return 'bool' if node.id in ('True', 'False') else node.id
 
     def do_Num(self, node):  # pragma: no cover (obsolete)
         return 'number'
@@ -3183,7 +3185,10 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         self.assertEqual(stub_3.level(), 2)
     #@+node:ekr.20210807133118.1: *3* test_stub_formatter_class
     def test_stub_formatter_class(self):
-        formatter = AstFormatter()
+        
+        controller = Controller()
+        traverser = StubTraverser(controller)
+        formatter = StubFormatter(controller, traverser)
         if 0:  # For debugging.
             tests = ["""\
                 def yield_test():
@@ -3194,6 +3199,24 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             tests = [
             #@+<< define tests >>
             #@+node:ekr.20210807133228.1: *4* << define tests >> (test_stub_formatter_class)
+            # Tests are either a single string, or a tuple: (source, expected).
+
+            (
+            """\
+            a = 1
+            b = 2.5
+            c = False
+            d = None
+            s = "abc"
+            """,
+            """\
+            a = int
+            b = float
+            c = bool
+            d = None
+            s = str
+            """,
+            )
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):

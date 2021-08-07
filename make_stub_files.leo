@@ -341,9 +341,8 @@
 <v t="ekr.20160318141204.158"></v>
 <v t="ekr.20160318141204.167"></v>
 </v>
-<v t="ekr.20210807133118.1"></v>
 <v t="ekr.20210805090943.1"></v>
-<v t="ekr.20210807133723.1"></v>
+<v t="ekr.20210807133118.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1887,23 +1886,24 @@ def do_Attribute(self, node):
 </t>
 <t tx="ekr.20160318141204.154"># Return generic markers to allow better pattern matches.
 
-def do_Contant(self, node):
-    ### Experimental.
-    name = node.value.__class__.__name__
-    if name == 'ellipsis':
-        return '...'
-    return name
+def do_Constant(self, node):
+    return 'None' if node.value is None else node.value.__class__.__name__
+
+def do_BoolOp(self, node):  # pragma: no cover (obsolete)
+    return 'bool'
 
 def do_Bytes(self, node):  # pragma: no cover (obsolete)
     return 'bytes'
+
+def do_Name(self, node):  # pragma: no cover (obsolete)
+    return 'bool' if node.id in ('True', 'False') else node.id
 
 def do_Num(self, node):  # pragma: no cover (obsolete)
     return 'number'
 
 def do_Str(self, node):  # pragma: no cover (obsolete)
     """This represents a string constant."""
-    return 'str'
-</t>
+    return 'str'</t>
 <t tx="ekr.20160318141204.155">def do_Dict(self, node):  ###
     result = []
     keys = [self.visit(z) for z in node.keys]
@@ -4067,7 +4067,10 @@ print(T)</t>
 <t tx="ekr.20210807105731.1"></t>
 <t tx="ekr.20210807120326.1"></t>
 <t tx="ekr.20210807133118.1">def test_stub_formatter_class(self):
-    formatter = AstFormatter()
+    
+    controller = Controller()
+    traverser = StubTraverser(controller)
+    formatter = StubFormatter(controller, traverser)
     if 0:  # For debugging.
         tests = ["""\
             def yield_test():
@@ -4096,11 +4099,30 @@ print(T)</t>
         expected = g.splitLines(expected_s)
         self.assertEqual(expected, lines, msg=filename)
 </t>
-<t tx="ekr.20210807133228.1"></t>
+<t tx="ekr.20210807133228.1"># Tests are either a single string, or a tuple: (source, expected).
+
+(
+"""\
+a = 1
+b = 2.5
+c = False
+d = None
+s = "abc"
+""",
+"""\
+a = int
+b = float
+c = bool
+d = None
+s = str
+""",
+)
+</t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.
 # test = '.TestMakeStubFiles.test_stub_formatter_class'
-test = '.TestMakeStubFiles.test_ast_arg_formatter_class'
+# test = '.TestMakeStubFiles.test_ast_arg_formatter_class'
+test = '.TestMakeStubFiles.test_stub_formatter_class'
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210807133723.1">def test_ast_arg_formatter_class(self):
