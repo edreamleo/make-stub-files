@@ -2192,12 +2192,12 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.167: *4* sf.UnaryOp
     # UnaryOp(unaryop op, expr operand)
 
-    def do_UnaryOp(self, node):  ###
+    def do_UnaryOp(self, node):
         """StubFormatter.UnaryOp for unary +, -, ~ and 'not' operators."""
         op = self.op_name(node.op)
         if op.strip() == 'not':
             return 'bool'
-        s = self.visit(node.operand)
+        s = op + self.visit(node.operand)  # bug fix: 2021/08/07.
         s = self.match_all(node, s)
         self.trace_visitor(node, op, s)
         return s
@@ -3245,7 +3245,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             c = Dict
             """,
             ),
-            # Test 5: Call
+            # Test 5: Call.
             (
             """\
             print(*args, **kwargs)
@@ -3256,20 +3256,31 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             print(Dict[a, b])
             """
             ),
-            # Test 6: ifExp
+            # Test 6: ifExp.
             (
             "print(1 if True else 2)\n",
             "print(int)\n",
             ),
-            # Test 7: List
+            # Test 7: List.
             (
             "a = ['1', 2]\n",
             "a = List[str, int]\n",
             ),
-            # Test 8: Tuple
+            # Test 8: Tuple.
             (
             "a = ('1', 2)\n",
             "a = Tuple[str, int]\n",
+            ),
+            # Test 9: Unary ops.
+            (
+            """\
+            a = -b
+            c = not d
+            """,
+            """\
+            a = -b
+            c = bool
+            """
             ),
             #@-<< define tests >>
             ]
