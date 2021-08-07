@@ -331,8 +331,6 @@
 <v t="ekr.20160318141204.160"></v>
 <v t="ekr.20160318141204.162"></v>
 <v t="ekr.20160318141204.164"></v>
-<v t="ekr.20160318141204.91"></v>
-<v t="ekr.20160318141204.154"></v>
 <v t="ekr.20160318141204.155"></v>
 <v t="ekr.20160318141204.165"></v>
 <v t="ekr.20160318141204.156"></v>
@@ -343,6 +341,10 @@
 </v>
 <v t="ekr.20210805090943.1"></v>
 <v t="ekr.20210807133118.1"></v>
+<v t="ekr.20210807140347.1"><vh>Found:def do_Attribute</vh>
+<v t="ekr.20160318141204.33"></v>
+<v t="ekr.20160318141204.153"></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1871,17 +1873,12 @@ def match_all(self, node, s, trace=False):  ###
 </t>
 <t tx="ekr.20160318141204.153"># Attribute(expr value, identifier attr, expr_context ctx)
 
-# attrs_seen = []
-
 def do_Attribute(self, node):
     """StubFormatter.do_Attribute."""
     s = '%s.%s' % (
         self.visit(node.value),
         node.attr)  # Don't visit node.attr: it is always a string.
     s2 = self.names_dict.get(s)
-    # if s2 and s2 not in self.attrs_seen:
-        # self.attrs_seen.append(s2)
-        # g.trace(s, '==&gt;', s2)
     return s2 or s
 </t>
 <t tx="ekr.20160318141204.154"># Return generic markers to allow better pattern matches.
@@ -4101,6 +4098,7 @@ print(T)</t>
 </t>
 <t tx="ekr.20210807133228.1"># Tests are either a single string, or a tuple: (source, expected).
 
+# Test 1: Constant.
 (
 """\
 a = 1
@@ -4116,7 +4114,9 @@ c = bool
 d = None
 s = str
 """,
-)
+),
+# Test 2: Attribute.
+"print(a.b)\n",
 </t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.
@@ -4165,5 +4165,10 @@ d = None
 """,
 )
 </t>
+<t tx="ekr.20210807140347.1">@nosearch
+
+# Ignore Case, Head, Body
+
+# found 2 nodes</t>
 </tnodes>
 </leo_file>

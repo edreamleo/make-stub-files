@@ -2036,17 +2036,12 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.153: *4* sf.Attribute
     # Attribute(expr value, identifier attr, expr_context ctx)
 
-    # attrs_seen = []
-
     def do_Attribute(self, node):
         """StubFormatter.do_Attribute."""
         s = '%s.%s' % (
             self.visit(node.value),
             node.attr)  # Don't visit node.attr: it is always a string.
         s2 = self.names_dict.get(s)
-        # if s2 and s2 not in self.attrs_seen:
-            # self.attrs_seen.append(s2)
-            # g.trace(s, '==>', s2)
         return s2 or s
     #@+node:ekr.20160318141204.154: *4* sf.Constants: Constant, Bytes, Num, Str
     # Return generic markers to allow better pattern matches.
@@ -3201,6 +3196,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             #@+node:ekr.20210807133228.1: *4* << define tests >> (test_stub_formatter_class)
             # Tests are either a single string, or a tuple: (source, expected).
 
+            # Test 1: Constant.
             (
             """\
             a = 1
@@ -3216,7 +3212,9 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             d = None
             s = str
             """,
-            )
+            ),
+            # Test 2: Attribute.
+            "print(a.b)\n",
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):
