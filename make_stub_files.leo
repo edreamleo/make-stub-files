@@ -128,7 +128,7 @@
 <v t="ekr.20160318141204.80"><vh>f.TryExcept</vh></v>
 <v t="ekr.20160318141204.81"><vh>f.TryFinally</vh></v>
 <v t="ekr.20160318141204.82"><vh>f.While</vh></v>
-<v t="ekr.20160318141204.83"><vh>f.With (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.83"><vh>f.With</vh></v>
 <v t="ekr.20160318141204.84"><vh>f.Yield</vh></v>
 <v t="ekr.20160318141204.85"><vh>f.YieldFrom (Python 3)</vh></v>
 </v>
@@ -317,10 +317,57 @@
 <v t="ekr.20210804214511.1"></v>
 <v t="ekr.20160318141204.18"></v>
 <v t="ekr.20160318141204.91"></v>
+<v t="ekr.20160318141204.75"></v>
 </v>
 <v t="ekr.20210804060105.1"></v>
 <v t="ekr.20210805090943.1"></v>
 <v t="ekr.20210805144859.1"></v>
+<v t="ekr.20210807105513.1"><vh>--- To do: ###</vh>
+<v t="ekr.20210807105747.1"><vh>AstFormatter</vh>
+<v t="ekr.20160318141204.63"></v>
+<v t="ekr.20160318141204.47"></v>
+<v t="ekr.20160318141204.77"></v>
+<v t="ekr.20160318141204.79"></v>
+<v t="ekr.20160318141204.18"></v>
+<v t="ekr.20160318141204.82"></v>
+<v t="ekr.20160318141204.83"></v>
+<v t="ekr.20160318141204.84"></v>
+<v t="ekr.20160318141204.85"></v>
+</v>
+<v t="ekr.20210807105645.1"><vh>--- msf</vh>
+<v t="ekr.20160318141204.135"></v>
+<v t="ekr.20160318141204.138"></v>
+<v t="ekr.20160318141204.139"></v>
+<v t="ekr.20160318141204.140"></v>
+</v>
+<v t="ekr.20210807105658.1"><vh>--- Pattern</vh>
+<v t="ekr.20160318141204.111"></v>
+<v t="ekr.20160318141204.113"></v>
+</v>
+<v t="ekr.20160318141204.118"></v>
+<v t="ekr.20210807105711.1"><vh>--- StubFormatter</vh>
+<v t="ekr.20160318141204.160"></v>
+<v t="ekr.20160318141204.162"></v>
+<v t="ekr.20160318141204.164"></v>
+<v t="ekr.20160318141204.91"></v>
+<v t="ekr.20160318141204.154"></v>
+<v t="ekr.20160318141204.155"></v>
+<v t="ekr.20160318141204.165"></v>
+<v t="ekr.20160318141204.156"></v>
+<v t="ekr.20160318141204.149"></v>
+<v t="ekr.20160318141204.166"></v>
+<v t="ekr.20160318141204.158"></v>
+<v t="ekr.20160318141204.167"></v>
+</v>
+<v t="ekr.20210807105731.1"><vh>--- StubTraverser</vh>
+<v t="ekr.20160318141204.188"></v>
+<v t="ekr.20160318141204.190"></v>
+<v t="ekr.20160318141204.175"></v>
+<v t="ekr.20160318141204.176"></v>
+<v t="ekr.20160318141204.186"></v>
+<v t="ekr.20160318141204.194"></v>
+</v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -2748,11 +2795,6 @@ def do_Store(self, node):  # pragma: no cover (defensive)
 </t>
 <t tx="ekr.20160318141204.31"># 2: arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
 
-###
-    # 3: OLD arguments = (arg*  args, arg? vararg,
-    #                arg* kwonlyargs, expr* kw_defaults,
-    #                arg? kwarg, expr* defaults)
-
 # 3: arguments = (
 #       arg* posonlyargs, arg* args, arg? vararg, arg* kwonlyargs,
 #       expr* kw_defaults, arg? kwarg, expr* defaults
@@ -3057,9 +3099,9 @@ def do_Subscript(self, node):
     result.append(self.indent('except'))
     if getattr(node, 'type', None):
         result.append(' %s' % self.visit(node.type))
-    if getattr(node, 'name', None):  ###
+    if getattr(node, 'name', None):
         if isinstance(node.name, ast.AST):  
-            result.append(' as %s' % self.visit(node.name))
+            result.append(' as %s' % self.visit(node.name))  # pragma: no cover (python 2)
         else:
             result.append(' as %s' % node.name)  # Python 3.x.
     result.append(':\n')
@@ -3150,7 +3192,7 @@ def do_Subscript(self, node):
     names = []
     for fn, asname in self.get_import_names(node):
         if asname:
-            names.append('%s as %s' % (fn, asname))  ###
+            names.append('%s as %s' % (fn, asname))
         else:
             names.append(fn)
     return self.indent('from %s import %s\n' % (
@@ -3160,7 +3202,7 @@ def do_Subscript(self, node):
 <t tx="ekr.20160318141204.72"># Nonlocal(identifier* names)
 
 def do_Nonlocal(self, node):
-    return self.indent('nonlocal %s\n' % ', '.join(node.names))  ###
+    return self.indent('nonlocal %s\n' % ', '.join(node.names))
 </t>
 <t tx="ekr.20160318141204.73">def do_Pass(self, node):
     return self.indent('pass\n')
@@ -3178,9 +3220,13 @@ def do_Nonlocal(self, node):
         ','.join(vals)))
 
 </t>
-<t tx="ekr.20160318141204.75">def do_Raise(self, node):  ###
+<t tx="ekr.20160318141204.75">def do_Raise(self, node):
     args = []
-    for attr in ('type', 'inst', 'tback'):
+    g.trace(node)
+    for attr in (
+        'exc', 'cause',  # python 3
+        'type', 'inst', 'tback'  # python 2
+    ):
         if getattr(node, attr, None) is not None:
             args.append(self.visit(getattr(node, attr)))
     if args:
@@ -3962,18 +4008,27 @@ else:
     print('else')
 finally:
     print('finally')
+""",
+# Test 13: ImportFrom
+"from a import b as c\n",
+# Test 14: Nonlocal
+"""\
+def nonlocal_test():
+    nonlocal a
+""",
+# Test 15: Raise
+"""\
+raise Exception('spam', 'eggs')
+raise
 """,</t>
 <t tx="ekr.20210806005225.1"># FormattedValue(expr value, int? conversion, expr? format_spec)
 
 def do_FormattedValue(self, node):
-    ### Experimental: need unit tests.
     return self.visit(node.value)
     
 def do_JoinedStr(self, node):
-    ### Experimental: need unit tests.
     return "%s" % ''.join(self.visit(z) for z in node.values or [])
 
-    
 </t>
 <t tx="ekr.20210806011736.1">def test_ast_formatter_class_on_file(self):
     # Use the source of *this* file as a single test.
@@ -4016,5 +4071,15 @@ See README.md for examples.
 T(base=str)
 print(T)</t>
 <t tx="ekr.20210806162349.1"></t>
+<t tx="ekr.20210807105513.1">@nosearch
+
+# Ignore Case, Head, Body
+
+# found 47 nodes</t>
+<t tx="ekr.20210807105645.1"></t>
+<t tx="ekr.20210807105658.1"></t>
+<t tx="ekr.20210807105711.1"></t>
+<t tx="ekr.20210807105731.1"></t>
+<t tx="ekr.20210807105747.1"></t>
 </tnodes>
 </leo_file>

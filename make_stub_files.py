@@ -254,11 +254,6 @@ class AstFormatter:
     #@+node:ekr.20160318141204.31: *4* f.arguments
     # 2: arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
 
-    ###
-        # 3: OLD arguments = (arg*  args, arg? vararg,
-        #                arg* kwonlyargs, expr* kw_defaults,
-        #                arg? kwarg, expr* defaults)
-
     # 3: arguments = (
     #       arg* posonlyargs, arg* args, arg? vararg, arg* kwonlyargs,
     #       expr* kw_defaults, arg? kwarg, expr* defaults
@@ -401,14 +396,11 @@ class AstFormatter:
     # FormattedValue(expr value, int? conversion, expr? format_spec)
 
     def do_FormattedValue(self, node):
-        ### Experimental: need unit tests.
         return self.visit(node.value)
         
     def do_JoinedStr(self, node):
-        ### Experimental: need unit tests.
         return "%s" % ''.join(self.visit(z) for z in node.values or [])
 
-        
     #@+node:ekr.20160318141204.42: *4* f.List
     def do_List(self, node):
         # Not used: list context.
@@ -565,9 +557,9 @@ class AstFormatter:
         result.append(self.indent('except'))
         if getattr(node, 'type', None):
             result.append(' %s' % self.visit(node.type))
-        if getattr(node, 'name', None):  ###
+        if getattr(node, 'name', None):
             if isinstance(node.name, ast.AST):  
-                result.append(' as %s' % self.visit(node.name))
+                result.append(' as %s' % self.visit(node.name))  # pragma: no cover (python 2)
             else:
                 result.append(' as %s' % node.name)  # Python 3.x.
         result.append(':\n')
@@ -658,7 +650,7 @@ class AstFormatter:
         names = []
         for fn, asname in self.get_import_names(node):
             if asname:
-                names.append('%s as %s' % (fn, asname))  ###
+                names.append('%s as %s' % (fn, asname))
             else:
                 names.append(fn)
         return self.indent('from %s import %s\n' % (
@@ -668,7 +660,7 @@ class AstFormatter:
     # Nonlocal(identifier* names)
 
     def do_Nonlocal(self, node):
-        return self.indent('nonlocal %s\n' % ', '.join(node.names))  ###
+        return self.indent('nonlocal %s\n' % ', '.join(node.names))
     #@+node:ekr.20160318141204.73: *4* f.Pass
     def do_Pass(self, node):
         return self.indent('pass\n')
@@ -686,9 +678,13 @@ class AstFormatter:
             ','.join(vals)))
 
     #@+node:ekr.20160318141204.75: *4* f.Raise
-    def do_Raise(self, node):  ###
+    def do_Raise(self, node):
         args = []
-        for attr in ('type', 'inst', 'tback'):
+        g.trace(node)
+        for attr in (
+            'exc', 'cause',  # python 3
+            'type', 'inst', 'tback'  # python 2
+        ):
             if getattr(node, attr, None) is not None:
                 args.append(self.visit(getattr(node, attr)))
         if args:
@@ -786,7 +782,7 @@ class AstFormatter:
                 self.level -= 1
         return ''.join(result)
 
-    #@+node:ekr.20160318141204.83: *4* f.With (make_stub_files)
+    #@+node:ekr.20160318141204.83: *4* f.With
     # 2:  With(expr context_expr, expr? optional_vars,
     #          stmt* body)
     # 3:  With(withitem* items,
@@ -2956,6 +2952,18 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
                 print('else')
             finally:
                 print('finally')
+            """,
+            # Test 13: ImportFrom
+            "from a import b as c\n",
+            # Test 14: Nonlocal
+            """\
+            def nonlocal_test():
+                nonlocal a
+            """,
+            # Test 15: Raise
+            """\
+            raise Exception('spam', 'eggs')
+            raise
             """,
             #@-<< define tests >>
             ]
