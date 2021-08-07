@@ -324,7 +324,7 @@
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.194"></v>
 </v>
-<v t="ekr.20210806163439.1"><vh>COPY tog.arguments</vh></v>
+<v t="ekr.20210806164116.1"><vh>***** rewrite f.args</vh></v>
 <v t="ekr.20160318141204.31"></v>
 </vnodes>
 <tnodes>
@@ -2772,8 +2772,14 @@ def do_arguments(self, node):
     defaults = [self.visit(z) for z in node.defaults]
     # Assign default values to the last args.
     args2 = []
+    # PEP 570: Position-only args.
+    posonlyargs = getattr(node, 'posonlyargs', [])
+    if posonlyargs:
+        for z in posonlyargs:
+            args2.append(self.visit(z))
+        args2.append('/')
     n_plain = len(args) - len(defaults)
-    for i in range(len(args)):  ###
+    for i in range(len(args)):
         if i &lt; n_plain:
             args2.append(args[i])
         else:
@@ -2787,15 +2793,15 @@ def do_arguments(self, node):
         if name:
             args2.append('**' + name)
         return ', '.join(args2)
-    #
-    args = [self.visit(z) for z in node.kwonlyargs]
-    defaults = [self.visit(z) for z in node.kw_defaults]
-    n_plain = len(args) - len(defaults)
-    for i in range(len(args)):  ###
-        if i &lt; n_plain:
-            args2.append(args[i])
-        else:
-            args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
+    # PEP 3102: keyword-only args.
+    if node.kwonlyargs:
+        assert len(node.kwonlyargs) == len(node.kw_defaults)
+        args2.append('*')
+        for n, z in enumerate(node.kwonlyargs):
+            if node.kw_defaults[n] is None:
+                args2.append(self.visit(z))
+            else:
+                args2.append('%s=%s' % (self.visit(z), self.visit(node.kw_defaults[n])))
     # Add the vararg and kwarg expressions.
     vararg = getattr(node, 'vararg', None)
     if vararg:
@@ -3843,20 +3849,16 @@ https://github.com/edreamleo/make-stub-files/issues/18
 <t tx="ekr.20210805090003.1"></t>
 <t tx="ekr.20210805090544.1"></t>
 <t tx="ekr.20210805090943.1">def test_ast_formatter_class(self):
-    """Test the output of all AstFormatter visitors.
-    
-    We can *usually assume that sources are in the form of the expected
-    output, because the input source serves only to create the ast tree.
-    
-    However, there are a few special cases for which the stub is not valid python.
-    """
+    # We can *usually assume that sources are in the form of the expected
+    # output, because the input source serves only to create the ast tree.
+    # However, there are a few special cases for which the stub is not valid python.
     tag = 'test_ast_formatter_class'
     formatter = AstFormatter()
     tests = [
     &lt;&lt; define tests &gt;&gt;
     ]
     for i, source_data in enumerate(tests):
-        filename = f"{tag}: test {i}"
+        filename = f"{tag}: test {i+1}"
         if isinstance(source_data, str):
             source = textwrap.dedent(source_data)
             expected_s = textwrap.dedent(source)
@@ -3865,14 +3867,17 @@ https://github.com/edreamleo/make-stub-files/issues/18
             source = textwrap.dedent(source)
             expected_s = textwrap.dedent(expected)
         node = ast.parse(source, filename=filename, mode='exec')
-        result_s = formatter.format(node)
+        try:
+            result_s = formatter.format(node)
+        except Exception:
+            self.fail(f"{tag}: {i}")
         lines = g.splitLines(result_s)
         expected = g.splitLines(expected_s)
         if 0:
             g.printObj(expected, tag='expected')
             g.printObj(lines, tag='lines')
         else:
-            self.assertEqual(expected, lines, msg=f"{tag}: {i}")
+            self.assertEqual(expected, lines, msg=f"test {i+1}")
 </t>
 <t tx="ekr.20210805091045.1"></t>
 <t tx="ekr.20210805092921.1"></t>
@@ -3908,19 +3913,20 @@ https://github.com/edreamleo/make-stub-files/issues/18
 
 # All tests should match the expected formatted output.
 
+# Test 1.
 """\
 class AstFormatter:
     def format(self, node: Node) -&gt; Union[Any, str]:
         pass
 """,
-# Constant...
+# Test 2: Constant.
 """\
 a = 1
 b = 2.5
 c = False
 d = None
 """,
-# ClassDef...
+# Test 3: ClassDef
 (
 """\
 @class_decorator
@@ -3933,27 +3939,27 @@ class TestClass(str, base2=int): ...
     pass
 """,
 ),
-# FunctionDef...
+# Test 4: FunctionDef
 """\
 @function_decorator
 def f():
     pass
 """,
-### Not yet.
-    # From PEP 570...
-    # """\
-    # def pos_only_arg(arg, /):
-        # pass
-    # """,
-    # """\
-    # def kwd_only_arg(*, arg):
-        # pass
-    # def combined_example(pos_only, /, standard, *, kwd_only):
-        # pass
-    # """,
-
-
-   
+# Test 5: Position-only arg.
+"""\
+def pos_only_arg(arg, /):
+    pass
+""",
+# Test 6: Keyword-only arg.
+"""\
+def kwd_only_arg(*, arg, arg2=None):
+    pass
+""",
+# Test 7: Position-only and keyword-only args.
+"""\
+def combined_example(pos_only, /, standard, *, kwd_only):
+    pass
+""",
 </t>
 <t tx="ekr.20210806005225.1"># FormattedValue(expr value, int? conversion, expr? format_spec)
 
@@ -4009,64 +4015,6 @@ See README.md for examples.
 T(base=str)
 print(T)</t>
 <t tx="ekr.20210806162349.1"></t>
-<t tx="ekr.20210806163439.1"># arguments = (
-#       arg* posonlyargs, arg* args, arg? vararg, arg* kwonlyargs,
-#       expr* kw_defaults, arg? kwarg, expr* defaults
-# )
-
-def do_arguments(self, node):
-    """Arguments to ast.Function or ast.Lambda, **not** ast.Call."""
-    #
-    # No need to generate commas anywhere below.
-    #
-    # Let block. Some fields may not exist pre Python 3.8.
-    n_plain = len(node.args) - len(node.defaults)
-    posonlyargs = getattr(node, 'posonlyargs', [])  # type:ignore
-    vararg = getattr(node, 'vararg', None)
-    kwonlyargs = getattr(node, 'kwonlyargs', [])  # type:ignore
-    kw_defaults = getattr(node, 'kw_defaults', [])  # type:ignore
-    kwarg = getattr(node, 'kwarg', None)
-    if 0:
-        g.printObj(ast.dump(node.vararg) if node.vararg else 'None', tag='node.vararg')
-        g.printObj([ast.dump(z) for z in node.args], tag='node.args')
-        g.printObj([ast.dump(z) for z in node.defaults], tag='node.defaults')
-        g.printObj([ast.dump(z) for z in posonlyargs], tag='node.posonlyargs')
-        g.printObj([ast.dump(z) for z in kwonlyargs], tag='kwonlyargs')
-        g.printObj([ast.dump(z) if z else 'None' for z in kw_defaults], tag='kw_defaults')
-    # 1. Sync the position-only args.
-    if posonlyargs:
-        for n, z in enumerate(posonlyargs):
-            # g.trace('pos-only', ast.dump(z))
-            yield from self.gen(z)
-        yield from self.gen_op('/')
-    # 2. Sync all args.
-    for i, z in enumerate(node.args):
-        yield from self.gen(z)
-        if i &gt;= n_plain:
-            yield from self.gen_op('=')
-            yield from self.gen(node.defaults[i - n_plain])
-    # 3. Sync the vararg.
-    if vararg:
-        # g.trace('vararg', ast.dump(vararg))
-        yield from self.gen_op('*')
-        yield from self.gen(vararg)
-    # 4. Sync the keyword-only args.
-    if kwonlyargs:
-        if not vararg:
-            yield from self.gen_op('*')
-        for n, z in enumerate(kwonlyargs):
-            # g.trace('keyword-only', ast.dump(z))
-            yield from self.gen(z)
-            val = kw_defaults[n]
-            if val is not None:
-                yield from self.gen_op('=')
-                yield from self.gen(val)
-    # 5. Sync the kwarg.
-    if kwarg:
-        # g.trace('kwarg', ast.dump(kwarg))
-        yield from self.gen_op('**')
-        yield from self.gen(kwarg)
-
-</t>
+<t tx="ekr.20210806164116.1"></t>
 </tnodes>
 </leo_file>

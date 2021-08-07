@@ -273,8 +273,14 @@ class AstFormatter:
         defaults = [self.visit(z) for z in node.defaults]
         # Assign default values to the last args.
         args2 = []
+        # PEP 570: Position-only args.
+        posonlyargs = getattr(node, 'posonlyargs', [])
+        if posonlyargs:
+            for z in posonlyargs:
+                args2.append(self.visit(z))
+            args2.append('/')
         n_plain = len(args) - len(defaults)
-        for i in range(len(args)):  ###
+        for i in range(len(args)):
             if i < n_plain:
                 args2.append(args[i])
             else:
@@ -288,15 +294,15 @@ class AstFormatter:
             if name:
                 args2.append('**' + name)
             return ', '.join(args2)
-        #
-        args = [self.visit(z) for z in node.kwonlyargs]
-        defaults = [self.visit(z) for z in node.kw_defaults]
-        n_plain = len(args) - len(defaults)
-        for i in range(len(args)):  ###
-            if i < n_plain:
-                args2.append(args[i])
-            else:
-                args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
+        # PEP 3102: keyword-only args.
+        if node.kwonlyargs:
+            assert len(node.kwonlyargs) == len(node.kw_defaults)
+            args2.append('*')
+            for n, z in enumerate(node.kwonlyargs):
+                if node.kw_defaults[n] is None:
+                    args2.append(self.visit(z))
+                else:
+                    args2.append('%s=%s' % (self.visit(z), self.visit(node.kw_defaults[n])))
         # Add the vararg and kwarg expressions.
         vararg = getattr(node, 'vararg', None)
         if vararg:
@@ -2880,13 +2886,9 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         self.assertEqual(lines, expected)
     #@+node:ekr.20210805090943.1: *3* test_ast_formatter_class
     def test_ast_formatter_class(self):
-        """Test the output of all AstFormatter visitors.
-        
-        We can *usually assume that sources are in the form of the expected
-        output, because the input source serves only to create the ast tree.
-        
-        However, there are a few special cases for which the stub is not valid python.
-        """
+        # We can *usually assume that sources are in the form of the expected
+        # output, because the input source serves only to create the ast tree.
+        # However, there are a few special cases for which the stub is not valid python.
         tag = 'test_ast_formatter_class'
         formatter = AstFormatter()
         tests = [
@@ -2896,19 +2898,20 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
 
         # All tests should match the expected formatted output.
 
+        # Test 1.
         """\
         class AstFormatter:
             def format(self, node: Node) -> Union[Any, str]:
                 pass
         """,
-        # Constant...
+        # Test 2: Constant.
         """\
         a = 1
         b = 2.5
         c = False
         d = None
         """,
-        # ClassDef...
+        # Test 3: ClassDef
         (
         """\
         @class_decorator
@@ -2921,31 +2924,31 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             pass
         """,
         ),
-        # FunctionDef...
+        # Test 4: FunctionDef
         """\
         @function_decorator
         def f():
             pass
         """,
-        ### Not yet.
-            # From PEP 570...
-            # """\
-            # def pos_only_arg(arg, /):
-                # pass
-            # """,
-            # """\
-            # def kwd_only_arg(*, arg):
-                # pass
-            # def combined_example(pos_only, /, standard, *, kwd_only):
-                # pass
-            # """,
-
-
-           
+        # Test 5: Position-only arg.
+        """\
+        def pos_only_arg(arg, /):
+            pass
+        """,
+        # Test 6: Keyword-only arg.
+        """\
+        def kwd_only_arg(*, arg, arg2=None):
+            pass
+        """,
+        # Test 7: Position-only and keyword-only args.
+        """\
+        def combined_example(pos_only, /, standard, *, kwd_only):
+            pass
+        """,
         #@-<< define tests >>
         ]
         for i, source_data in enumerate(tests):
-            filename = f"{tag}: test {i}"
+            filename = f"{tag}: test {i+1}"
             if isinstance(source_data, str):
                 source = textwrap.dedent(source_data)
                 expected_s = textwrap.dedent(source)
@@ -2954,14 +2957,17 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
                 source = textwrap.dedent(source)
                 expected_s = textwrap.dedent(expected)
             node = ast.parse(source, filename=filename, mode='exec')
-            result_s = formatter.format(node)
+            try:
+                result_s = formatter.format(node)
+            except Exception:
+                self.fail(f"{tag}: {i}")
             lines = g.splitLines(result_s)
             expected = g.splitLines(expected_s)
             if 0:
                 g.printObj(expected, tag='expected')
                 g.printObj(lines, tag='lines')
             else:
-                self.assertEqual(expected, lines, msg=f"{tag}: {i}")
+                self.assertEqual(expected, lines, msg=f"test {i+1}")
     #@+node:ekr.20210806011736.1: *3* test_ast_formatter_class_on_file
     def test_ast_formatter_class_on_file(self):
         # Use the source of *this* file as a single test.
