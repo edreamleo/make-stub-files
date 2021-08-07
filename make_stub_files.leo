@@ -302,6 +302,7 @@
 <v t="ekr.20160318141204.85"></v>
 </v>
 <v t="ekr.20210807151105.1"><vh>--- changed StubFormatter visitors</vh>
+<v t="ekr.20160318141204.168"></v>
 <v t="ekr.20160318141204.167"></v>
 </v>
 </v>
@@ -316,6 +317,7 @@
 <v t="ekr.20160318141204.111"></v>
 <v t="ekr.20160318141204.113"></v>
 </v>
+<v t="ekr.20160318141204.149"></v>
 <v t="ekr.20160318141204.118"></v>
 <v t="ekr.20210807105731.1"><vh>--- StubTraverser</vh>
 <v t="ekr.20160318141204.188"></v>
@@ -328,11 +330,7 @@
 </v>
 </v>
 <v t="ekr.20210803055042.1"></v>
-<v t="ekr.20210807105711.1"><vh>--- to do: StubFormatter</vh>
-<v t="ekr.20160318141204.149"></v>
-</v>
 <v t="ekr.20210807133118.1"></v>
-<v t="ekr.20160318141204.168"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -2324,7 +2322,6 @@ def out(self, s):  # pragma: no cover
     if method:
         s = method(node)
         assert g.isString(s), s.__class__.__name__
-        # g.trace(name,  '==&gt;', s) ###
         return s
     # #13: Insert an error comment directly into the output.
     return f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover (defensive)
@@ -4042,7 +4039,6 @@ print(T)</t>
 </t>
 <t tx="ekr.20210807105645.1"></t>
 <t tx="ekr.20210807105658.1"></t>
-<t tx="ekr.20210807105711.1"></t>
 <t tx="ekr.20210807105731.1"></t>
 <t tx="ekr.20210807120326.1"></t>
 <t tx="ekr.20210807133118.1">def test_stub_formatter_class(self):

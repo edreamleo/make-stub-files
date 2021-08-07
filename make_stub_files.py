@@ -135,7 +135,6 @@ class AstFormatter:
         if method:
             s = method(node)
             assert g.isString(s), s.__class__.__name__
-            # g.trace(name,  '==>', s) ###
             return s
         # #13: Insert an error comment directly into the output.
         return f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover (defensive)
