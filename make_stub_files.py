@@ -2236,8 +2236,9 @@ class StubFormatter(AstFormatter):
         Return only the return expression itself.
         """
         s = AstFormatter.do_Return(self, node)
+        s = s.strip()
         assert s.startswith('return'), repr(s)
-        return s[len('return') :].strip()
+        return s[len('return'):].strip()
     #@-others
 #@+node:ekr.20160318141204.169: ** class StubTraverser (ast.NodeVisitor)
 class StubTraverser(ast.NodeVisitor):
@@ -3223,7 +3224,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             print(a+b)
             """,
             ),
-            # Test 3: Compare
+            # Test 4: Compare
             (
             """\
             print(a in b)
@@ -3232,7 +3233,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             print(bool)
             """
             ),
-            # Test 4: Dict
+            # Test 5: Dict
             (
             """\
             a = {}
@@ -3245,7 +3246,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             c = Dict
             """,
             ),
-            # Test 5: Call.
+            # Test 6: Call.
             (
             """\
             print(*args, **kwargs)
@@ -3256,22 +3257,22 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             print(Dict[a, b])
             """
             ),
-            # Test 6: ifExp.
+            # Test 7: ifExp.
             (
             "print(1 if True else 2)\n",
             "print(int)\n",
             ),
-            # Test 7: List.
+            # Test 8: List.
             (
             "a = ['1', 2]\n",
             "a = List[str, int]\n",
             ),
-            # Test 8: Tuple.
+            # Test 9: Tuple.
             (
             "a = ('1', 2)\n",
             "a = Tuple[str, int]\n",
             ),
-            # Test 9: UnaryOp.
+            # Test 10: UnaryOp.
             (
             """\
             a = -b
@@ -3282,10 +3283,16 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             c = bool
             """
             ),
-            # Test 10: Subscript.
+            # Test 11: Subscript.
             (
             "a = b[1:2:3]\n",
             "a = b[int:int:int]\n"
+            ),
+            # Test 12: Return.
+            (
+            # sf.Return only returns the return expression(!)
+            "return 99\n",
+            "int",
             )
             #@-<< define tests >>
             ]
