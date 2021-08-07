@@ -2152,40 +2152,6 @@ class StubFormatter(AstFormatter):
         s = self.match_all(node, s)
         self.trace_visitor(node, op, s)
         return s
-    #@+node:ekr.20160318141204.162: *4* sf.Call & sf.keyword
-    # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
-
-    def do_Call(self, node):
-        """StubFormatter.Call visitor."""
-        func = self.visit(node.func)
-        args = [self.visit(z) for z in node.args]
-        for z in node.keywords:
-            # Calls f.do_keyword.
-            args.append(self.visit(z))
-        if getattr(node, 'starargs', None):
-            args.append('*%s' % (self.visit(node.starargs)))
-        if getattr(node, 'kwargs', None):
-            args.append('**%s' % (self.visit(node.kwargs)))
-        args = [z for z in args if z]  # Kludge: Defensive coding.
-        # Explicit pattern:
-        if func in ('dict', 'list', 'set', 'tuple',):
-            if args:
-                s = '%s[%s]' % (func.capitalize(), ', '.join(args))
-            else:
-                s = '%s' % func.capitalize()
-        else:
-            s = '%s(%s)' % (func, ', '.join(args))
-        s = self.match_all(node, s, trace=False)
-        self.trace_visitor(node, 'call', s)
-        return s
-    #@+node:ekr.20160318141204.163: *5* sf.keyword
-    # keyword = (identifier arg, expr value)
-
-    def do_keyword(self, node):  ###
-        # node.arg is a string.
-        value = self.visit(node.value)
-        # This is a keyword *arg*, not a Python keyword!
-        return '%s=%s' % (node.arg, value)
     #@+node:ekr.20160318141204.164: *4* sf.Compare
     # Compare(expr left, cmpop* ops, expr* comparators)
 
@@ -2235,7 +2201,35 @@ class StubFormatter(AstFormatter):
         s = self.match_all(node, s)
         self.trace_visitor(node, op, s)
         return s
-    #@+node:ekr.20160318141204.168: *3* sf.Return
+    #@+node:ekr.20210807145722.1: *3* sf.Statements
+    #@+node:ekr.20160318141204.162: *4* sf.Call & sf.keyword
+    # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
+
+    def do_Call(self, node):
+        """StubFormatter.Call visitor."""
+        func = self.visit(node.func)
+        args = [self.visit(z) for z in node.args]
+        for z in node.keywords:
+            # Calls *base class* s.do_keyword.
+            args.append(self.visit(z))
+        if not isPython3: # pragma: no cover (python 2)
+            if getattr(node, 'starargs', None):
+                args.append('*%s' % (self.visit(node.starargs)))
+            if getattr(node, 'kwargs', None):
+                args.append('**%s' % (self.visit(node.kwargs)))
+        args = [z for z in args if z]  # Kludge: Defensive coding.
+        # Explicit pattern:
+        if func in ('dict', 'list', 'set', 'tuple',):
+            if args:
+                s = '%s[%s]' % (func.capitalize(), ', '.join(args))
+            else:
+                s = '%s' % func.capitalize()
+        else:
+            s = '%s(%s)' % (func, ', '.join(args))
+        s = self.match_all(node, s, trace=False)
+        self.trace_visitor(node, 'call', s)
+        return s
+    #@+node:ekr.20160318141204.168: *4* sf.Return
     def do_Return(self, node):
         """
         StubFormatter ast.Return vsitor.
@@ -3239,28 +3233,30 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             print(bool)
             """
             ),
-            # Test 4: Call.
-            (
-            """\
-            dict()
-            """,
-            """\
-            Dict
-            """
-            ),
-            # Test 5: Dict
+            # Test 4: Dict
             (
             """\
             a = {}
             b = {'1': 1}
+            c = dict()
             """,
             """\
             a = Dict
             b = Dict[str:int]
+            c = Dict
             """,
-            )
-
-
+            ),
+            # Test 5: Call
+            (
+            """\
+            print(*args, **kwargs)
+            print(dict(a, b))
+            """,
+            """\
+            print(*args, **kwargs)
+            print(Dict[a, b])
+            """
+            ),
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):

@@ -202,15 +202,15 @@
 <v t="ekr.20160318141204.159"><vh>sf.Operators</vh>
 <v t="ekr.20160318141204.160"><vh>sf.BinOp</vh></v>
 <v t="ekr.20160318141204.161"><vh>sf.BoolOp</vh></v>
-<v t="ekr.20160318141204.162"><vh>sf.Call &amp; sf.keyword</vh>
-<v t="ekr.20160318141204.163"><vh>sf.keyword</vh></v>
-</v>
 <v t="ekr.20160318141204.164"><vh>sf.Compare</vh></v>
 <v t="ekr.20160318141204.165"><vh>sf.IfExp</vh></v>
 <v t="ekr.20160318141204.166"><vh>sf.Subscript</vh></v>
 <v t="ekr.20160318141204.167"><vh>sf.UnaryOp</vh></v>
 </v>
+<v t="ekr.20210807145722.1"><vh>sf.Statements</vh>
+<v t="ekr.20160318141204.162"><vh>sf.Call &amp; sf.keyword</vh></v>
 <v t="ekr.20160318141204.168"><vh>sf.Return</vh></v>
+</v>
 </v>
 <v t="ekr.20160318141204.169"><vh>class StubTraverser (ast.NodeVisitor)</vh>
 <v t="ekr.20160318141204.170"><vh>st.ctor</vh></v>
@@ -337,7 +337,6 @@
 <v t="ekr.20210807133118.1"></v>
 <v t="ekr.20160318141204.35"></v>
 <v t="ekr.20160318141204.162"></v>
-<v t="ekr.20160318141204.155"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1989,12 +1988,13 @@ def do_Call(self, node):
     func = self.visit(node.func)
     args = [self.visit(z) for z in node.args]
     for z in node.keywords:
-        # Calls f.do_keyword.
+        # Calls *base class* s.do_keyword.
         args.append(self.visit(z))
-    if getattr(node, 'starargs', None):
-        args.append('*%s' % (self.visit(node.starargs)))
-    if getattr(node, 'kwargs', None):
-        args.append('**%s' % (self.visit(node.kwargs)))
+    if not isPython3: # pragma: no cover (python 2)
+        if getattr(node, 'starargs', None):
+            args.append('*%s' % (self.visit(node.starargs)))
+        if getattr(node, 'kwargs', None):
+            args.append('**%s' % (self.visit(node.kwargs)))
     args = [z for z in args if z]  # Kludge: Defensive coding.
     # Explicit pattern:
     if func in ('dict', 'list', 'set', 'tuple',):
@@ -2007,14 +2007,6 @@ def do_Call(self, node):
     s = self.match_all(node, s, trace=False)
     self.trace_visitor(node, 'call', s)
     return s
-</t>
-<t tx="ekr.20160318141204.163"># keyword = (identifier arg, expr value)
-
-def do_keyword(self, node):  ###
-    # node.arg is a string.
-    value = self.visit(node.value)
-    # This is a keyword *arg*, not a Python keyword!
-    return '%s=%s' % (node.arg, value)
 </t>
 <t tx="ekr.20160318141204.164"># Compare(expr left, cmpop* ops, expr* comparators)
 
@@ -4134,28 +4126,30 @@ print(a in b)
 print(bool)
 """
 ),
-# Test 4: Call.
-(
-"""\
-dict()
-""",
-"""\
-Dict
-"""
-),
-# Test 5: Dict
+# Test 4: Dict
 (
 """\
 a = {}
 b = {'1': 1}
+c = dict()
 """,
 """\
 a = Dict
 b = Dict[str:int]
+c = Dict
 """,
-)
-
-
+),
+# Test 5: Call
+(
+"""\
+print(*args, **kwargs)
+print(dict(a, b))
+""",
+"""\
+print(*args, **kwargs)
+print(Dict[a, b])
+"""
+),
 </t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.
@@ -4204,5 +4198,6 @@ d = None
 """,
 )
 </t>
+<t tx="ekr.20210807145722.1"></t>
 </tnodes>
 </leo_file>
