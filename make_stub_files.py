@@ -219,7 +219,6 @@ class AstFormatter:
     def do_Expr(self, node):
         """An outer expression: must be indented."""
         return self.indent('%s\n' % self.visit(node.value))
-
     #@+node:ekr.20160318141204.27: *4* f.Expression
     def do_Expression(self, node):  # pragma: no cover (never used)
         """An expression context"""
@@ -440,8 +439,8 @@ class AstFormatter:
         if getattr(node, 'upper', None) is not None:
             upper = self.visit(node.upper)
         if getattr(node, 'step', None) is not None:
-            step = self.visit(node.step) ###
-            return '%s:%s:%s' % (lower, upper, step) ###
+            step = self.visit(node.step)
+            return '%s:%s:%s' % (lower, upper, step)
         return '%s:%s' % (lower, upper)
 
     #@+node:ekr.20160318141204.48: *4* f.Str
@@ -548,8 +547,8 @@ class AstFormatter:
 
     #@+node:ekr.20160318141204.63: *4* f.Delete
     def do_Delete(self, node):
-        targets = [self.visit(z) for z in node.targets]  ###
-        return self.indent('del %s\n' % ','.join(targets))  ###
+        targets = [self.visit(z) for z in node.targets]
+        return self.indent('del %s\n' % ','.join(targets))
 
     #@+node:ekr.20160318141204.64: *4* f.ExceptHandler
     def do_ExceptHandler(self, node):
@@ -630,8 +629,7 @@ class AstFormatter:
                 names.append('%s as %s' % (fn, asname))
             else:
                 names.append(fn)
-        return self.indent('import %s\n' % (
-            ','.join(names)))
+        return self.indent('import %s\n' % (','.join(names)))
 
     #@+node:ekr.20160318141204.70: *5* f.get_import_names
     def get_import_names(self, node):
@@ -674,8 +672,7 @@ class AstFormatter:
             vals.append('dest=%s' % self.visit(node.dest))
         if getattr(node, 'nl', None):
             vals.append('nl=%s' % node.nl)
-        return self.indent('print(%s)\n' % (
-            ','.join(vals)))
+        return self.indent('print(%s)\n' % ','.join(vals))
 
     #@+node:ekr.20160318141204.75: *4* f.Raise
     def do_Raise(self, node):
@@ -687,8 +684,7 @@ class AstFormatter:
             if getattr(node, attr, None) is not None:
                 args.append(self.visit(getattr(node, attr)))
         if args:
-            return self.indent('raise %s\n' % (
-                ','.join(args)))
+            return self.indent('raise %s\n' % ','.join(args))
         return self.indent('raise\n')
 
     #@+node:ekr.20160318141204.76: *4* f.Return
@@ -702,7 +698,7 @@ class AstFormatter:
     # Starred(expr value, expr_context ctx)
 
     def do_Starred(self, node):
-        return '*' + self.visit(node.value)  ###
+        return '*' + self.visit(node.value)
     #@+node:ekr.20160318141204.79: *4* f.Try (Python 3)
     # Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
 
@@ -717,7 +713,7 @@ class AstFormatter:
         if node.handlers:
             for z in node.handlers:
                 result.append(self.visit(z))
-        if node.orelse:  ###
+        if node.orelse:
             result.append(self.indent('else:\n'))
             for z in node.orelse:
                 self.level += 1
@@ -819,16 +815,17 @@ class AstFormatter:
             self.level -= 1
         return ''.join(result)
     #@+node:ekr.20160318141204.84: *4* f.Yield
-    def do_Yield(self, node):  ###
+    def do_Yield(self, node):
+        # do_Expr has already indented this *expression*.
         if getattr(node, 'value', None):
-            return self.indent('yield %s\n' % (
-                self.visit(node.value)))
-        return self.indent('yield\n')
+            return 'yield %s' % self.visit(node.value)
+        return 'yield'
     #@+node:ekr.20160318141204.85: *4* f.YieldFrom (Python 3)
     # YieldFrom(expr value)
 
     def do_YieldFrom(self, node):
-        return self.indent(f"yield from {self.visit(node.value)}\n")  ###
+        # do_Expr has already indented this *expression*.
+        return 'yield from %s' % self.visit(node.value)
     #@+node:ekr.20160318141204.86: *3* f.Utils
 
     # Utils...
@@ -2877,7 +2874,11 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     def test_ast_formatter_class(self):
         formatter = AstFormatter()
         if 0:  # For debugging.
-            tests = ["print(s[0:1:2])\n",]
+            tests = ["""\
+                def yield_test():
+                    yield 1
+                """
+        ]
         else:
             tests = [
             #@+<< define tests >>
@@ -2976,6 +2977,13 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             """\
             with open(f, 'r') as f:
                 f.read()
+            """,
+            # Test 18: Yield and YieldFrom.
+            """\
+            def yield_test():
+                yield 1
+                yield from z
+                yield
             """,
             #@-<< define tests >>
             ]

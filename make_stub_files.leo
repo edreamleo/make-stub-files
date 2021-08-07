@@ -319,20 +319,12 @@
 <v t="ekr.20160318141204.91"></v>
 <v t="ekr.20160318141204.75"></v>
 <v t="ekr.20160318141204.83"></v>
+<v t="ekr.20160318141204.18"></v>
 </v>
 <v t="ekr.20210804060105.1"></v>
 <v t="ekr.20210805090943.1"></v>
 <v t="ekr.20210805144859.1"></v>
 <v t="ekr.20210807105513.1"><vh>--- To do: ###</vh>
-<v t="ekr.20210807105747.1"><vh>--- AstFormatter</vh>
-<v t="ekr.20160318141204.63"></v>
-<v t="ekr.20160318141204.47"></v>
-<v t="ekr.20160318141204.77"></v>
-<v t="ekr.20160318141204.79"></v>
-<v t="ekr.20160318141204.18"></v>
-<v t="ekr.20160318141204.84"></v>
-<v t="ekr.20160318141204.85"></v>
-</v>
 <v t="ekr.20210807105645.1"><vh>--- msf</vh>
 <v t="ekr.20160318141204.135"></v>
 <v t="ekr.20160318141204.138"></v>
@@ -367,6 +359,9 @@
 <v t="ekr.20160318141204.194"></v>
 </v>
 </v>
+<v t="ekr.20160318141204.26"></v>
+<v t="ekr.20160318141204.84"></v>
+<v t="ekr.20160318141204.85"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -2758,9 +2753,7 @@ def do_FunctionDef(self, node):
 </t>
 <t tx="ekr.20160318141204.26">def do_Expr(self, node):
     """An outer expression: must be indented."""
-    return self.indent('%s\n' % self.visit(node.value))
-
-</t>
+    return self.indent('%s\n' % self.visit(node.value))</t>
 <t tx="ekr.20160318141204.27">def do_Expression(self, node):  # pragma: no cover (never used)
     """An expression context"""
     return '%s\n' % self.visit(node.body)
@@ -2968,8 +2961,8 @@ def do_NameConstant(self, node):  # pragma: no cover (obsolete)
     if getattr(node, 'upper', None) is not None:
         upper = self.visit(node.upper)
     if getattr(node, 'step', None) is not None:
-        step = self.visit(node.step) ###
-        return '%s:%s:%s' % (lower, upper, step) ###
+        step = self.visit(node.step)
+        return '%s:%s:%s' % (lower, upper, step)
     return '%s:%s' % (lower, upper)
 
 </t>
@@ -3089,8 +3082,8 @@ def do_Subscript(self, node):
 
 </t>
 <t tx="ekr.20160318141204.63">def do_Delete(self, node):
-    targets = [self.visit(z) for z in node.targets]  ###
-    return self.indent('del %s\n' % ','.join(targets))  ###
+    targets = [self.visit(z) for z in node.targets]
+    return self.indent('del %s\n' % ','.join(targets))
 
 </t>
 <t tx="ekr.20160318141204.64">def do_ExceptHandler(self, node):
@@ -3171,8 +3164,7 @@ def do_Subscript(self, node):
             names.append('%s as %s' % (fn, asname))
         else:
             names.append(fn)
-    return self.indent('import %s\n' % (
-        ','.join(names)))
+    return self.indent('import %s\n' % (','.join(names)))
 
 </t>
 <t tx="ekr.20160318141204.70">def get_import_names(self, node):
@@ -3215,8 +3207,7 @@ def do_Nonlocal(self, node):
         vals.append('dest=%s' % self.visit(node.dest))
     if getattr(node, 'nl', None):
         vals.append('nl=%s' % node.nl)
-    return self.indent('print(%s)\n' % (
-        ','.join(vals)))
+    return self.indent('print(%s)\n' % ','.join(vals))
 
 </t>
 <t tx="ekr.20160318141204.75">def do_Raise(self, node):
@@ -3228,8 +3219,7 @@ def do_Nonlocal(self, node):
         if getattr(node, attr, None) is not None:
             args.append(self.visit(getattr(node, attr)))
     if args:
-        return self.indent('raise %s\n' % (
-            ','.join(args)))
+        return self.indent('raise %s\n' % ','.join(args))
     return self.indent('raise\n')
 
 </t>
@@ -3243,7 +3233,7 @@ def do_Nonlocal(self, node):
 <t tx="ekr.20160318141204.77"># Starred(expr value, expr_context ctx)
 
 def do_Starred(self, node):
-    return '*' + self.visit(node.value)  ###
+    return '*' + self.visit(node.value)
 </t>
 <t tx="ekr.20160318141204.79"># Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
 
@@ -3258,7 +3248,7 @@ def do_Try(self, node):  # Python 3
     if node.handlers:
         for z in node.handlers:
             result.append(self.visit(z))
-    if node.orelse:  ###
+    if node.orelse:
         result.append(self.indent('else:\n'))
         for z in node.orelse:
             self.level += 1
@@ -3360,16 +3350,17 @@ def do_With(self, node):
         self.level -= 1
     return ''.join(result)
 </t>
-<t tx="ekr.20160318141204.84">def do_Yield(self, node):  ###
+<t tx="ekr.20160318141204.84">def do_Yield(self, node):
+    # do_Expr has already indented this *expression*.
     if getattr(node, 'value', None):
-        return self.indent('yield %s\n' % (
-            self.visit(node.value)))
-    return self.indent('yield\n')
+        return 'yield %s' % self.visit(node.value)
+    return 'yield'
 </t>
 <t tx="ekr.20160318141204.85"># YieldFrom(expr value)
 
 def do_YieldFrom(self, node):
-    return self.indent(f"yield from {self.visit(node.value)}\n")  ###
+    # do_Expr has already indented this *expression*.
+    return 'yield from %s' % self.visit(node.value)
 </t>
 <t tx="ekr.20160318141204.86">
 # Utils...
@@ -3884,7 +3875,11 @@ https://github.com/edreamleo/make-stub-files/issues/18
 <t tx="ekr.20210805090943.1">def test_ast_formatter_class(self):
     formatter = AstFormatter()
     if 0:  # For debugging.
-        tests = ["print(s[0:1:2])\n",]
+        tests = ["""\
+            def yield_test():
+                yield 1
+            """
+    ]
     else:
         tests = [
         &lt;&lt; define tests &gt;&gt;
@@ -4031,7 +4026,15 @@ else:
 """\
 with open(f, 'r') as f:
     f.read()
-""",</t>
+""",
+# Test 18: Yield and YieldFrom.
+"""\
+def yield_test():
+    yield 1
+    yield from z
+    yield
+""",
+</t>
 <t tx="ekr.20210806005225.1"># FormattedValue(expr value, int? conversion, expr? format_spec)
 
 def do_FormattedValue(self, node):
@@ -4083,14 +4086,10 @@ T(base=str)
 print(T)</t>
 <t tx="ekr.20210806162349.1"></t>
 <t tx="ekr.20210807105513.1">@nosearch
-
-# Ignore Case, Head, Body
-
-# found 47 nodes</t>
+</t>
 <t tx="ekr.20210807105645.1"></t>
 <t tx="ekr.20210807105658.1"></t>
 <t tx="ekr.20210807105711.1"></t>
 <t tx="ekr.20210807105731.1"></t>
-<t tx="ekr.20210807105747.1"></t>
 </tnodes>
 </leo_file>
