@@ -83,7 +83,6 @@
 <v t="ekr.20210807213637.1"><vh>--- changed StubTraverser methods</vh>
 <v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
 </v>
-</v>
 <v t="ekr.20210806134651.1"><vh>--- recent</vh>
 <v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
@@ -109,6 +108,7 @@
 </v>
 <v t="ekr.20210807193409.1"><vh>test_st_format_returns</vh>
 <v t="ekr.20210807210106.1"><vh>&lt;&lt; test_st_format_returns tests &gt;&gt;</vh></v>
+</v>
 </v>
 </v>
 </v>
@@ -193,21 +193,6 @@
 </v>
 <v t="ekr.20160318141204.90"><vh>class AstArgFormatter (AstFormatter)</vh>
 <v t="ekr.20160318141204.91"></v>
-</v>
-<v t="ekr.20160318141204.125"><vh>class Controller</vh>
-<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
-<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.131"></v>
-<v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
-<v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
-<v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160318141204.135"><vh>msf.find_pattern_ops</vh></v>
-<v t="ekr.20160318141204.136"><vh>msf.get_config_string</vh></v>
-<v t="ekr.20160318141204.137"><vh>msf.init_parser</vh></v>
-<v t="ekr.20160318141204.138"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
-<v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
-</v>
 </v>
 <v t="ekr.20160318141204.92"><vh>class LeoGlobals</vh>
 <v t="ekr.20160318141204.94"><vh>g._callerName</vh></v>
@@ -307,38 +292,47 @@
 <v t="ekr.20160318141204.194"><vh>st.visit_Return</vh></v>
 </v>
 <v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
-<v t="ekr.20210805090544.1"></v>
-<v t="ekr.20210805090943.1"></v>
-<v t="ekr.20210807133723.1"><vh>test_ast_arg_formatter_class</vh>
-<v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_arg_formatter_class)</vh></v>
-</v>
-<v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
 <v t="ekr.20210805091045.1"><vh>test class ReduceTypes</vh>
 <v t="ekr.20210808033520.1"><vh>test_rt_is_known_type</vh></v>
 <v t="ekr.20210804105256.1"><vh>test_rt_reduce_numbers</vh></v>
 <v t="ekr.20210804111613.1"><vh>test_rt_reduce_types</vh></v>
 <v t="ekr.20210804111803.1"><vh>test_rt_split_types</vh></v>
 </v>
-<v t="ekr.20210804103146.1"><vh>test class Pattern</vh></v>
-<v t="ekr.20210804112556.1"><vh>test class Stub (complete)</vh></v>
-<v t="ekr.20210807133118.1"><vh>test_stub_formatter_class</vh>
-<v t="ekr.20210807133228.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
-</v>
 <v t="ekr.20210805092921.1"></v>
-<v t="ekr.20210805093615.1"><vh>test file: make_stub_files.py</vh></v>
+<v t="ekr.20210805090544.1"></v>
 <v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
 <v t="ekr.20210806153836.1"><vh>test_finalize</vh></v>
 <v t="ekr.20210806154007.1"><vh>test_is_known_type</vh></v>
 <v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
 </v>
+<v t="ekr.20210807133723.1"><vh>test_ast_arg_formatter_class</vh>
+<v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_arg_formatter_class)</vh></v>
+</v>
+<v t="ekr.20210805090943.1"></v>
+<v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
+<v t="ekr.20210808052134.1"><vh>test_controller_class</vh></v>
+<v t="ekr.20210805093615.1"><vh>test_file_msb</vh></v>
+<v t="ekr.20210804103146.1"><vh>test_pattern_class</vh></v>
+<v t="ekr.20210804112556.1"><vh>test_stub_class</vh></v>
+<v t="ekr.20210807133118.1"><vh>test_stub_formatter_class</vh>
+<v t="ekr.20210807133228.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
 </v>
 </v>
-<v t="ekr.20210807105513.1"><vh>--- To do: ###</vh>
-<v t="ekr.20210807105645.1"><vh>--- msf</vh>
-<v t="ekr.20160318141204.135"></v>
-<v t="ekr.20160318141204.138"></v>
-<v t="ekr.20160318141204.139"></v>
-<v t="ekr.20160318141204.140"></v>
+</v>
+<v t="ekr.20160318141204.125"><vh>class Controller</vh>
+<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
+<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
+<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
+<v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
+<v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
+<v t="ekr.20160318141204.135"><vh>msf.find_pattern_ops</vh></v>
+<v t="ekr.20160318141204.136"><vh>msf.get_config_string</vh></v>
+<v t="ekr.20160318141204.137"><vh>msf.init_parser</vh></v>
+<v t="ekr.20160318141204.138"><vh>msf.is_section_name</vh></v>
+<v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
+<v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
+</v>
 </v>
 <v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser &amp; StubFormatter</vh>
 <v t="ekr.20160318141204.189"></v>
@@ -348,9 +342,7 @@
 <v t="ekr.20160318141204.194"></v>
 <v t="ekr.20160318141204.149"></v>
 </v>
-</v>
-<v t="ekr.20210803055042.1"></v>
-<v t="ekr.20210804103146.1"></v>
+<v t="ekr.20210808052134.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1572,17 +1564,17 @@ def make_stub_file(self, fn):  # pragma: no cover
         print('--force-pyx: .pyx files will be parsed as regular python, cython syntax is not supported')
     self.files = args.files
 </t>
-<t tx="ekr.20160318141204.132">def scan_options(self):  # pragma: no cover
+<t tx="ekr.20160318141204.132">def scan_options(self):
     """Set all configuration-related ivars."""
-    if self.verbose:
+    if self.verbose:  # pragma: no cover
         print('')
         print(f"configuration file: {self.config_fn}")
-    if not self.config_fn:
+    if not self.config_fn:  # pragma: no cover
         return
     self.parser = parser = self.create_parser()
     s = self.get_config_string()
     self.init_parser(s)
-    if self.files:
+    if self.files:  # pragma: no cover
         files_source = 'command-line'
         files = self.files
         if isinstance(files, str):
@@ -1591,9 +1583,9 @@ def make_stub_file(self, fn):  # pragma: no cover
         files_source = 'config file'
         files = parser.get('Global', 'files')
         files = [z.strip() for z in files.split('\n') if z.strip()]
-    else:
+    else:  # pragma: no cover
         return
-    if self.verbose:
+    if self.verbose:  # pragma: no cover
         print(f"Files (from {files_source})...")
     files2 = []
     not_found = []
@@ -1601,13 +1593,13 @@ def make_stub_file(self, fn):  # pragma: no cover
         # Warn if z does not exist.
         files3 = glob.glob(finalize(z))
         if files3:
-            if self.verbose:
+            if self.verbose:  # pragma: no cover
                 for z in files3:
                     print(f"  {z}")
             files2.extend(files3)
-        else:
+        else:  # pragma: no cover
             not_found.append(z)
-    if not_found:
+    if not_found:  # pragma: no cover
         print('Not found...')
         for z in not_found:
             print(f"  {z}")
@@ -1617,9 +1609,9 @@ def make_stub_file(self, fn):  # pragma: no cover
         output_dir = finalize(s)
         if os.path.exists(output_dir):
             self.output_directory = output_dir
-            if self.verbose:
+            if self.verbose:  # pragma: no cover
                 print(f"output directory: {output_dir}")
-        else:
+        else:  # pragma: no cover
             print(f"output directory not found: {output_dir}")
             self.output_directory = None  # inhibit run().
     if 'prefix_lines' in parser.options('Global'):
@@ -1633,7 +1625,7 @@ def make_stub_file(self, fn):  # pragma: no cover
                 # for z in self.prefix_lines:
                     # print('  %s' % z)
                 # print('')
-    if self.verbose:
+    if self.verbose:  # pragma: no cover
         print('')
     self.def_patterns = self.scan_patterns('Def Name Patterns')
     self.general_patterns = self.scan_patterns('General Patterns')
@@ -1664,16 +1656,16 @@ def make_stub_file(self, fn):  # pragma: no cover
         d[op] = ['Compare',]
     return d
 </t>
-<t tx="ekr.20160318141204.134">def create_parser(self):  # pragma: no cover
+<t tx="ekr.20160318141204.134">def create_parser(self):
     """Create a RawConfigParser and return it."""
     parser = configparser.RawConfigParser(dict_type=OrderedDict)
     parser.optionxform = str
     return parser
 </t>
-<t tx="ekr.20160318141204.135">def find_pattern_ops(self, pattern):  ###
+<t tx="ekr.20160318141204.135">def find_pattern_ops(self, pattern):
     """Return a list of operators in pattern.find_s."""
     trace = False or self.trace_patterns
-    if pattern.is_regex():  ###
+    if pattern.is_regex():  # pragma: no cover
         # Add the pattern to the regex patterns list.
         g.trace(pattern)
         self.regex_patterns.append(pattern)
@@ -1704,8 +1696,8 @@ def make_stub_file(self, fn):  # pragma: no cover
     # Handle the keys9 list very carefully.
     for op in keys9:
         target = ' %s ' % op
-        if target in s:
-            ops.append(op)  ###
+        if target in s:  # pragma: no cover
+            ops.append(op)
             break  # Only one match allowed.
     if trace and ops: g.trace(s1, ops)
     return ops
@@ -1736,7 +1728,7 @@ def make_stub_file(self, fn):  # pragma: no cover
     file_object = io.StringIO(s)
     self.parser.read_file(file_object)
 </t>
-<t tx="ekr.20160318141204.138">def is_section_name(self, s):  ###
+<t tx="ekr.20160318141204.138">def is_section_name(self, s):
 
     def munge(s):
         return s.strip().lower().replace(' ', '')
@@ -1749,7 +1741,7 @@ def make_stub_file(self, fn):  # pragma: no cover
                 return True
     return False
 </t>
-<t tx="ekr.20160318141204.139">def make_patterns_dict(self):  ###
+<t tx="ekr.20160318141204.139">def make_patterns_dict(self):
     """Assign all patterns to the appropriate ast.Node."""
     for pattern in self.general_patterns:
         ops = self.find_pattern_ops(pattern)
@@ -1765,7 +1757,7 @@ def make_stub_file(self, fn):  # pragma: no cover
             # Enter the name in self.names_dict.
             name = pattern.find_s
             # Special case for 'number'
-            if name == 'number':  ###
+            if name == 'number':  # pragma: no cover
                 aList = self.patterns_dict.get('Num', [])
                 aList.append(pattern)
                 self.patterns_dict['Num'] = aList
@@ -1796,7 +1788,7 @@ def make_stub_file(self, fn):  # pragma: no cover
 
     @others
 </t>
-<t tx="ekr.20160318141204.140">def scan_patterns(self, section_name):  ###
+<t tx="ekr.20160318141204.140">def scan_patterns(self, section_name):
     """Parse the config section into a list of patterns, preserving order."""
     trace = False or self.trace_patterns
     parser = self.parser
@@ -1807,7 +1799,7 @@ def make_stub_file(self, fn):  # pragma: no cover
             value = parser.get(section_name, key)
             # A kludge: strip leading \\ from patterns.
             if key.startswith(r'\\'):
-                key = '[' + key[2:]  ###
+                key = '[' + key[2:]  # pragma: no cover
             if key in seen:
                 g.trace('duplicate key', key)  # pragma: no cover (user error)
             else:
@@ -4054,7 +4046,7 @@ https://github.com/edreamleo/make-stub-files/issues/18
         # Actually creates stubs.
         # f"python {msf} -c {cfg} -o -v {src}"
         directory = os.path.dirname(__file__)
-        config_fn = os.path.normpath(os.path.abspath(os.path.expanduser('make_stub_files.cfg')))
+        config_fn = finalize('make_stub_files.cfg')
         sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
         main()
     else: # Works: (Like main function)
@@ -4207,9 +4199,6 @@ def do_JoinedStr(self, node):
 T(base=str)
 print(T)</t>
 <t tx="ekr.20210806162349.1"></t>
-<t tx="ekr.20210807105513.1">@nosearch
-</t>
-<t tx="ekr.20210807105645.1"></t>
 <t tx="ekr.20210807105731.1"></t>
 <t tx="ekr.20210807120326.1"></t>
 <t tx="ekr.20210807133118.1">def test_stub_formatter_class(self):
@@ -4358,7 +4347,8 @@ c = bool
 # test = '.TestMakeStubFiles.test_stub_formatter_class'
 # test = '.TestMakeStubFiles.test_st_format_returns'
 # test = '.TestMakeStubFiles.test_rt_is_known_type'
-test = '.TestMakeStubFiles.test_pattern_class'
+# test = '.TestMakeStubFiles.test_pattern_class'
+test = '.TestMakeStubFiles.test_controller_class'
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210807133723.1">def test_ast_arg_formatter_class(self):
@@ -4455,6 +4445,19 @@ def test_2(*args, **kwargs):
     for s, expected in table:
         result = ReduceTypes().is_known_type(s)
         self.assertEqual(result, expected, msg=repr(s))
+</t>
+<t tx="ekr.20210808052134.1">def test_controller_class(self):
+    
+    controller = Controller()
+    # Test is_section_name.
+    for name in controller.section_names:
+        self.assertTrue(controller.is_section_name(f"[{name}]"), msg=name)
+    self.assertFalse(controller.is_section_name('whatever'))
+    # Test find_pattern_ops.
+    directory = os.path.dirname(__file__)
+    controller.config_fn = finalize('make_stub_files.cfg')
+    controller.scan_options()
+    self.assertTrue(controller.parser)
 </t>
 </tnodes>
 </leo_file>

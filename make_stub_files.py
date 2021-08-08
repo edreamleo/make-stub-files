@@ -940,17 +940,17 @@ class Controller:
             print('--force-pyx: .pyx files will be parsed as regular python, cython syntax is not supported')
         self.files = args.files
     #@+node:ekr.20160318141204.132: *3* msf.scan_options & helpers
-    def scan_options(self):  # pragma: no cover
+    def scan_options(self):
         """Set all configuration-related ivars."""
-        if self.verbose:
+        if self.verbose:  # pragma: no cover
             print('')
             print(f"configuration file: {self.config_fn}")
-        if not self.config_fn:
+        if not self.config_fn:  # pragma: no cover
             return
         self.parser = parser = self.create_parser()
         s = self.get_config_string()
         self.init_parser(s)
-        if self.files:
+        if self.files:  # pragma: no cover
             files_source = 'command-line'
             files = self.files
             if isinstance(files, str):
@@ -959,9 +959,9 @@ class Controller:
             files_source = 'config file'
             files = parser.get('Global', 'files')
             files = [z.strip() for z in files.split('\n') if z.strip()]
-        else:
+        else:  # pragma: no cover
             return
-        if self.verbose:
+        if self.verbose:  # pragma: no cover
             print(f"Files (from {files_source})...")
         files2 = []
         not_found = []
@@ -969,13 +969,13 @@ class Controller:
             # Warn if z does not exist.
             files3 = glob.glob(finalize(z))
             if files3:
-                if self.verbose:
+                if self.verbose:  # pragma: no cover
                     for z in files3:
                         print(f"  {z}")
                 files2.extend(files3)
-            else:
+            else:  # pragma: no cover
                 not_found.append(z)
-        if not_found:
+        if not_found:  # pragma: no cover
             print('Not found...')
             for z in not_found:
                 print(f"  {z}")
@@ -985,9 +985,9 @@ class Controller:
             output_dir = finalize(s)
             if os.path.exists(output_dir):
                 self.output_directory = output_dir
-                if self.verbose:
+                if self.verbose:  # pragma: no cover
                     print(f"output directory: {output_dir}")
-            else:
+            else:  # pragma: no cover
                 print(f"output directory not found: {output_dir}")
                 self.output_directory = None  # inhibit run().
         if 'prefix_lines' in parser.options('Global'):
@@ -1001,7 +1001,7 @@ class Controller:
                     # for z in self.prefix_lines:
                         # print('  %s' % z)
                     # print('')
-        if self.verbose:
+        if self.verbose:  # pragma: no cover
             print('')
         self.def_patterns = self.scan_patterns('Def Name Patterns')
         self.general_patterns = self.scan_patterns('General Patterns')
@@ -1032,16 +1032,16 @@ class Controller:
             d[op] = ['Compare',]
         return d
     #@+node:ekr.20160318141204.134: *4* msf.create_parser
-    def create_parser(self):  # pragma: no cover
+    def create_parser(self):
         """Create a RawConfigParser and return it."""
         parser = configparser.RawConfigParser(dict_type=OrderedDict)
         parser.optionxform = str
         return parser
     #@+node:ekr.20160318141204.135: *4* msf.find_pattern_ops
-    def find_pattern_ops(self, pattern):  ###
+    def find_pattern_ops(self, pattern):
         """Return a list of operators in pattern.find_s."""
         trace = False or self.trace_patterns
-        if pattern.is_regex():  ###
+        if pattern.is_regex():  # pragma: no cover
             # Add the pattern to the regex patterns list.
             g.trace(pattern)
             self.regex_patterns.append(pattern)
@@ -1072,8 +1072,8 @@ class Controller:
         # Handle the keys9 list very carefully.
         for op in keys9:
             target = ' %s ' % op
-            if target in s:
-                ops.append(op)  ###
+            if target in s:  # pragma: no cover
+                ops.append(op)
                 break  # Only one match allowed.
         if trace and ops: g.trace(s1, ops)
         return ops
@@ -1104,7 +1104,7 @@ class Controller:
         file_object = io.StringIO(s)
         self.parser.read_file(file_object)
     #@+node:ekr.20160318141204.138: *4* msf.is_section_name
-    def is_section_name(self, s):  ###
+    def is_section_name(self, s):
 
         def munge(s):
             return s.strip().lower().replace(' ', '')
@@ -1117,7 +1117,7 @@ class Controller:
                     return True
         return False
     #@+node:ekr.20160318141204.139: *4* msf.make_patterns_dict
-    def make_patterns_dict(self):  ###
+    def make_patterns_dict(self):
         """Assign all patterns to the appropriate ast.Node."""
         for pattern in self.general_patterns:
             ops = self.find_pattern_ops(pattern)
@@ -1133,7 +1133,7 @@ class Controller:
                 # Enter the name in self.names_dict.
                 name = pattern.find_s
                 # Special case for 'number'
-                if name == 'number':  ###
+                if name == 'number':  # pragma: no cover
                     aList = self.patterns_dict.get('Num', [])
                     aList.append(pattern)
                     self.patterns_dict['Num'] = aList
@@ -1154,7 +1154,7 @@ class Controller:
                     print('  ' + repr(pattern))
         # Note: retain self.general_patterns for use in argument lists.
     #@+node:ekr.20160318141204.140: *4* msf.scan_patterns
-    def scan_patterns(self, section_name):  ###
+    def scan_patterns(self, section_name):
         """Parse the config section into a list of patterns, preserving order."""
         trace = False or self.trace_patterns
         parser = self.parser
@@ -1165,7 +1165,7 @@ class Controller:
                 value = parser.get(section_name, key)
                 # A kludge: strip leading \\ from patterns.
                 if key.startswith(r'\\'):
-                    key = '[' + key[2:]  ###
+                    key = '[' + key[2:]  # pragma: no cover
                 if key in seen:
                     g.trace('duplicate key', key)  # pragma: no cover (user error)
                 else:
@@ -2604,6 +2604,234 @@ class StubTraverser(ast.NodeVisitor):
 class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     """Unit tests for make_stub_files.py"""
     #@+others
+    #@+node:ekr.20210805091045.1: *3* test class ReduceTypes
+    #@+node:ekr.20210808033520.1: *4* test_rt_is_known_type
+    def test_rt_is_known_type(self):
+        table = (
+            ('None', True),
+            ('(xxx)', False),
+            ('str(xxx)', True),
+            ('[str]', True),
+            ('{whatever}', True),
+        )
+        for s, expected in table:
+            result = ReduceTypes().is_known_type(s)
+            self.assertEqual(result, expected, msg=repr(s))
+    #@+node:ekr.20210804105256.1: *4* test_rt_reduce_numbers
+    def test_rt_reduce_numbers(self):
+        a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
+        table = (
+            ([i,i],     [i]),
+            ([i],       [i]),
+            ([f, i],    [f]),
+            ([c, i],    [c]),
+            ([l, a],    [a, l]),
+        )
+        for aList, expected in table:
+            got = ReduceTypes().reduce_numbers(aList)
+            self.assertEqual(expected, got, msg=repr(aList))
+    #@+node:ekr.20210804111613.1: *4* test_rt_reduce_types
+    def test_rt_reduce_types(self):
+
+        a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
+        none = 'None'
+        x = 'xyzzy'
+        y = 'pdq'
+        table = (
+            ([i,i],         i),
+            ([i],           i),
+            ([f, i],        f),
+            ([c, i],        c),
+            ([l, a],        'Union[Any, long]'),
+            # Handle None
+            ([None],        none),
+            ([None, None],  none),
+            ([None, a, c],  'Optional[Union[Any, complex]]'),
+            # Handle unknown types, and special cases
+            ([i, x],        'Union[Any, int]'),
+            ([None, x],     'Optional[Any]'),
+            ([none, x],     'Optional[Any]'),
+            (['', x],       'Optional[Any]'),
+            ([none, x, c],  'Optional[Union[Any, complex]]'),
+            ([x, y],        'Any'),
+            # Collection merging.  More could be done...
+            (['Dict[int, str]', 'Dict[Any, str]'],          'Union[Dict[Any, str], Dict[int, str]]'),
+            (['List[int, str]', 'List[Any, str]'],          'Union[List[Any, str], List[int, str]]'),
+            (['Union[int, str]', 'Union[Any, str]'],        'Union[Union[Any, str], Union[int, str]]'),
+            (['Union[int, str]', 'int', 'Union[Any, str]'], 'Union[Union[Any, str], Union[int, str], int]'),
+            (['Tuple[xyz, pdq]'],                           'Tuple[Any, Any]'),
+        )
+        for aList, expected in table:
+            got = reduce_types(aList)  # Call the global function for better coverage.
+            self.assertEqual(expected, got, msg=repr(aList))
+    #@+node:ekr.20210804111803.1: *4* test_rt_split_types
+    def test_rt_split_types(self):
+        table = (
+            ('list',                    ['list']),
+            ('List[a,b]',               ['List[a,b]']),
+            ('List[a,b], List[c,d]',    ['List[a,b]', 'List[c,d]']),
+        )
+        for s, expected in table:
+            got = ReduceTypes().split_types(s)
+            self.assertEqual(expected, got, msg=repr(s))
+    #@+node:ekr.20210805092921.1: *3* test class StubTraverser
+    #@+node:ekr.20210804111915.1: *4* test_st_find
+    def test_st_find(self):
+
+        s = """\
+    def is_known_type(s: str) -> Union[Any,bool]: ...
+    def main() -> None: ...
+    def merge_types(a1: Any, a2: Any) -> str: ...
+
+    class AstFormatter:
+        def format(self, node: Node) -> Union[Any,str]: ...
+        def visit(self, node: Node) -> str: ...
+        def do_ClassDef(self, node: Node) -> str: ...
+        def do_FunctionDef(self, node: Node) -> str: ...
+    """
+        controller = Controller()
+        st = StubTraverser(controller=controller)
+        d, root = st.parse_stub_file(s, root_name='<root>')  # Root *is* used below.
+        if 0:
+            print(st.trace_stubs(root, header='root'))
+        stub1 = Stub(kind='class', name='AstFormatter')
+        stub2 = Stub(kind='def', name='format', parent=stub1, stack=['AstFormatter'])
+        stub3 = Stub(kind='def', name='helper', parent = stub2, stack=['AstFormatter', 'format'])
+        # stub4 = Stub(kind='def', name='main')
+        for stub in (stub1, stub2, stub3,):  # (stub1, stub2, stub3):
+            found = st.find_stub(stub, root)
+            id_found = found and id(found) or None
+            if 0:
+                print('found  %s => %9s %35s ==> %s' % (id(stub), id_found, stub, found))
+            found = st.find_parent_stub(stub, root)
+            id_found = found and id(found) or None
+            if 0:
+                print('parent %s => %9s %35s ==> %s' % (id(stub), id_found, stub, found))
+    #@+node:ekr.20210804112211.1: *4* test_st_flatten_stubs
+    def test_st_flatten_stubs(self):
+        s = """\
+        def is_known_type(s: str) -> Union[Any,bool]: ...
+        def main() -> None: ...
+        def merge_types(a1: Any, a2: Any) -> str: ...
+        
+        class AstFormatter:
+            def format(self, node: Node) -> Union[Any,str]: ...
+            def visit(self, node: Node) -> str: ...
+            def do_ClassDef(self, node: Node) -> str: ...
+            def do_FunctionDef(self, node: Node) -> str: ...
+        """
+        controller = Controller()
+        st = StubTraverser(controller=controller)
+        d, root = st.parse_stub_file(s, root_name='<root>')
+        if 0:
+            print(st.trace_stubs(root, header='root'))
+        aList = st.flatten_stubs(root)
+        self.assertTrue(aList)
+        if 0:
+            for i, stub in enumerate(aList):
+                print('%2s %s' % (i, stub))
+        for stub in aList:
+            found = st.find_stub(stub, root)
+            self.assertTrue(found, msg=repr(stub))
+    #@+node:ekr.20210804112405.1: *4* test_st_merge_stubs
+    def test_st_merge_stubs(self):
+        # To do:
+        # - Test between-stub lines and leading lines.
+        # - Round-trip tests!
+        #@+<< old_stubs >>
+        #@+node:ekr.20210804112405.3: *5* << old_stubs >>
+        old_s = """\
+        def main() -> None: ...
+        def merge_types(a1: Any, a2: Any) -> str: ...
+        def pdb(self) -> None: ...
+        def reduce_types(aList: List[Any], name: str=None, trace: bool=False) -> Any: ...
+        class Pattern(object):
+            def __init__(self, find_s: str, repl_s: str='') -> None: ...
+            def __eq__(self, obj: Any) -> bool: ...
+            def __ne__(self, obj: Any) -> bool: ...
+            def __hash__(self) -> int: ...
+            def __repr__(self) -> str: ...
+            def is_balanced(self) -> bool: ...
+            def is_regex(self) -> Any: ...
+                #   0: return self.find_s.endswith('$')
+                # ? 0: return self.find_s.endswith(str)
+        """
+        #@-<< old_stubs >>
+        #@+<< new_stubs >>
+        #@+node:ekr.20210804112405.4: *5* << new_stubs >>
+        new_s = """\
+        def is_known_type(s: str) -> Union[Any,bool]: ...
+        def main() -> None: ...
+        def merge_types(a1: Any, a2: Any) -> str: ...
+        def pdb(self) -> None: ...
+        def reduce_numbers(aList: List[Any]) -> List[Any]: ...
+        def reduce_types(aList: List[Any], name: str=None, trace: bool=False) -> Any: ...
+
+        class AstFormatter:
+            def format(self, node: Node) -> Union[Any,str]: ...
+            def visit(self, node: Node) -> str: ...
+            def do_ClassDef(self, node: Node) -> str: ...
+            def do_FunctionDef(self, node: Node) -> str: ...
+        """
+        #@-<< new_stubs >>
+        controller = Controller()
+        st = StubTraverser(controller=controller)
+        # dump('old_s', old_s)
+        # dump('new_s', new_s)
+        old_d, old_root = st.parse_stub_file(old_s, root_name='<old-root>')
+        new_d, new_root = st.parse_stub_file(new_s, root_name='<new-root>')
+        if 0:
+            dump_dict('old_d', old_d)
+            dump_dict('new_d', new_d)
+            print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
+            print(st.trace_stubs(new_root, header='trace_stubs(new_root)'))
+        if 0:  # separate unit test. Passed.
+            aList = st.sort_stubs_by_hierarchy(new_root)
+            dump_list(aList, 'after sort_stubs_by_hierarcy')
+        new_stubs = new_d.values()
+        st.merge_stubs(new_stubs, old_root, new_root, trace=False)
+        if 0:
+            print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
+    #@+node:ekr.20210807193409.1: *4* test_st_format_returns
+    def test_st_format_returns(self):
+        # Create the stubs.
+        tag = 'test_st_format_returns'
+        tests = [
+        #@+<< test_st_format_returns tests >>
+        #@+node:ekr.20210807210106.1: *5* << test_st_format_returns tests >>
+        # Test 1:
+        """\
+        def test_1(self):
+            if 1:
+                return True
+            return False
+        """,
+        # Test 2:
+        """\
+        def test_2():
+            return xyzzy
+        """,
+        # Test3:
+        """\
+        def test_2(*args, **kwargs):
+            return args
+        """,
+        #@-<< test_st_format_returns tests >>
+        ]
+        controller=Controller()
+        for i, s in enumerate(tests):
+            for verbose in (True, False):
+                for patterns in ([], [Pattern('test_*')]):
+                    # Instantiate new StubController, to avoid duplicate entries.
+                    st = StubTraverser(controller=controller)
+                    st.def_patterns = patterns
+                    st.verbose = verbose
+                    test_name = f"test {i}"
+                    source = textwrap.dedent(s)
+                    d, root = st.parse_stub_file(source, root_name=tag)
+                    node = ast.parse(source, filename=test_name, mode='exec')
+                    st.parent_stub = Stub(kind='root', name=test_name)
+                    st.visit(node)
     #@+node:ekr.20210805090544.1: *3* test issues...
     #@+node:ekr.20180901040718.1: *4* test_bug2_empty
     def test_bug2_empty(self):
@@ -2674,6 +2902,67 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         # Test.
         lines = g.splitLines(st.output_file.getvalue())
         self.assertEqual(lines, expected)
+    #@+node:ekr.20210805093004.1: *3* test top-level functions
+    #@+node:ekr.20210806153836.1: *4* test_finalize
+    def test_finalize(self):
+        result = finalize(__file__)
+        self.assertEqual(result, __file__)
+    #@+node:ekr.20210806154007.1: *4* test_is_known_type
+    def test_is_known_type(self):
+        self.assertTrue(is_known_type('str'))
+    #@+node:ekr.20160207115947.1: *4* test_truncate
+    def test_truncate(self):
+        table = (
+            ('abc',     'abc'),
+            ('abcd',    'abcd'),
+            ('abcde',   'abcde'),
+            ('abcdef',  'ab...'),
+            ('abcdefg', 'ab...'),
+        )
+        for s1, s2 in table:
+            got = truncate(s1, 5)
+            self.assertEqual(s2, got, msg=f"s1: {s1!r}")
+    #@+node:ekr.20210807133723.1: *3* test_ast_arg_formatter_class
+    def test_ast_arg_formatter_class(self):
+        formatter = AstArgFormatter()
+        tests = [
+            #@+<< define tests >>
+            #@+node:ekr.20210807133723.2: *4* << define tests >> (test_ast_arg_formatter_class)
+            # Tests are either a single string, or a tuple: (source, expected).
+
+            (
+            """\
+            a = 1
+            b = 2.5
+            c = False
+            d = None
+            """,
+            """\
+            a = int
+            b = float
+            c = bool
+            d = None
+            """,
+            )
+            #@-<< define tests >>
+        ]
+        for i, source_data in enumerate(tests):
+            filename = f"test {i+1}"
+            if isinstance(source_data, str):
+                source = textwrap.dedent(source_data)
+                expected_s = textwrap.dedent(source)
+            else:
+                source, expected = source_data
+                source = textwrap.dedent(source)
+                expected_s = textwrap.dedent(expected)
+            node = ast.parse(source, filename=filename, mode='exec')
+            try:
+                result_s = formatter.format(node)
+            except Exception:
+                self.fail(filename)
+            lines = g.splitLines(result_s)
+            expected = g.splitLines(expected_s)
+            self.assertEqual(expected, lines, msg=filename)
     #@+node:ekr.20210805090943.1: *3* test_ast_formatter_class
     def test_ast_formatter_class(self):
         formatter = AstFormatter()
@@ -2808,47 +3097,6 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             lines = g.splitLines(result_s)
             expected = g.splitLines(expected_s)
             self.assertEqual(expected, lines, msg=filename)
-    #@+node:ekr.20210807133723.1: *3* test_ast_arg_formatter_class
-    def test_ast_arg_formatter_class(self):
-        formatter = AstArgFormatter()
-        tests = [
-            #@+<< define tests >>
-            #@+node:ekr.20210807133723.2: *4* << define tests >> (test_ast_arg_formatter_class)
-            # Tests are either a single string, or a tuple: (source, expected).
-
-            (
-            """\
-            a = 1
-            b = 2.5
-            c = False
-            d = None
-            """,
-            """\
-            a = int
-            b = float
-            c = bool
-            d = None
-            """,
-            )
-            #@-<< define tests >>
-        ]
-        for i, source_data in enumerate(tests):
-            filename = f"test {i+1}"
-            if isinstance(source_data, str):
-                source = textwrap.dedent(source_data)
-                expected_s = textwrap.dedent(source)
-            else:
-                source, expected = source_data
-                source = textwrap.dedent(source)
-                expected_s = textwrap.dedent(expected)
-            node = ast.parse(source, filename=filename, mode='exec')
-            try:
-                result_s = formatter.format(node)
-            except Exception:
-                self.fail(filename)
-            lines = g.splitLines(result_s)
-            expected = g.splitLines(expected_s)
-            self.assertEqual(expected, lines, msg=filename)
     #@+node:ekr.20210806011736.1: *3* test_ast_formatter_class_on_file
     def test_ast_formatter_class_on_file(self):
         # Use the source of *this* file as a single test.
@@ -2859,77 +3107,46 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         node = ast.parse(source, filename=filename, mode='exec')
         result_s = formatter.format(node)
         assert result_s
-    #@+node:ekr.20210805091045.1: *3* test class ReduceTypes
-    #@+node:ekr.20210808033520.1: *4* test_rt_is_known_type
-    def test_rt_is_known_type(self):
-        table = (
-            ('None', True),
-            ('(xxx)', False),
-            ('str(xxx)', True),
-            ('[str]', True),
-            ('{whatever}', True),
-        )
-        for s, expected in table:
-            result = ReduceTypes().is_known_type(s)
-            self.assertEqual(result, expected, msg=repr(s))
-    #@+node:ekr.20210804105256.1: *4* test_rt_reduce_numbers
-    def test_rt_reduce_numbers(self):
-        a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
-        table = (
-            ([i,i],     [i]),
-            ([i],       [i]),
-            ([f, i],    [f]),
-            ([c, i],    [c]),
-            ([l, a],    [a, l]),
-        )
-        for aList, expected in table:
-            got = ReduceTypes().reduce_numbers(aList)
-            self.assertEqual(expected, got, msg=repr(aList))
-    #@+node:ekr.20210804111613.1: *4* test_rt_reduce_types
-    def test_rt_reduce_types(self):
-
-        a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
-        none = 'None'
-        x = 'xyzzy'
-        y = 'pdq'
-        table = (
-            ([i,i],         i),
-            ([i],           i),
-            ([f, i],        f),
-            ([c, i],        c),
-            ([l, a],        'Union[Any, long]'),
-            # Handle None
-            ([None],        none),
-            ([None, None],  none),
-            ([None, a, c],  'Optional[Union[Any, complex]]'),
-            # Handle unknown types, and special cases
-            ([i, x],        'Union[Any, int]'),
-            ([None, x],     'Optional[Any]'),
-            ([none, x],     'Optional[Any]'),
-            (['', x],       'Optional[Any]'),
-            ([none, x, c],  'Optional[Union[Any, complex]]'),
-            ([x, y],        'Any'),
-            # Collection merging.  More could be done...
-            (['Dict[int, str]', 'Dict[Any, str]'],          'Union[Dict[Any, str], Dict[int, str]]'),
-            (['List[int, str]', 'List[Any, str]'],          'Union[List[Any, str], List[int, str]]'),
-            (['Union[int, str]', 'Union[Any, str]'],        'Union[Union[Any, str], Union[int, str]]'),
-            (['Union[int, str]', 'int', 'Union[Any, str]'], 'Union[Union[Any, str], Union[int, str], int]'),
-            (['Tuple[xyz, pdq]'],                           'Tuple[Any, Any]'),
-        )
-        for aList, expected in table:
-            got = reduce_types(aList)  # Call the global function for better coverage.
-            self.assertEqual(expected, got, msg=repr(aList))
-    #@+node:ekr.20210804111803.1: *4* test_rt_split_types
-    def test_rt_split_types(self):
-        table = (
-            ('list',                    ['list']),
-            ('List[a,b]',               ['List[a,b]']),
-            ('List[a,b], List[c,d]',    ['List[a,b]', 'List[c,d]']),
-        )
-        for s, expected in table:
-            got = ReduceTypes().split_types(s)
-            self.assertEqual(expected, got, msg=repr(s))
-    #@+node:ekr.20210804103146.1: *3* test class Pattern
+    #@+node:ekr.20210808052134.1: *3* test_controller_class
+    def test_controller_class(self):
+        
+        controller = Controller()
+        # Test is_section_name.
+        for name in controller.section_names:
+            self.assertTrue(controller.is_section_name(f"[{name}]"), msg=name)
+        self.assertFalse(controller.is_section_name('whatever'))
+        # Test find_pattern_ops.
+        directory = os.path.dirname(__file__)
+        controller.config_fn = finalize('make_stub_files.cfg')
+        controller.scan_options()
+        self.assertTrue(controller.parser)
+    #@+node:ekr.20210805093615.1: *3* test_file_msb
+    def test_file_msb(self):
+        """Run make_stub_files on itself."""
+        if 1:
+            # This test is was only briefly useful.
+            # In general, this test masks proper testing.
+            self.skipTest('Prevents proper coverage data')
+        elif 1:
+            # Actually creates stubs.
+            # f"python {msf} -c {cfg} -o -v {src}"
+            directory = os.path.dirname(__file__)
+            config_fn = finalize('make_stub_files.cfg')
+            sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
+            main()
+        else: # Works: (Like main function)
+            controller = Controller()
+            # Set ivars instead of calling scan_command_line.
+            fn = __file__
+            directory = os.path.dirname(__file__)
+            controller.config_fn = finalize(os.path.join(directory, 'make_stub_files.cfg'))
+            assert os.path.exists(controller.config_fn), controller.config_fn
+            controller.overwrite = True
+            # Go!
+            controller.scan_options()
+            for fn in controller.files:
+                controller.make_stub_file(fn)
+    #@+node:ekr.20210804103146.1: *3* test_pattern_class
     def test_pattern_class(self):
         table = (
             # s,  Pattern.find_s, Pattern.repl_s, expected
@@ -2990,7 +3207,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         self.assertTrue(p6.all_matches('list[abc]'))
         for m in reversed(p6.all_matches('list[abc]')):
             pattern.replace(m, 'list(xyz)')
-    #@+node:ekr.20210804112556.1: *3* test class Stub (complete)
+    #@+node:ekr.20210804112556.1: *3* test_stub_class
     def test_stub_class(self):
         # Test equality...
         stub1 = Stub(kind='def', name='foo')
@@ -3159,210 +3376,6 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             lines = g.splitLines(result_s)
             expected = g.splitLines(expected_s)
             self.assertEqual(expected, lines, msg=filename)
-    #@+node:ekr.20210805092921.1: *3* test class StubTraverser
-    #@+node:ekr.20210804111915.1: *4* test_st_find
-    def test_st_find(self):
-
-        s = """\
-    def is_known_type(s: str) -> Union[Any,bool]: ...
-    def main() -> None: ...
-    def merge_types(a1: Any, a2: Any) -> str: ...
-
-    class AstFormatter:
-        def format(self, node: Node) -> Union[Any,str]: ...
-        def visit(self, node: Node) -> str: ...
-        def do_ClassDef(self, node: Node) -> str: ...
-        def do_FunctionDef(self, node: Node) -> str: ...
-    """
-        controller = Controller()
-        st = StubTraverser(controller=controller)
-        d, root = st.parse_stub_file(s, root_name='<root>')  # Root *is* used below.
-        if 0:
-            print(st.trace_stubs(root, header='root'))
-        stub1 = Stub(kind='class', name='AstFormatter')
-        stub2 = Stub(kind='def', name='format', parent=stub1, stack=['AstFormatter'])
-        stub3 = Stub(kind='def', name='helper', parent = stub2, stack=['AstFormatter', 'format'])
-        # stub4 = Stub(kind='def', name='main')
-        for stub in (stub1, stub2, stub3,):  # (stub1, stub2, stub3):
-            found = st.find_stub(stub, root)
-            id_found = found and id(found) or None
-            if 0:
-                print('found  %s => %9s %35s ==> %s' % (id(stub), id_found, stub, found))
-            found = st.find_parent_stub(stub, root)
-            id_found = found and id(found) or None
-            if 0:
-                print('parent %s => %9s %35s ==> %s' % (id(stub), id_found, stub, found))
-    #@+node:ekr.20210804112211.1: *4* test_st_flatten_stubs
-    def test_st_flatten_stubs(self):
-        s = """\
-        def is_known_type(s: str) -> Union[Any,bool]: ...
-        def main() -> None: ...
-        def merge_types(a1: Any, a2: Any) -> str: ...
-        
-        class AstFormatter:
-            def format(self, node: Node) -> Union[Any,str]: ...
-            def visit(self, node: Node) -> str: ...
-            def do_ClassDef(self, node: Node) -> str: ...
-            def do_FunctionDef(self, node: Node) -> str: ...
-        """
-        controller = Controller()
-        st = StubTraverser(controller=controller)
-        d, root = st.parse_stub_file(s, root_name='<root>')
-        if 0:
-            print(st.trace_stubs(root, header='root'))
-        aList = st.flatten_stubs(root)
-        self.assertTrue(aList)
-        if 0:
-            for i, stub in enumerate(aList):
-                print('%2s %s' % (i, stub))
-        for stub in aList:
-            found = st.find_stub(stub, root)
-            self.assertTrue(found, msg=repr(stub))
-    #@+node:ekr.20210804112405.1: *4* test_st_merge_stubs
-    def test_st_merge_stubs(self):
-        # To do:
-        # - Test between-stub lines and leading lines.
-        # - Round-trip tests!
-        #@+<< old_stubs >>
-        #@+node:ekr.20210804112405.3: *5* << old_stubs >>
-        old_s = """\
-        def main() -> None: ...
-        def merge_types(a1: Any, a2: Any) -> str: ...
-        def pdb(self) -> None: ...
-        def reduce_types(aList: List[Any], name: str=None, trace: bool=False) -> Any: ...
-        class Pattern(object):
-            def __init__(self, find_s: str, repl_s: str='') -> None: ...
-            def __eq__(self, obj: Any) -> bool: ...
-            def __ne__(self, obj: Any) -> bool: ...
-            def __hash__(self) -> int: ...
-            def __repr__(self) -> str: ...
-            def is_balanced(self) -> bool: ...
-            def is_regex(self) -> Any: ...
-                #   0: return self.find_s.endswith('$')
-                # ? 0: return self.find_s.endswith(str)
-        """
-        #@-<< old_stubs >>
-        #@+<< new_stubs >>
-        #@+node:ekr.20210804112405.4: *5* << new_stubs >>
-        new_s = """\
-        def is_known_type(s: str) -> Union[Any,bool]: ...
-        def main() -> None: ...
-        def merge_types(a1: Any, a2: Any) -> str: ...
-        def pdb(self) -> None: ...
-        def reduce_numbers(aList: List[Any]) -> List[Any]: ...
-        def reduce_types(aList: List[Any], name: str=None, trace: bool=False) -> Any: ...
-
-        class AstFormatter:
-            def format(self, node: Node) -> Union[Any,str]: ...
-            def visit(self, node: Node) -> str: ...
-            def do_ClassDef(self, node: Node) -> str: ...
-            def do_FunctionDef(self, node: Node) -> str: ...
-        """
-        #@-<< new_stubs >>
-        controller = Controller()
-        st = StubTraverser(controller=controller)
-        # dump('old_s', old_s)
-        # dump('new_s', new_s)
-        old_d, old_root = st.parse_stub_file(old_s, root_name='<old-root>')
-        new_d, new_root = st.parse_stub_file(new_s, root_name='<new-root>')
-        if 0:
-            dump_dict('old_d', old_d)
-            dump_dict('new_d', new_d)
-            print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
-            print(st.trace_stubs(new_root, header='trace_stubs(new_root)'))
-        if 0:  # separate unit test. Passed.
-            aList = st.sort_stubs_by_hierarchy(new_root)
-            dump_list(aList, 'after sort_stubs_by_hierarcy')
-        new_stubs = new_d.values()
-        st.merge_stubs(new_stubs, old_root, new_root, trace=False)
-        if 0:
-            print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
-    #@+node:ekr.20210807193409.1: *4* test_st_format_returns
-    def test_st_format_returns(self):
-        # Create the stubs.
-        tag = 'test_st_format_returns'
-        tests = [
-        #@+<< test_st_format_returns tests >>
-        #@+node:ekr.20210807210106.1: *5* << test_st_format_returns tests >>
-        # Test 1:
-        """\
-        def test_1(self):
-            if 1:
-                return True
-            return False
-        """,
-        # Test 2:
-        """\
-        def test_2():
-            return xyzzy
-        """,
-        # Test3:
-        """\
-        def test_2(*args, **kwargs):
-            return args
-        """,
-        #@-<< test_st_format_returns tests >>
-        ]
-        controller=Controller()
-        for i, s in enumerate(tests):
-            for verbose in (True, False):
-                for patterns in ([], [Pattern('test_*')]):
-                    # Instantiate new StubController, to avoid duplicate entries.
-                    st = StubTraverser(controller=controller)
-                    st.def_patterns = patterns
-                    st.verbose = verbose
-                    test_name = f"test {i}"
-                    source = textwrap.dedent(s)
-                    d, root = st.parse_stub_file(source, root_name=tag)
-                    node = ast.parse(source, filename=test_name, mode='exec')
-                    st.parent_stub = Stub(kind='root', name=test_name)
-                    st.visit(node)
-    #@+node:ekr.20210805093615.1: *3* test file: make_stub_files.py
-    def test_file_msb(self):
-        """Run make_stub_files on itself."""
-        if 1:
-            # This test is was only briefly useful.
-            # In general, this test masks proper testing.
-            self.skipTest('Prevents proper coverage data')
-        elif 1:
-            # Actually creates stubs.
-            # f"python {msf} -c {cfg} -o -v {src}"
-            directory = os.path.dirname(__file__)
-            config_fn = os.path.normpath(os.path.abspath(os.path.expanduser('make_stub_files.cfg')))
-            sys.argv = ['python', '-c', config_fn, '-o', '-v', __file__]
-            main()
-        else: # Works: (Like main function)
-            controller = Controller()
-            # Set ivars instead of calling scan_command_line.
-            fn = __file__
-            directory = os.path.dirname(__file__)
-            controller.config_fn = finalize(os.path.join(directory, 'make_stub_files.cfg'))
-            assert os.path.exists(controller.config_fn), controller.config_fn
-            controller.overwrite = True
-            # Go!
-            controller.scan_options()
-            for fn in controller.files:
-                controller.make_stub_file(fn)
-    #@+node:ekr.20210805093004.1: *3* test top-level functions
-    #@+node:ekr.20210806153836.1: *4* test_finalize
-    def test_finalize(self):
-        result = finalize(__file__)
-        self.assertEqual(result, __file__)
-    #@+node:ekr.20210806154007.1: *4* test_is_known_type
-    def test_is_known_type(self):
-        self.assertTrue(is_known_type('str'))
-    #@+node:ekr.20160207115947.1: *4* test_truncate
-    def test_truncate(self):
-        table = (
-            ('abc',     'abc'),
-            ('abcd',    'abcd'),
-            ('abcde',   'abcde'),
-            ('abcdef',  'ab...'),
-            ('abcdefg', 'ab...'),
-        )
-        for s1, s2 in table:
-            got = truncate(s1, 5)
-            self.assertEqual(s2, got, msg=f"s1: {s1!r}")
     #@-others
 #@-others
 g = LeoGlobals()
