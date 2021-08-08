@@ -3532,7 +3532,6 @@ g.cls()
 command = f"python -m unittest make_stub_files"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210804103146.1">def test_pattern_class(self):
-    g = LeoGlobals() # Use the g available to the script.
     table = (
         # s,  Pattern.find_s, Pattern.repl_s, expected
         ('aabbcc', '(a+)(b+)(c+)$', r'\3\2\1', 'ccbbaa'),
@@ -3748,7 +3747,6 @@ class AstFormatter:
 """
 </t>
 <t tx="ekr.20210804112556.1">def test_stub_class(self):
-    g = LeoGlobals()  # Use the g available to the script.
     # Test equality...
     stub1 = Stub(kind='def', name='foo')
     stub2 = Stub(kind='class', name='foo')
@@ -4209,7 +4207,6 @@ d = None
 <t tx="ekr.20210807145722.1"></t>
 <t tx="ekr.20210807151105.1"></t>
 <t tx="ekr.20210807193409.1">def test_st_format_returns(self):
-    ### g = LeoGlobals() # Use the g available to the script.
     controller=Controller()
     st = StubTraverser(controller=controller)
     assert st

@@ -3073,7 +3073,6 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             self.assertEqual(expected, got, msg=repr(s))
     #@+node:ekr.20210804103146.1: *3* test class Pattern (mostly complete)
     def test_pattern_class(self):
-        g = LeoGlobals() # Use the g available to the script.
         table = (
             # s,  Pattern.find_s, Pattern.repl_s, expected
             ('aabbcc', '(a+)(b+)(c+)$', r'\3\2\1', 'ccbbaa'),
@@ -3115,7 +3114,6 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         self.assertFalse(p1.match_entire_string('abcx'))
     #@+node:ekr.20210804112556.1: *3* test class Stub (complete)
     def test_stub_class(self):
-        g = LeoGlobals()  # Use the g available to the script.
         # Test equality...
         stub1 = Stub(kind='def', name='foo')
         stub2 = Stub(kind='class', name='foo')
@@ -3405,7 +3403,6 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
     #@+node:ekr.20210807193409.1: *4* test_st_format_returns
     def test_st_format_returns(self):
-        ### g = LeoGlobals() # Use the g available to the script.
         controller=Controller()
         st = StubTraverser(controller=controller)
         assert st
