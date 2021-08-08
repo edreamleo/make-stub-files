@@ -125,23 +125,16 @@ class AstFormatter:
             return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
         if node is None:
             return 'None'  # pragma: no cover
-        # if not isinstance(node, ast.AST):
-            # # #13: Insert an error comment directly into the output.
-            # assert False, f"\n#{tag}: not an AST node: {name}\n"
-            # return f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
         method_name = 'do_' + node.__class__.__name__
-        # #13: *Never* ignore missing visitors!
         method = getattr(self, method_name, None)
         if method:
             s = method(node)
             assert g.isString(s), s.__class__.__name__
             return s
-        # #13:
-        g.pdb()
-        message = f"\n#{tag}: no visitor: do_{name}\n"
-        print(message, flush=True)
-        sys.exit(1)
-        # Insert an error comment directly into the output.
+        # #13: *Never* ignore missing visitors!
+        #      Insert an error comment directly into the output.
+        message = f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover (defensive)
+        print(message, flush=True)  # pragma: no cover (defensive)
         return message  # pragma: no cover (defensive)
     #@+node:ekr.20160318141204.19: *3* f.Contexts
 
@@ -1308,22 +1301,6 @@ class Controller:
 class LeoGlobals:  # pragma: no cover
     """A class supporting g.pdb and g.trace for compatibility with Leo."""
     #@+others
-    #@+node:ekr.20160318141204.93: *3* class NullObject (Python Cookbook)
-
-    class NullObject:
-        """
-        An object that does nothing, and does it very well.
-        From the Python cookbook, recipe 5.23
-        """
-        def __init__(self, *args, **keys): pass
-        def __call__(self, *args, **keys): return self
-        def __repr__(self): return "NullObject"
-        def __str__(self): return "NullObject"
-        def __bool__(self): return False
-        def __nonzero__(self): return 0
-        def __delattr__(self, attr): return self
-        def __getattr__(self, attr): return self
-        def __setattr__(self, attr, val): return self
     #@+node:ekr.20160318141204.94: *3* g._callerName
     def _callerName(self, n=1, files=False):
         # print('_callerName: %s %s' % (n,files))
@@ -2686,7 +2663,7 @@ class StubTraverser(ast.NodeVisitor):
         if self.type_pattern.match(s):
             return s
         return s + ': Any'
-    #@+node:ekr.20160318141204.190: *4* st.format_returns & helpers ***
+    #@+node:ekr.20160318141204.190: *4* st.format_returns & helpers
     def format_returns(self, node):  ###
         """
         Calculate the return type:
@@ -3322,8 +3299,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         def do_ClassDef(self, node: Node) -> str: ...
         def do_FunctionDef(self, node: Node) -> str: ...
     """
-        g = LeoGlobals() # Use the g available to the script.
-        st = StubTraverser(controller=g.NullObject())
+        controller = Controller()
+        st = StubTraverser(controller=controller)
         d, root = st.parse_stub_file(s, root_name='<root>')  # Root *is* used below.
         if 0:
             print(st.trace_stubs(root, header='root'))
@@ -3354,8 +3331,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             def do_ClassDef(self, node: Node) -> str: ...
             def do_FunctionDef(self, node: Node) -> str: ...
         """
-        g = LeoGlobals()  # Use the g available to the script.
-        st = StubTraverser(controller=g.NullObject())
+        controller = Controller()
+        st = StubTraverser(controller=controller)
         d, root = st.parse_stub_file(s, root_name='<root>')
         if 0:
             print(st.trace_stubs(root, header='root'))
@@ -3408,8 +3385,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             def do_FunctionDef(self, node: Node) -> str: ...
         """
         #@-<< new_stubs >>
-        g = LeoGlobals() # Use the g available to the script.
-        st = StubTraverser(controller=g.NullObject())
+        controller = Controller()
+        st = StubTraverser(controller=controller)
         # dump('old_s', old_s)
         # dump('new_s', new_s)
         old_d, old_root = st.parse_stub_file(old_s, root_name='<old-root>')
@@ -3426,6 +3403,17 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         st.merge_stubs(new_stubs, old_root, new_root, trace=False)
         if 0:
             print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
+    #@+node:ekr.20210807193409.1: *4* test_st_format_returns
+    def test_st_format_returns(self):
+        ### g = LeoGlobals() # Use the g available to the script.
+        controller=Controller()
+        st = StubTraverser(controller=controller)
+        assert st
+        # dump('old_s', old_s)
+        # dump('new_s', new_s)
+        # old_d, old_root = st.parse_stub_file(old_s, root_name='<old-root>')
+        # new_d, new_root = st.parse_stub_file(new_s, root_name='<new-root>')
+        # new_stubs = new_d.values()
     #@+node:ekr.20210805093615.1: *3* test file: make_stub_files.py
     def test_file_msb(self):
         """Run make_stub_files on itself."""

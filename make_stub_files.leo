@@ -45,14 +45,13 @@
 </v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 </v>
-<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e352e3571017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
+<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e352e3471017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh>
+<v t="ekr.20210807194019.1"><vh> --- no longer used</vh>
+<v t="ekr.20160318141204.93"><vh>class NullObject (Python Cookbook)</vh></v>
+</v>
 <v t="ekr.20210807120326.1"><vh> --- tests</vh>
 <v t="ekr.20210806161202.1"><vh>test: class syntax</vh></v>
-</v>
-<v t="ekr.20210805090003.1"><vh>--- no longer used</vh>
-<v t="ekr.20160318141204.12"><vh>function: pdb</vh></v>
-<v t="ekr.20210806132036.1"><vh>&lt;&lt; define description &gt;&gt;</vh></v>
 </v>
 <v t="ekr.20210805061637.1"></v>
 <v t="ekr.20210805102238.1"><vh>--- classes</vh>
@@ -237,7 +236,7 @@
 <v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
 <v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
 </v>
-<v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers ***</vh>
+<v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers</vh>
 <v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
 <v t="ekr.20160318141204.192"><vh>st.get_def_name</vh></v>
 <v t="ekr.20160318141204.193"><vh>st.remove_recursive_calls</vh></v>
@@ -275,6 +274,7 @@
 <v t="ekr.20210804112405.3"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
 <v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
 </v>
+<v t="ekr.20210807193409.1"><vh>test_st_format_returns</vh></v>
 </v>
 <v t="ekr.20210805093615.1"><vh>test file: make_stub_files.py</vh></v>
 <v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
@@ -287,17 +287,18 @@
 <v t="ekr.20210806134651.1"><vh>--- recent</vh>
 <v t="ekr.20160318141204.131"></v>
 <v t="ekr.20210805090943.1"></v>
+<v t="ekr.20160318141204.190"></v>
+<v t="ekr.20160318141204.191"></v>
 </v>
 <v t="ekr.20210806162349.1"><vh>--- changed AstFormatter visitors</vh>
+<v t="ekr.20160318141204.91"></v>
 <v t="ekr.20160318141204.31"></v>
 <v t="ekr.20160318141204.35"></v>
 <v t="ekr.20160318141204.20"></v>
 <v t="ekr.20210804214511.1"></v>
-<v t="ekr.20160318141204.18"></v>
-<v t="ekr.20160318141204.91"></v>
 <v t="ekr.20160318141204.75"></v>
-<v t="ekr.20160318141204.83"></v>
 <v t="ekr.20160318141204.18"></v>
+<v t="ekr.20160318141204.83"></v>
 <v t="ekr.20160318141204.84"></v>
 <v t="ekr.20160318141204.85"></v>
 </v>
@@ -306,6 +307,7 @@
 <v t="ekr.20160318141204.167"></v>
 </v>
 </v>
+<v t="ekr.20210803055042.1"></v>
 <v t="ekr.20210807105513.1"><vh>--- To do: ###</vh>
 <v t="ekr.20210807105645.1"><vh>--- msf</vh>
 <v t="ekr.20160318141204.135"></v>
@@ -319,7 +321,8 @@
 </v>
 <v t="ekr.20160318141204.149"></v>
 <v t="ekr.20160318141204.118"></v>
-<v t="ekr.20210807105731.1"><vh>--- StubTraverser</vh>
+</v>
+<v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser</vh>
 <v t="ekr.20160318141204.188"></v>
 <v t="ekr.20160318141204.190"></v>
 <v t="ekr.20160318141204.189"></v>
@@ -328,17 +331,8 @@
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.194"></v>
 </v>
-</v>
-<v t="ekr.20210803055042.1"></v>
-<v t="ekr.20210807133118.1"></v>
-<v t="ekr.20210807185905.1"><vh>---- bad output</vh></v>
-<v t="ekr.20160318141204.147"></v>
-<v t="ekr.20160318141204.169"></v>
-<v t="ekr.20160318141204.18"></v>
-<v t="ekr.20160318141204.154"></v>
-<v t="ekr.20160318141204.173"></v>
-<v t="ekr.20160318141204.190"></v>
-<v t="ekr.20160318141204.191"></v>
+<v t="ekr.20210805092921.1"></v>
+<v t="ekr.20210807193409.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1306,16 +1300,6 @@ __str__ = __repr__
     result = others
     result.extend(r2)
     return sorted(set(result))
-</t>
-<t tx="ekr.20160318141204.12">def pdb(self):  # pragma: no cover
-    """Invoke a debugger during unit testing."""
-    try:
-        import leo.core.leoGlobals as leo_g
-        assert leo_g
-        # leo_g.pdb()
-    except ImportError:
-        import pdb
-        pdb.set_trace()
 </t>
 <t tx="ekr.20160318141204.120">def reduce_numbers(self, aList):
     """
@@ -2315,23 +2299,16 @@ def out(self, s):  # pragma: no cover
         return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
     if node is None:
         return 'None'  # pragma: no cover
-    # if not isinstance(node, ast.AST):
-        # # #13: Insert an error comment directly into the output.
-        # assert False, f"\n#{tag}: not an AST node: {name}\n"
-        # return f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
     method_name = 'do_' + node.__class__.__name__
-    # #13: *Never* ignore missing visitors!
     method = getattr(self, method_name, None)
     if method:
         s = method(node)
         assert g.isString(s), s.__class__.__name__
         return s
-    # #13:
-    g.pdb()
-    message = f"\n#{tag}: no visitor: do_{name}\n"
-    print(message, flush=True)
-    sys.exit(1)
-    # Insert an error comment directly into the output.
+    # #13: *Never* ignore missing visitors!
+    #      Insert an error comment directly into the output.
+    message = f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover (defensive)
+    print(message, flush=True)  # pragma: no cover (defensive)
     return message  # pragma: no cover (defensive)
 </t>
 <t tx="ekr.20160318141204.180">def check_delete(self, new_stubs, old_root, new_root, trace):
@@ -3412,6 +3389,22 @@ def do_Str(self, node):  # pragma: no cover (obsolete)
     """This represents a string constant."""
     return 'str'
 </t>
+<t tx="ekr.20160318141204.93">
+class NullObject:
+    """
+    An object that does nothing, and does it very well.
+    From the Python cookbook, recipe 5.23
+    """
+    def __init__(self, *args, **keys): pass
+    def __call__(self, *args, **keys): return self
+    def __repr__(self): return "NullObject"
+    def __str__(self): return "NullObject"
+    def __bool__(self): return False
+    def __nonzero__(self): return 0
+    def __delattr__(self, attr): return self
+    def __getattr__(self, attr): return self
+    def __setattr__(self, attr, val): return self
+</t>
 <t tx="ekr.20160330201030.1">Metadata-Version: 1.0
 Name: make_stub_files
 Version: 0.1
@@ -3651,8 +3644,8 @@ class AstFormatter:
     def do_ClassDef(self, node: Node) -&gt; str: ...
     def do_FunctionDef(self, node: Node) -&gt; str: ...
 """
-    g = LeoGlobals() # Use the g available to the script.
-    st = StubTraverser(controller=g.NullObject())
+    controller = Controller()
+    st = StubTraverser(controller=controller)
     d, root = st.parse_stub_file(s, root_name='&lt;root&gt;')  # Root *is* used below.
     if 0:
         print(st.trace_stubs(root, header='root'))
@@ -3683,8 +3676,8 @@ class AstFormatter:
         def do_ClassDef(self, node: Node) -&gt; str: ...
         def do_FunctionDef(self, node: Node) -&gt; str: ...
     """
-    g = LeoGlobals()  # Use the g available to the script.
-    st = StubTraverser(controller=g.NullObject())
+    controller = Controller()
+    st = StubTraverser(controller=controller)
     d, root = st.parse_stub_file(s, root_name='&lt;root&gt;')
     if 0:
         print(st.trace_stubs(root, header='root'))
@@ -3703,8 +3696,8 @@ class AstFormatter:
     # - Round-trip tests!
     &lt;&lt; old_stubs &gt;&gt;
     &lt;&lt; new_stubs &gt;&gt;
-    g = LeoGlobals() # Use the g available to the script.
-    st = StubTraverser(controller=g.NullObject())
+    controller = Controller()
+    st = StubTraverser(controller=controller)
     # dump('old_s', old_s)
     # dump('new_s', new_s)
     old_d, old_root = st.parse_stub_file(old_s, root_name='&lt;old-root&gt;')
@@ -3824,7 +3817,6 @@ https://github.com/edreamleo/make-stub-files/issues/18
 <t tx="ekr.20210805061637.1"></t>
 <t tx="ekr.20210805061856.1"></t>
 <t tx="ekr.20210805061902.1"></t>
-<t tx="ekr.20210805090003.1"></t>
 <t tx="ekr.20210805090544.1"></t>
 <t tx="ekr.20210805090943.1">def test_ast_formatter_class(self):
     formatter = AstFormatter()
@@ -4008,22 +4000,6 @@ def do_JoinedStr(self, node):
     result_s = formatter.format(node)
     assert result_s
 </t>
-<t tx="ekr.20210806132036.1">@pagewidth 90
-
-description = textwrap.dedent("""\
-
-make_stub_files: Create stubs (.pyi files) using patterns, not type inference.
-
-make_stub_files applies patterns to argument names and the text of return expressions and
-creates annotations when the patterns match. (Return expressions are the text of whatever
-follows the "return" keyword.)
-
-Before applying patterns, make_stub_files removes comments from return expressions and
-converts all strings to "str". This preprocessing simplifies pattern matching.
-
-See README.md for examples.
-"""
-)</t>
 <t tx="ekr.20210806134651.1"></t>
 <t tx="ekr.20210806153836.1">def test_finalize(self):
     result = finalize(__file__)
@@ -4232,6 +4208,17 @@ d = None
 </t>
 <t tx="ekr.20210807145722.1"></t>
 <t tx="ekr.20210807151105.1"></t>
-<t tx="ekr.20210807185905.1"></t>
+<t tx="ekr.20210807193409.1">def test_st_format_returns(self):
+    ### g = LeoGlobals() # Use the g available to the script.
+    controller=Controller()
+    st = StubTraverser(controller=controller)
+    assert st
+    # dump('old_s', old_s)
+    # dump('new_s', new_s)
+    # old_d, old_root = st.parse_stub_file(old_s, root_name='&lt;old-root&gt;')
+    # new_d, new_root = st.parse_stub_file(new_s, root_name='&lt;new-root&gt;')
+    # new_stubs = new_d.values()
+</t>
+<t tx="ekr.20210807194019.1"></t>
 </tnodes>
 </leo_file>
