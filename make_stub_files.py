@@ -125,10 +125,10 @@ class AstFormatter:
             return ','.join([self.visit(z) for z in node])  # pragma: no cover (defensive)
         if node is None:
             return 'None'  # pragma: no cover
-        if not isinstance(node, ast.AST):
-            # #13: Insert an error comment directly into the output.
-            return f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
+        # if not isinstance(node, ast.AST):
+            # # #13: Insert an error comment directly into the output.
             # assert False, f"\n#{tag}: not an AST node: {name}\n"
+            # return f"\n#{tag}: not an AST node: {name}\n"  # pragma: no cover (defensive)
         method_name = 'do_' + node.__class__.__name__
         # #13: *Never* ignore missing visitors!
         method = getattr(self, method_name, None)
@@ -136,9 +136,13 @@ class AstFormatter:
             s = method(node)
             assert g.isString(s), s.__class__.__name__
             return s
-        # #13: Insert an error comment directly into the output.
-        return f"\n#{tag}: no visitor: do_{name}\n"  # pragma: no cover (defensive)
-        # assert False, f"\n#{tag}: no visitor: do_{name}\n"
+        # #13:
+        g.pdb()
+        message = f"\n#{tag}: no visitor: do_{name}\n"
+        print(message, flush=True)
+        sys.exit(1)
+        # Insert an error comment directly into the output.
+        return message  # pragma: no cover (defensive)
     #@+node:ekr.20160318141204.19: *3* f.Contexts
 
     # Contexts...
@@ -2048,14 +2052,8 @@ class StubFormatter(AstFormatter):
     def do_Constant(self, node):
         return 'None' if node.value is None else node.value.__class__.__name__
 
-    def do_BoolOp(self, node):  # pragma: no cover (obsolete)
-        return 'bool'
-
     def do_Bytes(self, node):  # pragma: no cover (obsolete)
         return 'bytes'
-
-    def do_Name(self, node):  # pragma: no cover (obsolete)
-        return 'bool' if node.id in ('True', 'False') else node.id
 
     def do_Num(self, node):  # pragma: no cover (obsolete)
         return 'number'
@@ -2142,7 +2140,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.161: *4* sf.BoolOp
     # BoolOp(boolop op, expr* values)
 
-    def do_BoolOp(self, node):  # pragma: no cover (Python 2.x only)
+    def do_BoolOp(self, node):  # pragma: no cover (obsolete)
         """StubFormatter.BoolOp visitor for 'and' and 'or'."""
         trace = self.trace_reduce
         op = self.op_name(node.op)
@@ -2634,9 +2632,6 @@ class StubTraverser(ast.NodeVisitor):
         self.context_stack.pop()
         self.level -= 1
         # Format *after* traversing
-        # if self.trace_matches or self.trace_reduce:
-            # if not self.class_name_stack:
-                # print('def %s\n' % node.name)
         self.out('def %s(%s) -> %s' % (
             node.name,
             self.format_arguments(node.args),
@@ -2691,7 +2686,7 @@ class StubTraverser(ast.NodeVisitor):
         if self.type_pattern.match(s):
             return s
         return s + ': Any'
-    #@+node:ekr.20160318141204.190: *4* st.format_returns & helpers
+    #@+node:ekr.20160318141204.190: *4* st.format_returns & helpers ***
     def format_returns(self, node):  ###
         """
         Calculate the return type:
@@ -2703,7 +2698,6 @@ class StubTraverser(ast.NodeVisitor):
         raw = [self.raw_format(z) for z in self.returns]
         # Allow StubFormatter.do_Return to do the hack.
         r = [self.format(z) for z in self.returns]
-        ### g.trace('1', raw, r)
         # Step 1: Return None if there are no return statements.
         if not [z for z in self.returns if z.value is not None]:
             empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
@@ -2712,12 +2706,10 @@ class StubTraverser(ast.NodeVisitor):
         # Step 2: [Def Name Patterns] override all other patterns.
         for pattern in self.def_patterns:
             found, s = pattern.match(name)
-            ### g.trace('2', found, name, pattern, s)
             if found:
                 return s + ': ...'
         # Step 3: remove recursive calls.
         raw, r = self.remove_recursive_calls(name, raw, r)
-        ### g.trace('3', raw, r)
         # Step 4: Calculate return types.
         return self.format_return_expressions(node, name, raw, r)
     #@+node:ekr.20160318141204.191: *5* st.format_return_expressions
@@ -2735,13 +2727,14 @@ class StubTraverser(ast.NodeVisitor):
         known = all(is_known_type(e) for e in reduced_returns)
         empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
         tail = ': ...' if empty else ':'
+        # pylint: disable=no-else-return
         if not known or self.verbose:
             # First, generate the return lines.
             aList = []
             for i in range(n):
                 e, raw = reduced_returns[i], raw_returns[i]
                 known = ' ' if is_known_type(e) else '?'
-                aList.append('# %s %s: %s' % (' ', i, raw))
+                aList.append('# %s %s: %s' % (' ', i, raw.rstrip()))
                 aList.append('# %s %s: return %s' % (known, i, e))
             results = ''.join([lws + self.indent(z) for z in aList])
             # Put the return lines in their proper places.
@@ -2749,9 +2742,10 @@ class StubTraverser(ast.NodeVisitor):
                 s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
                 return s + tail + results
             return 'Any' + tail + results
-        # Coverage tests use verbose option.
-        s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)  # pragma: no cover
-        return s + tail  # pragma: no cover
+        else:  # pragma: no cover
+            # Coverage tests use verbose option.
+            s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
+            return s + tail
     #@+node:ekr.20160318141204.192: *5* st.get_def_name
     def get_def_name(self, node):
         """Return the representaion of a function or method name."""
