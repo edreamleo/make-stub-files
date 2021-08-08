@@ -2174,7 +2174,7 @@ class StubTraverser(ast.NodeVisitor):
         for child in stub.children:
             self.output_stubs(child)
     #@+node:ekr.20160318141204.175: *4* st.output_time_stamp
-    def output_time_stamp(self):  ###
+    def output_time_stamp(self):
         """Put a time-stamp in the output file."""
         if self.output_file:
             self.output_file.write('# make_stub_files: %s\n' %
@@ -3384,7 +3384,6 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         tag = 'test_stub_traverser_class'
         controller = Controller()
         traverser = StubTraverser(controller)
-        traverser.output_file = io.StringIO()
         # Part 1: test st.visit_*.
         source = textwrap.dedent("""\
             class Test(base1, base2=None):
@@ -3397,7 +3396,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
                 def test(self) -> bool: ...
             """)
         node = ast.parse(source, filename=tag, mode='exec')
-        # Like traverser.run
+        # Like traverser.run, but with a StringIO file.
+        traverser.output_file = io.StringIO()
         traverser.parent_stub = Stub(kind='root', name='<new-stubs>')
         traverser.visit(node)
         traverser.output_stubs(traverser.parent_stub)
@@ -3414,6 +3414,11 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         for arg, expected in table:
             got = traverser.munge_arg(arg)
             self.assertEqual(expected, got, msg=arg)
+        # Part 3: Test st.output_time_stamp.
+        traverser.output_file = io.StringIO()
+        traverser.output_time_stamp()
+        output = traverser.output_file.getvalue()
+        self.assertTrue(output.startswith('# make_stub_files:'), msg=output)
     #@-others
 #@-others
 g = LeoGlobals()

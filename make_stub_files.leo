@@ -337,25 +337,10 @@
 </v>
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser</vh>
-<v t="ekr.20160318141204.175"></v>
 <v t="ekr.20160318141204.176"></v>
 </v>
-<v t="ekr.20160318141204.189"></v>
+<v t="ekr.20160318141204.175"></v>
 <v t="ekr.20210808063828.1"></v>
-<v t="ekr.20210808080140.1"><vh>git diff HEAD </vh>
-<v t="ekr.20210808080140.14"><vh>make_stub_files.py</vh>
-<v t="ekr.20210808080140.19"><vh>Changed</vh>
-<v t="ekr.20210808080140.20"><vh>st.munge_arg</vh>
-<v t="ekr.20210808080140.21"><vh>Old:st.munge_arg</vh></v>
-<v t="ekr.20160318141204.189"></v>
-</v>
-<v t="ekr.20210808080140.22"><vh>test_stub_traverser_class</vh>
-<v t="ekr.20210808080140.23"><vh>Old:test_stub_traverser_class</vh></v>
-<v t="ekr.20210808063828.1"></v>
-</v>
-</v>
-</v>
-</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -2196,7 +2181,7 @@ def out(self, s):  # pragma: no cover
     for child in stub.children:
         self.output_stubs(child)
 </t>
-<t tx="ekr.20160318141204.175">def output_time_stamp(self):  ###
+<t tx="ekr.20160318141204.175">def output_time_stamp(self):
     """Put a time-stamp in the output file."""
     if self.output_file:
         self.output_file.write('# make_stub_files: %s\n' %
@@ -4480,7 +4465,6 @@ def test_2(*args, **kwargs):
     tag = 'test_stub_traverser_class'
     controller = Controller()
     traverser = StubTraverser(controller)
-    traverser.output_file = io.StringIO()
     # Part 1: test st.visit_*.
     source = textwrap.dedent("""\
         class Test(base1, base2=None):
@@ -4493,7 +4477,8 @@ def test_2(*args, **kwargs):
             def test(self) -&gt; bool: ...
         """)
     node = ast.parse(source, filename=tag, mode='exec')
-    # Like traverser.run
+    # Like traverser.run, but with a StringIO file.
+    traverser.output_file = io.StringIO()
     traverser.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
     traverser.visit(node)
     traverser.output_stubs(traverser.parent_stub)
@@ -4510,138 +4495,10 @@ def test_2(*args, **kwargs):
     for arg, expected in table:
         got = traverser.munge_arg(arg)
         self.assertEqual(expected, got, msg=arg)
-</t>
-<t tx="ekr.20210808080140.1">@ignore
-@nosearch
-HEAD=0c13082</t>
-<t tx="ekr.20210808080140.14">@ignore
-@nosearch
-@language patch
---- HEAD
-+++ uncommitted
-@@ -2492,7 +2492,7 @@
-         if s == 'self':
-             return s
-         for pattern in self.general_patterns:
--            if pattern.match_entire_string(s):  ###
-+            if pattern.match_entire_string(s):
-                 return '%s: %s' % (s, pattern.repl_s)
-         if self.warn and s not in self.warn_list:  # pragma: no cover
-             self.warn_list.append(s)
-@@ -3385,6 +3385,7 @@
-         controller = Controller()
-         traverser = StubTraverser(controller)
-         traverser.output_file = io.StringIO()
-+        # Part 1: test st.visit_*.
-         source = textwrap.dedent("""\
-             class Test(base1, base2=None):
-                 def test(self):
-@@ -3402,6 +3403,17 @@
-         traverser.output_stubs(traverser.parent_stub)
-         output = traverser.output_file.getvalue()
-         self.assertEqual(output, expected_output)
-+        # Part 2: Test st.munge_arg.
-+        traverser.general_patterns = [Pattern('abc', 'xyz')]
-+        table = (
-+            ('self', 'self'),
-+            ('a:b', 'a:b'),
-+            ('abc', 'abc: xyz'),
-+            ('xxx', 'xxx: Any'),
-+        )
-+        for arg, expected in table:
-+            got = traverser.munge_arg(arg)
-+            self.assertEqual(expected, got, msg=arg)
-     #@-others
- #@-others
- g = LeoGlobals()
-@language python
-</t>
-<t tx="ekr.20210808080140.19"></t>
-<t tx="ekr.20210808080140.20">@ignore
-@nosearch
-@language patch
---- HEAD
-+++ uncommitted
-@@ -5,7 +5,7 @@
-     if s == 'self':
-         return s
-     for pattern in self.general_patterns:
--        if pattern.match_entire_string(s):  ###
-+        if pattern.match_entire_string(s):
-             return '%s: %s' % (s, pattern.repl_s)
-     if self.warn and s not in self.warn_list:  # pragma: no cover
-         self.warn_list.append(s)
-@language python
-</t>
-<t tx="ekr.20210808080140.21">type_pattern = re.compile(r'.*:.*')
-
-def munge_arg(self, s):
-    """Add an annotation for s if possible."""
-    if s == 'self':
-        return s
-    for pattern in self.general_patterns:
-        if pattern.match_entire_string(s):  ###
-            return '%s: %s' % (s, pattern.repl_s)
-    if self.warn and s not in self.warn_list:  # pragma: no cover
-        self.warn_list.append(s)
-        print('no annotation for %s' % s)
-    # Fix issue #3.
-    if self.type_pattern.match(s):
-        return s
-    return s + ': Any'
-</t>
-<t tx="ekr.20210808080140.22">@ignore
-@nosearch
-@language patch
---- HEAD
-+++ uncommitted
-@@ -3,6 +3,7 @@
-     controller = Controller()
-     traverser = StubTraverser(controller)
-     traverser.output_file = io.StringIO()
-+    # Part 1: test st.visit_*.
-     source = textwrap.dedent("""\
-         class Test(base1, base2=None):
-             def test(self):
-@@ -20,3 +21,14 @@
-     traverser.output_stubs(traverser.parent_stub)
-     output = traverser.output_file.getvalue()
-     self.assertEqual(output, expected_output)
-+    # Part 2: Test st.munge_arg.
-+    traverser.general_patterns = [Pattern('abc', 'xyz')]
-+    table = (
-+        ('self', 'self'),
-+        ('a:b', 'a:b'),
-+        ('abc', 'abc: xyz'),
-+        ('xxx', 'xxx: Any'),
-+    )
-+    for arg, expected in table:
-+        got = traverser.munge_arg(arg)
-+        self.assertEqual(expected, got, msg=arg)
-@language python
-</t>
-<t tx="ekr.20210808080140.23">def test_stub_traverser_class(self):
-    tag = 'test_stub_traverser_class'
-    controller = Controller()
-    traverser = StubTraverser(controller)
+    # Part 3: Test st.output_time_stamp.
     traverser.output_file = io.StringIO()
-    source = textwrap.dedent("""\
-        class Test(base1, base2=None):
-            def test(self):
-                if 1:
-                    return True
-        """)
-    expected_output = textwrap.dedent("""\
-        class Test(base1):
-            def test(self) -&gt; bool: ...
-        """)
-    node = ast.parse(source, filename=tag, mode='exec')
-    # Like traverser.run
-    traverser.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
-    traverser.visit(node)
-    traverser.output_stubs(traverser.parent_stub)
+    traverser.output_time_stamp()
     output = traverser.output_file.getvalue()
-    self.assertEqual(output, expected_output)
-</t>
+    self.assertTrue(output.startswith('# make_stub_files:'), msg=output)</t>
 </tnodes>
 </leo_file>
