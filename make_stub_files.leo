@@ -45,11 +45,17 @@
 </v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 </v>
-<v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh>
 <v t="ekr.20210807194019.1"><vh> --- no longer used</vh>
+<v t="ekr.20160318141204.65"><vh>f.Exec</vh></v>
+<v t="ekr.20160318141204.41"><vh>f.Index</vh></v>
+<v t="ekr.20160318141204.74"><vh>f.Print</vh></v>
+<v t="ekr.20160318141204.46"><vh>f.Repr</vh></v>
+<v t="ekr.20160318141204.80"><vh>f.TryExcept</vh></v>
+<v t="ekr.20160318141204.81"><vh>f.TryFinally</vh></v>
 <v t="ekr.20180902073131.1"><vh>g.execute_shell_commands</vh></v>
-<v t="ekr.20160318141204.93"><vh>class NullObject (Python Cookbook)</vh></v>
+<v t="ekr.20160318141204.97"><vh>g.isString &amp; isUnicode</vh></v>
+<v t="ekr.20160318141204.93"><vh>g.NullObject</vh></v>
 </v>
 <v t="ekr.20210807120326.1"><vh> --- tests</vh>
 <v t="ekr.20210806161202.1"><vh>test: class syntax</vh></v>
@@ -67,7 +73,7 @@
 <v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
 <v t="ekr.20160318141204.83"><vh>f.With</vh></v>
 <v t="ekr.20160318141204.84"><vh>f.Yield</vh></v>
-<v t="ekr.20160318141204.85"><vh>f.YieldFrom (Python 3)</vh></v>
+<v t="ekr.20160318141204.85"><vh>f.YieldFrom</vh></v>
 </v>
 <v t="ekr.20210807151105.1"><vh>--- changed StubFormatter visitors</vh>
 <v t="ekr.20160318141204.168"><vh>sf.Return</vh></v>
@@ -115,7 +121,7 @@
 </v>
 <v t="ekr.20160318141204.30"><vh>f.Operands</vh>
 <v t="ekr.20160318141204.31"></v>
-<v t="ekr.20160318141204.32"><vh>f.arg (Python3 only) (make_stub_files)</vh></v>
+<v t="ekr.20160318141204.32"><vh>f.arg</vh></v>
 <v t="ekr.20160318141204.33"><vh>f.Attribute</vh></v>
 <v t="ekr.20160318141204.34"><vh>f.Bytes</vh></v>
 <v t="ekr.20160318141204.35"></v>
@@ -124,13 +130,11 @@
 <v t="ekr.20160318141204.38"><vh>f.Dict</vh></v>
 <v t="ekr.20160318141204.39"><vh>f.Ellipsis</vh></v>
 <v t="ekr.20160318141204.40"><vh>f.ExtSlice</vh></v>
-<v t="ekr.20160318141204.41"><vh>f.Index</vh></v>
 <v t="ekr.20210806005225.1"><vh>f.FormattedValue &amp; JoinedStr</vh></v>
 <v t="ekr.20160318141204.42"><vh>f.List</vh></v>
 <v t="ekr.20160318141204.43"><vh>f.ListComp</vh></v>
 <v t="ekr.20160318141204.44"><vh>f.Name &amp; NameConstant</vh></v>
 <v t="ekr.20160318141204.45"><vh>f.Num</vh></v>
-<v t="ekr.20160318141204.46"><vh>f.Repr</vh></v>
 <v t="ekr.20160318141204.47"><vh>f.Slice</vh></v>
 <v t="ekr.20160318141204.48"><vh>f.Str</vh></v>
 <v t="ekr.20160318141204.49"><vh>f.Subscript</vh></v>
@@ -151,7 +155,6 @@
 <v t="ekr.20160318141204.62"><vh>f.Continue</vh></v>
 <v t="ekr.20160318141204.63"><vh>f.Delete</vh></v>
 <v t="ekr.20160318141204.64"><vh>f.ExceptHandler</vh></v>
-<v t="ekr.20160318141204.65"><vh>f.Exec</vh></v>
 <v t="ekr.20160318141204.66"><vh>f.For</vh></v>
 <v t="ekr.20160318141204.67"><vh>f.Global</vh></v>
 <v t="ekr.20160318141204.68"><vh>f.If</vh></v>
@@ -159,15 +162,12 @@
 <v t="ekr.20160318141204.70"><vh>f.get_import_names</vh></v>
 </v>
 <v t="ekr.20160318141204.71"><vh>f.ImportFrom</vh></v>
-<v t="ekr.20160318141204.72"><vh>f.Nonlocal (Python 3)</vh></v>
+<v t="ekr.20160318141204.72"><vh>f.Nonlocal</vh></v>
 <v t="ekr.20160318141204.73"><vh>f.Pass</vh></v>
-<v t="ekr.20160318141204.74"><vh>f.Print</vh></v>
 <v t="ekr.20160318141204.75"></v>
 <v t="ekr.20160318141204.76"><vh>f.Return</vh></v>
-<v t="ekr.20160318141204.77"><vh>f.Starred (Python 3)</vh></v>
-<v t="ekr.20160318141204.79"><vh>f.Try (Python 3)</vh></v>
-<v t="ekr.20160318141204.80"><vh>f.TryExcept</vh></v>
-<v t="ekr.20160318141204.81"><vh>f.TryFinally</vh></v>
+<v t="ekr.20160318141204.77"><vh>f.Starred</vh></v>
+<v t="ekr.20160318141204.79"><vh>f.Try</vh></v>
 <v t="ekr.20160318141204.82"><vh>f.While</vh></v>
 <v t="ekr.20160318141204.83"></v>
 <v t="ekr.20160318141204.84"></v>
@@ -202,7 +202,6 @@
 <v t="ekr.20180902035806.1"><vh>g.caller</vh></v>
 <v t="ekr.20160318141204.95"><vh>g.callers</vh></v>
 <v t="ekr.20160318141204.96"><vh>g.cls</vh></v>
-<v t="ekr.20160318141204.97"><vh>g.isString &amp; isUnicode</vh></v>
 <v t="ekr.20180902034437.1"><vh>g.objToSTring &amp; helpers</vh>
 <v t="ekr.20180902041247.1"><vh>g.dictToString</vh></v>
 <v t="ekr.20180902041311.1"><vh>g.listToString</vh></v>
@@ -353,6 +352,7 @@
 <v t="ekr.20160318141204.149"></v>
 </v>
 <v t="ekr.20210805092921.1"></v>
+<v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1490,7 +1490,7 @@ def make_stub_file(self, fn):  # pragma: no cover
         with open(fn, 'r') as f:
             s = f.read()
     except UnicodeDecodeError:
-        # Python 3 only, try utf-8 encoding.
+        # Try utf-8 encoding.
         with open(fn, 'r', encoding='utf-8') as f:
             s = f.read()
     #
@@ -1669,7 +1669,6 @@ def make_stub_file(self, fn):  # pragma: no cover
 <t tx="ekr.20160318141204.134">def create_parser(self):  # pragma: no cover
     """Create a RawConfigParser and return it."""
     parser = configparser.RawConfigParser(dict_type=OrderedDict)
-        # Requires Python 2.7
     parser.optionxform = str
     return parser
 </t>
@@ -1707,7 +1706,6 @@ def make_stub_file(self, fn):  # pragma: no cover
     # Handle the keys9 list very carefully.
     for op in keys9:
         target = ' %s ' % op
-        ### if s.find(target) &gt; -1:
         if target in s:
             ops.append(op)  ###
             break  # Only one match allowed.
@@ -1965,6 +1963,7 @@ def do_BinOp(self, node):
     op = self.op_name(node.op)
     lhs = self.visit(node.left)
     rhs = self.visit(node.right)
+    ### ???
     if op.strip() in ('is', 'is not', 'in', 'not in'):  # pragma: no cover (python 2?)
         s = 'bool'
     elif lhs == rhs:  # pragma: no cover (python 2?)
@@ -2008,11 +2007,6 @@ def do_Call(self, node):
     for z in node.keywords:
         # Calls *base class* s.do_keyword.
         args.append(self.visit(z))
-    if not isPython3: # pragma: no cover (python 2)
-        if getattr(node, 'starargs', None):
-            args.append('*%s' % (self.visit(node.starargs)))
-        if getattr(node, 'kwargs', None):
-            args.append('**%s' % (self.visit(node.kwargs)))
     args = [z for z in args if z]  # Kludge: Defensive coding.
     # Explicit pattern:
     if func in ('dict', 'list', 'set', 'tuple',):
@@ -2254,6 +2248,7 @@ def out(self, s):  # pragma: no cover
     
     Parse by hand, so that --update can be run with Python 2.
     """
+    ### Still needed ???
     assert '\t' not in s
     d = {}
     root = Stub(kind='root', name=root_name)
@@ -2340,7 +2335,7 @@ def out(self, s):  # pragma: no cover
     method = getattr(self, method_name, None)
     if method:
         s = method(node)
-        assert g.isString(s), s.__class__.__name__
+        assert isinstance(s, str), s.__class__.__name__
         return s
     # #13: *Never* ignore missing visitors!
     #      Insert an error comment directly into the output.
@@ -2436,11 +2431,9 @@ def flatten_stubs_helper(self, root, aList):
         return '\n'.join(aList) + '\n'
     return ''
 </t>
-<t tx="ekr.20160318141204.186"># 2: ClassDef(identifier name, expr* bases,
-#             stmt* body, expr* decorator_list)
-# 3: ClassDef(identifier name, expr* bases,
-#             keyword* keywords, expr? starargs, expr? kwargs
-#             stmt* body, expr* decorator_list)
+<t tx="ekr.20160318141204.186"># ClassDef(identifier name, expr* bases,
+#       keyword* keywords, expr? starargs, expr? kwargs
+#       stmt* body, expr* decorator_list)
 #
 # keyword arguments supplied to call (NULL identifier for **kwargs)
 # keyword = (identifier? arg, expr value)
@@ -2487,9 +2480,7 @@ def visit_ClassDef(self, node):  ###
     self.level -= 1
     self.parent_stub = old_stub
 </t>
-<t tx="ekr.20160318141204.187"># 2: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
-# 3: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list,
-#                expr? returns)
+<t tx="ekr.20160318141204.187"># FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
 
 def visit_FunctionDef(self, node):
 
@@ -2652,17 +2643,16 @@ def munge_arg(self, s):
     self.returns.append(node)
         # New: return the entire node, not node.value.
 </t>
-<t tx="ekr.20160318141204.20"># 2: ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
-# 3: ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
+<t tx="ekr.20160318141204.20"># ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
 
 def do_ClassDef(self, node):
     result = []
     name = node.name  # Only a plain string is valid.
     bases = [self.visit(z) for z in node.bases] if node.bases else []
-    if getattr(node, 'decorator_list', None):  # Python 3
+    if getattr(node, 'decorator_list', None):
         for decorator in node.decorator_list:
             result.append(f"@{self.visit(decorator)}\n")  # Bug fix: 2021/08/06.
-    if getattr(node, 'keywords', None):  # Python 3
+    if getattr(node, 'keywords', None):
         for keyword in node.keywords:
             bases.append('%s=%s' % (keyword.arg, self.visit(keyword.value)))
     # Fix issue #2: look ahead to see if there are any functions in this class.
@@ -2680,8 +2670,7 @@ def do_ClassDef(self, node):
     return ''.join(result)
 
 </t>
-<t tx="ekr.20160318141204.21"># 2: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
-# 3: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
+<t tx="ekr.20160318141204.21"># FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
 
 def do_FunctionDef(self, node):
     """Format a FunctionDef node."""
@@ -2689,9 +2678,9 @@ def do_FunctionDef(self, node):
     if node.decorator_list:
         for z in node.decorator_list:
             result.append('@%s\n' % self.visit(z))
-    name = node.name  # Only a plain string is valid.
+    name = node.name  # a string.
     args = self.visit(node.args) if node.args else ''
-    if getattr(node, 'returns', None):  # Python 3.
+    if getattr(node, 'returns', None):
         returns = self.visit(node.returns)
         # Bug found by unit test.
         result.append(self.indent('def %s(%s) -&gt; %s:\n' % (name, args, returns)))
@@ -2759,9 +2748,7 @@ def do_Store(self, node):  # pragma: no cover (defensive)
 # Operands...
 
 </t>
-<t tx="ekr.20160318141204.31"># 2: arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
-
-# 3: arguments = (
+<t tx="ekr.20160318141204.31"># arguments = (
 #       arg* posonlyargs, arg* args, arg? vararg, arg* kwonlyargs,
 #       expr* kw_defaults, arg? kwarg, expr* defaults
 # )
@@ -2780,21 +2767,13 @@ def do_arguments(self, node):
         for z in posonlyargs:
             args2.append(self.visit(z))
         args2.append('/')
+    # Regular args.
     n_plain = len(args) - len(defaults)
     for i in range(len(args)):
         if i &lt; n_plain:
             args2.append(args[i])
         else:
             args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
-    if not isPython3:  # pragma: no cover
-        # Add the vararg and kwarg names.
-        name = getattr(node, 'vararg', None)
-        if name:
-            args2.append('*' + name)
-        name = getattr(node, 'kwarg', None)
-        if name:
-            args2.append('**' + name)
-        return ', '.join(args2)
     # PEP 3102: keyword-only args.
     if node.kwonlyargs:
         assert len(node.kwonlyargs) == len(node.kw_defaults)
@@ -2832,8 +2811,7 @@ def do_Attribute(self, node):
     return str(node.s)
 
 </t>
-<t tx="ekr.20160318141204.35"># 2: Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
-# 3: Call(expr func, expr* args, keyword* keywords)
+<t tx="ekr.20160318141204.35"># Call(expr func, expr* args, keyword* keywords)
 
 def do_Call(self, node):
     func = self.visit(node.func)
@@ -2841,14 +2819,7 @@ def do_Call(self, node):
     for z in node.keywords:
         # Calls f.do_keyword.
         args.append(self.visit(z))
-    if not isPython3: # pragma: no cover (python 2)
-        if getattr(node, 'starargs', None):
-            args.append('*%s' % (self.visit(node.starargs)))  
-        if getattr(node, 'kwargs', None):
-            args.append('**%s' % (self.visit(node.kwargs))) # pragma: no cover (python 2)
-        args = [z for z in args if z]  # Kludge: Defensive coding.
     return '%s(%s)' % (func, ', '.join(args))
-
 </t>
 <t tx="ekr.20160318141204.36"># keyword = (identifier arg, expr value)
 
@@ -3066,17 +3037,13 @@ def do_Subscript(self, node):
     if getattr(node, 'type', None):
         result.append(' %s' % self.visit(node.type))
     if getattr(node, 'name', None):
-        if isinstance(node.name, ast.AST):  
-            result.append(' as %s' % self.visit(node.name))  # pragma: no cover (python 2)
-        else:
-            result.append(' as %s' % node.name)  # Python 3.x.
+        result.append(' as %s' % node.name)
     result.append(':\n')
     for z in node.body:
         self.level += 1
         result.append(self.visit(z))
         self.level -= 1
     return ''.join(result)
-
 </t>
 <t tx="ekr.20160318141204.65">def do_Exec(self, node):  # pragma: no cover (Python 2.x only)
     body = self.visit(node.body)
@@ -3186,15 +3153,12 @@ def do_Nonlocal(self, node):
 </t>
 <t tx="ekr.20160318141204.75">def do_Raise(self, node):
     args = []
-    for attr in (
-        'exc', 'cause',  # python 3
-        'type', 'inst', 'tback'  # python 2
-    ):
+    for attr in ('exc', 'cause'):
         if getattr(node, attr, None) is not None:
             args.append(self.visit(getattr(node, attr)))
-    if args:
-        return self.indent('raise %s\n' % ','.join(args))
-    return self.indent('raise\n')
+    args_s = f" {', '.join(args)}" if args else ''
+    return self.indent('raise%s\n' % args_s)
+
 
 </t>
 <t tx="ekr.20160318141204.76">def do_Return(self, node):
@@ -3286,26 +3250,13 @@ def do_Try(self, node):  # Python 3
     return ''.join(result)
 
 </t>
-<t tx="ekr.20160318141204.83"># 2:  With(expr context_expr, expr? optional_vars,
-#          stmt* body)
-# withitem = (expr context_expr, expr? optional_vars)
-
-# 3:  With(withitem* items,
-#          stmt* body)
+<t tx="ekr.20160318141204.83"># With(withitem* items, stmt* body)
 
 def do_With(self, node):
     result = []
     result.append(self.indent('with '))
     vars_list = []
-    if getattr(node, 'context_expression', None):  # pragma: no cover (python 2)
-        result.append(self.visit(node.context_expresssion))
-    if getattr(node, 'optional_vars', None):  # pragma: no cover (python 2)
-        try:
-            for z in node.optional_vars:
-                vars_list.append(self.visit(z))
-        except TypeError:  # Not iterable.
-            vars_list.append(self.visit(node.optional_vars))
-    if getattr(node, 'items', None):  # Python 3.
+    if getattr(node, 'items', None):
         for item in node.items:
             result.append(self.visit(item.context_expr))
             result.append(' as ')
@@ -3639,7 +3590,7 @@ Categories:
         s = self.listToString(obj, indent=indent)
     elif isinstance(obj, tuple):
         s = self.tupleToString(obj, indent=indent)
-    elif g.isString(obj):
+    elif isinstance(obj, str):
         # Print multi-line strings as lists.
         s = obj
         lines = g.splitLines(s)
@@ -4452,7 +4403,8 @@ d = None
                 d, root = st.parse_stub_file(source, root_name=tag)
                 node = ast.parse(source, filename=test_name, mode='exec')
                 st.parent_stub = Stub(kind='root', name=test_name)
-                st.visit(node)</t>
+                st.visit(node)
+</t>
 <t tx="ekr.20210807194019.1"></t>
 <t tx="ekr.20210807210106.1"># Test 1:
 """\

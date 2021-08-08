@@ -16,26 +16,16 @@ Written by Edward K. Ream.
 import argparse
 import ast
 from collections import OrderedDict
-    # Requires Python 2.7 or above. Without OrderedDict
-    # the configparser will give random order for patterns.
-try:
-    import ConfigParser as configparser  # Python 2
-except ImportError:
-    import configparser  # Python 3
+import configparser
 import glob
+import io
 import os
 import re
 import sys
 import textwrap
 import time
-import types
 import unittest
-try:
-    import StringIO as io  # Python 2
-except ImportError:
-    import io  # Python 3
 #@-<< imports >>
-isPython3 = sys.version_info >= (3, 0, 0)
 #@+others
 #@+node:ekr.20210805085843.1: ** top-level functions
 #@+node:ekr.20160318141204.8: *3* function: dump
@@ -128,7 +118,7 @@ class AstFormatter:
         method = getattr(self, method_name, None)
         if method:
             s = method(node)
-            assert g.isString(s), s.__class__.__name__
+            assert isinstance(s, str), s.__class__.__name__
             return s
         # #13: *Never* ignore missing visitors!
         #      Insert an error comment directly into the output.
@@ -139,17 +129,16 @@ class AstFormatter:
 
     # Contexts...
     #@+node:ekr.20160318141204.20: *4* f.ClassDef
-    # 2: ClassDef(identifier name, expr* bases, stmt* body, expr* decorator_list)
-    # 3: ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
+    # ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
 
     def do_ClassDef(self, node):
         result = []
         name = node.name  # Only a plain string is valid.
         bases = [self.visit(z) for z in node.bases] if node.bases else []
-        if getattr(node, 'decorator_list', None):  # Python 3
+        if getattr(node, 'decorator_list', None):
             for decorator in node.decorator_list:
                 result.append(f"@{self.visit(decorator)}\n")  # Bug fix: 2021/08/06.
-        if getattr(node, 'keywords', None):  # Python 3
+        if getattr(node, 'keywords', None):
             for keyword in node.keywords:
                 bases.append('%s=%s' % (keyword.arg, self.visit(keyword.value)))
         # Fix issue #2: look ahead to see if there are any functions in this class.
@@ -167,8 +156,7 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.21: *4* f.FunctionDef
-    # 2: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
-    # 3: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
+    # FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
 
     def do_FunctionDef(self, node):
         """Format a FunctionDef node."""
@@ -176,9 +164,9 @@ class AstFormatter:
         if node.decorator_list:
             for z in node.decorator_list:
                 result.append('@%s\n' % self.visit(z))
-        name = node.name  # Only a plain string is valid.
+        name = node.name  # a string.
         args = self.visit(node.args) if node.args else ''
-        if getattr(node, 'returns', None):  # Python 3.
+        if getattr(node, 'returns', None):
             returns = self.visit(node.returns)
             # Bug found by unit test.
             result.append(self.indent('def %s(%s) -> %s:\n' % (name, args, returns)))
@@ -246,9 +234,7 @@ class AstFormatter:
     # Operands...
 
     #@+node:ekr.20160318141204.31: *4* f.arguments
-    # 2: arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
-
-    # 3: arguments = (
+    # arguments = (
     #       arg* posonlyargs, arg* args, arg? vararg, arg* kwonlyargs,
     #       expr* kw_defaults, arg? kwarg, expr* defaults
     # )
@@ -267,21 +253,13 @@ class AstFormatter:
             for z in posonlyargs:
                 args2.append(self.visit(z))
             args2.append('/')
+        # Regular args.
         n_plain = len(args) - len(defaults)
         for i in range(len(args)):
             if i < n_plain:
                 args2.append(args[i])
             else:
                 args2.append('%s=%s' % (args[i], defaults[i - n_plain]))
-        if not isPython3:  # pragma: no cover
-            # Add the vararg and kwarg names.
-            name = getattr(node, 'vararg', None)
-            if name:
-                args2.append('*' + name)
-            name = getattr(node, 'kwarg', None)
-            if name:
-                args2.append('**' + name)
-            return ', '.join(args2)
         # PEP 3102: keyword-only args.
         if node.kwonlyargs:
             assert len(node.kwonlyargs) == len(node.kw_defaults)
@@ -299,7 +277,7 @@ class AstFormatter:
         if kwarg:
             args2.append('**' + self.visit(kwarg))
         return ', '.join(args2)
-    #@+node:ekr.20160318141204.32: *4* f.arg (Python3 only) (make_stub_files)
+    #@+node:ekr.20160318141204.32: *4* f.arg
     # 3: arg = (identifier arg, expr? annotation)
 
     def do_arg(self, node):
@@ -319,8 +297,7 @@ class AstFormatter:
         return str(node.s)
 
     #@+node:ekr.20160318141204.35: *4* f.Call & f.keyword
-    # 2: Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
-    # 3: Call(expr func, expr* args, keyword* keywords)
+    # Call(expr func, expr* args, keyword* keywords)
 
     def do_Call(self, node):
         func = self.visit(node.func)
@@ -328,14 +305,7 @@ class AstFormatter:
         for z in node.keywords:
             # Calls f.do_keyword.
             args.append(self.visit(z))
-        if not isPython3: # pragma: no cover (python 2)
-            if getattr(node, 'starargs', None):
-                args.append('*%s' % (self.visit(node.starargs)))  
-            if getattr(node, 'kwargs', None):
-                args.append('**%s' % (self.visit(node.kwargs))) # pragma: no cover (python 2)
-            args = [z for z in args if z]  # Kludge: Defensive coding.
         return '%s(%s)' % (func, ', '.join(args))
-
     #@+node:ekr.20160318141204.36: *5* f.keyword
     # keyword = (identifier arg, expr value)
 
@@ -382,10 +352,6 @@ class AstFormatter:
     def do_ExtSlice(self, node):  # pragma: no cover (deprecated)
         return ':'.join([self.visit(z) for z in node.dims])
 
-    #@+node:ekr.20160318141204.41: *4* f.Index
-    def do_Index(self, node):  # pragma: no cover (python 2)
-        return self.visit(node.value)
-
     #@+node:ekr.20210806005225.1: *4* f.FormattedValue & JoinedStr
     # FormattedValue(expr value, int? conversion, expr? format_spec)
 
@@ -421,10 +387,6 @@ class AstFormatter:
     #@+node:ekr.20160318141204.45: *4* f.Num
     def do_Num(self, node):  # pragma: no cover (obsolete)
         return repr(node.n)
-
-    #@+node:ekr.20160318141204.46: *4* f.Repr
-    def do_Repr(self, node):  # pragma: no cover (Python 2.x only)
-        return 'repr(%s)' % self.visit(node.value)
 
     #@+node:ekr.20160318141204.47: *4* f.Slice
     def do_Slice(self, node):
@@ -552,30 +514,13 @@ class AstFormatter:
         if getattr(node, 'type', None):
             result.append(' %s' % self.visit(node.type))
         if getattr(node, 'name', None):
-            if isinstance(node.name, ast.AST):  
-                result.append(' as %s' % self.visit(node.name))  # pragma: no cover (python 2)
-            else:
-                result.append(' as %s' % node.name)  # Python 3.x.
+            result.append(' as %s' % node.name)
         result.append(':\n')
         for z in node.body:
             self.level += 1
             result.append(self.visit(z))
             self.level -= 1
         return ''.join(result)
-
-    #@+node:ekr.20160318141204.65: *4* f.Exec
-    def do_Exec(self, node):  # pragma: no cover (Python 2.x only)
-        body = self.visit(node.body)
-        args = []  # Globals before locals.
-        if getattr(node, 'globals', None):
-            args.append(self.visit(node.globals))
-        if getattr(node, 'locals', None):
-            args.append(self.visit(node.locals))
-        if args:
-            return self.indent('exec %s in %s\n' % (
-                body, ','.join(args)))
-        return self.indent('exec %s\n' % (body))
-
     #@+node:ekr.20160318141204.66: *4* f.For
     def do_For(self, node):
         result = []
@@ -649,7 +594,7 @@ class AstFormatter:
         return self.indent('from %s import %s\n' % (
             node.module,
             ','.join(names)))
-    #@+node:ekr.20160318141204.72: *4* f.Nonlocal (Python 3)
+    #@+node:ekr.20160318141204.72: *4* f.Nonlocal
     # Nonlocal(identifier* names)
 
     def do_Nonlocal(self, node):
@@ -658,29 +603,15 @@ class AstFormatter:
     def do_Pass(self, node):
         return self.indent('pass\n')
 
-    #@+node:ekr.20160318141204.74: *4* f.Print
-    def do_Print(self, node):  # pragma: no cover (Python 2.x only)
-        vals = []
-        for z in node.values:
-            vals.append(self.visit(z))
-        if getattr(node, 'dest', None):
-            vals.append('dest=%s' % self.visit(node.dest))
-        if getattr(node, 'nl', None):
-            vals.append('nl=%s' % node.nl)
-        return self.indent('print(%s)\n' % ','.join(vals))
-
     #@+node:ekr.20160318141204.75: *4* f.Raise
     def do_Raise(self, node):
         args = []
-        for attr in (
-            'exc', 'cause',  # python 3
-            'type', 'inst', 'tback'  # python 2
-        ):
+        for attr in ('exc', 'cause'):
             if getattr(node, attr, None) is not None:
                 args.append(self.visit(getattr(node, attr)))
-        if args:
-            return self.indent('raise %s\n' % ','.join(args))
-        return self.indent('raise\n')
+        args_s = f" {', '.join(args)}" if args else ''
+        return self.indent('raise%s\n' % args_s)
+
 
     #@+node:ekr.20160318141204.76: *4* f.Return
     def do_Return(self, node):
@@ -689,12 +620,12 @@ class AstFormatter:
                 self.visit(node.value).strip()))
         return self.indent('return\n')
 
-    #@+node:ekr.20160318141204.77: *4* f.Starred (Python 3)
+    #@+node:ekr.20160318141204.77: *4* f.Starred
     # Starred(expr value, expr_context ctx)
 
     def do_Starred(self, node):
         return '*' + self.visit(node.value)
-    #@+node:ekr.20160318141204.79: *4* f.Try (Python 3)
+    #@+node:ekr.20160318141204.79: *4* f.Try
     # Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
 
     def do_Try(self, node):  # Python 3
@@ -721,40 +652,6 @@ class AstFormatter:
                 result.append(self.visit(z))
                 self.level -= 1
         return ''.join(result)
-    #@+node:ekr.20160318141204.80: *4* f.TryExcept
-    def do_TryExcept(self, node):  # pragma: no cover (python 2)
-        result = []
-        result.append(self.indent('try:\n'))
-        for z in node.body:
-            self.level += 1
-            result.append(self.visit(z))
-            self.level -= 1
-        if node.handlers:
-            for z in node.handlers:
-                result.append(self.visit(z))
-        if node.orelse:
-            result.append('else:\n')
-            for z in node.orelse:
-                self.level += 1
-                result.append(self.visit(z))
-                self.level -= 1
-        return ''.join(result)
-
-    #@+node:ekr.20160318141204.81: *4* f.TryFinally
-    def do_TryFinally(self, node):  # pragma: no cover (python 2)
-        result = []
-        result.append(self.indent('try:\n'))
-        for z in node.body:
-            self.level += 1
-            result.append(self.visit(z))
-            self.level -= 1
-        result.append(self.indent('finally:\n'))
-        for z in node.finalbody:
-            self.level += 1
-            result.append(self.visit(z))
-            self.level -= 1
-        return ''.join(result)
-
     #@+node:ekr.20160318141204.82: *4* f.While
     def do_While(self, node):
         result = []
@@ -772,26 +669,13 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.83: *4* f.With
-    # 2:  With(expr context_expr, expr? optional_vars,
-    #          stmt* body)
-    # withitem = (expr context_expr, expr? optional_vars)
-
-    # 3:  With(withitem* items,
-    #          stmt* body)
+    # With(withitem* items, stmt* body)
 
     def do_With(self, node):
         result = []
         result.append(self.indent('with '))
         vars_list = []
-        if getattr(node, 'context_expression', None):  # pragma: no cover (python 2)
-            result.append(self.visit(node.context_expresssion))
-        if getattr(node, 'optional_vars', None):  # pragma: no cover (python 2)
-            try:
-                for z in node.optional_vars:
-                    vars_list.append(self.visit(z))
-            except TypeError:  # Not iterable.
-                vars_list.append(self.visit(node.optional_vars))
-        if getattr(node, 'items', None):  # Python 3.
+        if getattr(node, 'items', None):
             for item in node.items:
                 result.append(self.visit(item.context_expr))
                 result.append(' as ')
@@ -815,7 +699,7 @@ class AstFormatter:
         if getattr(node, 'value', None):
             return 'yield %s' % self.visit(node.value)
         return 'yield'
-    #@+node:ekr.20160318141204.85: *4* f.YieldFrom (Python 3)
+    #@+node:ekr.20160318141204.85: *4* f.YieldFrom
     # YieldFrom(expr value)
 
     def do_YieldFrom(self, node):
@@ -972,7 +856,7 @@ class Controller:
             with open(fn, 'r') as f:
                 s = f.read()
         except UnicodeDecodeError:
-            # Python 3 only, try utf-8 encoding.
+            # Try utf-8 encoding.
             with open(fn, 'r', encoding='utf-8') as f:
                 s = f.read()
         #
@@ -1151,7 +1035,6 @@ class Controller:
     def create_parser(self):  # pragma: no cover
         """Create a RawConfigParser and return it."""
         parser = configparser.RawConfigParser(dict_type=OrderedDict)
-            # Requires Python 2.7
         parser.optionxform = str
         return parser
     #@+node:ekr.20160318141204.135: *4* msf.find_pattern_ops
@@ -1189,7 +1072,6 @@ class Controller:
         # Handle the keys9 list very carefully.
         for op in keys9:
             target = ' %s ' % op
-            ### if s.find(target) > -1:
             if target in s:
                 ops.append(op)  ###
                 break  # Only one match allowed.
@@ -1352,20 +1234,6 @@ class LeoGlobals:  # pragma: no cover
         """Clear the screen."""
         if sys.platform.lower().startswith('win'):
             os.system('cls')
-    #@+node:ekr.20160318141204.97: *3* g.isString & isUnicode
-    def isString(self, s):
-        """Return True if s is any string, but not bytes."""
-        # pylint: disable=no-member
-        if isPython3:
-            return isinstance(s, str)
-        return isinstance(s, types.StringTypes)
-
-    def isUnicode(self, s):
-        """Return True if s is a unicode string."""
-        # pylint: disable=no-member
-        if isPython3:
-            return isinstance(s, str)
-        return isinstance(s, types.UnicodeType)
     #@+node:ekr.20180902034437.1: *3* g.objToSTring & helpers
     def objToString(self, obj, indent='', printCaller=False, tag=None):
         """Pretty print any Python object to a string."""
@@ -1379,7 +1247,7 @@ class LeoGlobals:  # pragma: no cover
             s = self.listToString(obj, indent=indent)
         elif isinstance(obj, tuple):
             s = self.tupleToString(obj, indent=indent)
-        elif g.isString(obj):
+        elif isinstance(obj, str):
             # Print multi-line strings as lists.
             s = obj
             lines = g.splitLines(s)
@@ -2080,6 +1948,7 @@ class StubFormatter(AstFormatter):
         op = self.op_name(node.op)
         lhs = self.visit(node.left)
         rhs = self.visit(node.right)
+        ### ???
         if op.strip() in ('is', 'is not', 'in', 'not in'):  # pragma: no cover (python 2?)
             s = 'bool'
         elif lhs == rhs:  # pragma: no cover (python 2?)
@@ -2173,11 +2042,6 @@ class StubFormatter(AstFormatter):
         for z in node.keywords:
             # Calls *base class* s.do_keyword.
             args.append(self.visit(z))
-        if not isPython3: # pragma: no cover (python 2)
-            if getattr(node, 'starargs', None):
-                args.append('*%s' % (self.visit(node.starargs)))
-            if getattr(node, 'kwargs', None):
-                args.append('**%s' % (self.visit(node.kwargs)))
         args = [z for z in args if z]  # Kludge: Defensive coding.
         # Explicit pattern:
         if func in ('dict', 'list', 'set', 'tuple',):
@@ -2365,6 +2229,7 @@ class StubTraverser(ast.NodeVisitor):
         
         Parse by hand, so that --update can be run with Python 2.
         """
+        ### Still needed ???
         assert '\t' not in s
         d = {}
         root = Stub(kind='root', name=root_name)
@@ -2526,11 +2391,9 @@ class StubTraverser(ast.NodeVisitor):
             return '\n'.join(aList) + '\n'
         return ''
     #@+node:ekr.20160318141204.186: *3* st.visit_ClassDef
-    # 2: ClassDef(identifier name, expr* bases,
-    #             stmt* body, expr* decorator_list)
-    # 3: ClassDef(identifier name, expr* bases,
-    #             keyword* keywords, expr? starargs, expr? kwargs
-    #             stmt* body, expr* decorator_list)
+    # ClassDef(identifier name, expr* bases,
+    #       keyword* keywords, expr? starargs, expr? kwargs
+    #       stmt* body, expr* decorator_list)
     #
     # keyword arguments supplied to call (NULL identifier for **kwargs)
     # keyword = (identifier? arg, expr value)
@@ -2577,9 +2440,7 @@ class StubTraverser(ast.NodeVisitor):
         self.level -= 1
         self.parent_stub = old_stub
     #@+node:ekr.20160318141204.187: *3* st.visit_FunctionDef & helpers
-    # 2: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list)
-    # 3: FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list,
-    #                expr? returns)
+    # FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
 
     def visit_FunctionDef(self, node):
 
