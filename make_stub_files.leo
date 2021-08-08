@@ -55,14 +55,53 @@
 <v t="ekr.20210806161202.1"><vh>test: class syntax</vh></v>
 </v>
 <v t="ekr.20210805061637.1"></v>
+<v t="ekr.20210806162349.1"><vh>--- changed AstFormatter visitors</vh>
+<v t="ekr.20160318141204.91"><vh>arg_formatter.Constants &amp; Name</vh></v>
+<v t="ekr.20160318141204.31"><vh>f.arguments</vh></v>
+<v t="ekr.20160318141204.35"><vh>f.Call &amp; f.keyword</vh>
+<v t="ekr.20160318141204.36"><vh>f.keyword</vh></v>
+</v>
+<v t="ekr.20160318141204.20"><vh>f.ClassDef</vh></v>
+<v t="ekr.20210804214511.1"><vh>f.Constant</vh></v>
+<v t="ekr.20160318141204.75"><vh>f.Raise</vh></v>
+<v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
+<v t="ekr.20160318141204.83"><vh>f.With</vh></v>
+<v t="ekr.20160318141204.84"><vh>f.Yield</vh></v>
+<v t="ekr.20160318141204.85"><vh>f.YieldFrom (Python 3)</vh></v>
+</v>
+<v t="ekr.20210807151105.1"><vh>--- changed StubFormatter visitors</vh>
+<v t="ekr.20160318141204.168"><vh>sf.Return</vh></v>
+<v t="ekr.20160318141204.167"><vh>sf.UnaryOp</vh></v>
+</v>
+<v t="ekr.20210807213637.1"><vh>--- changed StubTraverser methods</vh>
+<v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
+</v>
+</v>
+<v t="ekr.20210806134651.1"><vh>--- recent</vh>
+<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
+<v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
+<v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
+</v>
+<v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160318141204.191"></v>
+<v t="ekr.20160318141204.192"><vh>st.get_def_name</vh></v>
+<v t="ekr.20160318141204.193"><vh>st.remove_recursive_calls</vh></v>
+</v>
+<v t="ekr.20160318141204.191"></v>
+<v t="ekr.20210805090544.1"><vh>test issues...</vh>
+<v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
+<v t="ekr.20180901044640.1"><vh>test_bug2_non_empty</vh></v>
+<v t="ekr.20180901051603.1"><vh>test_bug3</vh></v>
+</v>
+</v>
 <v t="ekr.20210805102238.1"><vh>--- classes</vh>
 <v t="ekr.20160318141204.14"><vh> class AstFormatter</vh>
 <v t="ekr.20160318141204.15"><vh> f.Entries</vh>
 <v t="ekr.20160318141204.17"><vh>f.format</vh></v>
-<v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
+<v t="ekr.20160318141204.18"></v>
 </v>
 <v t="ekr.20160318141204.19"><vh>f.Contexts</vh>
-<v t="ekr.20160318141204.20"><vh>f.ClassDef</vh></v>
+<v t="ekr.20160318141204.20"></v>
 <v t="ekr.20160318141204.21"><vh>f.FunctionDef</vh></v>
 <v t="ekr.20160318141204.22"><vh>f.Interactive</vh></v>
 <v t="ekr.20160318141204.23"><vh>f.Module</vh></v>
@@ -75,14 +114,12 @@
 <v t="ekr.20160318141204.29"><vh>f.ctx nodes</vh></v>
 </v>
 <v t="ekr.20160318141204.30"><vh>f.Operands</vh>
-<v t="ekr.20160318141204.31"><vh>f.arguments</vh></v>
+<v t="ekr.20160318141204.31"></v>
 <v t="ekr.20160318141204.32"><vh>f.arg (Python3 only) (make_stub_files)</vh></v>
 <v t="ekr.20160318141204.33"><vh>f.Attribute</vh></v>
 <v t="ekr.20160318141204.34"><vh>f.Bytes</vh></v>
-<v t="ekr.20160318141204.35"><vh>f.Call &amp; f.keyword</vh>
-<v t="ekr.20160318141204.36"><vh>f.keyword</vh></v>
-</v>
-<v t="ekr.20210804214511.1"><vh>f.Constant</vh></v>
+<v t="ekr.20160318141204.35"></v>
+<v t="ekr.20210804214511.1"></v>
 <v t="ekr.20160318141204.37"><vh>f.comprehension</vh></v>
 <v t="ekr.20160318141204.38"><vh>f.Dict</vh></v>
 <v t="ekr.20160318141204.39"><vh>f.Ellipsis</vh></v>
@@ -125,16 +162,16 @@
 <v t="ekr.20160318141204.72"><vh>f.Nonlocal (Python 3)</vh></v>
 <v t="ekr.20160318141204.73"><vh>f.Pass</vh></v>
 <v t="ekr.20160318141204.74"><vh>f.Print</vh></v>
-<v t="ekr.20160318141204.75"><vh>f.Raise</vh></v>
+<v t="ekr.20160318141204.75"></v>
 <v t="ekr.20160318141204.76"><vh>f.Return</vh></v>
 <v t="ekr.20160318141204.77"><vh>f.Starred (Python 3)</vh></v>
 <v t="ekr.20160318141204.79"><vh>f.Try (Python 3)</vh></v>
 <v t="ekr.20160318141204.80"><vh>f.TryExcept</vh></v>
 <v t="ekr.20160318141204.81"><vh>f.TryFinally</vh></v>
 <v t="ekr.20160318141204.82"><vh>f.While</vh></v>
-<v t="ekr.20160318141204.83"><vh>f.With</vh></v>
-<v t="ekr.20160318141204.84"><vh>f.Yield</vh></v>
-<v t="ekr.20160318141204.85"><vh>f.YieldFrom (Python 3)</vh></v>
+<v t="ekr.20160318141204.83"></v>
+<v t="ekr.20160318141204.84"></v>
+<v t="ekr.20160318141204.85"></v>
 </v>
 <v t="ekr.20160318141204.86"><vh>f.Utils</vh>
 <v t="ekr.20160318141204.87"><vh>f.kind</vh></v>
@@ -143,12 +180,12 @@
 </v>
 </v>
 <v t="ekr.20160318141204.90"><vh>class AstArgFormatter (AstFormatter)</vh>
-<v t="ekr.20160318141204.91"><vh>arg_formatter.Constants &amp; Name</vh></v>
+<v t="ekr.20160318141204.91"></v>
 </v>
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
 <v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
+<v t="ekr.20160318141204.131"></v>
 <v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
@@ -222,11 +259,11 @@
 <v t="ekr.20160318141204.164"><vh>sf.Compare</vh></v>
 <v t="ekr.20160318141204.165"><vh>sf.IfExp</vh></v>
 <v t="ekr.20160318141204.166"><vh>sf.Subscript</vh></v>
-<v t="ekr.20160318141204.167"><vh>sf.UnaryOp</vh></v>
+<v t="ekr.20160318141204.167"></v>
 </v>
 <v t="ekr.20210807145722.1"><vh>sf.Statements</vh>
 <v t="ekr.20160318141204.162"><vh>sf.Call &amp; sf.keyword</vh></v>
-<v t="ekr.20160318141204.168"><vh>sf.Return</vh></v>
+<v t="ekr.20160318141204.168"></v>
 </v>
 </v>
 <v t="ekr.20160318141204.169"><vh>class StubTraverser (ast.NodeVisitor)</vh>
@@ -254,23 +291,13 @@
 <v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
 <v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
 </v>
-<v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers</vh>
-<v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
-<v t="ekr.20160318141204.192"><vh>st.get_def_name</vh></v>
-<v t="ekr.20160318141204.193"><vh>st.remove_recursive_calls</vh></v>
-</v>
+<v t="ekr.20160318141204.190"></v>
 </v>
 <v t="ekr.20160318141204.194"><vh>st.visit_Return</vh></v>
 </v>
 <v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
-<v t="ekr.20210805090544.1"><vh>test issues...</vh>
-<v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
-<v t="ekr.20180901044640.1"><vh>test_bug2_non_empty</vh></v>
-<v t="ekr.20180901051603.1"><vh>test_bug3</vh></v>
-</v>
-<v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
-<v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
-</v>
+<v t="ekr.20210805090544.1"></v>
+<v t="ekr.20210805090943.1"></v>
 <v t="ekr.20210807133723.1"><vh>test_ast_arg_formatter_class</vh>
 <v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_arg_formatter_class)</vh></v>
 </v>
@@ -304,31 +331,6 @@
 </v>
 </v>
 </v>
-<v t="ekr.20210806134651.1"><vh>--- recent</vh>
-<v t="ekr.20160318141204.131"></v>
-<v t="ekr.20210805090943.1"></v>
-<v t="ekr.20160318141204.190"></v>
-<v t="ekr.20160318141204.191"></v>
-</v>
-<v t="ekr.20210806162349.1"><vh>--- changed AstFormatter visitors</vh>
-<v t="ekr.20160318141204.91"></v>
-<v t="ekr.20160318141204.31"></v>
-<v t="ekr.20160318141204.35"></v>
-<v t="ekr.20160318141204.20"></v>
-<v t="ekr.20210804214511.1"></v>
-<v t="ekr.20160318141204.75"></v>
-<v t="ekr.20160318141204.18"></v>
-<v t="ekr.20160318141204.83"></v>
-<v t="ekr.20160318141204.84"></v>
-<v t="ekr.20160318141204.85"></v>
-</v>
-<v t="ekr.20210807151105.1"><vh>--- changed StubFormatter visitors</vh>
-<v t="ekr.20160318141204.168"></v>
-<v t="ekr.20160318141204.167"></v>
-</v>
-</v>
-<v t="ekr.20210803055042.1"></v>
-<v t="ekr.20210805090544.1"></v>
 <v t="ekr.20210807105513.1"><vh>--- To do: ###</vh>
 <v t="ekr.20210807105645.1"><vh>--- msf</vh>
 <v t="ekr.20160318141204.135"></v>
@@ -340,23 +342,17 @@
 <v t="ekr.20160318141204.111"></v>
 <v t="ekr.20160318141204.113"></v>
 </v>
-<v t="ekr.20160318141204.149"></v>
 <v t="ekr.20160318141204.118"></v>
 </v>
-<v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser</vh>
+<v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser &amp; StubFormatter</vh>
 <v t="ekr.20160318141204.189"></v>
 <v t="ekr.20160318141204.175"></v>
 <v t="ekr.20160318141204.176"></v>
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.194"></v>
+<v t="ekr.20160318141204.149"></v>
 </v>
-<v t="ekr.20160318141204.102"></v>
-<v t="ekr.20160318141204.188"></v>
-<v t="ekr.20160318141204.190"></v>
 <v t="ekr.20210805092921.1"></v>
-<v t="ekr.20160318141204.171"></v>
-<v t="ekr.20160318141204.187"></v>
-<v t="ekr.20210807193409.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -4476,5 +4472,6 @@ def test_2(*args, **kwargs):
     return args
 """,
 </t>
+<t tx="ekr.20210807213637.1"></t>
 </tnodes>
 </leo_file>
