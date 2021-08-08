@@ -54,7 +54,6 @@
 </v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 </v>
-<v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh>
 <v t="ekr.20210806162349.1"><vh>--- changed AstFormatter visitors</vh>
 <v t="ekr.20160318141204.91"><vh>arg_formatter.Constants &amp; Name</vh></v>
@@ -77,6 +76,11 @@
 <v t="ekr.20210807213637.1"><vh>--- changed StubTraverser methods</vh>
 <v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
 </v>
+</v>
+<v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
+<v t="ekr.20160318141204.59"><vh>f.AnnAssign &amp; Assign</vh></v>
+<v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
+<v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
 </v>
 </vnodes>
 <tnodes>
@@ -920,6 +924,20 @@ def do_keyword(self, node):
     return sorted(set(r1 + r2))
 
 </t>
+<t tx="ekr.20160318141204.59"># AnnAssign(expr target, expr annotation, expr? value, int simple)
+
+def do_AnnAssign(self, node):
+    return self.indent('%s: [%s] = %s\n' % (
+        self.visit(node.target),
+        self.visit(node.annotation),
+        self.visit(node.value)))
+
+def do_Assign(self, node):
+    return self.indent('%s = %s\n' % (
+        '='.join([self.visit(z) for z in node.targets]),
+        self.visit(node.value)))
+
+</t>
 <t tx="ekr.20160318141204.65">def do_Exec(self, node):  # pragma: no cover (Python 2.x only)
     body = self.visit(node.body)
     args = []  # Globals before locals.
@@ -1184,6 +1202,141 @@ https://github.com/edreamleo/make-stub-files/issues/18
 <t tx="ekr.20210805061637.1"></t>
 <t tx="ekr.20210805061856.1"></t>
 <t tx="ekr.20210805061902.1"></t>
+<t tx="ekr.20210805090943.1">def test_ast_formatter_class(self):
+    formatter = AstFormatter()
+    if 0:  # For debugging.
+        tests = ["""\
+            def yield_test():
+                yield 1
+            """
+        ]
+    else:
+        tests = [
+        &lt;&lt; define tests &gt;&gt;
+        ]
+    for i, source_data in enumerate(tests):
+        filename = f"test {i+1}"
+        if isinstance(source_data, str):
+            source = textwrap.dedent(source_data)
+            expected_s = textwrap.dedent(source)
+        else:
+            source, expected = source_data
+            source = textwrap.dedent(source)
+            expected_s = textwrap.dedent(expected)
+        node = ast.parse(source, filename=filename, mode='exec')
+        try:
+            result_s = formatter.format(node)
+        except Exception:
+            self.fail(filename)
+        lines = g.splitLines(result_s)
+        expected = g.splitLines(expected_s)
+        self.assertEqual(expected, lines, msg=filename)
+</t>
+<t tx="ekr.20210805144859.1"># Tests are either a single string, or a tuple: (source, expected).
+
+# Test 1. Class.
+"""\
+class AstFormatter:
+    def format(self, node: Node) -&gt; Union[Any, str]:
+        pass
+""",
+# Test 2: Constant.
+"""\
+a = 1
+b = 2.5
+c = False
+d = None
+""",
+# Test 3: ClassDef
+(
+"""\
+@class_decorator
+class TestClass(str, base2=int):
+    pass
+""",
+"""\
+@class_decorator
+class TestClass(str, base2=int): ...
+    pass
+""",
+),
+# Test 4: FunctionDef
+"""\
+@function_decorator
+def f():
+    pass
+""",
+# Test 5: Position-only arg.
+"""\
+def pos_only_arg(arg, /):
+    pass
+""",
+# Test 6: Keyword-only arg.
+"""\
+def kwd_only_arg(*, arg, arg2=None):
+    pass
+""",
+# Test 7: Position-only and keyword-only args.
+"""\
+def combined_example(pos_only, /, standard, *, kwd_only):
+    pass
+""",
+# Test 8: Call.
+"print(*args, **kwargs)\n",
+# Test 9: Slices: Python 3.9 does not use ExtSlice.
+"print(s[0:1:2])\n",
+# Test 10: Continue.
+"""\
+while 1:
+    continue
+""",
+# Test 11: Delete.
+"del a\n",
+# Test 12: ExceptHandler.
+"""\
+try:
+    pass
+except Exception as e:
+    print('oops')
+else:
+    print('else')
+finally:
+    print('finally')
+""",
+# Test 13: ImportFrom.
+"from a import b as c\n",
+# Test 14: Nonlocal.
+"""\
+def nonlocal_test():
+    nonlocal a
+""",
+# Test 15: Raise.
+"""\
+raise Exception('spam', 'eggs')
+raise
+""",
+# Test 16: While.
+"""\
+while True:
+    print(True)
+else:
+    print('else')
+""",
+# Test 17: With.
+"""\
+with open(f, 'r') as f:
+    f.read()
+""",
+# Test 18: Yield and YieldFrom.
+"""\
+def yield_test():
+    yield 1
+    yield from z
+    yield
+""",
+# Test 19: ImportFrom
+"import a.b as c\n",
+</t>
 <t tx="ekr.20210806162349.1"></t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.

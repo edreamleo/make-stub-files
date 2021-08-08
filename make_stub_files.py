@@ -20,10 +20,12 @@ import configparser
 import glob
 import io
 import os
+import pdb
 import re
 import sys
 import textwrap
 import time
+from typing import Dict, List, Tuple
 import unittest
 #@-<< imports >>
 #@+others
@@ -481,7 +483,15 @@ class AstFormatter:
             return self.indent('assert %s, %s' % (test, message))
         return self.indent('assert %s' % test)
 
-    #@+node:ekr.20160318141204.59: *4* f.Assign
+    #@+node:ekr.20160318141204.59: *4* f.AnnAssign & Assign
+    # AnnAssign(expr target, expr annotation, expr? value, int simple)
+
+    def do_AnnAssign(self, node):
+        return self.indent('%s: [%s] = %s\n' % (
+            self.visit(node.target),
+            self.visit(node.annotation),
+            self.visit(node.value)))
+
     def do_Assign(self, node):
         return self.indent('%s = %s\n' % (
             '='.join([self.visit(z) for z in node.targets]),
@@ -957,8 +967,8 @@ class Controller:
                 files = [files]
         elif parser.has_section('Global'):
             files_source = 'config file'
-            files = parser.get('Global', 'files')
-            files = [z.strip() for z in files.split('\n') if z.strip()]
+            files = parser.get('Global', 'files')  # type:ignore
+            files = [z.strip() for z in files.split('\n') if z.strip()]  # type:ignore
         else:  # pragma: no cover
             return
         if self.verbose:  # pragma: no cover
@@ -1035,7 +1045,7 @@ class Controller:
     def create_parser(self):
         """Create a RawConfigParser and return it."""
         parser = configparser.RawConfigParser(dict_type=OrderedDict)
-        parser.optionxform = str
+        parser.optionxform = str # type:ignore
         return parser
     #@+node:ekr.20160318141204.135: *4* msf.find_pattern_ops
     def find_pattern_ops(self, pattern):
@@ -1325,12 +1335,7 @@ class LeoGlobals:  # pragma: no cover
         return '%s...\n%s\n' % (tag, s) if tag else s
     #@+node:ekr.20160318141204.98: *3* g.pdb
     def pdb(self):
-        try:
-            import leo.core.leoGlobals as leo_g
-            leo_g.pdb()
-        except ImportError:
-            import pdb
-            pdb.set_trace()
+        pdb.set_trace()
     #@+node:ekr.20180902034446.1: *3* g.printObj
     def printObj(self, obj, indent='', printCaller=False, tag=None):
         """Pretty print any Python object using g.pr."""
@@ -1586,13 +1591,13 @@ class ReduceTypes:
         brackets. This prevents unwanted Any types.
         """
         s = s.strip()
-        table = (
+        types_table = (
             '', 'None',  # Tricky.
             'complex', 'float', 'int', 'long', 'number',
             'dict', 'list', 'tuple',
             'bool', 'bytes', 'str', 'unicode',
         )
-        for s2 in table:
+        for s2 in types_table:
             if s2 == s:
                 return True
             if s2 and Pattern(s2 + '(*)', s).match_entire_string(s):  # 2021/08/08
@@ -1605,7 +1610,7 @@ class ReduceTypes:
             return self.is_known_type(inner) if inner else True
         if s.startswith('{') and s.endswith('}'):
             return True
-        table = (
+        names_table = (
             # Pep 484: https://www.python.org/dev/peps/pep-0484/
             # typing module: https://docs.python.org/3/library/typing.html
             # Test the most common types first.
@@ -1628,7 +1633,7 @@ class ReduceTypes:
             'Undefined', 'UnionMeta',
             'VT', 'ValuesView', 'VarBinding',
         )
-        for s2 in table:
+        for s2 in names_table:
             if s2 == s:
                 return True
             # Don't look inside bracketss.
@@ -1734,8 +1739,8 @@ class ReduceTypes:
                 context = g.callers(3).split(',')[0].strip()
             context = truncate(context, 26)
             known = '' if known else '? '
-            pattern = sorted(set([z.replace('\n', ' ') for z in aList]))
-            pattern = '[%s]' % truncate(', '.join(pattern), 53 - 2)
+            pattern = sorted(set([z.replace('\n', ' ') for z in aList]))  # type:ignore
+            pattern = '[%s]' % truncate(', '.join(pattern), 53 - 2)  # type:ignore
             print('reduce_types: %-26s %53s ==> %s%s' % (context, pattern, known, s))
                 # widths above match the corresponding indents in match_all and match.
         return s
@@ -1764,7 +1769,7 @@ class Stub:
     #@+node:ekr.20160318141204.142: *3* stub.ctor
     def __init__(self, kind, name, parent=None, stack=None):
         """Stub ctor. Equality depends only on full_name and kind."""
-        self.children = []
+        self.children: List[Stub] = []
         self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
         self.kind = kind
         self.name = name
@@ -1836,7 +1841,7 @@ class StubFormatter(AstFormatter):
         # mypy workarounds
         self.seen_names = []
     #@+node:ekr.20160318141204.149: *3* sf.match_all
-    matched_d = {}
+    matched_d: Dict[str, List[str]] = {}
 
     def match_all(self, node, s, trace=False):
         """Match all the patterns for the given node."""
@@ -2233,11 +2238,11 @@ class StubTraverser(ast.NodeVisitor):
         Parse by hand, so that --update can be run with Python 2.
         """
         assert '\t' not in s
-        d = {}
+        d: Dict[str, Stub] = {}
         root = Stub(kind='root', name=root_name)
         indent_stack = [-1]  # To prevent the root from being popped.
         stub_stack = [root]
-        lines = []
+        lines: List[str] = []
         pat = re.compile(r'^([ ]*)(def|class)\s+([a-zA-Z_]+)(.*)')
         for line in g.splitLines(s):
             m = pat.match(line)
@@ -3073,6 +3078,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
                 yield from z
                 yield
             """,
+            # Test 19: ImportFrom
+            "import a.b as c\n",
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):
@@ -3382,7 +3389,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         # Part 3: test match_all.
         source = '("a", "b")\n'
         root = ast.parse(source, filename='match-all', mode='exec')
-        for node in ast.walk(root):
+        for node in ast.walk(root):  # type:ignore
             formatter.match_all(node, 'hash(a)', trace=False)
     #@+node:ekr.20210808063828.1: *3* test_stub_traverser_class
     def test_stub_traverser_class(self):
