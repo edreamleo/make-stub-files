@@ -1847,14 +1847,14 @@ class StubFormatter(AstFormatter):
         patterns = self.patterns_dict.get(name, []) + self.regex_patterns
         for pattern in patterns:
             found, s = pattern.match(s, trace=False)
+            if found and trace:  # pragma: no cover
+                caller = g.callers(2).split(',')[1].strip()  # The direct caller of match_all.
+                aList = d.get(name, [])
+                if pattern not in aList:
+                    aList.append(pattern)
+                    d[name] = aList
+                    print('match_all:    %-12s %26s %40s ==> %s' % (caller, pattern, s1, s))
             if found:
-                if trace:  # pragma: no cover
-                    caller = g.callers(2).split(',')[1].strip()  # The direct caller of match_all.
-                    aList = d.get(name, [])
-                    if pattern not in aList:
-                        aList.append(pattern)
-                        d[name] = aList
-                        print('match_all:    %-12s %26s %40s ==> %s' % (caller, pattern, s1, s))
                 break
         return s
     #@+node:ekr.20160318141204.151: *3* sf.trace_visitor
@@ -2389,14 +2389,12 @@ class StubTraverser(ast.NodeVisitor):
             return '\n'.join(aList) + '\n'
         return ''
     #@+node:ekr.20160318141204.186: *3* st.visit_ClassDef
-    # ClassDef(identifier name, expr* bases,
-    #       keyword* keywords, expr? starargs, expr? kwargs
-    #       stmt* body, expr* decorator_list)
+    # ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
     #
     # keyword arguments supplied to call (NULL identifier for **kwargs)
     # keyword = (identifier? arg, expr value)
 
-    def visit_ClassDef(self, node):  ###
+    def visit_ClassDef(self, node):
 
         # Create the stub in the old context.
         old_stub = self.parent_stub
@@ -2408,20 +2406,14 @@ class StubTraverser(ast.NodeVisitor):
         self.context_stack.append(node.name)
         if self.trace_matches or self.trace_reduce:  # pragma: no cover
             print('\nclass %s\n' % node.name)
-        #
         # Fix issue #2: look ahead to see if there are any functions in this class.
         empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
         tail = ' ...' if empty else ''
-        #
         # Format...
         bases = [self.visit(z) for z in node.bases] if node.bases else []
-        if getattr(node, 'keywords', None):  # Python 3
+        if getattr(node, 'keywords', None):
             for keyword in node.keywords:
                 bases.append('%s=%s' % (keyword.arg, self.visit(keyword.value)))
-        if getattr(node, 'starargs', None):  # Python 3
-            bases.append('*%s', self.visit(node.starargs))
-        if getattr(node, 'kwargs', None):  # Python 3
-            bases.append('*%s', self.visit(node.kwargs))
         if not node.name.startswith('_'):
             if node.bases:
                 s = '(%s)' % ', '.join([self.format(z) for z in node.bases])
@@ -2594,7 +2586,7 @@ class StubTraverser(ast.NodeVisitor):
                 reduced_result.append(reduced[i])
         return raw_result, reduced_result
     #@+node:ekr.20160318141204.194: *3* st.visit_Return
-    def visit_Return(self, node):  ###
+    def visit_Return(self, node):
         self.returns.append(node)
             # New: return the entire node, not node.value.
     #@-others
@@ -3383,11 +3375,33 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         controller.scan_options()
         #
         # Part 3: test match_all.
-        # source = '(str.join("a", "b"), 101)\n'
         source = '("a", "b")\n'
         root = ast.parse(source, filename='match-all', mode='exec')
         for node in ast.walk(root):
             formatter.match_all(node, 'hash(a)', trace=False)
+    #@+node:ekr.20210808063828.1: *3* test_stub_traverser_class
+    def test_stub_traverser_class(self):
+        tag = 'test_stub_traverser_class'
+        controller = Controller()
+        traverser = StubTraverser(controller)
+        traverser.output_file = io.StringIO()
+        source = textwrap.dedent("""\
+            class Test(base1, base2=None):
+                def test(self):
+                    if 1:
+                        return True
+            """)
+        expected_output = textwrap.dedent("""\
+            class Test(base1):
+                def test(self) -> bool: ...
+            """)
+        node = ast.parse(source, filename=tag, mode='exec')
+        # Like traverser.run
+        traverser.parent_stub = Stub(kind='root', name='<new-stubs>')
+        traverser.visit(node)
+        traverser.output_stubs(traverser.parent_stub)
+        output = traverser.output_file.getvalue()
+        self.assertEqual(output, expected_output)
     #@-others
 #@-others
 g = LeoGlobals()

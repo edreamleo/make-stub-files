@@ -252,6 +252,7 @@
 <v t="ekr.20160318141204.123"><vh>rt.show</vh></v>
 <v t="ekr.20160318141204.124"><vh>rt.split_types</vh></v>
 </v>
+</v>
 <v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
 <v t="ekr.20210805091045.1"><vh>test class ReduceTypes</vh>
 <v t="ekr.20210808033520.1"><vh>test_rt_is_known_type</vh></v>
@@ -278,7 +279,7 @@
 <v t="ekr.20210807133118.1"><vh>test_stub_formatter_class</vh>
 <v t="ekr.20210807133228.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
 </v>
-</v>
+<v t="ekr.20210808063828.1"><vh>test_stub_traverser_class</vh></v>
 </v>
 <v t="ekr.20160318141204.147"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160318141204.148"><vh>sf.ctor</vh></v>
@@ -334,15 +335,13 @@
 </v>
 <v t="ekr.20160318141204.194"><vh>st.visit_Return</vh></v>
 </v>
+<v t="ekr.20160318141204.186"></v>
 <v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser &amp; StubFormatter</vh>
 <v t="ekr.20160318141204.189"></v>
 <v t="ekr.20160318141204.175"></v>
 <v t="ekr.20160318141204.176"></v>
-<v t="ekr.20160318141204.186"></v>
-<v t="ekr.20160318141204.194"></v>
 </v>
-<v t="ekr.20160318141204.149"></v>
-<v t="ekr.20210807133118.1"></v>
+<v t="ekr.20210808063828.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1849,14 +1848,14 @@ def match_all(self, node, s, trace=False):
     patterns = self.patterns_dict.get(name, []) + self.regex_patterns
     for pattern in patterns:
         found, s = pattern.match(s, trace=False)
+        if found and trace:  # pragma: no cover
+            caller = g.callers(2).split(',')[1].strip()  # The direct caller of match_all.
+            aList = d.get(name, [])
+            if pattern not in aList:
+                aList.append(pattern)
+                d[name] = aList
+                print('match_all:    %-12s %26s %40s ==&gt; %s' % (caller, pattern, s1, s))
         if found:
-            if trace:  # pragma: no cover
-                caller = g.callers(2).split(',')[1].strip()  # The direct caller of match_all.
-                aList = d.get(name, [])
-                if pattern not in aList:
-                    aList.append(pattern)
-                    d[name] = aList
-                    print('match_all:    %-12s %26s %40s ==&gt; %s' % (caller, pattern, s1, s))
             break
     return s
 </t>
@@ -2419,14 +2418,12 @@ def flatten_stubs_helper(self, root, aList):
         return '\n'.join(aList) + '\n'
     return ''
 </t>
-<t tx="ekr.20160318141204.186"># ClassDef(identifier name, expr* bases,
-#       keyword* keywords, expr? starargs, expr? kwargs
-#       stmt* body, expr* decorator_list)
+<t tx="ekr.20160318141204.186"># ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
 #
 # keyword arguments supplied to call (NULL identifier for **kwargs)
 # keyword = (identifier? arg, expr value)
 
-def visit_ClassDef(self, node):  ###
+def visit_ClassDef(self, node):
 
     # Create the stub in the old context.
     old_stub = self.parent_stub
@@ -2438,20 +2435,14 @@ def visit_ClassDef(self, node):  ###
     self.context_stack.append(node.name)
     if self.trace_matches or self.trace_reduce:  # pragma: no cover
         print('\nclass %s\n' % node.name)
-    #
     # Fix issue #2: look ahead to see if there are any functions in this class.
     empty = not any(isinstance(z, ast.FunctionDef) for z in node.body)
     tail = ' ...' if empty else ''
-    #
     # Format...
     bases = [self.visit(z) for z in node.bases] if node.bases else []
-    if getattr(node, 'keywords', None):  # Python 3
+    if getattr(node, 'keywords', None):
         for keyword in node.keywords:
             bases.append('%s=%s' % (keyword.arg, self.visit(keyword.value)))
-    if getattr(node, 'starargs', None):  # Python 3
-        bases.append('*%s', self.visit(node.starargs))
-    if getattr(node, 'kwargs', None):  # Python 3
-        bases.append('*%s', self.visit(node.kwargs))
     if not node.name.startswith('_'):
         if node.bases:
             s = '(%s)' % ', '.join([self.format(z) for z in node.bases])
@@ -2627,7 +2618,7 @@ def munge_arg(self, s):
             reduced_result.append(reduced[i])
     return raw_result, reduced_result
 </t>
-<t tx="ekr.20160318141204.194">def visit_Return(self, node):  ###
+<t tx="ekr.20160318141204.194">def visit_Return(self, node):
     self.returns.append(node)
         # New: return the entire node, not node.value.
 </t>
@@ -4239,7 +4230,6 @@ print(T)</t>
     controller.scan_options()
     #
     # Part 3: test match_all.
-    # source = '(str.join("a", "b"), 101)\n'
     source = '("a", "b")\n'
     root = ast.parse(source, filename='match-all', mode='exec')
     for node in ast.walk(root):
@@ -4360,7 +4350,8 @@ c = bool
 # test = '.TestMakeStubFiles.test_rt_is_known_type'
 # test = '.TestMakeStubFiles.test_pattern_class'
 # test = '.TestMakeStubFiles.test_controller_class'
-test = '.TestMakeStubFiles.test_stub_formatter_class'
+# test = '.TestMakeStubFiles.test_stub_formatter_class'
+test = '.TestMakeStubFiles.test_stub_traverser_class'
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210807133723.1">def test_ast_arg_formatter_class(self):
@@ -4470,6 +4461,29 @@ def test_2(*args, **kwargs):
     controller.config_fn = finalize('make_stub_files.cfg')
     controller.scan_options()
     self.assertTrue(controller.parser)
+</t>
+<t tx="ekr.20210808063828.1">def test_stub_traverser_class(self):
+    tag = 'test_stub_traverser_class'
+    controller = Controller()
+    traverser = StubTraverser(controller)
+    traverser.output_file = io.StringIO()
+    source = textwrap.dedent("""\
+        class Test(base1, base2=None):
+            def test(self):
+                if 1:
+                    return True
+        """)
+    expected_output = textwrap.dedent("""\
+        class Test(base1):
+            def test(self) -&gt; bool: ...
+        """)
+    node = ast.parse(source, filename=tag, mode='exec')
+    # Like traverser.run
+    traverser.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
+    traverser.visit(node)
+    traverser.output_stubs(traverser.parent_stub)
+    output = traverser.output_file.getvalue()
+    self.assertEqual(output, expected_output)
 </t>
 </tnodes>
 </leo_file>
