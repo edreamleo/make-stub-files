@@ -496,7 +496,6 @@ class AstFormatter:
         return self.indent('%s = %s\n' % (
             '='.join([self.visit(z) for z in node.targets]),
             self.visit(node.value)))
-
     #@+node:ekr.20160318141204.60: *4* f.AugAssign
     def do_AugAssign(self, node):
         return self.indent('%s%s=%s\n' % (
