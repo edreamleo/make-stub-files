@@ -3974,8 +3974,6 @@ c.redraw()
 
 https://github.com/edreamleo/make-stub-files/issues/18
 
-2259-2264, 2587
-
 @language python
 @nosearch
 </t>
