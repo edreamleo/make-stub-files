@@ -25,7 +25,6 @@ except ImportError:
 import glob
 import os
 import re
-import subprocess
 import sys
 import textwrap
 import time
@@ -1353,19 +1352,7 @@ class LeoGlobals:  # pragma: no cover
         """Clear the screen."""
         if sys.platform.lower().startswith('win'):
             os.system('cls')
-    #@+node:ekr.20180902073131.1: *3* g.execute_shell_commands
-    def execute_shell_commands(self, commands, trace=False):
-        """
-        Execute each shell command in a separate process.
-        Wait for each command to complete, except those starting with '&'
-        """
-        if g.isString(commands): commands = [commands]
-        for command in commands:
-            wait = not command.startswith('&')
-            if command.startswith('&'): command = command[1:].strip()
-            proc = subprocess.Popen(command, shell=True)
-            if wait: proc.communicate()
-    #@+node:ekr.20160318141204.97: *3* g.isString & isUnicode (make_stub_files.py)
+    #@+node:ekr.20160318141204.97: *3* g.isString & isUnicode
     def isString(self, s):
         """Return True if s is any string, but not bytes."""
         # pylint: disable=no-member

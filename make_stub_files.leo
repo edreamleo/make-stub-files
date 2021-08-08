@@ -45,9 +45,10 @@
 </v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 </v>
-<v t="ekr.20160318141204.1" descendentVnodeUnknownAttributes="7d71005805000000302e352e3471017d71025808000000616e6e6f7461746571037d710473732e"><vh>@file make_stub_files.py</vh></v>
+<v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh>
 <v t="ekr.20210807194019.1"><vh> --- no longer used</vh>
+<v t="ekr.20180902073131.1"><vh>g.execute_shell_commands</vh></v>
 <v t="ekr.20160318141204.93"><vh>class NullObject (Python Cookbook)</vh></v>
 </v>
 <v t="ekr.20210807120326.1"><vh> --- tests</vh>
@@ -158,6 +159,23 @@
 <v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
 <v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
 </v>
+</v>
+<v t="ekr.20160318141204.92"><vh>class LeoGlobals</vh>
+<v t="ekr.20160318141204.94"><vh>g._callerName</vh></v>
+<v t="ekr.20180902035806.1"><vh>g.caller</vh></v>
+<v t="ekr.20160318141204.95"><vh>g.callers</vh></v>
+<v t="ekr.20160318141204.96"><vh>g.cls</vh></v>
+<v t="ekr.20160318141204.97"><vh>g.isString &amp; isUnicode</vh></v>
+<v t="ekr.20180902034437.1"><vh>g.objToSTring &amp; helpers</vh>
+<v t="ekr.20180902041247.1"><vh>g.dictToString</vh></v>
+<v t="ekr.20180902041311.1"><vh>g.listToString</vh></v>
+<v t="ekr.20180902041320.1"><vh>g.tupleToString</vh></v>
+</v>
+<v t="ekr.20160318141204.98"><vh>g.pdb</vh></v>
+<v t="ekr.20180902034446.1"><vh>g.printObj</vh></v>
+<v t="ekr.20160318141204.99"><vh>g.shortFileName</vh></v>
+<v t="ekr.20160318141204.100"><vh>g.splitLines</vh></v>
+<v t="ekr.20160318141204.101"><vh>g.trace</vh></v>
 </v>
 <v t="ekr.20160318141204.102"><vh>class Pattern</vh>
 <v t="ekr.20160318141204.103"><vh>pattern.ctor</vh></v>
@@ -1000,6 +1018,23 @@ the config file.
 7. Specify a configuration file containing patterns:
 
         make_stub_files -c myConfigFile.cfg -o
+</t>
+<t tx="ekr.20160318141204.100">def splitLines(self, s):
+    """Split s into lines, preserving trailing newlines."""
+    return s.splitlines(True) if s else []
+</t>
+<t tx="ekr.20160318141204.101">def trace(self, *args, **keys):
+
+    # Compute the caller name.
+    try:
+        f1 = sys._getframe(1)
+        code1 = f1.f_code
+        name = code1.co_name
+    except Exception:
+        name = ''
+    print('%s: %s' % (name, ' '.join(str(z) for z in args)))
+
+    
 </t>
 <t tx="ekr.20160318141204.102">class Pattern:
     """
@@ -3389,6 +3424,10 @@ def do_Str(self, node):  # pragma: no cover (obsolete)
     """This represents a string constant."""
     return 'str'
 </t>
+<t tx="ekr.20160318141204.92">class LeoGlobals:  # pragma: no cover
+    """A class supporting g.pdb and g.trace for compatibility with Leo."""
+    @others
+</t>
 <t tx="ekr.20160318141204.93">
 class NullObject:
     """
@@ -3404,6 +3443,82 @@ class NullObject:
     def __delattr__(self, attr): return self
     def __getattr__(self, attr): return self
     def __setattr__(self, attr, val): return self
+</t>
+<t tx="ekr.20160318141204.94">def _callerName(self, n=1, files=False):
+    # print('_callerName: %s %s' % (n,files))
+    try:  # get the function name from the call stack.
+        f1 = sys._getframe(n)  # The stack frame, n levels up.
+        code1 = f1.f_code  # The code object
+        name = code1.co_name
+        if name == '__init__':
+            name = '__init__(%s,line %s)' % (
+                self.shortFileName(code1.co_filename), code1.co_firstlineno)
+        if files:
+            return '%s:%s' % (self.shortFileName(code1.co_filename), name)
+        return name  # The code name
+    except ValueError:
+        # print('g._callerName: ValueError',n)
+        return ''  # The stack is not deep enough.
+    except Exception:
+        # es_exception()
+        return ''  # "&lt;no caller name&gt;"
+</t>
+<t tx="ekr.20160318141204.95">def callers(self, n=4, count=0, excludeCaller=True, files=False):
+    """Return a list containing the callers of the function that called g.callerList.
+
+    If the excludeCaller keyword is True (the default), g.callers is not on the list.
+
+    If the files keyword argument is True, filenames are included in the list.
+    """
+    # sys._getframe throws ValueError in both cpython and jython if there are less than i entries.
+    # The jython stack often has less than 8 entries,
+    # so we must be careful to call g._callerName with smaller values of i first.
+    result = []
+    i = 3 if excludeCaller else 2
+    while 1:
+        s = self._callerName(i, files=files)
+        # print(i,s)
+        if s:
+            result.append(s)
+        if not s or len(result) &gt;= n: break
+        i += 1
+    result.reverse()
+    if count &gt; 0: result = result[:count]
+    sep = '\n' if files else ','
+    return sep.join(result)
+</t>
+<t tx="ekr.20160318141204.96">def cls(self):
+    """Clear the screen."""
+    if sys.platform.lower().startswith('win'):
+        os.system('cls')
+</t>
+<t tx="ekr.20160318141204.97">def isString(self, s):
+    """Return True if s is any string, but not bytes."""
+    # pylint: disable=no-member
+    if isPython3:
+        return isinstance(s, str)
+    return isinstance(s, types.StringTypes)
+
+def isUnicode(self, s):
+    """Return True if s is a unicode string."""
+    # pylint: disable=no-member
+    if isPython3:
+        return isinstance(s, str)
+    return isinstance(s, types.UnicodeType)
+</t>
+<t tx="ekr.20160318141204.98">def pdb(self):
+    try:
+        import leo.core.leoGlobals as leo_g
+        leo_g.pdb()
+    except ImportError:
+        import pdb
+        pdb.set_trace()
+</t>
+<t tx="ekr.20160318141204.99">def shortFileName(self, fileName, n=None):
+    # pylint: disable=invalid-unary-operand-type
+    if n is None or n &lt; 1:
+        return os.path.basename(fileName)
+    return '/'.join(fileName.replace('\\', '/').split('/')[-n :])
 </t>
 <t tx="ekr.20160330201030.1">Metadata-Version: 1.0
 Name: make_stub_files
@@ -3511,6 +3626,119 @@ Categories:
     # Test.
     lines = g.splitLines(st.output_file.getvalue())
     self.assertEqual(lines, expected)
+</t>
+<t tx="ekr.20180902034437.1">def objToString(self, obj, indent='', printCaller=False, tag=None):
+    """Pretty print any Python object to a string."""
+    # pylint: disable=undefined-loop-variable
+        # Looks like a a pylint bug.
+    #
+    # Compute s.
+    if isinstance(obj, dict):
+        s = self.dictToString(obj, indent=indent)
+    elif isinstance(obj, list):
+        s = self.listToString(obj, indent=indent)
+    elif isinstance(obj, tuple):
+        s = self.tupleToString(obj, indent=indent)
+    elif g.isString(obj):
+        # Print multi-line strings as lists.
+        s = obj
+        lines = g.splitLines(s)
+        if len(lines) &gt; 1:
+            s = self.objToString(lines, indent=indent)
+        else:
+            s = repr(s)
+    else:
+        s = repr(obj)
+    #
+    # Compute the return value.
+    if printCaller and tag:
+        prefix = '%s: %s' % (g.caller(), tag)
+    elif printCaller or tag:
+        prefix = self.caller() if printCaller else tag
+    else:
+        prefix = None
+    return '%s...\n%s\n' % (prefix, s) if prefix else s
+
+toString = objToString
+</t>
+<t tx="ekr.20180902034446.1">def printObj(self, obj, indent='', printCaller=False, tag=None):
+    """Pretty print any Python object using g.pr."""
+    print(self.objToString(obj, indent=indent, printCaller=printCaller, tag=tag))
+
+</t>
+<t tx="ekr.20180902035806.1">def caller(self, i=1):
+    """Return the caller name i levels up the stack."""
+    return self.callers(i + 1).split(',')[0]
+</t>
+<t tx="ekr.20180902041247.1">def dictToString(self, d, indent='', tag=None):
+    """Pretty print a Python dict to a string."""
+    # pylint: disable=unnecessary-lambda
+    if not d:
+        return '{}'
+    result = ['{\n']
+    indent2 = indent + ' ' * 4
+    n = 2 + len(indent) + max([len(repr(z)) for z in d.keys()])
+    for i, key in enumerate(sorted(d, key=lambda z: repr(z))):
+        pad = ' ' * max(0, (n - len(repr(key))))
+        result.append('%s%s:' % (pad, key))
+        result.append(self.objToString(d.get(key), indent=indent2))
+        if i + 1 &lt; len(d.keys()):
+            result.append(',')
+        result.append('\n')
+    result.append(indent + '}')
+    s = ''.join(result)
+    return '%s...\n%s\n' % (tag, s) if tag else s
+</t>
+<t tx="ekr.20180902041311.1">def listToString(self, obj, indent='', tag=None):
+    """Pretty print a Python list to a string."""
+    if not obj:
+        return '[]'
+    result = ['[']
+    indent2 = indent + ' ' * 4
+    for i, obj2 in enumerate(obj):
+        if len(obj) &gt; 1:
+            result.append('\n' + indent2)
+        result.append(self.objToString(obj2, indent=indent2))
+        if i + 1 &lt; len(obj) &gt; 1:
+            result.append(',')
+        elif len(obj) &gt; 1:
+            result.append('\n' + indent)
+    result.append(']')
+    s = ''.join(result)
+    return '%s...\n%s\n' % (tag, s) if tag else s
+</t>
+<t tx="ekr.20180902041320.1">def tupleToString(self, obj, indent='', tag=None):
+    """Pretty print a Python tuple to a string."""
+    if not obj:
+        return '(),'
+    result = ['(']
+    indent2 = indent + ' ' * 4
+    for i, obj2 in enumerate(obj):
+        if len(obj) &gt; 1:
+            result.append('\n' + indent2)
+        result.append(self.objToString(obj2, indent=indent2))
+        if len(obj) == 1 or i + 1 &lt; len(obj):
+            result.append(',')
+        elif len(obj) &gt; 1:
+            result.append('\n' + indent)
+    result.append(')')
+    s = ''.join(result)
+    return '%s...\n%s\n' % (tag, s) if tag else s
+</t>
+<t tx="ekr.20180902073131.1" annotate="7d71002e">def execute_shell_commands(self, commands, trace=False):
+    """
+    Execute each shell command in a separate process.
+    Wait for each command to complete, except those starting with '&amp;'
+    """
+    if g.isString(commands):
+        commands = [commands]
+    for command in commands:
+        wait = not command.startswith('&amp;')
+        if command.startswith('&amp;'):
+            command = command[1:].strip()
+        proc = subprocess.Popen(command, shell=True)
+        if wait:
+            proc.communicate()
 </t>
 <t tx="ekr.20210803055042.1">class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     """Unit tests for make_stub_files.py"""
