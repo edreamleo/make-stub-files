@@ -319,7 +319,7 @@
 <v t="ekr.20210804111613.1"><vh>test_rt_reduce_types</vh></v>
 <v t="ekr.20210804111803.1"><vh>test_rt_split_types</vh></v>
 </v>
-<v t="ekr.20210804103146.1"><vh>test class Pattern (mostly complete)</vh></v>
+<v t="ekr.20210804103146.1"><vh>test class Pattern</vh></v>
 <v t="ekr.20210804112556.1"><vh>test class Stub (complete)</vh></v>
 <v t="ekr.20210807133118.1"><vh>test_stub_formatter_class</vh>
 <v t="ekr.20210807133228.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
@@ -340,10 +340,6 @@
 <v t="ekr.20160318141204.139"></v>
 <v t="ekr.20160318141204.140"></v>
 </v>
-<v t="ekr.20210807105658.1"><vh>--- Pattern</vh>
-<v t="ekr.20160318141204.111"></v>
-<v t="ekr.20160318141204.113"></v>
-</v>
 <v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser &amp; StubFormatter</vh>
 <v t="ekr.20160318141204.189"></v>
 <v t="ekr.20160318141204.175"></v>
@@ -354,7 +350,7 @@
 </v>
 </v>
 <v t="ekr.20210803055042.1"></v>
-<v t="ekr.20210805091045.1"></v>
+<v t="ekr.20210804103146.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1095,7 +1091,7 @@ __str__ = __repr__
     if s.endswith('*'):
         return True
     for pattern in ('(*)', '[*]', '{*}'):
-        if s.find(pattern) &gt; -1:
+        if pattern in s:
             return True
     return False
 </t>
@@ -1118,7 +1114,7 @@ __str__ = __repr__
             progress = i
             j = self.full_balanced_match(s, i)
             if j is None:
-                i += 1#   pragma: no cover
+                i += 1  #  pragma: no cover
             else:
                 aList.append((i, j),)
                 i = j
@@ -1154,7 +1150,7 @@ __str__ = __repr__
     Return the index of the end of the balanced parenthesized string, or len(s)+1.
     """
     global g_input_file_name
-    assert s[i] == delim, s[i]
+    assert s[i] == delim, (s, s[i], delim)
     assert delim in '([{'
     delim2 = ')]}'['([{'.index(delim)]
     assert delim2 in ')]}'
@@ -1174,7 +1170,7 @@ __str__ = __repr__
     print('%20s: unmatched %s in %s' % (g_input_file_name, delim, s))  # pragma: no cover
     return len(s) + 1  # pragma: no cover
 </t>
-<t tx="ekr.20160318141204.111">def match(self, s, trace=False):  ###
+<t tx="ekr.20160318141204.111">def match(self, s, trace=False):
     """
     Perform the match on the entire string if possible.
     Return (found, new s)
@@ -1200,7 +1196,7 @@ __str__ = __repr__
     m = self.regex.match(s)
     return m and m.group(0) == s
 </t>
-<t tx="ekr.20160318141204.113">def replace(self, m, s):  ###
+<t tx="ekr.20160318141204.113">def replace(self, m, s):
     """Perform any kind of replacement."""
     if self.is_balanced():
         start, end = m
@@ -1209,7 +1205,7 @@ __str__ = __repr__
 </t>
 <t tx="ekr.20160318141204.114">def replace_balanced(self, s1, start, end):
     """
-    Use m (returned by all_matches) to replace s by the string implied by repr_s.
+    Use start, end to replace s by the string implied by repr_s.
     Within repr_s, * star matches corresponding * in find_s
     """
     s = s1[start:end]
@@ -3752,6 +3748,26 @@ g.execute_shell_commands(command, trace=False)</t>
     aSet.add(p3)
     self.assertTrue(p1.match_entire_string('abc'))
     self.assertFalse(p1.match_entire_string('abcx'))
+    # Test pattern.match.
+    p4 = Pattern('[*]', '[*]')
+    self.assertTrue(p4.is_balanced())
+    found, new_s = p4.match('xyzzy')
+    self.assertFalse(found, msg='p4')
+    p5 = Pattern('abc', 'xyz')
+    self.assertFalse(p5.is_balanced())
+    found, new_s = p5.match('xyzzy')
+    self.assertFalse(found, msg='p5')
+    # Test pattern.replace.
+    found, new_s = p5.match('abc')
+    self.assertTrue(found, msg='replace p5')
+    result = p5.replace(found, 'ABC')
+    self.assertTrue(result, 'ABC')
+    p6 = Pattern('list[*]', 'List[*]')
+    found, s = p6.match('list[abc]')
+    self.assertTrue(found, msg='p6')
+    self.assertTrue(p6.all_matches('list[abc]'))
+    for m in reversed(p6.all_matches('list[abc]')):
+        pattern.replace(m, 'list(xyz)')
 </t>
 <t tx="ekr.20210804105256.1">def test_rt_reduce_numbers(self):
     a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
@@ -4194,7 +4210,6 @@ print(T)</t>
 <t tx="ekr.20210807105513.1">@nosearch
 </t>
 <t tx="ekr.20210807105645.1"></t>
-<t tx="ekr.20210807105658.1"></t>
 <t tx="ekr.20210807105731.1"></t>
 <t tx="ekr.20210807120326.1"></t>
 <t tx="ekr.20210807133118.1">def test_stub_formatter_class(self):
@@ -4342,7 +4357,8 @@ c = bool
 # test = '.TestMakeStubFiles.test_ast_arg_formatter_class'
 # test = '.TestMakeStubFiles.test_stub_formatter_class'
 # test = '.TestMakeStubFiles.test_st_format_returns'
-test = '.TestMakeStubFiles.test_rt_is_known_type'
+# test = '.TestMakeStubFiles.test_rt_is_known_type'
+test = '.TestMakeStubFiles.test_pattern_class'
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210807133723.1">def test_ast_arg_formatter_class(self):

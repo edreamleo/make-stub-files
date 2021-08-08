@@ -1416,7 +1416,7 @@ class Pattern:
         if s.endswith('*'):
             return True
         for pattern in ('(*)', '[*]', '{*}'):
-            if s.find(pattern) > -1:
+            if pattern in s:
                 return True
         return False
     #@+node:ekr.20160318141204.107: *3* pattern.is_regex
@@ -1439,7 +1439,7 @@ class Pattern:
                 progress = i
                 j = self.full_balanced_match(s, i)
                 if j is None:
-                    i += 1#   pragma: no cover
+                    i += 1  #  pragma: no cover
                 else:
                     aList.append((i, j),)
                     i = j
@@ -1475,7 +1475,7 @@ class Pattern:
         Return the index of the end of the balanced parenthesized string, or len(s)+1.
         """
         global g_input_file_name
-        assert s[i] == delim, s[i]
+        assert s[i] == delim, (s, s[i], delim)
         assert delim in '([{'
         delim2 = ')]}'['([{'.index(delim)]
         assert delim2 in ')]}'
@@ -1495,7 +1495,7 @@ class Pattern:
         print('%20s: unmatched %s in %s' % (g_input_file_name, delim, s))  # pragma: no cover
         return len(s) + 1  # pragma: no cover
     #@+node:ekr.20160318141204.111: *3* pattern.match (trace-matches)
-    def match(self, s, trace=False):  ###
+    def match(self, s, trace=False):
         """
         Perform the match on the entire string if possible.
         Return (found, new s)
@@ -1521,7 +1521,7 @@ class Pattern:
         m = self.regex.match(s)
         return m and m.group(0) == s
     #@+node:ekr.20160318141204.113: *3* pattern.replace & helpers
-    def replace(self, m, s):  ###
+    def replace(self, m, s):
         """Perform any kind of replacement."""
         if self.is_balanced():
             start, end = m
@@ -1530,7 +1530,7 @@ class Pattern:
     #@+node:ekr.20160318141204.114: *4* pattern.replace_balanced
     def replace_balanced(self, s1, start, end):
         """
-        Use m (returned by all_matches) to replace s by the string implied by repr_s.
+        Use start, end to replace s by the string implied by repr_s.
         Within repr_s, * star matches corresponding * in find_s
         """
         s = s1[start:end]
@@ -2929,7 +2929,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         for s, expected in table:
             got = ReduceTypes().split_types(s)
             self.assertEqual(expected, got, msg=repr(s))
-    #@+node:ekr.20210804103146.1: *3* test class Pattern (mostly complete)
+    #@+node:ekr.20210804103146.1: *3* test class Pattern
     def test_pattern_class(self):
         table = (
             # s,  Pattern.find_s, Pattern.repl_s, expected
@@ -2970,6 +2970,26 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         aSet.add(p3)
         self.assertTrue(p1.match_entire_string('abc'))
         self.assertFalse(p1.match_entire_string('abcx'))
+        # Test pattern.match.
+        p4 = Pattern('[*]', '[*]')
+        self.assertTrue(p4.is_balanced())
+        found, new_s = p4.match('xyzzy')
+        self.assertFalse(found, msg='p4')
+        p5 = Pattern('abc', 'xyz')
+        self.assertFalse(p5.is_balanced())
+        found, new_s = p5.match('xyzzy')
+        self.assertFalse(found, msg='p5')
+        # Test pattern.replace.
+        found, new_s = p5.match('abc')
+        self.assertTrue(found, msg='replace p5')
+        result = p5.replace(found, 'ABC')
+        self.assertTrue(result, 'ABC')
+        p6 = Pattern('list[*]', 'List[*]')
+        found, s = p6.match('list[abc]')
+        self.assertTrue(found, msg='p6')
+        self.assertTrue(p6.all_matches('list[abc]'))
+        for m in reversed(p6.all_matches('list[abc]')):
+            pattern.replace(m, 'list(xyz)')
     #@+node:ekr.20210804112556.1: *3* test class Stub (complete)
     def test_stub_class(self):
         # Test equality...
