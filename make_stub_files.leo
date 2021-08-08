@@ -45,6 +45,7 @@
 </v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 </v>
+<v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh>
 <v t="ekr.20210807194019.1"><vh> --- no longer used</vh>
 <v t="ekr.20160318141204.65"><vh>f.Exec</vh></v>
@@ -98,6 +99,17 @@
 <v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
 <v t="ekr.20180901044640.1"><vh>test_bug2_non_empty</vh></v>
 <v t="ekr.20180901051603.1"><vh>test_bug3</vh></v>
+</v>
+<v t="ekr.20210805092921.1"><vh>test class StubTraverser</vh>
+<v t="ekr.20210804111915.1"><vh>test_st_find</vh></v>
+<v t="ekr.20210804112211.1"><vh>test_st_flatten_stubs</vh></v>
+<v t="ekr.20210804112405.1"><vh>test_st_merge_stubs</vh>
+<v t="ekr.20210804112405.3"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
+<v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
+</v>
+<v t="ekr.20210807193409.1"><vh>test_st_format_returns</vh>
+<v t="ekr.20210807210106.1"><vh>&lt;&lt; test_st_format_returns tests &gt;&gt;</vh></v>
+</v>
 </v>
 </v>
 <v t="ekr.20210805102238.1"><vh>--- classes</vh>
@@ -301,27 +313,18 @@
 <v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_arg_formatter_class)</vh></v>
 </v>
 <v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
-<v t="ekr.20210805091045.1"><vh>test class ReduceTypes (mostly complete)</vh>
-<v t="ekr.20210804105256.1"><vh>test_reduce_numbers</vh></v>
-<v t="ekr.20210804111613.1"><vh>test_reduce_types</vh></v>
-<v t="ekr.20210804111803.1"><vh>test_split_types</vh></v>
+<v t="ekr.20210805091045.1"><vh>test class ReduceTypes</vh>
+<v t="ekr.20210808033520.1"><vh>test_rt_is_known_type</vh></v>
+<v t="ekr.20210804105256.1"><vh>test_rt_reduce_numbers</vh></v>
+<v t="ekr.20210804111613.1"><vh>test_rt_reduce_types</vh></v>
+<v t="ekr.20210804111803.1"><vh>test_rt_split_types</vh></v>
 </v>
 <v t="ekr.20210804103146.1"><vh>test class Pattern (mostly complete)</vh></v>
 <v t="ekr.20210804112556.1"><vh>test class Stub (complete)</vh></v>
 <v t="ekr.20210807133118.1"><vh>test_stub_formatter_class</vh>
 <v t="ekr.20210807133228.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
 </v>
-<v t="ekr.20210805092921.1"><vh>test class StubTraverser</vh>
-<v t="ekr.20210804111915.1"><vh>test_st_find</vh></v>
-<v t="ekr.20210804112211.1"><vh>test_st_flatten_stubs</vh></v>
-<v t="ekr.20210804112405.1"><vh>test_st_merge_stubs</vh>
-<v t="ekr.20210804112405.3"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
-<v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
-</v>
-<v t="ekr.20210807193409.1"><vh>test_st_format_returns</vh>
-<v t="ekr.20210807210106.1"><vh>&lt;&lt; test_st_format_returns tests &gt;&gt;</vh></v>
-</v>
-</v>
+<v t="ekr.20210805092921.1"></v>
 <v t="ekr.20210805093615.1"><vh>test file: make_stub_files.py</vh></v>
 <v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
 <v t="ekr.20210806153836.1"><vh>test_finalize</vh></v>
@@ -341,8 +344,6 @@
 <v t="ekr.20160318141204.111"></v>
 <v t="ekr.20160318141204.113"></v>
 </v>
-<v t="ekr.20160318141204.118"></v>
-</v>
 <v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser &amp; StubFormatter</vh>
 <v t="ekr.20160318141204.189"></v>
 <v t="ekr.20160318141204.175"></v>
@@ -351,8 +352,9 @@
 <v t="ekr.20160318141204.194"></v>
 <v t="ekr.20160318141204.149"></v>
 </v>
-<v t="ekr.20210805092921.1"></v>
-<v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
+</v>
+<v t="ekr.20210803055042.1"></v>
+<v t="ekr.20210805091045.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1271,15 +1273,15 @@ __str__ = __repr__
     for s2 in table:
         if s2 == s:
             return True
-        if Pattern(s2 + '(*)', s).match_entire_string(s):
-            return True  ###
-    if s.startswith('[') and s.endswith(']'):  ###
+        if s2 and Pattern(s2 + '(*)', s).match_entire_string(s):  # 2021/08/08
+            return True
+    if s.startswith('[') and s.endswith(']'):
         inner = s[1:-1]
         return self.is_known_type(inner) if inner else True
-    if s.startswith('(') and s.endswith(')'):  ###
+    if s.startswith('(') and s.endswith(')'):
         inner = s[1:-1]
         return self.is_known_type(inner) if inner else True
-    if s.startswith('{') and s.endswith('}'):  ###
+    if s.startswith('{') and s.endswith('}'):
         return True
     table = (
         # Pep 484: https://www.python.org/dev/peps/pep-0484/
@@ -3751,7 +3753,7 @@ g.execute_shell_commands(command, trace=False)</t>
     self.assertTrue(p1.match_entire_string('abc'))
     self.assertFalse(p1.match_entire_string('abcx'))
 </t>
-<t tx="ekr.20210804105256.1">def test_reduce_numbers(self):
+<t tx="ekr.20210804105256.1">def test_rt_reduce_numbers(self):
     a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
     table = (
         ([i,i],     [i]),
@@ -3764,7 +3766,7 @@ g.execute_shell_commands(command, trace=False)</t>
         got = ReduceTypes().reduce_numbers(aList)
         self.assertEqual(expected, got, msg=repr(aList))
 </t>
-<t tx="ekr.20210804111613.1">def test_reduce_types(self):
+<t tx="ekr.20210804111613.1">def test_rt_reduce_types(self):
 
     a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
     none = 'None'
@@ -3798,7 +3800,7 @@ g.execute_shell_commands(command, trace=False)</t>
         got = reduce_types(aList)  # Call the global function for better coverage.
         self.assertEqual(expected, got, msg=repr(aList))
 </t>
-<t tx="ekr.20210804111803.1">def test_split_types(self):
+<t tx="ekr.20210804111803.1">def test_rt_split_types(self):
     table = (
         ('list',                    ['list']),
         ('List[a,b]',               ['List[a,b]']),
@@ -4339,7 +4341,8 @@ c = bool
 # test = '.TestMakeStubFiles.test_stub_formatter_class'
 # test = '.TestMakeStubFiles.test_ast_arg_formatter_class'
 # test = '.TestMakeStubFiles.test_stub_formatter_class'
-test = '.TestMakeStubFiles.test_st_format_returns'
+# test = '.TestMakeStubFiles.test_st_format_returns'
+test = '.TestMakeStubFiles.test_rt_is_known_type'
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210807133723.1">def test_ast_arg_formatter_class(self):
@@ -4425,5 +4428,17 @@ def test_2(*args, **kwargs):
 """,
 </t>
 <t tx="ekr.20210807213637.1"></t>
+<t tx="ekr.20210808033520.1">def test_rt_is_known_type(self):
+    table = (
+        ('None', True),
+        ('(xxx)', False),
+        ('str(xxx)', True),
+        ('[str]', True),
+        ('{whatever}', True),
+    )
+    for s, expected in table:
+        result = ReduceTypes().is_known_type(s)
+        self.assertEqual(result, expected, msg=repr(s))
+</t>
 </tnodes>
 </leo_file>

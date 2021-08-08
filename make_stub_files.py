@@ -1595,15 +1595,15 @@ class ReduceTypes:
         for s2 in table:
             if s2 == s:
                 return True
-            if Pattern(s2 + '(*)', s).match_entire_string(s):
-                return True  ###
-        if s.startswith('[') and s.endswith(']'):  ###
+            if s2 and Pattern(s2 + '(*)', s).match_entire_string(s):  # 2021/08/08
+                return True
+        if s.startswith('[') and s.endswith(']'):
             inner = s[1:-1]
             return self.is_known_type(inner) if inner else True
-        if s.startswith('(') and s.endswith(')'):  ###
+        if s.startswith('(') and s.endswith(')'):
             inner = s[1:-1]
             return self.is_known_type(inner) if inner else True
-        if s.startswith('{') and s.endswith('}'):  ###
+        if s.startswith('{') and s.endswith('}'):
             return True
         table = (
             # Pep 484: https://www.python.org/dev/peps/pep-0484/
@@ -2859,9 +2859,21 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         node = ast.parse(source, filename=filename, mode='exec')
         result_s = formatter.format(node)
         assert result_s
-    #@+node:ekr.20210805091045.1: *3* test class ReduceTypes (mostly complete)
-    #@+node:ekr.20210804105256.1: *4* test_reduce_numbers
-    def test_reduce_numbers(self):
+    #@+node:ekr.20210805091045.1: *3* test class ReduceTypes
+    #@+node:ekr.20210808033520.1: *4* test_rt_is_known_type
+    def test_rt_is_known_type(self):
+        table = (
+            ('None', True),
+            ('(xxx)', False),
+            ('str(xxx)', True),
+            ('[str]', True),
+            ('{whatever}', True),
+        )
+        for s, expected in table:
+            result = ReduceTypes().is_known_type(s)
+            self.assertEqual(result, expected, msg=repr(s))
+    #@+node:ekr.20210804105256.1: *4* test_rt_reduce_numbers
+    def test_rt_reduce_numbers(self):
         a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
         table = (
             ([i,i],     [i]),
@@ -2873,8 +2885,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         for aList, expected in table:
             got = ReduceTypes().reduce_numbers(aList)
             self.assertEqual(expected, got, msg=repr(aList))
-    #@+node:ekr.20210804111613.1: *4* test_reduce_types
-    def test_reduce_types(self):
+    #@+node:ekr.20210804111613.1: *4* test_rt_reduce_types
+    def test_rt_reduce_types(self):
 
         a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
         none = 'None'
@@ -2907,8 +2919,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         for aList, expected in table:
             got = reduce_types(aList)  # Call the global function for better coverage.
             self.assertEqual(expected, got, msg=repr(aList))
-    #@+node:ekr.20210804111803.1: *4* test_split_types
-    def test_split_types(self):
+    #@+node:ekr.20210804111803.1: *4* test_rt_split_types
+    def test_rt_split_types(self):
         table = (
             ('list',                    ['list']),
             ('List[a,b]',               ['List[a,b]']),
