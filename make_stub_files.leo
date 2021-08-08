@@ -83,35 +83,6 @@
 <v t="ekr.20210807213637.1"><vh>--- changed StubTraverser methods</vh>
 <v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
 </v>
-<v t="ekr.20210806134651.1"><vh>--- recent</vh>
-<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
-<v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
-<v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
-</v>
-<v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers</vh>
-<v t="ekr.20160318141204.191"></v>
-<v t="ekr.20160318141204.192"><vh>st.get_def_name</vh></v>
-<v t="ekr.20160318141204.193"><vh>st.remove_recursive_calls</vh></v>
-</v>
-<v t="ekr.20160318141204.191"></v>
-<v t="ekr.20210805090544.1"><vh>test issues...</vh>
-<v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
-<v t="ekr.20180901044640.1"><vh>test_bug2_non_empty</vh></v>
-<v t="ekr.20180901051603.1"><vh>test_bug3</vh></v>
-</v>
-<v t="ekr.20210805092921.1"><vh>test class StubTraverser</vh>
-<v t="ekr.20210804111915.1"><vh>test_st_find</vh></v>
-<v t="ekr.20210804112211.1"><vh>test_st_flatten_stubs</vh></v>
-<v t="ekr.20210804112405.1"><vh>test_st_merge_stubs</vh>
-<v t="ekr.20210804112405.3"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
-<v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
-</v>
-<v t="ekr.20210807193409.1"><vh>test_st_format_returns</vh>
-<v t="ekr.20210807210106.1"><vh>&lt;&lt; test_st_format_returns tests &gt;&gt;</vh></v>
-</v>
-</v>
-</v>
-</v>
 <v t="ekr.20210805102238.1"><vh>--- classes</vh>
 <v t="ekr.20160318141204.14"><vh> class AstFormatter</vh>
 <v t="ekr.20160318141204.15"><vh> f.Entries</vh>
@@ -197,7 +168,7 @@
 <v t="ekr.20160318141204.125"><vh>class Controller</vh>
 <v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
 <v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.131"><vh>msf.scan_command_line</vh></v>
 <v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
 <v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
 <v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
@@ -252,35 +223,6 @@
 <v t="ekr.20160318141204.123"><vh>rt.show</vh></v>
 <v t="ekr.20160318141204.124"><vh>rt.split_types</vh></v>
 </v>
-</v>
-<v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
-<v t="ekr.20210805091045.1"><vh>test class ReduceTypes</vh>
-<v t="ekr.20210808033520.1"><vh>test_rt_is_known_type</vh></v>
-<v t="ekr.20210804105256.1"><vh>test_rt_reduce_numbers</vh></v>
-<v t="ekr.20210804111613.1"><vh>test_rt_reduce_types</vh></v>
-<v t="ekr.20210804111803.1"><vh>test_rt_split_types</vh></v>
-</v>
-<v t="ekr.20210805092921.1"></v>
-<v t="ekr.20210805090544.1"></v>
-<v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
-<v t="ekr.20210806153836.1"><vh>test_finalize</vh></v>
-<v t="ekr.20210806154007.1"><vh>test_is_known_type</vh></v>
-<v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
-</v>
-<v t="ekr.20210807133723.1"><vh>test_ast_arg_formatter_class</vh>
-<v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_arg_formatter_class)</vh></v>
-</v>
-<v t="ekr.20210805090943.1"></v>
-<v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
-<v t="ekr.20210808052134.1"><vh>test_controller_class</vh></v>
-<v t="ekr.20210805093615.1"><vh>test_file_msb</vh></v>
-<v t="ekr.20210804103146.1"><vh>test_pattern_class</vh></v>
-<v t="ekr.20210804112556.1"><vh>test_stub_class</vh></v>
-<v t="ekr.20210807133118.1"><vh>test_stub_formatter_class</vh>
-<v t="ekr.20210807133228.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
-</v>
-<v t="ekr.20210808063828.1"><vh>test_stub_traverser_class</vh></v>
-</v>
 <v t="ekr.20160318141204.147"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160318141204.148"><vh>sf.ctor</vh></v>
 <v t="ekr.20160318141204.149"><vh>sf.match_all</vh></v>
@@ -331,16 +273,60 @@
 <v t="ekr.20160318141204.188"><vh>st.format_arguments &amp; helper</vh>
 <v t="ekr.20160318141204.189"><vh>st.munge_arg</vh></v>
 </v>
-<v t="ekr.20160318141204.190"></v>
+<v t="ekr.20160318141204.190"><vh>st.format_returns &amp; helpers</vh>
+<v t="ekr.20160318141204.191"></v>
+<v t="ekr.20160318141204.192"><vh>st.get_def_name</vh></v>
+<v t="ekr.20160318141204.193"><vh>st.remove_recursive_calls</vh></v>
+</v>
 </v>
 <v t="ekr.20160318141204.194"><vh>st.visit_Return</vh></v>
 </v>
-<v t="ekr.20160318141204.186"></v>
-<v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser</vh>
-<v t="ekr.20160318141204.176"></v>
+<v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
+<v t="ekr.20210805091045.1"><vh>test class ReduceTypes</vh>
+<v t="ekr.20210808033520.1"><vh>test_rt_is_known_type</vh></v>
+<v t="ekr.20210804105256.1"><vh>test_rt_reduce_numbers</vh></v>
+<v t="ekr.20210804111613.1"><vh>test_rt_reduce_types</vh></v>
+<v t="ekr.20210804111803.1"><vh>test_rt_split_types</vh></v>
 </v>
-<v t="ekr.20160318141204.175"></v>
-<v t="ekr.20210808063828.1"></v>
+<v t="ekr.20210805092921.1"><vh>test class StubTraverser</vh>
+<v t="ekr.20210804111915.1"><vh>test_st_find</vh></v>
+<v t="ekr.20210804112211.1"><vh>test_st_flatten_stubs</vh></v>
+<v t="ekr.20210804112405.1"><vh>test_st_merge_stubs</vh>
+<v t="ekr.20210804112405.3"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
+<v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
+</v>
+<v t="ekr.20210807193409.1"><vh>test_st_format_returns</vh>
+<v t="ekr.20210807210106.1"><vh>&lt;&lt; test_st_format_returns tests &gt;&gt;</vh></v>
+</v>
+</v>
+<v t="ekr.20210805090544.1"><vh>test issues...</vh>
+<v t="ekr.20180901040718.1"><vh>test_bug2_empty</vh></v>
+<v t="ekr.20180901044640.1"><vh>test_bug2_non_empty</vh></v>
+<v t="ekr.20180901051603.1"><vh>test_bug3</vh></v>
+</v>
+<v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
+<v t="ekr.20210806153836.1"><vh>test_finalize</vh></v>
+<v t="ekr.20210806154007.1"><vh>test_is_known_type</vh></v>
+<v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
+</v>
+<v t="ekr.20210807133723.1"><vh>test_ast_arg_formatter_class</vh>
+<v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_arg_formatter_class)</vh></v>
+</v>
+<v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
+<v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
+</v>
+<v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
+<v t="ekr.20210808052134.1"><vh>test_controller_class</vh></v>
+<v t="ekr.20210805093615.1"><vh>test_file_msb</vh></v>
+<v t="ekr.20210804103146.1"><vh>test_pattern_class</vh></v>
+<v t="ekr.20210804112556.1"><vh>test_stub_class</vh></v>
+<v t="ekr.20210807133118.1"><vh>test_stub_formatter_class</vh>
+<v t="ekr.20210807133228.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
+</v>
+<v t="ekr.20210808063828.1"><vh>test_stub_traverser_class</vh></v>
+</v>
+</v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -2187,7 +2173,7 @@ def out(self, s):  # pragma: no cover
         self.output_file.write('# make_stub_files: %s\n' %
             time.strftime("%a %d %b %Y at %H:%M:%S"))
 </t>
-<t tx="ekr.20160318141204.176">def update(self, fn, new_root):  ###
+<t tx="ekr.20160318141204.176">def update(self, fn, new_root, contents=None, silent=False):
     """
     Merge the new_root tree with the old_root tree in fn (a .pyi file).
 
@@ -2196,26 +2182,30 @@ def out(self, s):  # pragma: no cover
     
     Return old_root, or new_root if there are any errors.
     """
-    s = self.get_stub_file(fn)
+    if contents:
+        s = contents  # For testing
+    else:
+        s = self.get_stub_file(fn)  # pragma: no cover
     if not s or not s.strip():
-        return new_root
-    if '\t' in s:
+        return new_root  # pragma: no cover
+    if '\t' in s:  # pragma: no cover
         # Tabs in stub files make it impossible to parse them reliably.
         g.trace('Can not update stub files containing tabs.')
         return new_root
     # Read old_root from the .pyi file.
     old_d, old_root = self.parse_stub_file(s, root_name='&lt;old-stubs&gt;')
-    if old_root:
-        # Merge new stubs into the old tree.
-        if 0:
-            print(self.trace_stubs(old_root, header='old_root'))
-            print(self.trace_stubs(new_root, header='new_root'))
+    if not old_root:
+        return new_root  # pragma: no cover
+    # Merge new stubs into the old tree.
+    if 0:  # pragma: no cover
+        print(self.trace_stubs(old_root, header='old_root'))
+        print(self.trace_stubs(new_root, header='new_root'))
+    if not silent:  # pragma: no cover
         print('***** updating stubs from %s *****' % fn)
-        self.merge_stubs(self.stubs_dict.values(), old_root, new_root)
-        # print(self.trace_stubs(old_root, header='updated_root'))
-        return old_root
-    return new_root
-</t>
+    self.merge_stubs(self.stubs_dict.values(), old_root, new_root)
+    # print(self.trace_stubs(old_root, header='updated_root'))
+    return old_root
+   </t>
 <t tx="ekr.20160318141204.177">def get_stub_file(self, fn):  # pragma: no cover
     """Read the stub file into s."""
     if os.path.exists(fn):
@@ -2234,7 +2224,6 @@ def out(self, s):  # pragma: no cover
     
     Parse by hand, so that --update can be run with Python 2.
     """
-    ### Still needed ???
     assert '\t' not in s
     d = {}
     root = Stub(kind='root', name=root_name)
@@ -2256,7 +2245,8 @@ def out(self, s):  # pragma: no cover
                 stub_stack.pop()
             elif indent &gt; old_indent:
                 indent_stack.append(indent)
-            else:  # indent &lt; old_indent
+            else:  # pragma: no cover
+                # indent &lt; old_indent
                 # The indent_stack can't underflow because
                 # indent &gt;= 0 and indent_stack[0] &lt; 0
                 assert indent &gt;= 0
@@ -2611,7 +2601,7 @@ def munge_arg(self, s):
     raw_result, reduced_result = [], []
     for i in range(n):
         if pattern.match_entire_string(reduced[i]):
-            pass
+            pass  # pragma: no cover
         else:
             raw_result.append(raw[i])
             reduced_result.append(reduced[i])
@@ -3984,6 +3974,8 @@ c.redraw()
 
 https://github.com/edreamleo/make-stub-files/issues/18
 
+2259-2264, 2587
+
 @language python
 @nosearch
 </t>
@@ -4173,7 +4165,6 @@ def do_JoinedStr(self, node):
     result_s = formatter.format(node)
     assert result_s
 </t>
-<t tx="ekr.20210806134651.1"></t>
 <t tx="ekr.20210806153836.1">def test_finalize(self):
     result = finalize(__file__)
     self.assertEqual(result, __file__)
@@ -4187,7 +4178,6 @@ def do_JoinedStr(self, node):
 T(base=str)
 print(T)</t>
 <t tx="ekr.20210806162349.1"></t>
-<t tx="ekr.20210807105731.1"></t>
 <t tx="ekr.20210807120326.1"></t>
 <t tx="ekr.20210807133118.1">def test_stub_formatter_class(self):
     
@@ -4464,7 +4454,7 @@ def test_2(*args, **kwargs):
 <t tx="ekr.20210808063828.1">def test_stub_traverser_class(self):
     tag = 'test_stub_traverser_class'
     controller = Controller()
-    traverser = StubTraverser(controller)
+    st = StubTraverser(controller)
     # Part 1: test st.visit_*.
     source = textwrap.dedent("""\
         class Test(base1, base2=None):
@@ -4478,14 +4468,14 @@ def test_2(*args, **kwargs):
         """)
     node = ast.parse(source, filename=tag, mode='exec')
     # Like traverser.run, but with a StringIO file.
-    traverser.output_file = io.StringIO()
-    traverser.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
-    traverser.visit(node)
-    traverser.output_stubs(traverser.parent_stub)
-    output = traverser.output_file.getvalue()
+    st.output_file = io.StringIO()
+    st.parent_stub = Stub(kind='root', name='&lt;new-stubs&gt;')
+    st.visit(node)
+    st.output_stubs(st.parent_stub)
+    output = st.output_file.getvalue()
     self.assertEqual(output, expected_output)
     # Part 2: Test st.munge_arg.
-    traverser.general_patterns = [Pattern('abc', 'xyz')]
+    st.general_patterns = [Pattern('abc', 'xyz')]
     table = (
         ('self', 'self'),
         ('a:b', 'a:b'),
@@ -4493,12 +4483,19 @@ def test_2(*args, **kwargs):
         ('xxx', 'xxx: Any'),
     )
     for arg, expected in table:
-        got = traverser.munge_arg(arg)
+        got = st.munge_arg(arg)
         self.assertEqual(expected, got, msg=arg)
     # Part 3: Test st.output_time_stamp.
-    traverser.output_file = io.StringIO()
-    traverser.output_time_stamp()
-    output = traverser.output_file.getvalue()
-    self.assertTrue(output.startswith('# make_stub_files:'), msg=output)</t>
+    st.output_file = io.StringIO()
+    st.output_time_stamp()
+    output = st.output_file.getvalue()
+    self.assertTrue(output.startswith('# make_stub_files:'), msg=output)
+    # Part 4: Test st.update. Similar to st.run.
+    st.output_file = io.StringIO()
+    st.parent_stub = Stub(kind='root', name='update-test')
+    parent_stub = st.update(fn='test-update', new_root=st.parent_stub,
+        contents=expected_output, silent=True)
+    st.output_stubs(parent_stub)
+    output = st.output_file.getvalue()</t>
 </tnodes>
 </leo_file>

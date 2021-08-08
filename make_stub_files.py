@@ -2180,7 +2180,7 @@ class StubTraverser(ast.NodeVisitor):
             self.output_file.write('# make_stub_files: %s\n' %
                 time.strftime("%a %d %b %Y at %H:%M:%S"))
     #@+node:ekr.20160318141204.176: *4* st.update & helpers
-    def update(self, fn, new_root):  ###
+    def update(self, fn, new_root, contents=None, silent=False):
         """
         Merge the new_root tree with the old_root tree in fn (a .pyi file).
 
@@ -2189,25 +2189,30 @@ class StubTraverser(ast.NodeVisitor):
         
         Return old_root, or new_root if there are any errors.
         """
-        s = self.get_stub_file(fn)
+        if contents:
+            s = contents  # For testing
+        else:
+            s = self.get_stub_file(fn)  # pragma: no cover
         if not s or not s.strip():
-            return new_root
-        if '\t' in s:
+            return new_root  # pragma: no cover
+        if '\t' in s:  # pragma: no cover
             # Tabs in stub files make it impossible to parse them reliably.
             g.trace('Can not update stub files containing tabs.')
             return new_root
         # Read old_root from the .pyi file.
         old_d, old_root = self.parse_stub_file(s, root_name='<old-stubs>')
-        if old_root:
-            # Merge new stubs into the old tree.
-            if 0:
-                print(self.trace_stubs(old_root, header='old_root'))
-                print(self.trace_stubs(new_root, header='new_root'))
+        if not old_root:
+            return new_root  # pragma: no cover
+        # Merge new stubs into the old tree.
+        if 0:  # pragma: no cover
+            print(self.trace_stubs(old_root, header='old_root'))
+            print(self.trace_stubs(new_root, header='new_root'))
+        if not silent:  # pragma: no cover
             print('***** updating stubs from %s *****' % fn)
-            self.merge_stubs(self.stubs_dict.values(), old_root, new_root)
-            # print(self.trace_stubs(old_root, header='updated_root'))
-            return old_root
-        return new_root
+        self.merge_stubs(self.stubs_dict.values(), old_root, new_root)
+        # print(self.trace_stubs(old_root, header='updated_root'))
+        return old_root
+       
     #@+node:ekr.20160318141204.177: *5* st.get_stub_file
     def get_stub_file(self, fn):  # pragma: no cover
         """Read the stub file into s."""
@@ -2227,7 +2232,6 @@ class StubTraverser(ast.NodeVisitor):
         
         Parse by hand, so that --update can be run with Python 2.
         """
-        ### Still needed ???
         assert '\t' not in s
         d = {}
         root = Stub(kind='root', name=root_name)
@@ -2249,7 +2253,8 @@ class StubTraverser(ast.NodeVisitor):
                     stub_stack.pop()
                 elif indent > old_indent:
                     indent_stack.append(indent)
-                else:  # indent < old_indent
+                else:  # pragma: no cover
+                    # indent < old_indent
                     # The indent_stack can't underflow because
                     # indent >= 0 and indent_stack[0] < 0
                     assert indent >= 0
@@ -2580,7 +2585,7 @@ class StubTraverser(ast.NodeVisitor):
         raw_result, reduced_result = [], []
         for i in range(n):
             if pattern.match_entire_string(reduced[i]):
-                pass
+                pass  # pragma: no cover
             else:
                 raw_result.append(raw[i])
                 reduced_result.append(reduced[i])
@@ -3383,7 +3388,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     def test_stub_traverser_class(self):
         tag = 'test_stub_traverser_class'
         controller = Controller()
-        traverser = StubTraverser(controller)
+        st = StubTraverser(controller)
         # Part 1: test st.visit_*.
         source = textwrap.dedent("""\
             class Test(base1, base2=None):
@@ -3397,14 +3402,14 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             """)
         node = ast.parse(source, filename=tag, mode='exec')
         # Like traverser.run, but with a StringIO file.
-        traverser.output_file = io.StringIO()
-        traverser.parent_stub = Stub(kind='root', name='<new-stubs>')
-        traverser.visit(node)
-        traverser.output_stubs(traverser.parent_stub)
-        output = traverser.output_file.getvalue()
+        st.output_file = io.StringIO()
+        st.parent_stub = Stub(kind='root', name='<new-stubs>')
+        st.visit(node)
+        st.output_stubs(st.parent_stub)
+        output = st.output_file.getvalue()
         self.assertEqual(output, expected_output)
         # Part 2: Test st.munge_arg.
-        traverser.general_patterns = [Pattern('abc', 'xyz')]
+        st.general_patterns = [Pattern('abc', 'xyz')]
         table = (
             ('self', 'self'),
             ('a:b', 'a:b'),
@@ -3412,13 +3417,20 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             ('xxx', 'xxx: Any'),
         )
         for arg, expected in table:
-            got = traverser.munge_arg(arg)
+            got = st.munge_arg(arg)
             self.assertEqual(expected, got, msg=arg)
         # Part 3: Test st.output_time_stamp.
-        traverser.output_file = io.StringIO()
-        traverser.output_time_stamp()
-        output = traverser.output_file.getvalue()
+        st.output_file = io.StringIO()
+        st.output_time_stamp()
+        output = st.output_file.getvalue()
         self.assertTrue(output.startswith('# make_stub_files:'), msg=output)
+        # Part 4: Test st.update. Similar to st.run.
+        st.output_file = io.StringIO()
+        st.parent_stub = Stub(kind='root', name='update-test')
+        parent_stub = st.update(fn='test-update', new_root=st.parent_stub,
+            contents=expected_output, silent=True)
+        st.output_stubs(parent_stub)
+        output = st.output_file.getvalue()
     #@-others
 #@-others
 g = LeoGlobals()
