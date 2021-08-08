@@ -292,7 +292,9 @@
 <v t="ekr.20210804112405.3"><vh>&lt;&lt; old_stubs &gt;&gt;</vh></v>
 <v t="ekr.20210804112405.4"><vh>&lt;&lt; new_stubs &gt;&gt;</vh></v>
 </v>
-<v t="ekr.20210807193409.1"><vh>test_st_format_returns</vh></v>
+<v t="ekr.20210807193409.1"><vh>test_st_format_returns</vh>
+<v t="ekr.20210807210106.1"><vh>&lt;&lt; test_st_format_returns tests &gt;&gt;</vh></v>
+</v>
 </v>
 <v t="ekr.20210805093615.1"><vh>test file: make_stub_files.py</vh></v>
 <v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
@@ -326,6 +328,7 @@
 </v>
 </v>
 <v t="ekr.20210803055042.1"></v>
+<v t="ekr.20210805090544.1"></v>
 <v t="ekr.20210807105513.1"><vh>--- To do: ###</vh>
 <v t="ekr.20210807105645.1"><vh>--- msf</vh>
 <v t="ekr.20160318141204.135"></v>
@@ -341,15 +344,18 @@
 <v t="ekr.20160318141204.118"></v>
 </v>
 <v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser</vh>
-<v t="ekr.20160318141204.188"></v>
-<v t="ekr.20160318141204.190"></v>
 <v t="ekr.20160318141204.189"></v>
 <v t="ekr.20160318141204.175"></v>
 <v t="ekr.20160318141204.176"></v>
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.194"></v>
 </v>
+<v t="ekr.20160318141204.102"></v>
+<v t="ekr.20160318141204.188"></v>
+<v t="ekr.20160318141204.190"></v>
 <v t="ekr.20210805092921.1"></v>
+<v t="ekr.20160318141204.171"></v>
+<v t="ekr.20160318141204.187"></v>
 <v t="ekr.20210807193409.1"></v>
 </vnodes>
 <tnodes>
@@ -2512,7 +2518,7 @@ def visit_FunctionDef(self, node):
 </t>
 <t tx="ekr.20160318141204.188"># arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
 
-def format_arguments(self, node):  ###
+def format_arguments(self, node):
     """
     Format the arguments node.
     Similar to AstFormat.do_arguments, but it is not a visitor!
@@ -2562,7 +2568,7 @@ def munge_arg(self, s):
 <t tx="ekr.20160318141204.19">
 # Contexts...
 </t>
-<t tx="ekr.20160318141204.190">def format_returns(self, node):  ###
+<t tx="ekr.20160318141204.190">def format_returns(self, node):
     """
     Calculate the return type:
     - Return None if there are no return statements.
@@ -2588,7 +2594,7 @@ def munge_arg(self, s):
     # Step 4: Calculate return types.
     return self.format_return_expressions(node, name, raw, r)
 </t>
-<t tx="ekr.20160318141204.191">def format_return_expressions(self, node, name, raw_returns, reduced_returns):  ###
+<t tx="ekr.20160318141204.191">def format_return_expressions(self, node, name, raw_returns, reduced_returns):
     """
     aList is a list of maximally reduced return expressions.
     For each expression e in Alist:
@@ -2608,19 +2614,17 @@ def munge_arg(self, s):
         aList = []
         for i in range(n):
             e, raw = reduced_returns[i], raw_returns[i]
-            known = ' ' if is_known_type(e) else '?'
+            known2 = ' ' if is_known_type(e) else '?'
             aList.append('# %s %s: %s' % (' ', i, raw.rstrip()))
-            aList.append('# %s %s: return %s' % (known, i, e))
+            aList.append('# %s %s: return %s' % (known2, i, e))
         results = ''.join([lws + self.indent(z) for z in aList])
         # Put the return lines in their proper places.
         if known:
             s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
             return s + tail + results
         return 'Any' + tail + results
-    else:  # pragma: no cover
-        # Coverage tests use verbose option.
-        s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
-        return s + tail
+    s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
+    return s + tail
 </t>
 <t tx="ekr.20160318141204.192">def get_def_name(self, node):
     """Return the representaion of a function or method name."""
@@ -3866,7 +3870,6 @@ def merge_types(a1: Any, a2: Any) -&gt; str: ...
 
 class AstFormatter:
     def format(self, node: Node) -&gt; Union[Any,str]: ...
-        def helper(self): -&gt; None
     def visit(self, node: Node) -&gt; str: ...
     def do_ClassDef(self, node: Node) -&gt; str: ...
     def do_FunctionDef(self, node: Node) -&gt; str: ...
@@ -3898,7 +3901,6 @@ class AstFormatter:
     
     class AstFormatter:
         def format(self, node: Node) -&gt; Union[Any,str]: ...
-            def helper(self): -&gt; None
         def visit(self, node: Node) -&gt; str: ...
         def do_ClassDef(self, node: Node) -&gt; str: ...
         def do_FunctionDef(self, node: Node) -&gt; str: ...
@@ -4389,7 +4391,8 @@ c = bool
 # Run one test.
 # test = '.TestMakeStubFiles.test_stub_formatter_class'
 # test = '.TestMakeStubFiles.test_ast_arg_formatter_class'
-test = '.TestMakeStubFiles.test_stub_formatter_class'
+# test = '.TestMakeStubFiles.test_stub_formatter_class'
+test = '.TestMakeStubFiles.test_st_format_returns'
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210807133723.1">def test_ast_arg_formatter_class(self):
@@ -4435,15 +4438,43 @@ d = None
 <t tx="ekr.20210807145722.1"></t>
 <t tx="ekr.20210807151105.1"></t>
 <t tx="ekr.20210807193409.1">def test_st_format_returns(self):
+    # Create the stubs.
+    tag = 'test_st_format_returns'
+    tests = [
+    &lt;&lt; test_st_format_returns tests &gt;&gt;
+    ]
     controller=Controller()
-    st = StubTraverser(controller=controller)
-    assert st
-    # dump('old_s', old_s)
-    # dump('new_s', new_s)
-    # old_d, old_root = st.parse_stub_file(old_s, root_name='&lt;old-root&gt;')
-    # new_d, new_root = st.parse_stub_file(new_s, root_name='&lt;new-root&gt;')
-    # new_stubs = new_d.values()
-</t>
+    for i, s in enumerate(tests):
+        for verbose in (True, False):
+            for patterns in ([], [Pattern('test_*')]):
+                # Instantiate new StubController, to avoid duplicate entries.
+                st = StubTraverser(controller=controller)
+                st.def_patterns = patterns
+                st.verbose = verbose
+                test_name = f"test {i}"
+                source = textwrap.dedent(s)
+                d, root = st.parse_stub_file(source, root_name=tag)
+                node = ast.parse(source, filename=test_name, mode='exec')
+                st.parent_stub = Stub(kind='root', name=test_name)
+                st.visit(node)</t>
 <t tx="ekr.20210807194019.1"></t>
+<t tx="ekr.20210807210106.1"># Test 1:
+"""\
+def test_1(self):
+    if 1:
+        return True
+    return False
+""",
+# Test 2:
+"""\
+def test_2():
+    return xyzzy
+""",
+# Test3:
+"""\
+def test_2(*args, **kwargs):
+    return args
+""",
+</t>
 </tnodes>
 </leo_file>

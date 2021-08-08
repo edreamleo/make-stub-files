@@ -2604,7 +2604,7 @@ class StubTraverser(ast.NodeVisitor):
     #@+node:ekr.20160318141204.188: *4* st.format_arguments & helper
     # arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
 
-    def format_arguments(self, node):  ###
+    def format_arguments(self, node):
         """
         Format the arguments node.
         Similar to AstFormat.do_arguments, but it is not a visitor!
@@ -2651,7 +2651,7 @@ class StubTraverser(ast.NodeVisitor):
             return s
         return s + ': Any'
     #@+node:ekr.20160318141204.190: *4* st.format_returns & helpers
-    def format_returns(self, node):  ###
+    def format_returns(self, node):
         """
         Calculate the return type:
         - Return None if there are no return statements.
@@ -2677,7 +2677,7 @@ class StubTraverser(ast.NodeVisitor):
         # Step 4: Calculate return types.
         return self.format_return_expressions(node, name, raw, r)
     #@+node:ekr.20160318141204.191: *5* st.format_return_expressions
-    def format_return_expressions(self, node, name, raw_returns, reduced_returns):  ###
+    def format_return_expressions(self, node, name, raw_returns, reduced_returns):
         """
         aList is a list of maximally reduced return expressions.
         For each expression e in Alist:
@@ -2697,19 +2697,17 @@ class StubTraverser(ast.NodeVisitor):
             aList = []
             for i in range(n):
                 e, raw = reduced_returns[i], raw_returns[i]
-                known = ' ' if is_known_type(e) else '?'
+                known2 = ' ' if is_known_type(e) else '?'
                 aList.append('# %s %s: %s' % (' ', i, raw.rstrip()))
-                aList.append('# %s %s: return %s' % (known, i, e))
+                aList.append('# %s %s: return %s' % (known2, i, e))
             results = ''.join([lws + self.indent(z) for z in aList])
             # Put the return lines in their proper places.
             if known:
                 s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
                 return s + tail + results
             return 'Any' + tail + results
-        else:  # pragma: no cover
-            # Coverage tests use verbose option.
-            s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
-            return s + tail
+        s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
+        return s + tail
     #@+node:ekr.20160318141204.192: *5* st.get_def_name
     def get_def_name(self, node):
         """Return the representaion of a function or method name."""
@@ -3279,7 +3277,6 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
 
     class AstFormatter:
         def format(self, node: Node) -> Union[Any,str]: ...
-            def helper(self): -> None
         def visit(self, node: Node) -> str: ...
         def do_ClassDef(self, node: Node) -> str: ...
         def do_FunctionDef(self, node: Node) -> str: ...
@@ -3311,7 +3308,6 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         
         class AstFormatter:
             def format(self, node: Node) -> Union[Any,str]: ...
-                def helper(self): -> None
             def visit(self, node: Node) -> str: ...
             def do_ClassDef(self, node: Node) -> str: ...
             def do_FunctionDef(self, node: Node) -> str: ...
@@ -3390,14 +3386,44 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
     #@+node:ekr.20210807193409.1: *4* test_st_format_returns
     def test_st_format_returns(self):
+        # Create the stubs.
+        tag = 'test_st_format_returns'
+        tests = [
+        #@+<< test_st_format_returns tests >>
+        #@+node:ekr.20210807210106.1: *5* << test_st_format_returns tests >>
+        # Test 1:
+        """\
+        def test_1(self):
+            if 1:
+                return True
+            return False
+        """,
+        # Test 2:
+        """\
+        def test_2():
+            return xyzzy
+        """,
+        # Test3:
+        """\
+        def test_2(*args, **kwargs):
+            return args
+        """,
+        #@-<< test_st_format_returns tests >>
+        ]
         controller=Controller()
-        st = StubTraverser(controller=controller)
-        assert st
-        # dump('old_s', old_s)
-        # dump('new_s', new_s)
-        # old_d, old_root = st.parse_stub_file(old_s, root_name='<old-root>')
-        # new_d, new_root = st.parse_stub_file(new_s, root_name='<new-root>')
-        # new_stubs = new_d.values()
+        for i, s in enumerate(tests):
+            for verbose in (True, False):
+                for patterns in ([], [Pattern('test_*')]):
+                    # Instantiate new StubController, to avoid duplicate entries.
+                    st = StubTraverser(controller=controller)
+                    st.def_patterns = patterns
+                    st.verbose = verbose
+                    test_name = f"test {i}"
+                    source = textwrap.dedent(s)
+                    d, root = st.parse_stub_file(source, root_name=tag)
+                    node = ast.parse(source, filename=test_name, mode='exec')
+                    st.parent_stub = Stub(kind='root', name=test_name)
+                    st.visit(node)
     #@+node:ekr.20210805093615.1: *3* test file: make_stub_files.py
     def test_file_msb(self):
         """Run make_stub_files on itself."""
