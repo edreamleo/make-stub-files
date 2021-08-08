@@ -194,6 +194,21 @@
 <v t="ekr.20160318141204.90"><vh>class AstArgFormatter (AstFormatter)</vh>
 <v t="ekr.20160318141204.91"></v>
 </v>
+<v t="ekr.20160318141204.125"><vh>class Controller</vh>
+<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
+<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
+<v t="ekr.20160318141204.131"></v>
+<v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
+<v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
+<v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
+<v t="ekr.20160318141204.135"><vh>msf.find_pattern_ops</vh></v>
+<v t="ekr.20160318141204.136"><vh>msf.get_config_string</vh></v>
+<v t="ekr.20160318141204.137"><vh>msf.init_parser</vh></v>
+<v t="ekr.20160318141204.138"><vh>msf.is_section_name</vh></v>
+<v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
+<v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
+</v>
+</v>
 <v t="ekr.20160318141204.92"><vh>class LeoGlobals</vh>
 <v t="ekr.20160318141204.94"><vh>g._callerName</vh></v>
 <v t="ekr.20180902035806.1"><vh>g.caller</vh></v>
@@ -236,6 +251,34 @@
 <v t="ekr.20160318141204.122"><vh>rt.reduce_unknowns</vh></v>
 <v t="ekr.20160318141204.123"><vh>rt.show</vh></v>
 <v t="ekr.20160318141204.124"><vh>rt.split_types</vh></v>
+</v>
+<v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
+<v t="ekr.20210805091045.1"><vh>test class ReduceTypes</vh>
+<v t="ekr.20210808033520.1"><vh>test_rt_is_known_type</vh></v>
+<v t="ekr.20210804105256.1"><vh>test_rt_reduce_numbers</vh></v>
+<v t="ekr.20210804111613.1"><vh>test_rt_reduce_types</vh></v>
+<v t="ekr.20210804111803.1"><vh>test_rt_split_types</vh></v>
+</v>
+<v t="ekr.20210805092921.1"></v>
+<v t="ekr.20210805090544.1"></v>
+<v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
+<v t="ekr.20210806153836.1"><vh>test_finalize</vh></v>
+<v t="ekr.20210806154007.1"><vh>test_is_known_type</vh></v>
+<v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
+</v>
+<v t="ekr.20210807133723.1"><vh>test_ast_arg_formatter_class</vh>
+<v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_arg_formatter_class)</vh></v>
+</v>
+<v t="ekr.20210805090943.1"></v>
+<v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
+<v t="ekr.20210808052134.1"><vh>test_controller_class</vh></v>
+<v t="ekr.20210805093615.1"><vh>test_file_msb</vh></v>
+<v t="ekr.20210804103146.1"><vh>test_pattern_class</vh></v>
+<v t="ekr.20210804112556.1"><vh>test_stub_class</vh></v>
+<v t="ekr.20210807133118.1"><vh>test_stub_formatter_class</vh>
+<v t="ekr.20210807133228.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
+</v>
+</v>
 </v>
 <v t="ekr.20160318141204.147"><vh>class StubFormatter (AstFormatter)</vh>
 <v t="ekr.20160318141204.148"><vh>sf.ctor</vh></v>
@@ -291,58 +334,15 @@
 </v>
 <v t="ekr.20160318141204.194"><vh>st.visit_Return</vh></v>
 </v>
-<v t="ekr.20210803055042.1"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
-<v t="ekr.20210805091045.1"><vh>test class ReduceTypes</vh>
-<v t="ekr.20210808033520.1"><vh>test_rt_is_known_type</vh></v>
-<v t="ekr.20210804105256.1"><vh>test_rt_reduce_numbers</vh></v>
-<v t="ekr.20210804111613.1"><vh>test_rt_reduce_types</vh></v>
-<v t="ekr.20210804111803.1"><vh>test_rt_split_types</vh></v>
-</v>
-<v t="ekr.20210805092921.1"></v>
-<v t="ekr.20210805090544.1"></v>
-<v t="ekr.20210805093004.1"><vh>test top-level functions</vh>
-<v t="ekr.20210806153836.1"><vh>test_finalize</vh></v>
-<v t="ekr.20210806154007.1"><vh>test_is_known_type</vh></v>
-<v t="ekr.20160207115947.1"><vh>test_truncate</vh></v>
-</v>
-<v t="ekr.20210807133723.1"><vh>test_ast_arg_formatter_class</vh>
-<v t="ekr.20210807133723.2"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_arg_formatter_class)</vh></v>
-</v>
-<v t="ekr.20210805090943.1"></v>
-<v t="ekr.20210806011736.1"><vh>test_ast_formatter_class_on_file</vh></v>
-<v t="ekr.20210808052134.1"><vh>test_controller_class</vh></v>
-<v t="ekr.20210805093615.1"><vh>test_file_msb</vh></v>
-<v t="ekr.20210804103146.1"><vh>test_pattern_class</vh></v>
-<v t="ekr.20210804112556.1"><vh>test_stub_class</vh></v>
-<v t="ekr.20210807133118.1"><vh>test_stub_formatter_class</vh>
-<v t="ekr.20210807133228.1"><vh>&lt;&lt; define tests &gt;&gt; (test_stub_formatter_class)</vh></v>
-</v>
-</v>
-</v>
-<v t="ekr.20160318141204.125"><vh>class Controller</vh>
-<v t="ekr.20160318141204.126"><vh>msf.ctor</vh></v>
-<v t="ekr.20160318141204.128"><vh>msf.make_stub_file</vh></v>
-<v t="ekr.20160318141204.131"></v>
-<v t="ekr.20160318141204.132"><vh>msf.scan_options &amp; helpers</vh>
-<v t="ekr.20160318141204.133"><vh>msf.make_op_name_dict</vh></v>
-<v t="ekr.20160318141204.134"><vh>msf.create_parser</vh></v>
-<v t="ekr.20160318141204.135"><vh>msf.find_pattern_ops</vh></v>
-<v t="ekr.20160318141204.136"><vh>msf.get_config_string</vh></v>
-<v t="ekr.20160318141204.137"><vh>msf.init_parser</vh></v>
-<v t="ekr.20160318141204.138"><vh>msf.is_section_name</vh></v>
-<v t="ekr.20160318141204.139"><vh>msf.make_patterns_dict</vh></v>
-<v t="ekr.20160318141204.140"><vh>msf.scan_patterns</vh></v>
-</v>
-</v>
 <v t="ekr.20210807105731.1"><vh>--- To do: StubTraverser &amp; StubFormatter</vh>
 <v t="ekr.20160318141204.189"></v>
 <v t="ekr.20160318141204.175"></v>
 <v t="ekr.20160318141204.176"></v>
 <v t="ekr.20160318141204.186"></v>
 <v t="ekr.20160318141204.194"></v>
-<v t="ekr.20160318141204.149"></v>
 </v>
-<v t="ekr.20210808052134.1"></v>
+<v t="ekr.20160318141204.149"></v>
+<v t="ekr.20210807133118.1"></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1840,20 +1840,18 @@ def make_stub_file(self, fn):  # pragma: no cover
 </t>
 <t tx="ekr.20160318141204.149">matched_d = {}
 
-def match_all(self, node, s, trace=False):  ###
+def match_all(self, node, s, trace=False):
     """Match all the patterns for the given node."""
     trace = trace or self.trace_matches
-    # verbose = True
     d = self.matched_d
     name = node.__class__.__name__
     s1 = truncate(s, 40)
-    caller = g.callers(2).split(',')[1].strip()
-        # The direct caller of match_all.
     patterns = self.patterns_dict.get(name, []) + self.regex_patterns
     for pattern in patterns:
         found, s = pattern.match(s, trace=False)
         if found:
             if trace:  # pragma: no cover
+                caller = g.callers(2).split(',')[1].strip()  # The direct caller of match_all.
                 aList = d.get(name, [])
                 if pattern not in aList:
                     aList.append(pattern)
@@ -4204,8 +4202,11 @@ print(T)</t>
 <t tx="ekr.20210807133118.1">def test_stub_formatter_class(self):
     
     controller = Controller()
+    controller.config_fn = finalize('make_stub_files.cfg')
     traverser = StubTraverser(controller)
     formatter = StubFormatter(controller, traverser)
+    #
+    # Part 1: Formatting tests.
     if 0:  # For debugging.
         tests = [(
             "a = ['1', 2]\n",
@@ -4232,6 +4233,17 @@ print(T)</t>
         lines = g.splitLines(result_s)
         expected = g.splitLines(expected_s)
         self.assertEqual(expected, lines, msg=filename)
+    #
+    # Part 2: Scan the default options
+    directory = os.path.dirname(__file__)
+    controller.scan_options()
+    #
+    # Part 3: test match_all.
+    # source = '(str.join("a", "b"), 101)\n'
+    source = '("a", "b")\n'
+    root = ast.parse(source, filename='match-all', mode='exec')
+    for node in ast.walk(root):
+        formatter.match_all(node, 'hash(a)', trace=False)
 </t>
 <t tx="ekr.20210807133228.1"># Tests are either a single string, or a tuple: (source, expected).
 
@@ -4344,11 +4356,11 @@ c = bool
 # Run one test.
 # test = '.TestMakeStubFiles.test_stub_formatter_class'
 # test = '.TestMakeStubFiles.test_ast_arg_formatter_class'
-# test = '.TestMakeStubFiles.test_stub_formatter_class'
 # test = '.TestMakeStubFiles.test_st_format_returns'
 # test = '.TestMakeStubFiles.test_rt_is_known_type'
 # test = '.TestMakeStubFiles.test_pattern_class'
-test = '.TestMakeStubFiles.test_controller_class'
+# test = '.TestMakeStubFiles.test_controller_class'
+test = '.TestMakeStubFiles.test_stub_formatter_class'
 command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210807133723.1">def test_ast_arg_formatter_class(self):

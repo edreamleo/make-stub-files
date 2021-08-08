@@ -1838,20 +1838,18 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.149: *3* sf.match_all
     matched_d = {}
 
-    def match_all(self, node, s, trace=False):  ###
+    def match_all(self, node, s, trace=False):
         """Match all the patterns for the given node."""
         trace = trace or self.trace_matches
-        # verbose = True
         d = self.matched_d
         name = node.__class__.__name__
         s1 = truncate(s, 40)
-        caller = g.callers(2).split(',')[1].strip()
-            # The direct caller of match_all.
         patterns = self.patterns_dict.get(name, []) + self.regex_patterns
         for pattern in patterns:
             found, s = pattern.match(s, trace=False)
             if found:
                 if trace:  # pragma: no cover
+                    caller = g.callers(2).split(',')[1].strip()  # The direct caller of match_all.
                     aList = d.get(name, [])
                     if pattern not in aList:
                         aList.append(pattern)
@@ -3240,8 +3238,11 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     def test_stub_formatter_class(self):
         
         controller = Controller()
+        controller.config_fn = finalize('make_stub_files.cfg')
         traverser = StubTraverser(controller)
         formatter = StubFormatter(controller, traverser)
+        #
+        # Part 1: Formatting tests.
         if 0:  # For debugging.
             tests = [(
                 "a = ['1', 2]\n",
@@ -3376,6 +3377,17 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             lines = g.splitLines(result_s)
             expected = g.splitLines(expected_s)
             self.assertEqual(expected, lines, msg=filename)
+        #
+        # Part 2: Scan the default options
+        directory = os.path.dirname(__file__)
+        controller.scan_options()
+        #
+        # Part 3: test match_all.
+        # source = '(str.join("a", "b"), 101)\n'
+        source = '("a", "b")\n'
+        root = ast.parse(source, filename='match-all', mode='exec')
+        for node in ast.walk(root):
+            formatter.match_all(node, 'hash(a)', trace=False)
     #@-others
 #@-others
 g = LeoGlobals()
