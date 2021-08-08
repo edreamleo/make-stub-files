@@ -2492,7 +2492,7 @@ class StubTraverser(ast.NodeVisitor):
         if s == 'self':
             return s
         for pattern in self.general_patterns:
-            if pattern.match_entire_string(s):  ###
+            if pattern.match_entire_string(s):
                 return '%s: %s' % (s, pattern.repl_s)
         if self.warn and s not in self.warn_list:  # pragma: no cover
             self.warn_list.append(s)
@@ -3385,6 +3385,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         controller = Controller()
         traverser = StubTraverser(controller)
         traverser.output_file = io.StringIO()
+        # Part 1: test st.visit_*.
         source = textwrap.dedent("""\
             class Test(base1, base2=None):
                 def test(self):
@@ -3402,6 +3403,17 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         traverser.output_stubs(traverser.parent_stub)
         output = traverser.output_file.getvalue()
         self.assertEqual(output, expected_output)
+        # Part 2: Test st.munge_arg.
+        traverser.general_patterns = [Pattern('abc', 'xyz')]
+        table = (
+            ('self', 'self'),
+            ('a:b', 'a:b'),
+            ('abc', 'abc: xyz'),
+            ('xxx', 'xxx: Any'),
+        )
+        for arg, expected in table:
+            got = traverser.munge_arg(arg)
+            self.assertEqual(expected, got, msg=arg)
     #@-others
 #@-others
 g = LeoGlobals()
