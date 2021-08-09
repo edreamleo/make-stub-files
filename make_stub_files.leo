@@ -54,7 +54,6 @@
 </v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 </v>
-<v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh>
 <v t="ekr.20210806162349.1"><vh>--- changed &amp; new AstFormatter visitors</vh>
 <v t="ekr.20160318141204.91"><vh>arg_formatter.Constants &amp; Name</vh></v>
@@ -79,6 +78,7 @@
 <v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
 </v>
 </v>
+<v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -737,7 +737,7 @@ the config file.
 </t>
 <t tx="ekr.20160318141204.167"># UnaryOp(unaryop op, expr operand)
 
-def do_UnaryOp(self, node):
+def do_UnaryOp(self, node) -&gt; str:
     """StubFormatter.UnaryOp for unary +, -, ~ and 'not' operators."""
     op = self.op_name(node.op)
     if op.strip() == 'not':
@@ -747,7 +747,7 @@ def do_UnaryOp(self, node):
     self.trace_visitor(node, op, s)
     return s
 </t>
-<t tx="ekr.20160318141204.168">def do_Return(self, node):
+<t tx="ekr.20160318141204.168">def do_Return(self, node) -&gt; str:
     """
     StubFormatter ast.Return vsitor.
     Return only the return expression itself.
@@ -757,7 +757,7 @@ def do_UnaryOp(self, node):
     assert s.startswith('return'), repr(s)
     return s[len('return'):].strip()
 </t>
-<t tx="ekr.20160318141204.18">def visit(self, node):
+<t tx="ekr.20160318141204.18">def visit(self, node) -&gt; str:
     """Return the formatted version of an Ast node, or list of Ast nodes."""
     tag = 'AstFormatter.visit'
     name = node.__class__.__name__
@@ -778,7 +778,7 @@ def do_UnaryOp(self, node):
     print(message, flush=True)  # pragma: no cover (defensive)
     return message  # pragma: no cover (defensive)
 </t>
-<t tx="ekr.20160318141204.191">def format_return_expressions(self, node, name, raw_returns, reduced_returns):
+<t tx="ekr.20160318141204.191">def format_return_expressions(self, node, name, raw_returns, reduced_returns) -&gt; str:
     """
     aList is a list of maximally reduced return expressions.
     For each expression e in Alist:
@@ -812,7 +812,7 @@ def do_UnaryOp(self, node):
 </t>
 <t tx="ekr.20160318141204.20"># ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
 
-def do_ClassDef(self, node):
+def do_ClassDef(self, node) -&gt; str:
     result = []
     name = node.name  # Only a plain string is valid.
     bases = [self.visit(z) for z in node.bases] if node.bases else []
@@ -842,7 +842,7 @@ def do_ClassDef(self, node):
 #       expr* kw_defaults, arg? kwarg, expr* defaults
 # )
 
-def do_arguments(self, node):
+def do_arguments(self, node) -&gt; str:
     """Format the arguments node."""
     kind = self.kind(node)
     assert kind == 'arguments', kind
@@ -883,7 +883,7 @@ def do_arguments(self, node):
 </t>
 <t tx="ekr.20160318141204.35"># Call(expr func, expr* args, keyword* keywords)
 
-def do_Call(self, node):
+def do_Call(self, node) -&gt; str:
     func = self.visit(node.func)
     args = [self.visit(z) for z in node.args]
     for z in node.keywords:
@@ -893,7 +893,7 @@ def do_Call(self, node):
 </t>
 <t tx="ekr.20160318141204.36"># keyword = (identifier arg, expr value)
 
-def do_keyword(self, node):
+def do_keyword(self, node) -&gt; str:
     """Handle keyword *arg*, not a Python keyword!"""
     # node.arg is a string.
     value = self.visit(node.value)
@@ -923,13 +923,13 @@ def do_keyword(self, node):
 </t>
 <t tx="ekr.20160318141204.59"># AnnAssign(expr target, expr annotation, expr? value, int simple)
 
-def do_AnnAssign(self, node):
+def do_AnnAssign(self, node) -&gt; str:
     return self.indent('%s: [%s] = %s\n' % (
         self.visit(node.target),
         self.visit(node.annotation),
         self.visit(node.value)))
 
-def do_Assign(self, node):
+def do_Assign(self, node) -&gt; str:
     return self.indent('%s = %s\n' % (
         '='.join([self.visit(z) for z in node.targets]),
         self.visit(node.value)))
@@ -958,7 +958,7 @@ def do_Assign(self, node):
     return self.indent('print(%s)\n' % ','.join(vals))
 
 </t>
-<t tx="ekr.20160318141204.75">def do_Raise(self, node):
+<t tx="ekr.20160318141204.75">def do_Raise(self, node) -&gt; str:
     args = []
     for attr in ('exc', 'cause'):
         if getattr(node, attr, None) is not None:
@@ -1004,7 +1004,7 @@ def do_Assign(self, node):
 </t>
 <t tx="ekr.20160318141204.83"># With(withitem* items, stmt* body)
 
-def do_With(self, node):
+def do_With(self, node) -&gt; str:
     result = []
     result.append(self.indent('with '))
     vars_list = []
@@ -1027,7 +1027,7 @@ def do_With(self, node):
         self.level -= 1
     return ''.join(result)
 </t>
-<t tx="ekr.20160318141204.84">def do_Yield(self, node):
+<t tx="ekr.20160318141204.84">def do_Yield(self, node) -&gt; str:
     # do_Expr has already indented this *expression*.
     if getattr(node, 'value', None):
         return 'yield %s' % self.visit(node.value)
@@ -1035,28 +1035,28 @@ def do_With(self, node):
 </t>
 <t tx="ekr.20160318141204.85"># YieldFrom(expr value)
 
-def do_YieldFrom(self, node):
+def do_YieldFrom(self, node) -&gt; str:
     # do_Expr has already indented this *expression*.
     return 'yield from %s' % self.visit(node.value)
 </t>
 <t tx="ekr.20160318141204.91"># Return generic markers to allow better pattern matches.
 
-def do_Constant(self, node):
+def do_Constant(self, node) -&gt; str:
     return 'None' if node.value is None else node.value.__class__.__name__
 
-def do_BoolOp(self, node):  # pragma: no cover (obsolete)
+def do_BoolOp(self, node) -&gt; str:  # pragma: no cover (obsolete)
     return 'bool'
 
-def do_Bytes(self, node):  # pragma: no cover (obsolete)
+def do_Bytes(self, node) -&gt; str:  # pragma: no cover (obsolete)
     return 'bytes'
 
-def do_Name(self, node):  # pragma: no cover (obsolete)
+def do_Name(self, node) -&gt; str:  # pragma: no cover (obsolete)
     return 'bool' if node.id in ('True', 'False') else node.id
 
-def do_Num(self, node):  # pragma: no cover (obsolete)
+def do_Num(self, node) -&gt; str:  # pragma: no cover (obsolete)
     return 'number'
 
-def do_Str(self, node):  # pragma: no cover (obsolete)
+def do_Str(self, node) -&gt; str:  # pragma: no cover (obsolete)
     """This represents a string constant."""
     return 'str'
 </t>
@@ -1185,12 +1185,16 @@ while p:
     p.moveToThreadNext()
 c.redraw()
 </t>
-<t tx="ekr.20210804214511.1">def do_Constant(self, node):  # #13
+<t tx="ekr.20210804214511.1">def do_Constant(self, node) -&gt; str:  # #13
     return repr(node.value)
 </t>
 <t tx="ekr.20210805053830.1">@language rest
 
 https://github.com/edreamleo/make-stub-files/issues/18
+
+^(def .*)(:\s*?)$
+\1 -&gt; XXX:
+
 
 @language python
 @nosearch
