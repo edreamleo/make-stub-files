@@ -102,13 +102,13 @@ class AstFormatter:
 
     # Entries...
     #@+node:ekr.20160318141204.17: *4* f.format
-    def format(self, node) -> str:
+    def format(self, node: Node) -> str:
         """Format the node (or list of nodes) and its descendants."""
         self.level = 0
         val = self.visit(node)
         return val  # val is a string.
     #@+node:ekr.20160318141204.18: *4* f.visit
-    def visit(self, node) -> str:
+    def visit(self, node: Node) -> str:
         """Return the formatted version of an Ast node, or list of Ast nodes."""
         tag = 'AstFormatter.visit'
         name = node.__class__.__name__
@@ -134,7 +134,7 @@ class AstFormatter:
     #@+node:ekr.20160318141204.20: *4* f.ClassDef
     # ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
 
-    def do_ClassDef(self, node) -> str:
+    def do_ClassDef(self, node: Node) -> str:
         result = []
         name = node.name  # Only a plain string is valid.
         bases = [self.visit(z) for z in node.bases] if node.bases else []
@@ -161,7 +161,7 @@ class AstFormatter:
     #@+node:ekr.20160318141204.21: *4* f.FunctionDef
     # FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
 
-    def do_FunctionDef(self, node) -> str:
+    def do_FunctionDef(self, node: Node) -> str:
         """Format a FunctionDef node."""
         result = []
         if node.decorator_list:
@@ -182,18 +182,18 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.22: *4* f.Interactive
-    def do_Interactive(self, node) -> None:  # pragma: no cover (will never be used)
+    def do_Interactive(self, node: Node) -> None:  # pragma: no cover (will never be used)
         for z in node.body:
             self.visit(z)
 
     #@+node:ekr.20160318141204.23: *4* f.Module
-    def do_Module(self, node) -> str:
+    def do_Module(self, node: Node) -> str:
         assert 'body' in node._fields
         result = ''.join([self.visit(z) for z in node.body])
         return result  # 'module:\n%s' % (result)
 
     #@+node:ekr.20160318141204.24: *4* f.Lambda
-    def do_Lambda(self, node) -> str:
+    def do_Lambda(self, node: Node) -> str:
         return self.indent('lambda %s: %s' % (
             self.visit(node.args),
             self.visit(node.body)))
@@ -202,35 +202,35 @@ class AstFormatter:
     # Expressions...
 
     #@+node:ekr.20160318141204.26: *4* f.Expr
-    def do_Expr(self, node) -> str:
+    def do_Expr(self, node: Node) -> str:
         """An outer expression: must be indented."""
         return self.indent('%s\n' % self.visit(node.value))
     #@+node:ekr.20160318141204.27: *4* f.Expression
-    def do_Expression(self, node) -> str:  # pragma: no cover (never used)
+    def do_Expression(self, node: Node) -> str:  # pragma: no cover (never used)
         """An expression context"""
         return '%s\n' % self.visit(node.body)
 
     #@+node:ekr.20160318141204.28: *4* f.GeneratorExp
-    def do_GeneratorExp(self, node) -> str:
+    def do_GeneratorExp(self, node: Node) -> str:
         elt = self.visit(node.elt) or ''
         gens = [self.visit(z) for z in node.generators]
         gens = [z if z else '<**None**>' for z in gens]  # Kludge: probable bug.
         return '<gen %s for %s>' % (elt, ','.join(gens))
 
     #@+node:ekr.20160318141204.29: *4* f.ctx nodes
-    def do_AugLoad(self, node) -> str:  # pragma: no cover (defensive)
+    def do_AugLoad(self, node: Node) -> str:  # pragma: no cover (defensive)
         return 'AugLoad'
 
-    def do_Del(self, node) -> str:  # pragma: no cover (defensive)
+    def do_Del(self, node: Node) -> str:  # pragma: no cover (defensive)
         return 'Del'
 
-    def do_Load(self, node) -> str:  # pragma: no cover (defensive)
+    def do_Load(self, node: Node) -> str:  # pragma: no cover (defensive)
         return 'Load'
 
-    def do_Param(self, node) -> str:  # pragma: no cover (defensive)
+    def do_Param(self, node: Node) -> str:  # pragma: no cover (defensive)
         return 'Param'
 
-    def do_Store(self, node) -> str:  # pragma: no cover (defensive)
+    def do_Store(self, node: Node) -> str:  # pragma: no cover (defensive)
         return 'Store'
     #@+node:ekr.20160318141204.30: *3* f.Operands
 
@@ -242,7 +242,7 @@ class AstFormatter:
     #       expr* kw_defaults, arg? kwarg, expr* defaults
     # )
 
-    def do_arguments(self, node) -> str:
+    def do_arguments(self, node: Node) -> str:
         """Format the arguments node."""
         kind = self.kind(node)
         assert kind == 'arguments', kind
@@ -283,26 +283,26 @@ class AstFormatter:
     #@+node:ekr.20160318141204.32: *4* f.arg
     # 3: arg = (identifier arg, expr? annotation)
 
-    def do_arg(self, node) -> str:
+    def do_arg(self, node: Node) -> str:
         if getattr(node, 'annotation', None):
             return '%s: %s' % (node.arg, self.visit(node.annotation))
         return node.arg
     #@+node:ekr.20160318141204.33: *4* f.Attribute
     # Attribute(expr value, identifier attr, expr_context ctx)
 
-    def do_Attribute(self, node) -> str:
+    def do_Attribute(self, node: Node) -> str:
         return '%s.%s' % (
             self.visit(node.value),
             node.attr)  # Don't visit node.attr: it is always a string.
 
     #@+node:ekr.20160318141204.34: *4* f.Bytes
-    def do_Bytes(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Bytes(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return str(node.s)
 
     #@+node:ekr.20160318141204.35: *4* f.Call & f.keyword
     # Call(expr func, expr* args, keyword* keywords)
 
-    def do_Call(self, node) -> str:
+    def do_Call(self, node: Node) -> str:
         func = self.visit(node.func)
         args = [self.visit(z) for z in node.args]
         for z in node.keywords:
@@ -312,17 +312,17 @@ class AstFormatter:
     #@+node:ekr.20160318141204.36: *5* f.keyword
     # keyword = (identifier arg, expr value)
 
-    def do_keyword(self, node) -> str:
+    def do_keyword(self, node: Node) -> str:
         """Handle keyword *arg*, not a Python keyword!"""
         # node.arg is a string.
         value = self.visit(node.value)
         return '%s=%s' % (node.arg, value) if node.arg else '**%s' % value
 
     #@+node:ekr.20210804214511.1: *4* f.Constant
-    def do_Constant(self, node) -> str:  # #13
+    def do_Constant(self, node: Node) -> str:  # #13
         return repr(node.value)
     #@+node:ekr.20160318141204.37: *4* f.comprehension
-    def do_comprehension(self, node) -> str:
+    def do_comprehension(self, node: Node) -> str:
         result = []
         name = self.visit(node.target)  # A name.
         it = self.visit(node.iter)  # An attribute.
@@ -333,7 +333,7 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.38: *4* f.Dict
-    def do_Dict(self, node) -> str:
+    def do_Dict(self, node: Node) -> str:
         result = []
         keys = [self.visit(z) for z in node.keys]
         values = [self.visit(z) for z in node.values]
@@ -349,23 +349,23 @@ class AstFormatter:
                 repr(keys), repr(values)))
         return ''.join(result)
     #@+node:ekr.20160318141204.39: *4* f.Ellipsis
-    def do_Ellipsis(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Ellipsis(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return '...'
     #@+node:ekr.20160318141204.40: *4* f.ExtSlice
-    def do_ExtSlice(self, node) -> str:  # pragma: no cover (deprecated)
+    def do_ExtSlice(self, node: Node) -> str:  # pragma: no cover (deprecated)
         return ':'.join([self.visit(z) for z in node.dims])
 
     #@+node:ekr.20210806005225.1: *4* f.FormattedValue & JoinedStr
     # FormattedValue(expr value, int? conversion, expr? format_spec)
 
-    def do_FormattedValue(self, node) -> str:
+    def do_FormattedValue(self, node: Node) -> str:
         return self.visit(node.value)
         
-    def do_JoinedStr(self, node) -> str:
+    def do_JoinedStr(self, node: Node) -> str:
         return "%s" % ''.join(self.visit(z) for z in node.values or [])
 
     #@+node:ekr.20160318141204.42: *4* f.List
-    def do_List(self, node) -> str:
+    def do_List(self, node: Node) -> str:
         # Not used: list context.
         # self.visit(node.ctx)
         elts = [self.visit(z) for z in node.elts]
@@ -373,26 +373,26 @@ class AstFormatter:
         return '[%s]' % ','.join(elts)
 
     #@+node:ekr.20160318141204.43: *4* f.ListComp
-    def do_ListComp(self, node) -> str:
+    def do_ListComp(self, node: Node) -> str:
         elt = self.visit(node.elt)
         gens = [self.visit(z) for z in node.generators]
         gens = [z if z else '<**None**>' for z in gens]  # Kludge: probable bug.
         return '%s for %s' % (elt, ''.join(gens))
 
     #@+node:ekr.20160318141204.44: *4* f.Name & NameConstant
-    def do_Name(self, node) -> str:
+    def do_Name(self, node: Node) -> str:
         return node.id
 
-    def do_NameConstant(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_NameConstant(self, node: Node) -> str:  # pragma: no cover (obsolete)
         s = repr(node.value)
         return 'bool' if s in ('True', 'False') else s
 
     #@+node:ekr.20160318141204.45: *4* f.Num
-    def do_Num(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Num(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return repr(node.n)
 
     #@+node:ekr.20160318141204.47: *4* f.Slice
-    def do_Slice(self, node) -> str:
+    def do_Slice(self, node: Node) -> str:
         lower, upper, step = '', '', ''
         if getattr(node, 'lower', None) is not None:
             lower = self.visit(node.lower)
@@ -404,7 +404,7 @@ class AstFormatter:
         return '%s:%s' % (lower, upper)
 
     #@+node:ekr.20160318141204.48: *4* f.Str
-    def do_Str(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Str(self, node: Node) -> str:  # pragma: no cover (obsolete)
         """This represents a string constant."""
         return repr(node.s)
 
@@ -413,7 +413,7 @@ class AstFormatter:
 
     in_subscript = False
 
-    def do_Subscript(self, node) -> str:
+    def do_Subscript(self, node: Node) -> str:
         # A hack, for do_Tuple.
         old_in_subscript = self.in_subscript
         try:
@@ -425,7 +425,7 @@ class AstFormatter:
         return '%s[%s]' % (value, the_slice)
 
     #@+node:ekr.20160318141204.50: *4* f.Tuple
-    def do_Tuple(self, node) -> str:
+    def do_Tuple(self, node: Node) -> str:
         elts_s = ', '.join(self.visit(z) for z in node.elts)
         return elts_s if self.in_subscript else '(%s)' % elts_s
     #@+node:ekr.20160318141204.51: *3* f.Operators
@@ -433,20 +433,20 @@ class AstFormatter:
     # Operators...
 
     #@+node:ekr.20160318141204.52: *4* f.BinOp
-    def do_BinOp(self, node) -> str:
+    def do_BinOp(self, node: Node) -> str:
         return '%s%s%s' % (
             self.visit(node.left),
             self.op_name(node.op),
             self.visit(node.right))
 
     #@+node:ekr.20160318141204.53: *4* f.BoolOp
-    def do_BoolOp(self, node) -> str:
+    def do_BoolOp(self, node: Node) -> str:
         op_name = self.op_name(node.op)
         values = [self.visit(z) for z in node.values]
         return op_name.join(values)
 
     #@+node:ekr.20160318141204.54: *4* f.Compare
-    def do_Compare(self, node) -> str:
+    def do_Compare(self, node: Node) -> str:
         result = []
         lt = self.visit(node.left)
         ops = [self.op_name(z) for z in node.ops]
@@ -460,13 +460,13 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.55: *4* f.UnaryOp
-    def do_UnaryOp(self, node) -> str:
+    def do_UnaryOp(self, node: Node) -> str:
         return '%s%s' % (
             self.op_name(node.op),
             self.visit(node.operand))
 
     #@+node:ekr.20160318141204.56: *4* f.ifExp (ternary operator)
-    def do_IfExp(self, node) -> str:
+    def do_IfExp(self, node: Node) -> str:
         return '%s if %s else %s ' % (
             self.visit(node.body),
             self.visit(node.test),
@@ -476,7 +476,7 @@ class AstFormatter:
     # Statements...
 
     #@+node:ekr.20160318141204.58: *4* f.Assert
-    def do_Assert(self, node) -> str:
+    def do_Assert(self, node: Node) -> str:
         test = self.visit(node.test)
         if getattr(node, 'msg', None):
             message = self.visit(node.msg)
@@ -486,38 +486,38 @@ class AstFormatter:
     #@+node:ekr.20160318141204.59: *4* f.AnnAssign & Assign
     # AnnAssign(expr target, expr annotation, expr? value, int simple)
 
-    def do_AnnAssign(self, node) -> str:
+    def do_AnnAssign(self, node: Node) -> str:
         return self.indent('%s: [%s] = %s\n' % (
             self.visit(node.target),
             self.visit(node.annotation),
             self.visit(node.value)))
 
-    def do_Assign(self, node) -> str:
+    def do_Assign(self, node: Node) -> str:
         return self.indent('%s = %s\n' % (
             '='.join([self.visit(z) for z in node.targets]),
             self.visit(node.value)))
     #@+node:ekr.20160318141204.60: *4* f.AugAssign
-    def do_AugAssign(self, node) -> str:
+    def do_AugAssign(self, node: Node) -> str:
         return self.indent('%s%s=%s\n' % (
             self.visit(node.target),
             self.op_name(node.op),  # Bug fix: 2013/03/08.
             self.visit(node.value)))
 
     #@+node:ekr.20160318141204.61: *4* f.Break
-    def do_Break(self, node) -> str:
+    def do_Break(self, node: Node) -> str:
         return self.indent('break\n')
 
     #@+node:ekr.20160318141204.62: *4* f.Continue
-    def do_Continue(self, node) -> str:
+    def do_Continue(self, node: Node) -> str:
         return self.indent('continue\n')
 
     #@+node:ekr.20160318141204.63: *4* f.Delete
-    def do_Delete(self, node) -> str:
+    def do_Delete(self, node: Node) -> str:
         targets = [self.visit(z) for z in node.targets]
         return self.indent('del %s\n' % ','.join(targets))
 
     #@+node:ekr.20160318141204.64: *4* f.ExceptHandler
-    def do_ExceptHandler(self, node) -> str:
+    def do_ExceptHandler(self, node: Node) -> str:
         result = []
         result.append(self.indent('except'))
         if getattr(node, 'type', None):
@@ -531,7 +531,7 @@ class AstFormatter:
             self.level -= 1
         return ''.join(result)
     #@+node:ekr.20160318141204.66: *4* f.For
-    def do_For(self, node) -> str:
+    def do_For(self, node: Node) -> str:
         result = []
         result.append(self.indent('for %s in %s:\n' % (
             self.visit(node.target),
@@ -549,12 +549,12 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.67: *4* f.Global
-    def do_Global(self, node) -> str:
+    def do_Global(self, node: Node) -> str:
         return self.indent('global %s\n' % (
             ','.join(node.names)))
 
     #@+node:ekr.20160318141204.68: *4* f.If
-    def do_If(self, node) -> str:
+    def do_If(self, node: Node) -> str:
         result = []
         result.append(self.indent('if %s:\n' % (
             self.visit(node.test))))
@@ -571,7 +571,7 @@ class AstFormatter:
         return ''.join(result)
 
     #@+node:ekr.20160318141204.69: *4* f.Import & helper
-    def do_Import(self, node) -> str:
+    def do_Import(self, node: Node) -> str:
         names = []
         for fn, asname in self.get_import_names(node):
             if asname:
@@ -581,7 +581,7 @@ class AstFormatter:
         return self.indent('import %s\n' % (','.join(names)))
 
     #@+node:ekr.20160318141204.70: *5* f.get_import_names
-    def get_import_names(self, node) -> List[Tuple[str, str]]:
+    def get_import_names(self, node: Node) -> List[Tuple[str, str]]:
         """Return a list of the the full file names in the import statement."""
         result: List[Tuple[str, str]] = []
         for ast2 in node.names:
@@ -592,7 +592,7 @@ class AstFormatter:
         return result
 
     #@+node:ekr.20160318141204.71: *4* f.ImportFrom
-    def do_ImportFrom(self, node) -> str:
+    def do_ImportFrom(self, node: Node) -> str:
         names = []
         for fn, asname in self.get_import_names(node):
             if asname:
@@ -605,14 +605,14 @@ class AstFormatter:
     #@+node:ekr.20160318141204.72: *4* f.Nonlocal
     # Nonlocal(identifier* names)
 
-    def do_Nonlocal(self, node) -> str:
+    def do_Nonlocal(self, node: Node) -> str:
         return self.indent('nonlocal %s\n' % ', '.join(node.names))
     #@+node:ekr.20160318141204.73: *4* f.Pass
-    def do_Pass(self, node) -> str:
+    def do_Pass(self, node: Node) -> str:
         return self.indent('pass\n')
 
     #@+node:ekr.20160318141204.75: *4* f.Raise
-    def do_Raise(self, node) -> str:
+    def do_Raise(self, node: Node) -> str:
         args = []
         for attr in ('exc', 'cause'):
             if getattr(node, attr, None) is not None:
@@ -622,7 +622,7 @@ class AstFormatter:
 
 
     #@+node:ekr.20160318141204.76: *4* f.Return
-    def do_Return(self, node) -> str:
+    def do_Return(self, node: Node) -> str:
         if node.value:
             return self.indent('return %s\n' % (
                 self.visit(node.value).strip()))
@@ -631,12 +631,12 @@ class AstFormatter:
     #@+node:ekr.20160318141204.77: *4* f.Starred
     # Starred(expr value, expr_context ctx)
 
-    def do_Starred(self, node) -> str:
+    def do_Starred(self, node: Node) -> str:
         return '*' + self.visit(node.value)
     #@+node:ekr.20160318141204.79: *4* f.Try
     # Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
 
-    def do_Try(self, node) -> str:
+    def do_Try(self, node: Node) -> str:
 
         result = []
         result.append(self.indent('try:\n'))
@@ -661,7 +661,7 @@ class AstFormatter:
                 self.level -= 1
         return ''.join(result)
     #@+node:ekr.20160318141204.82: *4* f.While
-    def do_While(self, node) -> str:
+    def do_While(self, node: Node) -> str:
         result = []
         result.append(self.indent('while %s:\n' % self.visit(node.test)))
         for z in node.body:
@@ -679,7 +679,7 @@ class AstFormatter:
     #@+node:ekr.20160318141204.83: *4* f.With
     # With(withitem* items, stmt* body)
 
-    def do_With(self, node) -> str:
+    def do_With(self, node: Node) -> str:
         result = []
         result.append(self.indent('with '))
         vars_list = []
@@ -702,7 +702,7 @@ class AstFormatter:
             self.level -= 1
         return ''.join(result)
     #@+node:ekr.20160318141204.84: *4* f.Yield
-    def do_Yield(self, node) -> str:
+    def do_Yield(self, node: Node) -> str:
         # do_Expr has already indented this *expression*.
         if getattr(node, 'value', None):
             return 'yield %s' % self.visit(node.value)
@@ -710,7 +710,7 @@ class AstFormatter:
     #@+node:ekr.20160318141204.85: *4* f.YieldFrom
     # YieldFrom(expr value)
 
-    def do_YieldFrom(self, node) -> str:
+    def do_YieldFrom(self, node: Node) -> str:
         # do_Expr has already indented this *expression*.
         return 'yield from %s' % self.visit(node.value)
     #@+node:ekr.20160318141204.86: *3* f.Utils
@@ -718,7 +718,7 @@ class AstFormatter:
     # Utils...
 
     #@+node:ekr.20160318141204.87: *4* f.kind
-    def kind(self, node) -> str:
+    def kind(self, node: Node) -> str:
         """Return the name of node's class."""
         return node.__class__.__name__
     #@+node:ekr.20160318141204.88: *4* f.indent
@@ -727,7 +727,7 @@ class AstFormatter:
     #@+node:ekr.20160318141204.89: *4* f.op_name
     #@@nobeautify
 
-    def op_name(self, node, strict=True) -> str:
+    def op_name(self, node: Node, strict=True) -> str:
         """Return the print name of an operator node."""
         d = {
             # Binary operators.
@@ -784,22 +784,22 @@ class AstArgFormatter(AstFormatter):
     #@+node:ekr.20160318141204.91: *3* arg_formatter.Constants & Name
     # Return generic markers to allow better pattern matches.
 
-    def do_Constant(self, node) -> str:
+    def do_Constant(self, node: Node) -> str:
         return 'None' if node.value is None else node.value.__class__.__name__
 
-    def do_BoolOp(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_BoolOp(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return 'bool'
 
-    def do_Bytes(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Bytes(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return 'bytes'
 
-    def do_Name(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Name(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return 'bool' if node.id in ('True', 'False') else node.id
 
-    def do_Num(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Num(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return 'number'
 
-    def do_Str(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Str(self, node: Node) -> str:  # pragma: no cover (obsolete)
         """This represents a string constant."""
         return 'str'
     #@-others
@@ -815,13 +815,13 @@ class Controller:
         """Ctor for Controller class."""
         self.options: Dict[str, str] = {}
         # Ivars set on the command line...
-        self.config_fn = None
+        self.config_fn: str = None
         self.enable_coverage_tests = False
         self.enable_unit_tests = False
         self.files: List[str] = []
         # Ivars set in the config file...
-        self.output_fn = None
-        self.output_directory = None
+        self.output_fn: str = None
+        self.output_directory: str = None
         self.overwrite = False
         self.prefix_lines: List[str] = []
         self.silent = False
@@ -1842,7 +1842,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.149: *3* sf.match_all
     matched_d: Dict[str, List[str]] = {}
 
-    def match_all(self, node, s, trace=False) -> str:
+    def match_all(self, node: Node, s, trace=False) -> str:
         """Match all the patterns for the given node."""
         trace = trace or self.trace_matches
         d = self.matched_d
@@ -1862,7 +1862,7 @@ class StubFormatter(AstFormatter):
                 break
         return s
     #@+node:ekr.20160318141204.151: *3* sf.trace_visitor
-    def trace_visitor(self, node, op, s) -> None:  # pragma: no cover
+    def trace_visitor(self, node: Node, op, s) -> None:  # pragma: no cover
         """Trace node's visitor."""
         if self.trace_visitors:
             caller = g.callers(2).split(',')[1]
@@ -1873,7 +1873,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.153: *4* sf.Attribute
     # Attribute(expr value, identifier attr, expr_context ctx)
 
-    def do_Attribute(self, node) -> str:
+    def do_Attribute(self, node: Node) -> str:
         """StubFormatter.do_Attribute."""
         s = '%s.%s' % (
             self.visit(node.value),
@@ -1883,20 +1883,20 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.154: *4* sf.Constants: Constant, Bytes, Num, Str
     # Return generic markers to allow better pattern matches.
 
-    def do_Constant(self, node) -> str:
+    def do_Constant(self, node: Node) -> str:
         return 'None' if node.value is None else node.value.__class__.__name__
 
-    def do_Bytes(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Bytes(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return 'bytes'
 
-    def do_Num(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Num(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return 'number'
 
-    def do_Str(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_Str(self, node: Node) -> str:  # pragma: no cover (obsolete)
         """This represents a string constant."""
         return 'str'
     #@+node:ekr.20160318141204.155: *4* sf.Dict
-    def do_Dict(self, node) -> str:
+    def do_Dict(self, node: Node) -> str:
         keys = [self.visit(z) for z in node.keys]
         values = [self.visit(z) for z in node.values]
         if len(keys) != len(values):  # pragma: no cover (defensive)
@@ -1913,7 +1913,7 @@ class StubFormatter(AstFormatter):
             result.append('%s:%s' % (keys[i], values[i]))
         return ('Dict[%s]' % ', '.join(result))
     #@+node:ekr.20160318141204.156: *4* sf.List
-    def do_List(self, node) -> str:
+    def do_List(self, node: Node) -> str:
         """StubFormatter.List."""
         elts = [self.visit(z) for z in node.elts]
         elts = [z for z in elts if z]  # Defensive.
@@ -1921,7 +1921,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.157: *4* sf.Name
     # seen_names = [] # t--ype: List[str]
 
-    def do_Name(self, node) -> str:
+    def do_Name(self, node: Node) -> str:
         """StubFormatter ast.Name visitor."""
         d = self.names_dict
         name = d.get(node.id, node.id)
@@ -1934,7 +1934,7 @@ class StubFormatter(AstFormatter):
                 g.trace('**not found**', node.id)
         return s
     #@+node:ekr.20160318141204.158: *4* sf.Tuple
-    def do_Tuple(self, node) -> str:
+    def do_Tuple(self, node: Node) -> str:
         """StubFormatter.Tuple."""
         elts = [self.visit(z) for z in node.elts]
         return 'Tuple[%s]' % ', '.join(elts)
@@ -1943,7 +1943,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.160: *4* sf.BinOp
     # BinOp(expr left, operator op, expr right)
 
-    def do_BinOp(self, node) -> str:
+    def do_BinOp(self, node: Node) -> str:
         """StubFormatter.BinOp visitor."""
         trace = self.trace_reduce
         numbers = ['number', 'complex', 'float', 'long', 'int',]
@@ -1975,7 +1975,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.161: *4* sf.BoolOp
     # BoolOp(boolop op, expr* values)
 
-    def do_BoolOp(self, node) -> str:  # pragma: no cover (obsolete)
+    def do_BoolOp(self, node: Node) -> str:  # pragma: no cover (obsolete)
         """StubFormatter.BoolOp visitor for 'and' and 'or'."""
         trace = self.trace_reduce
         op = self.op_name(node.op)
@@ -1987,7 +1987,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.164: *4* sf.Compare
     # Compare(expr left, cmpop* ops, expr* comparators)
 
-    def do_Compare(self, node) -> str:
+    def do_Compare(self, node: Node) -> str:
         """
         StubFormatter ast.Compare visitor for these ops:
         '==', '!=', '<', '<=', '>', '>=', 'is', 'is not', 'in', 'not in',
@@ -1999,7 +1999,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.165: *4* sf.IfExp
     # If(expr test, stmt* body, stmt* orelse)
 
-    def do_IfExp(self, node) -> str:
+    def do_IfExp(self, node: Node) -> str:
         """StubFormatterIfExp (ternary operator)."""
         trace = self.trace_reduce
         aList = [
@@ -2013,7 +2013,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.166: *4* sf.Subscript
     # Subscript(expr value, slice slice, expr_context ctx)
 
-    def do_Subscript(self, node) -> str:
+    def do_Subscript(self, node: Node) -> str:
         """StubFormatter.Subscript."""
         s = '%s[%s]' % (
             self.visit(node.value),
@@ -2024,7 +2024,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.167: *4* sf.UnaryOp
     # UnaryOp(unaryop op, expr operand)
 
-    def do_UnaryOp(self, node) -> str:
+    def do_UnaryOp(self, node: Node) -> str:
         """StubFormatter.UnaryOp for unary +, -, ~ and 'not' operators."""
         op = self.op_name(node.op)
         if op.strip() == 'not':
@@ -2037,7 +2037,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.162: *4* sf.Call & sf.keyword
     # Call(expr func, expr* args, keyword* keywords, expr? starargs, expr? kwargs)
 
-    def do_Call(self, node) -> str:
+    def do_Call(self, node: Node) -> str:
         """StubFormatter.Call visitor."""
         func = self.visit(node.func)
         args = [self.visit(z) for z in node.args]
@@ -2057,7 +2057,7 @@ class StubFormatter(AstFormatter):
         self.trace_visitor(node, 'call', s)
         return s
     #@+node:ekr.20160318141204.168: *4* sf.Return
-    def do_Return(self, node) -> str:
+    def do_Return(self, node: Node) -> str:
         """
         StubFormatter ast.Return vsitor.
         Return only the return expression itself.
@@ -2088,7 +2088,7 @@ class StubTraverser(ast.NodeVisitor):
         self.format = sf.format
         self.arg_format = AstArgFormatter().format
         self.level = 0
-        self.output_file = None
+        self.output_file: io.StringIO = None
         self.parent_stub: Optional[Stub] = None
         self.raw_format = AstFormatter().format
         self.returns: List[Node] = []
@@ -2139,7 +2139,7 @@ class StubTraverser(ast.NodeVisitor):
         else:
             print(s)
     #@+node:ekr.20160318141204.173: *3* st.run (main line) & helpers
-    def run(self, node) -> None:  # pragma: no cover
+    def run(self, node: Node) -> None:  # pragma: no cover
         """StubTraverser.run: write the stubs in node's tree to self.output_fn."""
         fn = self.output_fn
         dir_ = os.path.dirname(fn)
@@ -2402,7 +2402,7 @@ class StubTraverser(ast.NodeVisitor):
     # keyword arguments supplied to call (NULL identifier for **kwargs)
     # keyword = (identifier? arg, expr value)
 
-    def visit_ClassDef(self, node) -> None:
+    def visit_ClassDef(self, node: Node) -> None:
 
         # Create the stub in the old context.
         old_stub = self.parent_stub
@@ -2440,7 +2440,7 @@ class StubTraverser(ast.NodeVisitor):
     #@+node:ekr.20160318141204.187: *3* st.visit_FunctionDef & helpers
     # FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
 
-    def visit_FunctionDef(self, node) -> None:
+    def visit_FunctionDef(self, node: Node) -> None:
 
         # Create the stub in the old context.
         old_stub = self.parent_stub
@@ -2463,7 +2463,7 @@ class StubTraverser(ast.NodeVisitor):
     #@+node:ekr.20160318141204.188: *4* st.format_arguments & helper
     # arguments = (expr* args, identifier? vararg, identifier? kwarg, expr* defaults)
 
-    def format_arguments(self, node) -> str:
+    def format_arguments(self, node: Node) -> str:
         """
         Format the arguments node.
         Similar to AstFormat.do_arguments, but it is not a visitor!
@@ -2510,7 +2510,7 @@ class StubTraverser(ast.NodeVisitor):
             return s
         return s + ': Any'
     #@+node:ekr.20160318141204.190: *4* st.format_returns & helpers
-    def format_returns(self, node) -> str:
+    def format_returns(self, node: Node) -> str:
         """
         Calculate the return type:
         - Return None if there are no return statements.
@@ -2536,7 +2536,7 @@ class StubTraverser(ast.NodeVisitor):
         # Step 4: Calculate return types.
         return self.format_return_expressions(node, name, raw, r)
     #@+node:ekr.20160318141204.191: *5* st.format_return_expressions
-    def format_return_expressions(self, node, name, raw_returns, reduced_returns) -> str:
+    def format_return_expressions(self, node: Node, name, raw_returns, reduced_returns) -> str:
         """
         aList is a list of maximally reduced return expressions.
         For each expression e in Alist:
@@ -2568,7 +2568,7 @@ class StubTraverser(ast.NodeVisitor):
         s = reduce_types(reduced_returns, name=name, trace=self.trace_reduce)
         return s + tail
     #@+node:ekr.20160318141204.192: *5* st.get_def_name
-    def get_def_name(self, node) -> str:
+    def get_def_name(self, node: Node) -> str:
         """Return the representaion of a function or method name."""
         if self.class_name_stack:
             name = '%s.%s' % (self.class_name_stack[-1], node.name)
@@ -2594,7 +2594,7 @@ class StubTraverser(ast.NodeVisitor):
                 reduced_result.append(reduced[i])
         return raw_result, reduced_result
     #@+node:ekr.20160318141204.194: *3* st.visit_Return
-    def visit_Return(self, node) -> None:
+    def visit_Return(self, node: Node) -> None:
         self.returns.append(node)
             # New: return the entire node, not node.value.
     #@-others
@@ -2959,8 +2959,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             except Exception:
                 self.fail(filename)
             lines = g.splitLines(result_s)
-            expected = g.splitLines(expected_s)
-            self.assertEqual(expected, lines, msg=filename)
+            expected_lines = g.splitLines(expected_s)
+            self.assertEqual(expected_lines, lines, msg=filename)
     #@+node:ekr.20210805090943.1: *3* test_ast_formatter_class
     def test_ast_formatter_class(self):
         formatter = AstFormatter()
@@ -3095,8 +3095,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             except Exception:
                 self.fail(filename)
             lines = g.splitLines(result_s)
-            expected = g.splitLines(expected_s)
-            self.assertEqual(expected, lines, msg=filename)
+            expected_lines = g.splitLines(expected_s)
+            self.assertEqual(expected_lines, lines, msg=filename)
     #@+node:ekr.20210806011736.1: *3* test_ast_formatter_class_on_file
     def test_ast_formatter_class_on_file(self):
         # Use the source of *this* file as a single test.
@@ -3119,7 +3119,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         directory = os.path.dirname(__file__)
         controller.config_fn = finalize('make_stub_files.cfg')
         controller.scan_options()
-        self.assertTrue(controller.parser)
+        self.assertTrue(controller.parser)  # type:ignore
     #@+node:ekr.20210805093615.1: *3* test_file_msb
     def test_file_msb(self):
         """Run make_stub_files on itself."""
@@ -3199,8 +3199,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         # Test pattern.replace.
         found, new_s = p5.match('abc')
         self.assertTrue(found, msg='replace p5')
-        result = p5.replace(found, 'ABC')
-        self.assertTrue(result, 'ABC')
+        result5 = p5.replace(found, 'ABC')
+        self.assertTrue(result5, 'ABC')
         p6 = Pattern('list[*]', 'List[*]')
         found, s = p6.match('list[abc]')
         self.assertTrue(found, msg='p6')
@@ -3377,8 +3377,8 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             except Exception:
                 self.fail(filename)
             lines = g.splitLines(result_s)
-            expected = g.splitLines(expected_s)
-            self.assertEqual(expected, lines, msg=filename)
+            expected_lines = g.splitLines(expected_s)
+            self.assertEqual(expected_lines, lines, msg=filename)
         #
         # Part 2: Scan the default options
         directory = os.path.dirname(__file__)
