@@ -54,6 +54,237 @@
 </v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
 <v t="ekr.20210809094659.1"><vh>@@@clean launch_msf.py</vh></v>
+<v t="ekr.20210809124558.1"><vh>@clean make_stub_files.pyi</vh>
+<v t="ekr.20210809124613.1"><vh>Declarations</vh></v>
+<v t="ekr.20210809124613.2"><vh>dump</vh></v>
+<v t="ekr.20210809124613.3"><vh>dump_dict</vh></v>
+<v t="ekr.20210809124613.4"><vh>dump_list</vh></v>
+<v t="ekr.20210809124613.5"><vh>finalize</vh></v>
+<v t="ekr.20210809124613.6"><vh>is_known_type</vh></v>
+<v t="ekr.20210809124613.7"><vh>main</vh></v>
+<v t="ekr.20210809124613.8"><vh>reduce_types</vh></v>
+<v t="ekr.20210809124613.9"><vh>truncate</vh></v>
+<v t="ekr.20210809124613.10"><vh>class AstFormatter</vh>
+<v t="ekr.20210809124613.11"><vh>AstFormatter.format</vh></v>
+<v t="ekr.20210809124613.12"><vh>AstFormatter.visit</vh></v>
+<v t="ekr.20210809124613.13"><vh>AstFormatter.do_ClassDef</vh></v>
+<v t="ekr.20210809124613.14"><vh>AstFormatter.do_FunctionDef</vh></v>
+<v t="ekr.20210809124613.15"><vh>AstFormatter.do_Interactive</vh></v>
+<v t="ekr.20210809124613.16"><vh>AstFormatter.do_Module</vh></v>
+<v t="ekr.20210809124613.17"><vh>AstFormatter.do_Lambda</vh></v>
+<v t="ekr.20210809124613.18"><vh>AstFormatter.do_Expr</vh></v>
+<v t="ekr.20210809124613.19"><vh>AstFormatter.do_Expression</vh></v>
+<v t="ekr.20210809124613.20"><vh>AstFormatter.do_GeneratorExp</vh></v>
+<v t="ekr.20210809124613.21"><vh>AstFormatter.do_AugLoad</vh></v>
+<v t="ekr.20210809124613.22"><vh>AstFormatter.do_Del</vh></v>
+<v t="ekr.20210809124613.23"><vh>AstFormatter.do_Load</vh></v>
+<v t="ekr.20210809124613.24"><vh>AstFormatter.do_Param</vh></v>
+<v t="ekr.20210809124613.25"><vh>AstFormatter.do_Store</vh></v>
+<v t="ekr.20210809124613.26"><vh>AstFormatter.do_arguments</vh></v>
+<v t="ekr.20210809124613.27"><vh>AstFormatter.do_arg</vh></v>
+<v t="ekr.20210809124613.28"><vh>AstFormatter.do_Attribute</vh></v>
+<v t="ekr.20210809124613.29"><vh>AstFormatter.do_Bytes</vh></v>
+<v t="ekr.20210809124613.30"><vh>AstFormatter.do_Call</vh></v>
+<v t="ekr.20210809124613.31"><vh>AstFormatter.do_keyword</vh></v>
+<v t="ekr.20210809124613.32"><vh>AstFormatter.do_Constant</vh></v>
+<v t="ekr.20210809124613.33"><vh>AstFormatter.do_comprehension</vh></v>
+<v t="ekr.20210809124613.34"><vh>AstFormatter.do_Dict</vh></v>
+<v t="ekr.20210809124613.35"><vh>AstFormatter.do_Ellipsis</vh></v>
+<v t="ekr.20210809124613.36"><vh>AstFormatter.do_ExtSlice</vh></v>
+<v t="ekr.20210809124613.37"><vh>AstFormatter.do_FormattedValue</vh></v>
+<v t="ekr.20210809124613.38"><vh>AstFormatter.do_JoinedStr</vh></v>
+<v t="ekr.20210809124613.39"><vh>AstFormatter.do_List</vh></v>
+<v t="ekr.20210809124613.40"><vh>AstFormatter.do_ListComp</vh></v>
+<v t="ekr.20210809124613.41"><vh>AstFormatter.do_Name</vh></v>
+<v t="ekr.20210809124613.42"><vh>AstFormatter.do_NameConstant</vh></v>
+<v t="ekr.20210809124613.43"><vh>AstFormatter.do_Num</vh></v>
+<v t="ekr.20210809124613.44"><vh>AstFormatter.do_Slice</vh></v>
+<v t="ekr.20210809124613.45"><vh>AstFormatter.do_Str</vh></v>
+<v t="ekr.20210809124613.46"><vh>AstFormatter.do_Subscript</vh></v>
+<v t="ekr.20210809124613.47"><vh>AstFormatter.do_Tuple</vh></v>
+<v t="ekr.20210809124613.48"><vh>AstFormatter.do_BinOp</vh></v>
+<v t="ekr.20210809124613.49"><vh>AstFormatter.do_BoolOp</vh></v>
+<v t="ekr.20210809124613.50"><vh>AstFormatter.do_Compare</vh></v>
+<v t="ekr.20210809124613.51"><vh>AstFormatter.do_UnaryOp</vh></v>
+<v t="ekr.20210809124613.52"><vh>AstFormatter.do_IfExp</vh></v>
+<v t="ekr.20210809124613.53"><vh>AstFormatter.do_Assert</vh></v>
+<v t="ekr.20210809124613.54"><vh>AstFormatter.do_AnnAssign</vh></v>
+<v t="ekr.20210809124613.55"><vh>AstFormatter.do_Assign</vh></v>
+<v t="ekr.20210809124613.56"><vh>AstFormatter.do_AugAssign</vh></v>
+<v t="ekr.20210809124613.57"><vh>AstFormatter.do_Break</vh></v>
+<v t="ekr.20210809124613.58"><vh>AstFormatter.do_Continue</vh></v>
+<v t="ekr.20210809124613.59"><vh>AstFormatter.do_Delete</vh></v>
+<v t="ekr.20210809124613.60"><vh>AstFormatter.do_ExceptHandler</vh></v>
+<v t="ekr.20210809124613.61"><vh>AstFormatter.do_For</vh></v>
+<v t="ekr.20210809124613.62"><vh>AstFormatter.do_Global</vh></v>
+<v t="ekr.20210809124613.63"><vh>AstFormatter.do_If</vh></v>
+<v t="ekr.20210809124613.64"><vh>AstFormatter.do_Import</vh></v>
+<v t="ekr.20210809124613.65"><vh>AstFormatter.get_import_names</vh></v>
+<v t="ekr.20210809124613.66"><vh>AstFormatter.do_ImportFrom</vh></v>
+<v t="ekr.20210809124613.67"><vh>AstFormatter.do_Nonlocal</vh></v>
+<v t="ekr.20210809124613.68"><vh>AstFormatter.do_Pass</vh></v>
+<v t="ekr.20210809124613.69"><vh>AstFormatter.do_Raise</vh></v>
+<v t="ekr.20210809124613.70"><vh>AstFormatter.do_Return</vh></v>
+<v t="ekr.20210809124613.71"><vh>AstFormatter.do_Starred</vh></v>
+<v t="ekr.20210809124613.72"><vh>AstFormatter.do_Try</vh></v>
+<v t="ekr.20210809124613.73"><vh>AstFormatter.do_While</vh></v>
+<v t="ekr.20210809124613.74"><vh>AstFormatter.do_With</vh></v>
+<v t="ekr.20210809124613.75"><vh>AstFormatter.do_Yield</vh></v>
+<v t="ekr.20210809124613.76"><vh>AstFormatter.do_YieldFrom</vh></v>
+<v t="ekr.20210809124613.77"><vh>AstFormatter.kind</vh></v>
+<v t="ekr.20210809124613.78"><vh>AstFormatter.indent</vh></v>
+<v t="ekr.20210809124613.79"><vh>AstFormatter.op_name</vh></v>
+</v>
+<v t="ekr.20210809124613.80"><vh>class AstArgFormatter(AstFormatter)</vh>
+<v t="ekr.20210809124613.81"><vh>AstArgFormatter(AstFormatter).do_Constant</vh></v>
+<v t="ekr.20210809124613.82"><vh>AstArgFormatter(AstFormatter).do_BoolOp</vh></v>
+<v t="ekr.20210809124613.83"><vh>AstArgFormatter(AstFormatter).do_Bytes</vh></v>
+<v t="ekr.20210809124613.84"><vh>AstArgFormatter(AstFormatter).do_Name</vh></v>
+<v t="ekr.20210809124613.85"><vh>AstArgFormatter(AstFormatter).do_Num</vh></v>
+<v t="ekr.20210809124613.86"><vh>AstArgFormatter(AstFormatter).do_Str</vh></v>
+</v>
+<v t="ekr.20210809124613.87"><vh>class Controller</vh>
+<v t="ekr.20210809124613.88"><vh>Controller.__init__</vh></v>
+<v t="ekr.20210809124613.89"><vh>Controller.make_stub_file</vh></v>
+<v t="ekr.20210809124613.90"><vh>Controller.scan_command_line</vh></v>
+<v t="ekr.20210809124613.91"><vh>Controller.scan_options</vh></v>
+<v t="ekr.20210809124613.92"><vh>Controller.make_op_name_dict</vh></v>
+<v t="ekr.20210809124613.93"><vh>Controller.create_parser</vh></v>
+<v t="ekr.20210809124613.94"><vh>Controller.find_pattern_ops</vh></v>
+<v t="ekr.20210809124613.95"><vh>Controller.get_config_string</vh></v>
+<v t="ekr.20210809124613.96"><vh>Controller.init_parser</vh></v>
+<v t="ekr.20210809124613.97"><vh>Controller.is_section_name</vh></v>
+<v t="ekr.20210809124613.98"><vh>Controller.make_patterns_dict</vh></v>
+<v t="ekr.20210809124613.99"><vh>Controller.scan_patterns</vh></v>
+</v>
+<v t="ekr.20210809124613.100"><vh>class LeoGlobals</vh>
+<v t="ekr.20210809124613.101"><vh>LeoGlobals._callerName</vh></v>
+<v t="ekr.20210809124613.102"><vh>LeoGlobals.caller</vh></v>
+<v t="ekr.20210809124613.103"><vh>LeoGlobals.callers</vh></v>
+<v t="ekr.20210809124613.104"><vh>LeoGlobals.cls</vh></v>
+<v t="ekr.20210809124613.105"><vh>LeoGlobals.objToString</vh></v>
+<v t="ekr.20210809124613.106"><vh>LeoGlobals.dictToString</vh></v>
+<v t="ekr.20210809124613.107"><vh>LeoGlobals.listToString</vh></v>
+<v t="ekr.20210809124613.108"><vh>LeoGlobals.tupleToString</vh></v>
+<v t="ekr.20210809124613.109"><vh>LeoGlobals.pdb</vh></v>
+<v t="ekr.20210809124613.110"><vh>LeoGlobals.printObj</vh></v>
+<v t="ekr.20210809124613.111"><vh>LeoGlobals.shortFileName</vh></v>
+<v t="ekr.20210809124613.112"><vh>LeoGlobals.splitLines</vh></v>
+<v t="ekr.20210809124613.113"><vh>LeoGlobals.trace</vh></v>
+</v>
+<v t="ekr.20210809124613.114"><vh>class Pattern</vh>
+<v t="ekr.20210809124613.115"><vh>Pattern.__init__</vh></v>
+<v t="ekr.20210809124613.116"><vh>Pattern.__eq__</vh></v>
+<v t="ekr.20210809124613.117"><vh>Pattern.__ne__</vh></v>
+<v t="ekr.20210809124613.118"><vh>Pattern.__hash__</vh></v>
+<v t="ekr.20210809124613.119"><vh>Pattern.__repr__</vh></v>
+<v t="ekr.20210809124613.120"><vh>Pattern.is_balanced</vh></v>
+<v t="ekr.20210809124613.121"><vh>Pattern.is_regex</vh></v>
+<v t="ekr.20210809124613.122"><vh>Pattern.all_matches</vh></v>
+<v t="ekr.20210809124613.123"><vh>Pattern.full_balanced_match</vh></v>
+<v t="ekr.20210809124613.124"><vh>Pattern.match_balanced</vh></v>
+<v t="ekr.20210809124613.125"><vh>Pattern.match</vh></v>
+<v t="ekr.20210809124613.126"><vh>Pattern.match_entire_string</vh></v>
+<v t="ekr.20210809124613.127"><vh>Pattern.replace</vh></v>
+<v t="ekr.20210809124613.128"><vh>Pattern.replace_balanced</vh></v>
+<v t="ekr.20210809124613.129"><vh>Pattern.replace_regex</vh></v>
+</v>
+<v t="ekr.20210809124613.130"><vh>class ReduceTypes</vh>
+<v t="ekr.20210809124613.131"><vh>ReduceTypes.__init__</vh></v>
+<v t="ekr.20210809124613.132"><vh>ReduceTypes.is_known_type</vh></v>
+<v t="ekr.20210809124613.133"><vh>ReduceTypes.reduce_collection</vh></v>
+<v t="ekr.20210809124613.134"><vh>ReduceTypes.reduce_numbers</vh></v>
+<v t="ekr.20210809124613.135"><vh>ReduceTypes.reduce_types</vh></v>
+<v t="ekr.20210809124613.136"><vh>ReduceTypes.reduce_unknowns</vh></v>
+<v t="ekr.20210809124613.137"><vh>ReduceTypes.show</vh></v>
+<v t="ekr.20210809124613.138"><vh>ReduceTypes.split_types</vh></v>
+</v>
+<v t="ekr.20210809124613.139"><vh>class Stub</vh>
+<v t="ekr.20210809124613.140"><vh>Stub.__init__</vh></v>
+<v t="ekr.20210809124613.141"><vh>Stub.__eq__</vh></v>
+<v t="ekr.20210809124613.142"><vh>Stub.__ne__</vh></v>
+<v t="ekr.20210809124613.143"><vh>Stub.__hash__</vh></v>
+<v t="ekr.20210809124613.144"><vh>Stub.__repr__</vh></v>
+<v t="ekr.20210809124613.145"><vh>Stub.level</vh></v>
+<v t="ekr.20210809124613.146"><vh>Stub.parents</vh></v>
+</v>
+<v t="ekr.20210809124613.147"><vh>class StubFormatter(AstFormatter)</vh>
+<v t="ekr.20210809124613.148"><vh>StubFormatter(AstFormatter).__init__</vh></v>
+<v t="ekr.20210809124613.149"><vh>StubFormatter(AstFormatter).match_all</vh></v>
+<v t="ekr.20210809124613.150"><vh>StubFormatter(AstFormatter).trace_visitor</vh></v>
+<v t="ekr.20210809124613.151"><vh>StubFormatter(AstFormatter).do_Attribute</vh></v>
+<v t="ekr.20210809124613.152"><vh>StubFormatter(AstFormatter).do_Constant</vh></v>
+<v t="ekr.20210809124613.153"><vh>StubFormatter(AstFormatter).do_Bytes</vh></v>
+<v t="ekr.20210809124613.154"><vh>StubFormatter(AstFormatter).do_Num</vh></v>
+<v t="ekr.20210809124613.155"><vh>StubFormatter(AstFormatter).do_Str</vh></v>
+<v t="ekr.20210809124613.156"><vh>StubFormatter(AstFormatter).do_Dict</vh></v>
+<v t="ekr.20210809124613.157"><vh>StubFormatter(AstFormatter).do_List</vh></v>
+<v t="ekr.20210809124613.158"><vh>StubFormatter(AstFormatter).do_Name</vh></v>
+<v t="ekr.20210809124613.159"><vh>StubFormatter(AstFormatter).do_Tuple</vh></v>
+<v t="ekr.20210809124613.160"><vh>StubFormatter(AstFormatter).do_BinOp</vh></v>
+<v t="ekr.20210809124613.161"><vh>StubFormatter(AstFormatter).do_BoolOp</vh></v>
+<v t="ekr.20210809124613.162"><vh>StubFormatter(AstFormatter).do_Compare</vh></v>
+<v t="ekr.20210809124613.163"><vh>StubFormatter(AstFormatter).do_IfExp</vh></v>
+<v t="ekr.20210809124613.164"><vh>StubFormatter(AstFormatter).do_Subscript</vh></v>
+<v t="ekr.20210809124613.165"><vh>StubFormatter(AstFormatter).do_UnaryOp</vh></v>
+<v t="ekr.20210809124613.166"><vh>StubFormatter(AstFormatter).do_Call</vh></v>
+<v t="ekr.20210809124613.167"><vh>StubFormatter(AstFormatter).do_Return</vh></v>
+</v>
+<v t="ekr.20210809124613.168"><vh>class StubTraverser(ast.NodeVisitor)</vh>
+<v t="ekr.20210809124613.169"><vh>StubTraverser(ast.NodeVisitor).__init__</vh></v>
+<v t="ekr.20210809124613.170"><vh>StubTraverser(ast.NodeVisitor).add_stub</vh></v>
+<v t="ekr.20210809124613.171"><vh>StubTraverser(ast.NodeVisitor).indent</vh></v>
+<v t="ekr.20210809124613.172"><vh>StubTraverser(ast.NodeVisitor).out</vh></v>
+<v t="ekr.20210809124613.173"><vh>StubTraverser(ast.NodeVisitor).run</vh></v>
+<v t="ekr.20210809124613.174"><vh>StubTraverser(ast.NodeVisitor).output_stubs</vh></v>
+<v t="ekr.20210809124613.175"><vh>StubTraverser(ast.NodeVisitor).output_time_stamp</vh></v>
+<v t="ekr.20210809124613.176"><vh>StubTraverser(ast.NodeVisitor).update</vh></v>
+<v t="ekr.20210809124613.177"><vh>StubTraverser(ast.NodeVisitor).get_stub_file</vh></v>
+<v t="ekr.20210809124613.178"><vh>StubTraverser(ast.NodeVisitor).parse_stub_file</vh></v>
+<v t="ekr.20210809124613.179"><vh>StubTraverser(ast.NodeVisitor).merge_stubs</vh></v>
+<v t="ekr.20210809124613.180"><vh>StubTraverser(ast.NodeVisitor).check_delete</vh></v>
+<v t="ekr.20210809124613.181"><vh>StubTraverser(ast.NodeVisitor).flatten_stubs</vh></v>
+<v t="ekr.20210809124613.182"><vh>StubTraverser(ast.NodeVisitor).flatten_stubs_helper</vh></v>
+<v t="ekr.20210809124613.183"><vh>StubTraverser(ast.NodeVisitor).find_parent_stub</vh></v>
+<v t="ekr.20210809124613.184"><vh>StubTraverser(ast.NodeVisitor).find_stub</vh></v>
+<v t="ekr.20210809124613.185"><vh>StubTraverser(ast.NodeVisitor).sort_stubs_by_hierarchy</vh></v>
+<v t="ekr.20210809124613.186"><vh>StubTraverser(ast.NodeVisitor).trace_stubs</vh></v>
+<v t="ekr.20210809124613.187"><vh>StubTraverser(ast.NodeVisitor).visit_ClassDef</vh></v>
+<v t="ekr.20210809124613.188"><vh>StubTraverser(ast.NodeVisitor).visit_FunctionDef</vh></v>
+<v t="ekr.20210809124613.189"><vh>StubTraverser(ast.NodeVisitor).format_arguments</vh></v>
+<v t="ekr.20210809124613.190"><vh>StubTraverser(ast.NodeVisitor).munge_arg</vh></v>
+<v t="ekr.20210809124613.191"><vh>StubTraverser(ast.NodeVisitor).format_returns</vh></v>
+<v t="ekr.20210809124613.192"><vh>StubTraverser(ast.NodeVisitor).format_return_expressions</vh></v>
+<v t="ekr.20210809124613.193"><vh>StubTraverser(ast.NodeVisitor).get_def_name</vh></v>
+<v t="ekr.20210809124613.194"><vh>StubTraverser(ast.NodeVisitor).remove_recursive_calls</vh></v>
+<v t="ekr.20210809124613.195"><vh>StubTraverser(ast.NodeVisitor).visit_Return</vh></v>
+</v>
+<v t="ekr.20210809124613.196"><vh>class TestMakeStubFiles(unittest.TestCase)</vh>
+<v t="ekr.20210809124613.197"><vh>TestMakeStubFiles(unittest.TestCase).test_rt_is_known_type</vh></v>
+<v t="ekr.20210809124613.198"><vh>TestMakeStubFiles(unittest.TestCase).test_rt_reduce_numbers</vh></v>
+<v t="ekr.20210809124613.199"><vh>TestMakeStubFiles(unittest.TestCase).test_rt_reduce_types</vh></v>
+<v t="ekr.20210809124613.200"><vh>TestMakeStubFiles(unittest.TestCase).test_rt_split_types</vh></v>
+<v t="ekr.20210809124613.201"><vh>TestMakeStubFiles(unittest.TestCase).test_st_find</vh></v>
+<v t="ekr.20210809124613.202"><vh>TestMakeStubFiles(unittest.TestCase).test_st_flatten_stubs</vh></v>
+<v t="ekr.20210809124613.203"><vh>TestMakeStubFiles(unittest.TestCase).test_st_merge_stubs</vh></v>
+<v t="ekr.20210809124613.204"><vh>TestMakeStubFiles(unittest.TestCase).test_st_format_returns</vh></v>
+<v t="ekr.20210809124613.205"><vh>TestMakeStubFiles(unittest.TestCase).test_bug2_empty</vh></v>
+<v t="ekr.20210809124613.206"><vh>TestMakeStubFiles(unittest.TestCase).test_bug2_non_empty</vh></v>
+<v t="ekr.20210809124613.207"><vh>TestMakeStubFiles(unittest.TestCase).test_bug3</vh></v>
+<v t="ekr.20210809124613.208"><vh>TestMakeStubFiles(unittest.TestCase).test_finalize</vh></v>
+<v t="ekr.20210809124613.209"><vh>TestMakeStubFiles(unittest.TestCase).test_is_known_type</vh></v>
+<v t="ekr.20210809124613.210"><vh>TestMakeStubFiles(unittest.TestCase).test_truncate</vh></v>
+<v t="ekr.20210809124613.211"><vh>TestMakeStubFiles(unittest.TestCase).test_ast_arg_formatter_class</vh></v>
+<v t="ekr.20210809124613.212"><vh>TestMakeStubFiles(unittest.TestCase).test_ast_formatter_class</vh></v>
+<v t="ekr.20210809124613.213"><vh>TestMakeStubFiles(unittest.TestCase).test_ast_formatter_class_on_file</vh></v>
+<v t="ekr.20210809124613.214"><vh>TestMakeStubFiles(unittest.TestCase).test_controller_class</vh></v>
+<v t="ekr.20210809124613.215"><vh>TestMakeStubFiles(unittest.TestCase).test_file_msb</vh></v>
+<v t="ekr.20210809124613.216"><vh>TestMakeStubFiles(unittest.TestCase).test_pattern_class</vh></v>
+<v t="ekr.20210809124613.217"><vh>TestMakeStubFiles(unittest.TestCase).test_stub_class</vh></v>
+<v t="ekr.20210809124613.218"><vh>TestMakeStubFiles(unittest.TestCase).test_stub_formatter_class</vh></v>
+<v t="ekr.20210809124613.219"><vh>TestMakeStubFiles(unittest.TestCase).test_stub_traverser_class</vh></v>
+</v>
+</v>
 </v>
 <v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh>
 <v t="ekr.20210806162349.1"><vh>--- changed &amp; new AstFormatter visitors</vh>
@@ -1241,6 +1472,551 @@ if 0:
 sys.argv = ['python', 'make_stub_files.py']
 # print(dir(make_stub_files))
 main()
+</t>
+<t tx="ekr.20210809124558.1"># make_stub_files: Mon 09 Aug 2021 at 12:44:15
+@others
+@language python
+@tabwidth -4
+</t>
+<t tx="ekr.20210809124613.1">from typing import Any, Dict, Optional, Sequence, Tuple, Union
+Node = Any
+</t>
+<t tx="ekr.20210809124613.10">class AstFormatter:
+    @others
+</t>
+<t tx="ekr.20210809124613.100">class LeoGlobals:
+    @others
+</t>
+<t tx="ekr.20210809124613.101">def _callerName(self, n: int=1, files: bool=False) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.102">def caller(self, i: int=1) -&gt; Any: ...
+    #   0: return self.callers(i+1).split(',')[0]
+    # ? 0: return self.callers(int).split(str)[int]
+</t>
+<t tx="ekr.20210809124613.103">def callers(self, n: int=4, count: int=0, excludeCaller: bool=True, files: bool=False) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.104">def cls(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.105">def objToString(self, obj: Any, indent: str='', printCaller: bool=False, tag: str=None) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.106">def dictToString(self, d: Dict[Any, Any], indent: str='', tag: str=None) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.107">def listToString(self, obj: Any, indent: str='', tag: str=None) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.108">def tupleToString(self, obj: Any, indent: str='', tag: str=None) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.109">def pdb(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.11">def format(self, node: Node) -&gt; Any: ...
+    #   0: return val
+    # ? 0: return val
+</t>
+<t tx="ekr.20210809124613.110">def printObj(self, obj: Any, indent: str='', printCaller: bool=False, tag: str=None) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.111">def shortFileName(self, fileName: str, n: int=None) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.112">def splitLines(self, s: str) -&gt; Union[Any, List]: ...
+</t>
+<t tx="ekr.20210809124613.113">def trace(self, *args: Optional[List], **keys: Optional[List]) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.114">class Pattern:
+    @others
+</t>
+<t tx="ekr.20210809124613.115">def __init__(self, find_s: str, repl_s: str='') -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.116">def __eq__(self, obj: Any) -&gt; bool: ...
+</t>
+<t tx="ekr.20210809124613.117">def __ne__(self, obj: Any) -&gt; bool: ...
+</t>
+<t tx="ekr.20210809124613.118">def __hash__(self) -&gt; int: ...
+</t>
+<t tx="ekr.20210809124613.119">def __repr__(self) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.12">def visit(self, node: Node) -&gt; Any: ...
+    #   0: return ','.join(self.visit(z) for z in node)
+    #   0: return str
+    #   1: return 'None'
+    #   1: return str
+    #   2: return s
+    #   2: return str
+    #   3: return message
+    # ? 3: return message
+</t>
+<t tx="ekr.20210809124613.120">def is_balanced(self) -&gt; bool: ...
+</t>
+<t tx="ekr.20210809124613.121">def is_regex(self) -&gt; Any: ...
+    #   0: return self.find_s.endswith('$')
+    # ? 0: return self.find_s.endswith(str)
+</t>
+<t tx="ekr.20210809124613.122">def all_matches(self, s: str) -&gt; List[Any]: ...
+</t>
+<t tx="ekr.20210809124613.123">def full_balanced_match(self, s: str, i: int) -&gt; Optional[int]: ...
+</t>
+<t tx="ekr.20210809124613.124">def match_balanced(self, delim: str, s: str, i: int) -&gt; int: ...
+</t>
+<t tx="ekr.20210809124613.125">def match(self, s: str, trace: bool=False) -&gt; Tuple[bool, str]: ...
+</t>
+<t tx="ekr.20210809124613.126">def match_entire_string(self, s: str) -&gt; Union[bool, bool(Union[Any, bool])]: ...
+</t>
+<t tx="ekr.20210809124613.127">def replace(self, m: Any, s: str) -&gt; Any: ...
+    #   0: return self.replace_balanced(s, start, end)
+    # ? 0: return self.replace_balanced(str, start, end)
+    #   1: return self.replace_regex(m, s)
+    # ? 1: return self.replace_regex(m, str)
+</t>
+<t tx="ekr.20210809124613.128">def replace_balanced(self, s1: str, start: int, end: int) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.129">def replace_regex(self, m: Any, s: str) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.13">def do_ClassDef(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.130">class ReduceTypes:
+    @others
+</t>
+<t tx="ekr.20210809124613.131">def __init__(self, aList: List[str]=None, name: str=None, trace: bool=False) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.132">def is_known_type(self, s: str) -&gt; Union[Union[Any, bool], bool]: ...
+</t>
+<t tx="ekr.20210809124613.133">def reduce_collection(self, aList: List[str], kind: str) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.134">def reduce_numbers(self, aList: List[str]) -&gt; List[Any]: ...
+</t>
+<t tx="ekr.20210809124613.135">def reduce_types(self) -&gt; Any: ...
+    #   0: return self.show('None')
+    # ? 0: return self.show(str)
+    #   1: return self.show(r[0])
+    # ? 1: return self.show(str)
+    #   2: return self.show('Union[%s]'%', '.join(sorted(r)))
+    # ? 2: return self.show(str)
+</t>
+<t tx="ekr.20210809124613.136">def reduce_unknowns(self, aList: List[str]) -&gt; Any: ...
+    #   0: return z if self.is_known_type(z) else 'Any'  for z in aList
+    # ? 0: return Union[Any, str] for z in List[Any]
+</t>
+<t tx="ekr.20210809124613.137">def show(self, s: str, known: bool=True) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.138">def split_types(self, s: str) -&gt; List[Any]: ...
+</t>
+<t tx="ekr.20210809124613.139">class Stub:
+    @others
+</t>
+<t tx="ekr.20210809124613.14">def do_FunctionDef(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.140">def __init__(self, kind: str, name: str, parent: 'Stub'=None, stack: List[str]=None) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.141">def __eq__(self, obj: Any) -&gt; bool: ...
+</t>
+<t tx="ekr.20210809124613.142">def __ne__(self, obj: Any) -&gt; bool: ...
+</t>
+<t tx="ekr.20210809124613.143">def __hash__(self) -&gt; int: ...
+</t>
+<t tx="ekr.20210809124613.144">def __repr__(self) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.145">def level(self) -&gt; int: ...
+</t>
+<t tx="ekr.20210809124613.146">def parents(self) -&gt; Any: ...
+    #   0: return self.full_name.split('.')[:-1]
+    # ? 0: return self.full_name.split(str)[:-int]
+</t>
+<t tx="ekr.20210809124613.147">class StubFormatter(AstFormatter):
+    @others
+</t>
+<t tx="ekr.20210809124613.148">def __init__(self, controller: Controller, traverser: 'StubTraverser') -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.149">def match_all(self, node: Node, s: str, trace: bool=False) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.15">def do_Interactive(self, node: Node) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.150">def trace_visitor(self, node: Node, op: str, s: str) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.151">def do_Attribute(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.152">def do_Constant(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.153">def do_Bytes(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.154">def do_Num(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.155">def do_Str(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.156">def do_Dict(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.157">def do_List(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.158">def do_Name(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.159">def do_Tuple(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.16">def do_Module(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.160">def do_BinOp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.161">def do_BoolOp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.162">def do_Compare(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.163">def do_IfExp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.164">def do_Subscript(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.165">def do_UnaryOp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.166">def do_Call(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.167">def do_Return(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.168">class StubTraverser(ast.NodeVisitor):
+    @others
+</t>
+<t tx="ekr.20210809124613.169">def __init__(self, controller: Controller) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.17">def do_Lambda(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.170">def add_stub(self, d: Dict[str, Stub], stub: Stub) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.171">def indent(self, s: str) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.172">def out(self, s: str) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.173">def run(self, node: Node) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.174">def output_stubs(self, stub: Stub) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.175">def output_time_stamp(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.176">def update(self, fn: str, new_root: Stub, contents: str=None, silent: bool=False) -&gt; Any: ...
+    #   0: return new_root
+    # ? 0: return new_root
+    #   1: return new_root
+    # ? 1: return new_root
+    #   2: return new_root
+    # ? 2: return new_root
+    #   3: return old_root
+    # ? 3: return old_root
+</t>
+<t tx="ekr.20210809124613.177">def get_stub_file(self, fn: str) -&gt; Any: ...
+    #   0: return open(fn, 'r').read()
+    # ? 0: return open(str, str).read()
+    #   1: return None
+    #   1: return None
+    #   2: return None
+    #   2: return None
+</t>
+<t tx="ekr.20210809124613.178">def parse_stub_file(self, s: str, root_name: str) -&gt; Tuple[Any, Any]: ...
+</t>
+<t tx="ekr.20210809124613.179">def merge_stubs(self, new_stubs: List[Stub], old_root: Stub, new_root: Stub, trace: bool=False) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.18">def do_Expr(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.180">def check_delete(self, new_stubs: List[Stub], old_root: Stub, new_root: Stub, trace: bool) -&gt; Any: ...
+    #   0: return delete_list
+    # ? 0: return delete_list
+</t>
+<t tx="ekr.20210809124613.181">def flatten_stubs(self, root: Stub) -&gt; List[Any]: ...
+</t>
+<t tx="ekr.20210809124613.182">def flatten_stubs_helper(self, root: Stub, aList: List[Stub]) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.183">def find_parent_stub(self, stub: Stub, root: Stub) -&gt; Optional[Any]: ...
+</t>
+<t tx="ekr.20210809124613.184">def find_stub(self, stub: Stub, root: Stub) -&gt; Any: ...
+    #   0: return root
+    # ? 0: return root
+    #   1: return stub2
+    # ? 1: return stub2
+    #   2: return None
+    #   2: return None
+</t>
+<t tx="ekr.20210809124613.185">def sort_stubs_by_hierarchy(self, stubs1: List[Stub]) -&gt; Any: ...
+    #   0: return result
+    # ? 0: return result
+    #   1: return []
+    #   1: return List
+</t>
+<t tx="ekr.20210809124613.186">def trace_stubs(self, stub: Stub, aList: List[str]=None, header: str=None, level: int=-1) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.187">def visit_ClassDef(self, node: Node) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.188">def visit_FunctionDef(self, node: Node) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.189">def format_arguments(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.19">def do_Expression(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.190">def munge_arg(self, s: str) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.191">def format_returns(self, node: Node) -&gt; Any: ...
+    #   0: return 'None'+tail
+    #   0: return str
+    #   1: return s+': ...'
+    #   1: return str
+    #   2: return self.format_return_expressions(node, name, raw, r)
+    # ? 2: return self.format_return_expressions(Node, str, raw, r)
+</t>
+<t tx="ekr.20210809124613.192">def format_return_expressions(self, node: Node, name: str, raw_returns: List[Any], reduced_returns: List[Any]) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.193">def get_def_name(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.194">def remove_recursive_calls(self, name: str, raw: List[str], reduced: List[str]) -&gt; Tuple[Any, Any]: ...
+</t>
+<t tx="ekr.20210809124613.195">def visit_Return(self, node: Node) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.196">class TestMakeStubFiles(unittest.TestCase):
+    @others
+</t>
+<t tx="ekr.20210809124613.197">def test_rt_is_known_type(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.198">def test_rt_reduce_numbers(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.199">def test_rt_reduce_types(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.2">def dump(title: str, s: str=None) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.20">def do_GeneratorExp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.200">def test_rt_split_types(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.201">def test_st_find(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.202">def test_st_flatten_stubs(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.203">def test_st_merge_stubs(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.204">def test_st_format_returns(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.205">def test_bug2_empty(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.206">def test_bug2_non_empty(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.207">def test_bug3(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.208">def test_finalize(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.209">def test_is_known_type(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.21">def do_AugLoad(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.210">def test_truncate(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.211">def test_ast_arg_formatter_class(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.212">def test_ast_formatter_class(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.213">def test_ast_formatter_class_on_file(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.214">def test_controller_class(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.215">def test_file_msb(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.216">def test_pattern_class(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.217">def test_stub_class(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.218">def test_stub_formatter_class(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.219">def test_stub_traverser_class(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.22">def do_Del(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.23">def do_Load(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.24">def do_Param(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.25">def do_Store(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.26">def do_arguments(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.27">def do_arg(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.28">def do_Attribute(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.29">def do_Bytes(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.3">def dump_dict(title: str, d: Dict[str, Any]) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.30">def do_Call(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.31">def do_keyword(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.32">def do_Constant(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.33">def do_comprehension(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.34">def do_Dict(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.35">def do_Ellipsis(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.36">def do_ExtSlice(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.37">def do_FormattedValue(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.38">def do_JoinedStr(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.39">def do_List(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.4">def dump_list(title: str, aList: List[Any]) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.40">def do_ListComp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.41">def do_Name(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.42">def do_NameConstant(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.43">def do_Num(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.44">def do_Slice(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.45">def do_Str(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.46">def do_Subscript(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.47">def do_Tuple(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.48">def do_BinOp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.49">def do_BoolOp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.5">def finalize(fn: str) -&gt; Any: ...
+    #   0: return os.path.normpath(os.path.abspath(os.path.expanduser(fn)))
+    # ? 0: return os.path.normpath(os.path.abspath(os.path.expanduser(str)))
+</t>
+<t tx="ekr.20210809124613.50">def do_Compare(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.51">def do_UnaryOp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.52">def do_IfExp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.53">def do_Assert(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.54">def do_AnnAssign(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.55">def do_Assign(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.56">def do_AugAssign(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.57">def do_Break(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.58">def do_Continue(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.59">def do_Delete(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.6">def is_known_type(s: str) -&gt; Any: ...
+    #   0: return ReduceTypes().is_known_type(s)
+    # ? 0: return ReduceTypes().is_known_type(str)
+</t>
+<t tx="ekr.20210809124613.60">def do_ExceptHandler(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.61">def do_For(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.62">def do_Global(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.63">def do_If(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.64">def do_Import(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.65">def get_import_names(self, node: Node) -&gt; Any: ...
+    #   0: return result
+    # ? 0: return result
+</t>
+<t tx="ekr.20210809124613.66">def do_ImportFrom(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.67">def do_Nonlocal(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.68">def do_Pass(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.69">def do_Raise(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.7">def main() -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.70">def do_Return(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.71">def do_Starred(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.72">def do_Try(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.73">def do_While(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.74">def do_With(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.75">def do_Yield(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.76">def do_YieldFrom(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.77">def kind(self, node: Node) -&gt; Any: ...
+    #   0: return node.__class__.__name__
+    # ? 0: return Node.__class__.__name__
+</t>
+<t tx="ekr.20210809124613.78">def indent(self, s: str) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.79">def op_name(self, node: Node, strict: bool=True) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.8">def reduce_types(aList: List[str], name: str=None, trace: bool=False) -&gt; Any: ...
+    #   0: return ReduceTypes(aList, name, trace).reduce_types()
+    # ? 0: return ReduceTypes(List[Any], str, bool).reduce_types()
+</t>
+<t tx="ekr.20210809124613.80">class AstArgFormatter(AstFormatter):
+    @others
+</t>
+<t tx="ekr.20210809124613.81">def do_Constant(self, node: Node) -&gt; Union[Any, str]: ...
+</t>
+<t tx="ekr.20210809124613.82">def do_BoolOp(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.83">def do_Bytes(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.84">def do_Name(self, node: Node) -&gt; Union[Any, str]: ...
+</t>
+<t tx="ekr.20210809124613.85">def do_Num(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.86">def do_Str(self, node: Node) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.87">class Controller:
+    @others
+</t>
+<t tx="ekr.20210809124613.88">def __init__(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.89">def make_stub_file(self, fn: str) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.9">def truncate(s: str, n: int) -&gt; str: ...
+</t>
+<t tx="ekr.20210809124613.90">def scan_command_line(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.91">def scan_options(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.92">def make_op_name_dict(self) -&gt; Any: ...
+    #   0: return d
+    # ? 0: return d
+</t>
+<t tx="ekr.20210809124613.93">def create_parser(self) -&gt; Any: ...
+    #   0: return parser
+    # ? 0: return optparse.OptionParser
+</t>
+<t tx="ekr.20210809124613.94">def find_pattern_ops(self, pattern: 'Pattern') -&gt; Any: ...
+    #   0: return []
+    #   0: return List
+    #   1: return ops
+    # ? 1: return ops
+</t>
+<t tx="ekr.20210809124613.95">def get_config_string(self) -&gt; Any: ...
+    #   0: return f.read()
+    # ? 0: return f.read()
+    #   1: return ''
+    #   1: return str
+</t>
+<t tx="ekr.20210809124613.96">def init_parser(self, s: str) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.97">def is_section_name(self, s: str) -&gt; Any:
+    #   0: return s.strip().lower().replace(' ', '')
+    # ? 0: return str.strip().lower().replace(str, str)
+    #   1: return True
+    #   1: return bool
+    #   2: return False
+    #   2: return bool
+    def munge(s: str) -&gt; Any: ...
+        #   0: return s.strip().lower().replace(' ', '')
+        # ? 0: return str.strip().lower().replace(str, str)
+</t>
+<t tx="ekr.20210809124613.98">def make_patterns_dict(self) -&gt; None: ...
+</t>
+<t tx="ekr.20210809124613.99">def scan_patterns(self, section_name: str) -&gt; List[Any]: ...
 </t>
 </tnodes>
 </leo_file>
