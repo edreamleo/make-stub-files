@@ -32,13 +32,13 @@ import unittest
 #@+others
 #@+node:ekr.20210805085843.1: ** top-level functions
 #@+node:ekr.20160318141204.8: *3* function: dump
-def dump(title, s=None) -> None:  # pragma: no cover
+def dump(title: str, s: str=None) -> None:  # pragma: no cover
     if s:
         print('===== %s...\n%s\n' % (title, s.rstrip()))
     else:
         print('===== %s...\n' % title)
 #@+node:ekr.20160318141204.9: *3* function: dump_dict
-def dump_dict(title, d):  # pragma: no cover
+def dump_dict(title: str, d: Dict[str, Any]) -> None:  # pragma: no cover
     """Dump a dictionary with a header."""
     dump(title)
     for z in sorted(d):
@@ -46,18 +46,18 @@ def dump_dict(title, d):  # pragma: no cover
     print('')
 
 #@+node:ekr.20160318141204.10: *3* function: dump_list
-def dump_list(title, aList):  # pragma: no cover
+def dump_list(title: str, aList: List[Any]) -> None:  # pragma: no cover
     """Dump a list with a header."""
     dump(title)
     for z in aList:
         print(z)
     print('')
 #@+node:ekr.20210805143805.1: *3* function: finalize
-def finalize(fn) -> str:
+def finalize(fn: str) -> str:
     """Finalize and regularize a filename."""
     return os.path.normpath(os.path.abspath(os.path.expanduser(fn)))
 #@+node:ekr.20160318141204.4: *3* function: is_known_type
-def is_known_type(s) -> bool:
+def is_known_type(s: str) -> bool:
     """
     Return True if s is nothing but a single known type.
     Recursively test inner types in square brackets.
@@ -65,7 +65,7 @@ def is_known_type(s) -> bool:
     return ReduceTypes().is_known_type(s)
 
 #@+node:ekr.20160318141204.11: *3* function: main
-def main():  # pragma: no cover
+def main() -> None:  # pragma: no cover
     """
     The driver for the stand-alone version of make-stub-files.
     All options come from the configuration file.
@@ -76,7 +76,7 @@ def main():  # pragma: no cover
     for fn in controller.files:
         controller.make_stub_file(fn)
 #@+node:ekr.20160318141204.6: *3* function: reduce_types
-def reduce_types(aList, name=None, trace=False) -> str:
+def reduce_types(aList: List[str], name: str=None, trace: bool=False) -> str:
     """
     Return a string containing the reduction of all types in aList.
     The --trace-reduce option sets trace=True.
@@ -85,7 +85,7 @@ def reduce_types(aList, name=None, trace=False) -> str:
     return ReduceTypes(aList, name, trace).reduce_types()
 
 #@+node:ekr.20160318141204.13: *3* function: truncate
-def truncate(s, n) -> str:
+def truncate(s: str, n: int) -> str:
     """Return s truncated to n characters."""
     return s if len(s) <= n else s[: n - 3] + '...'
 #@+node:ekr.20160318141204.14: **  class AstFormatter
@@ -722,12 +722,12 @@ class AstFormatter:
         """Return the name of node's class."""
         return node.__class__.__name__
     #@+node:ekr.20160318141204.88: *4* f.indent
-    def indent(self, s) -> str:
+    def indent(self, s: str) -> str:
         return '%s%s' % (' ' * 4 * self.level, s)
     #@+node:ekr.20160318141204.89: *4* f.op_name
     #@@nobeautify
 
-    def op_name(self, node: Node, strict=True) -> str:
+    def op_name(self, node: Node, strict: bool=True) -> str:
         """Return the print name of an operator node."""
         d = {
             # Binary operators.
@@ -836,14 +836,14 @@ class Controller:
         self.section_names = ('Global', 'Def Name Patterns', 'General Patterns')
         self.def_patterns: List["Pattern"] = []  # [Def Name Patterns]
         self.general_patterns: List["Pattern"] = []  # [General Patterns]
-        self.names_dict: Dict[str, List[str]] = {}
+        self.names_dict: Dict[str, str] = {}
         self.op_name_dict: Dict[str, List[str]] = self.make_op_name_dict()
         self.patterns_dict: Dict[str, List["Pattern"]] = {}
         self.regex_patterns: List[Any] = []
     #@+node:ekr.20160318141204.128: *3* msf.make_stub_file
     directory_warning_given = False
 
-    def make_stub_file(self, fn) -> None:  # pragma: no cover
+    def make_stub_file(self, fn: str) -> None:  # pragma: no cover
         """
         Make a stub file in ~/stubs for all source files mentioned in the
         [Source Files] section of the configuration file.
@@ -937,7 +937,6 @@ class Controller:
         if args.dir:
             dir_ = args.dir and args.dir.strip()
             dir_ = finalize(dir_)
-            g.trace('dir', dir_)
             if os.path.exists(dir_):
                 self.output_directory = dir_
             else:
@@ -1046,12 +1045,11 @@ class Controller:
         parser.optionxform = str # type:ignore
         return parser
     #@+node:ekr.20160318141204.135: *4* msf.find_pattern_ops
-    def find_pattern_ops(self, pattern) -> List[str]:
+    def find_pattern_ops(self, pattern: "Pattern") -> List[str]:
         """Return a list of operators in pattern.find_s."""
         trace = False or self.trace_patterns
         if pattern.is_regex():  # pragma: no cover
             # Add the pattern to the regex patterns list.
-            g.trace(pattern)
             self.regex_patterns.append(pattern)
             return []
         d = self.op_name_dict
@@ -1067,8 +1065,8 @@ class Controller:
                 keys2.append(op)
             elif len(op) == 1:
                 keys1.append(op)
-            else:
-                g.trace('bad op', op)  # pragma: no cover
+            else:  # pragma: no cover
+                g.trace('bad op', op)  # type:ignore
         ops = []
         s = s1 = pattern.find_s
         for aList in (keys3, keys2, keys1):
@@ -1083,7 +1081,8 @@ class Controller:
             if target in s:  # pragma: no cover
                 ops.append(op)
                 break  # Only one match allowed.
-        if trace and ops: g.trace(s1, ops)
+        if trace and ops:
+            g.trace(s1, ops)  # type:ignore
         return ops
     #@+node:ekr.20160318141204.136: *4* msf.get_config_string
     def get_config_string(self) -> str:  # pragma: no cover
@@ -1096,7 +1095,7 @@ class Controller:
         return ''
 
     #@+node:ekr.20160318141204.137: *4* msf.init_parser
-    def init_parser(self, s) -> None:  # pragma: no cover
+    def init_parser(self, s: str) -> None:  # pragma: no cover
         """Add double back-slashes to all patterns starting with '['."""
         if not s:
             return
@@ -1112,9 +1111,9 @@ class Controller:
         file_object = io.StringIO(s)
         self.parser.read_file(file_object)  # type:ignore
     #@+node:ekr.20160318141204.138: *4* msf.is_section_name
-    def is_section_name(self, s) -> bool:
+    def is_section_name(self, s: str) -> bool:
 
-        def munge(s):
+        def munge(s: str) -> str:
             return s.strip().lower().replace(' ', '')
 
         s = s.strip()
@@ -1145,10 +1144,10 @@ class Controller:
                     aList = self.patterns_dict.get('Num', [])
                     aList.append(pattern)
                     self.patterns_dict['Num'] = aList
-                elif name in self.names_dict:
-                    g.trace('duplicate pattern', pattern)  # pragma: no cover (user error)
+                elif name in self.names_dict:  # pragma: no cover (user error)
+                    g.trace('duplicate pattern', pattern)  # type:ignore
                 else:
-                    self.names_dict[name] = [pattern.repl_s]  # mypy found this bug.
+                    self.names_dict[name] = pattern.repl_s
         if 0:
             g.trace('names_dict...')
             for z in sorted(self.names_dict):
@@ -1162,7 +1161,7 @@ class Controller:
                     print('  ' + repr(pattern))
         # Note: retain self.general_patterns for use in argument lists.
     #@+node:ekr.20160318141204.140: *4* msf.scan_patterns
-    def scan_patterns(self, section_name) -> List["Pattern"]:
+    def scan_patterns(self, section_name: str) -> List["Pattern"]:
         """Parse the config section into a list of patterns, preserving order."""
         trace = False or self.trace_patterns
         parser = self.parser  # type:ignore
@@ -1174,13 +1173,13 @@ class Controller:
                 # A kludge: strip leading \\ from patterns.
                 if key.startswith(r'\\'):
                     key = '[' + key[2:]  # pragma: no cover
-                if key in seen:
-                    g.trace('duplicate key', key)  # pragma: no cover (user error)
+                if key in seen:  # pragma: no cover (user error)
+                    g.trace('duplicate key', key)  # type:ignore 
                 else:
                     seen.add(key)
                     aList.append(Pattern(key, value))
             if trace:  # pragma: no cover
-                g.trace('%s...\n' % section_name)
+                g.trace('%s...\n' % section_name)  # type:ignore
                 for z in aList:
                     print(z)
                 print('')
@@ -1191,8 +1190,7 @@ class LeoGlobals:  # pragma: no cover
     """A class supporting g.pdb and g.trace for compatibility with Leo."""
     #@+others
     #@+node:ekr.20160318141204.94: *3* g._callerName
-    def _callerName(self, n=1, files=False) -> str:
-        # print('_callerName: %s %s' % (n,files))
+    def _callerName(self, n: int=1, files: bool=False) -> str:
         try:  # get the function name from the call stack.
             f1 = sys._getframe(n)  # The stack frame, n levels up.
             code1 = f1.f_code  # The code object
@@ -1210,11 +1208,11 @@ class LeoGlobals:  # pragma: no cover
             # es_exception()
             return ''  # "<no caller name>"
     #@+node:ekr.20180902035806.1: *3* g.caller
-    def caller(self, i=1) -> str:
+    def caller(self, i: int=1) -> str:
         """Return the caller name i levels up the stack."""
         return self.callers(i + 1).split(',')[0]
     #@+node:ekr.20160318141204.95: *3* g.callers
-    def callers(self, n=4, count=0, excludeCaller=True, files=False) -> str:
+    def callers(self, n: int=4, count: int=0, excludeCaller: bool=True, files: bool=False) -> str:
         """Return a list containing the callers of the function that called g.callerList.
 
         If the excludeCaller keyword is True (the default), g.callers is not on the list.
@@ -1243,7 +1241,7 @@ class LeoGlobals:  # pragma: no cover
         if sys.platform.lower().startswith('win'):
             os.system('cls')
     #@+node:ekr.20180902034437.1: *3* g.objToSTring & helpers
-    def objToString(self, obj, indent='', printCaller=False, tag=None) -> str:
+    def objToString(self, obj:Any, indent: str='', printCaller: bool=False, tag: str=None) -> str:
         """Pretty print any Python object to a string."""
         # pylint: disable=undefined-loop-variable
             # Looks like a a pylint bug.
@@ -1278,7 +1276,7 @@ class LeoGlobals:  # pragma: no cover
 
     toString = objToString
     #@+node:ekr.20180902041247.1: *4* g.dictToString
-    def dictToString(self, d, indent='', tag=None) -> str:
+    def dictToString(self, d: Dict[Any, Any], indent: str='', tag: str=None) -> str:
         """Pretty print a Python dict to a string."""
         # pylint: disable=unnecessary-lambda
         if not d:
@@ -1297,7 +1295,7 @@ class LeoGlobals:  # pragma: no cover
         s = ''.join(result)
         return '%s...\n%s\n' % (tag, s) if tag else s
     #@+node:ekr.20180902041311.1: *4* g.listToString
-    def listToString(self, obj, indent='', tag=None) -> str:
+    def listToString(self, obj: Any, indent: str='', tag: str=None) -> str:
         """Pretty print a Python list to a string."""
         if not obj:
             return '[]'
@@ -1315,7 +1313,7 @@ class LeoGlobals:  # pragma: no cover
         s = ''.join(result)
         return '%s...\n%s\n' % (tag, s) if tag else s
     #@+node:ekr.20180902041320.1: *4* g.tupleToString
-    def tupleToString(self, obj, indent='', tag=None) -> str:
+    def tupleToString(self, obj: Any, indent: str='', tag: str=None) -> str:
         """Pretty print a Python tuple to a string."""
         if not obj:
             return '(),'
@@ -1336,22 +1334,22 @@ class LeoGlobals:  # pragma: no cover
     def pdb(self) -> None:
         pdb.set_trace()
     #@+node:ekr.20180902034446.1: *3* g.printObj
-    def printObj(self, obj, indent='', printCaller=False, tag=None) -> None:
+    def printObj(self, obj: Any, indent: str='', printCaller: bool=False, tag: str=None) -> None:
         """Pretty print any Python object using g.pr."""
         print(self.objToString(obj, indent=indent, printCaller=printCaller, tag=tag))
 
     #@+node:ekr.20160318141204.99: *3* g.shortFileName
-    def shortFileName(self, fileName, n=None) -> str:
+    def shortFileName(self, fileName: str, n: int=None) -> str:
         # pylint: disable=invalid-unary-operand-type
         if n is None or n < 1:
             return os.path.basename(fileName)
         return '/'.join(fileName.replace('\\', '/').split('/')[-n :])
     #@+node:ekr.20160318141204.100: *3* g.splitLines
-    def splitLines(self, s) -> List[str]:
+    def splitLines(self, s: str) -> List[str]:
         """Split s into lines, preserving trailing newlines."""
         return s.splitlines(True) if s else []
     #@+node:ekr.20160318141204.101: *3* g.trace
-    def trace(self, *args, **keys) -> None:
+    def trace(self, *args: Optional[List], **keys: Optional[List]) -> None:
         # Compute the caller name.
         try:
             f1 = sys._getframe(1)
@@ -1375,7 +1373,7 @@ class Pattern:
     """
     #@+others
     #@+node:ekr.20160318141204.103: *3* pattern.ctor
-    def __init__(self, find_s, repl_s='') -> None:
+    def __init__(self, find_s: str, repl_s: str='') -> None:
         """Ctor for the Pattern class."""
         self.find_s: str = find_s
         self.repl_s: str = repl_s
@@ -1394,13 +1392,13 @@ class Pattern:
                     result.append('\\' + ch)  # pragma: no cover
             self.regex = re.compile(''.join(result))
     #@+node:ekr.20160318141204.104: *3* pattern.__eq__, __ne__, __hash__
-    def __eq__(self, obj) -> bool:
+    def __eq__(self, obj: Any) -> bool:
         """Return True if two Patterns are equivalent."""
         if isinstance(obj, Pattern):
             return self.find_s == obj.find_s and self.repl_s == obj.repl_s
         return NotImplemented  # pragma: no cover
 
-    def __ne__(self, obj) -> bool:
+    def __ne__(self, obj: Any) -> bool:
         """Return True if two Patterns are not equivalent."""
         return not self.__eq__(obj)
 
@@ -1432,7 +1430,7 @@ class Pattern:
         return self.find_s.endswith('$')
             # A dollar sign is not valid in any Python expression.
     #@+node:ekr.20160318141204.108: *3* pattern.all_matches & helpers
-    def all_matches(self, s) -> List[Any]:
+    def all_matches(self, s: str) -> List[Any]:
         """
         Return a list of match objects for all matches in s.
         These are regex match objects or (start, end) for balanced searches.
@@ -1451,7 +1449,7 @@ class Pattern:
             return aList
         return list(self.regex.finditer(s))
     #@+node:ekr.20160318141204.109: *4* pattern.full_balanced_match
-    def full_balanced_match(self, s, i) -> Optional[int]:
+    def full_balanced_match(self, s: str, i: int) -> Optional[int]:
         """Return the index of the end of the match found at s[i:] or None."""
         pattern = self.find_s
         j = 0  # index into pattern
@@ -1473,7 +1471,7 @@ class Pattern:
         found = i <= len(s) and j == len(pattern)
         return i if found else None
     #@+node:ekr.20160318141204.110: *4* pattern.match_balanced
-    def match_balanced(self, delim, s, i) -> int:
+    def match_balanced(self, delim: str, s: str, i: int) -> int:
         """
         delim == s[i] and delim is in '([{'
         Return the index of the end of the balanced parenthesized string, or len(s)+1.
@@ -1499,7 +1497,7 @@ class Pattern:
         print('%20s: unmatched %s in %s' % (g_input_file_name, delim, s))  # pragma: no cover
         return len(s) + 1  # pragma: no cover
     #@+node:ekr.20160318141204.111: *3* pattern.match (trace-matches)
-    def match(self, s, trace=False) -> Tuple[bool, str]:
+    def match(self, s: str, trace: bool=False) -> Tuple[bool, str]:
         """
         Perform the match on the entire string if possible.
         Return (found, new s)
@@ -1517,7 +1515,7 @@ class Pattern:
             return True, s
         return False, s
     #@+node:ekr.20160318141204.112: *3* pattern.match_entire_string
-    def match_entire_string(self, s) -> bool:
+    def match_entire_string(self, s: str) -> bool:
         """Return True if s matches self.find_s"""
         if self.is_balanced():
             j = self.full_balanced_match(s, 0)
@@ -1525,14 +1523,14 @@ class Pattern:
         m = self.regex.match(s)
         return bool(m and m.group(0) == s)
     #@+node:ekr.20160318141204.113: *3* pattern.replace & helpers
-    def replace(self, m, s) -> str:
+    def replace(self, m: Any, s: str) -> str:
         """Perform any kind of replacement."""
         if self.is_balanced():
             start, end = m
             return self.replace_balanced(s, start, end)
         return self.replace_regex(m, s)
     #@+node:ekr.20160318141204.114: *4* pattern.replace_balanced
-    def replace_balanced(self, s1, start, end) -> str:
+    def replace_balanced(self, s1: str, start: int, end: int) -> str:
         """
         Use start, end to replace s by the string implied by repr_s.
         Within repr_s, * star matches corresponding * in find_s
@@ -1556,7 +1554,7 @@ class Pattern:
         repl = r[:j] + s_star + r[j + 1 :]
         return s1[:start] + repl + s1[end:]
     #@+node:ekr.20160318141204.115: *4* pattern.replace_regex
-    def replace_regex(self, m, s) -> str:
+    def replace_regex(self, m: Any, s: str) -> str:
         """Do the replacement in s specified by m."""
         s = self.repl_s
         for i in range(9):
@@ -1575,14 +1573,14 @@ class ReduceTypes:
     """
     #@+others
     #@+node:ekr.20160318141204.117: *3* rt.ctor
-    def __init__(self, aList=None, name=None, trace=False) -> None:
+    def __init__(self, aList: List[str]=None, name: str=None, trace: bool=False) -> None:
         """Ctor for ReduceTypes class."""
         self.aList = aList
         self.name = name
         self.optional = False
         self.trace = trace
     #@+node:ekr.20160318141204.118: *3* rt.is_known_type
-    def is_known_type(self, s) -> bool:
+    def is_known_type(self, s: str) -> bool:
         """
         Return True if s is nothing but a single known type.
 
@@ -1641,7 +1639,7 @@ class ReduceTypes:
                 return True
         return False
     #@+node:ekr.20160318141204.119: *3* rt.reduce_collection
-    def reduce_collection(self, aList, kind) -> List[str]:
+    def reduce_collection(self, aList: List[str], kind: str) -> List[str]:
         """
         Reduce the inner parts of a collection for the given kind.
         Return a list with only collections of the given kind reduced.
@@ -1666,7 +1664,7 @@ class ReduceTypes:
         result.extend(r2)
         return sorted(set(result))
     #@+node:ekr.20160318141204.120: *3* rt.reduce_numbers
-    def reduce_numbers(self, aList) -> List[str]:
+    def reduce_numbers(self, aList: List[str]) -> List[str]:
         """
         Return aList with all number types in aList replaced by the most
         general numeric type in aList.
@@ -1717,11 +1715,11 @@ class ReduceTypes:
             return self.show(r[0])
         return self.show('Union[%s]' % (', '.join(sorted(r))))
     #@+node:ekr.20160318141204.122: *3* rt.reduce_unknowns
-    def reduce_unknowns(self, aList) -> List[str]:
+    def reduce_unknowns(self, aList: List[str]) -> List[str]:
         """Replace all unknown types in aList with Any."""
         return [z if self.is_known_type(z) else 'Any' for z in aList]
     #@+node:ekr.20160318141204.123: *3* rt.show
-    def show(self, s, known=True) -> str:  # pragma: no cover.
+    def show(self, s: str, known: bool=True) -> str:  # pragma: no cover.
         """Show the result of reduce_types."""
         aList, name = self.aList, self.name
         trace = self.trace
@@ -1737,14 +1735,14 @@ class ReduceTypes:
             else:
                 context = g.callers(3).split(',')[0].strip()
             context = truncate(context, 26)
-            known = '' if known else '? '
+            known2 = '' if known else '? '
             pattern = sorted(set([z.replace('\n', ' ') for z in aList]))  # type:ignore
             pattern = '[%s]' % truncate(', '.join(pattern), 53 - 2)  # type:ignore
-            print('reduce_types: %-26s %53s ==> %s%s' % (context, pattern, known, s))
+            print('reduce_types: %-26s %53s ==> %s%s' % (context, pattern, known2, s))
                 # widths above match the corresponding indents in match_all and match.
         return s
     #@+node:ekr.20160318141204.124: *3* rt.split_types
-    def split_types(self, s) -> List[str]:
+    def split_types(self, s: str) -> List[str]:
         """Split types on *outer level* commas."""
         aList, i1, level = [], 0, 0
         for i, ch in enumerate(s):
@@ -1766,7 +1764,7 @@ class Stub:
     """
     #@+others
     #@+node:ekr.20160318141204.142: *3* stub.ctor
-    def __init__(self, kind, name, parent=None, stack=None) -> None:
+    def __init__(self, kind: str, name: str, parent: "Stub"=None, stack: List[str]=None) -> None:
         """Stub ctor. Equality depends only on full_name and kind."""
         self.children: List[Stub] = []
         self.full_name = '%s.%s' % ('.'.join(stack), name) if stack else name
@@ -1781,7 +1779,7 @@ class Stub:
             assert isinstance(parent, Stub)
             parent.children.append(self)
     #@+node:ekr.20160318141204.143: *3* stub.__eq__ and __ne__
-    def __eq__(self, obj) -> bool:
+    def __eq__(self, obj: Any) -> bool:
         """
         Stub.__eq__. Return whether two stubs refer to the same method.
         Do *not* test parent links. That would interfere with --update logic.
@@ -1790,7 +1788,7 @@ class Stub:
             return self.full_name == obj.full_name and self.kind == obj.kind
         return NotImplemented  # pragma: no cover
 
-    def __ne__(self, obj) -> bool:
+    def __ne__(self, obj: Any) -> bool:
         """Stub.__ne__"""
         return not self.__eq__(obj)
     #@+node:ekr.20160318141204.144: *3* stub.__hash__
@@ -1821,14 +1819,14 @@ class StubFormatter(AstFormatter):
     """
     #@+others
     #@+node:ekr.20160318141204.148: *3* sf.ctor
-    def __init__(self, controller, traverser) -> None:
+    def __init__(self, controller: Controller, traverser: "StubTraverser") -> None:
         """Ctor for StubFormatter class."""
         self.controller = x = controller
         self.traverser = traverser
             # 2016/02/07: to give the formatter access to the class_stack.
-        self.def_patterns = x.def_patterns
+        self.def_patterns: List["Pattern"] = x.def_patterns
         self.general_patterns = x.general_patterns
-        self.names_dict = x.names_dict
+        self.names_dict: Dict[str, str] = x.names_dict
         self.patterns_dict = x.patterns_dict
         self.raw_format = AstFormatter().format
         self.regex_patterns = x.regex_patterns
@@ -1842,7 +1840,7 @@ class StubFormatter(AstFormatter):
     #@+node:ekr.20160318141204.149: *3* sf.match_all
     matched_d: Dict[str, List[str]] = {}
 
-    def match_all(self, node: Node, s, trace=False) -> str:
+    def match_all(self, node: Node, s: str, trace: bool=False) -> str:
         """Match all the patterns for the given node."""
         trace = trace or self.trace_matches
         d = self.matched_d
@@ -1855,14 +1853,14 @@ class StubFormatter(AstFormatter):
                 caller = g.callers(2).split(',')[1].strip()  # The direct caller of match_all.
                 aList = d.get(name, [])
                 if pattern not in aList:
-                    aList.append(pattern)
+                    aList.append(pattern)  # type:ignore
                     d[name] = aList
                     print('match_all:    %-12s %26s %40s ==> %s' % (caller, pattern, s1, s))
             if found:
                 break
         return s
     #@+node:ekr.20160318141204.151: *3* sf.trace_visitor
-    def trace_visitor(self, node: Node, op, s) -> None:  # pragma: no cover
+    def trace_visitor(self, node: Node, op: str, s: str) -> None:  # pragma: no cover
         """Trace node's visitor."""
         if self.trace_visitors:
             caller = g.callers(2).split(',')[1]
@@ -2076,7 +2074,7 @@ class StubTraverser(ast.NodeVisitor):
     """
     #@+others
     #@+node:ekr.20160318141204.170: *3* st.ctor
-    def __init__(self, controller) -> None:
+    def __init__(self, controller: Controller) -> None:
         """Ctor for StubTraverser class."""
         self.controller = x = controller  # A Controller instance.
         # Internal state ivars...
@@ -2109,12 +2107,12 @@ class StubTraverser(ast.NodeVisitor):
         self.verbose = x.verbose
         self.warn = x.warn
         # Copies of controller patterns...
-        self.def_patterns = x.def_patterns
+        self.def_patterns: List["Pattern"] = x.def_patterns
         self.names_dict = x.names_dict
         self.general_patterns = x.general_patterns
         self.patterns_dict = x.patterns_dict
     #@+node:ekr.20160318141204.171: *3* st.add_stub
-    def add_stub(self, d, stub) -> None:
+    def add_stub(self, d: Dict[str, Stub], stub: Stub) -> None:
         """Add the stub to d, checking that it does not exist."""
         global g_input_file_name
         key = stub.full_name
@@ -2124,12 +2122,12 @@ class StubTraverser(ast.NodeVisitor):
         else:
             d[key] = stub
     #@+node:ekr.20160318141204.172: *3* st.indent & out
-    def indent(self, s) -> str:
+    def indent(self, s: str) -> str:
         """Return s, properly indented."""
         # This version of indent *is* used.
         return '%s%s' % (' ' * 4 * self.level, s)
 
-    def out(self, s) -> None:  # pragma: no cover
+    def out(self, s: str) -> None:  # pragma: no cover
         """Output the string to the console or the file."""
         s = self.indent(s)
         if self.parent_stub:
@@ -2166,7 +2164,7 @@ class StubTraverser(ast.NodeVisitor):
         if self.verbose:
             print('wrote: %s' % fn)
     #@+node:ekr.20160318141204.174: *4* st.output_stubs
-    def output_stubs(self, stub) -> None:
+    def output_stubs(self, stub: Stub) -> None:
         """Output this stub and all its descendants."""
         for s in stub.out_list or []:
             # Indentation must be present when an item is added to stub.out_list.
@@ -2184,7 +2182,7 @@ class StubTraverser(ast.NodeVisitor):
             self.output_file.write('# make_stub_files: %s\n' %
                 time.strftime("%a %d %b %Y at %H:%M:%S"))
     #@+node:ekr.20160318141204.176: *4* st.update & helpers
-    def update(self, fn, new_root, contents=None, silent=False) -> Stub:
+    def update(self, fn: str, new_root: Stub, contents: str=None, silent: bool=False) -> Stub:
         """
         Merge the new_root tree with the old_root tree in fn (a .pyi file).
 
@@ -2201,7 +2199,7 @@ class StubTraverser(ast.NodeVisitor):
             return new_root  # pragma: no cover
         if '\t' in s:  # pragma: no cover
             # Tabs in stub files make it impossible to parse them reliably.
-            g.trace('Can not update stub files containing tabs.')
+            g.trace('Can not update stub files containing tabs.')  # type:ignore
             return new_root
         # Read old_root from the .pyi file.
         old_d, old_root = self.parse_stub_file(s, root_name='<old-stubs>')
@@ -2213,12 +2211,12 @@ class StubTraverser(ast.NodeVisitor):
             print(self.trace_stubs(new_root, header='new_root'))
         if not silent:  # pragma: no cover
             print('***** updating stubs from %s *****' % fn)
-        self.merge_stubs(self.stubs_dict.values(), old_root, new_root)
+        self.merge_stubs(list(self.stubs_dict.values()), old_root, new_root)
         # print(self.trace_stubs(old_root, header='updated_root'))
         return old_root
        
     #@+node:ekr.20160318141204.177: *5* st.get_stub_file
-    def get_stub_file(self, fn) -> Optional[str]:  # pragma: no cover
+    def get_stub_file(self, fn: str) -> Optional[str]:  # pragma: no cover
         """Read the stub file into s."""
         if os.path.exists(fn):
             try:
@@ -2229,7 +2227,7 @@ class StubTraverser(ast.NodeVisitor):
         print('--update: not found: %s' % fn)
         return None
     #@+node:ekr.20160318141204.178: *5* st.parse_stub_file
-    def parse_stub_file(self, s, root_name) -> Tuple[Dict[str, Stub], Stub]:
+    def parse_stub_file(self, s: str, root_name: str) -> Tuple[Dict[str, Stub], Stub]:
         """
         Parse s, the contents of a stub file, into a tree of Stubs.
         
@@ -2282,7 +2280,7 @@ class StubTraverser(ast.NodeVisitor):
         old_stub.out_list.extend(lines)
         return d, root
     #@+node:ekr.20160318141204.179: *5* st.merge_stubs & helpers
-    def merge_stubs(self, new_stubs, old_root, new_root, trace=False) -> None:
+    def merge_stubs(self, new_stubs: List[Stub], old_root: Stub, new_root: Stub, trace: bool=False) -> None:
         """
         Merge the new_stubs *list* into the old_root *tree*.
         - new_stubs is a list of Stubs from the .py file.
@@ -2295,7 +2293,7 @@ class StubTraverser(ast.NodeVisitor):
         aList = list(reversed(self.sort_stubs_by_hierarchy(aList)))
             # Sort old stubs so that children are deleted before parents.
         for stub in aList:
-            if trace: g.trace('deleting  %s' % stub)
+            if trace: g.trace('deleting  %s' % stub)  # type:ignore
             parent = self.find_parent_stub(stub, old_root) or old_root
             parent.children.remove(stub)
             assert not self.find_stub(stub, old_root), stub
@@ -2304,12 +2302,12 @@ class StubTraverser(ast.NodeVisitor):
         aList = self.sort_stubs_by_hierarchy(aList)
             # Sort new stubs so that parents are created before children.
         for stub in aList:
-            if trace: g.trace('inserting %s' % stub)
+            if trace: g.trace('inserting %s' % stub)  # type:ignore
             parent = self.find_parent_stub(stub, old_root) or old_root
             parent.children.append(stub)
             assert self.find_stub(stub, old_root), stub
     #@+node:ekr.20160318141204.180: *6* st.check_delete
-    def check_delete(self, new_stubs, old_root, new_root, trace) -> List[Stub]:
+    def check_delete(self, new_stubs: List[Stub], old_root: Stub, new_root: Stub, trace: bool) -> List[Stub]:
         """Return a list of nodes that can be deleted."""
         old_stubs = self.flatten_stubs(old_root)
         old_stubs.remove(old_root)
@@ -2325,38 +2323,38 @@ class StubTraverser(ast.NodeVisitor):
             for i in range(20):
                 z = z.parent
                 if not z:  # pragma: no cover
-                    g.trace('can not append: new root not found', z)
+                    g.trace('can not append: new root not found', z)  # type:ignore
                     break
                 elif z == old_root:
                     delete_list.append(z1)
                     break
                 elif z not in aList:  # pragma: no cover
-                    g.trace("can not delete %s because of %s" % (z1, z))
+                    g.trace("can not delete %s because of %s" % (z1, z))  # type:ignore
                     break
             else:  # pragma: no cover
-                g.trace('can not happen: parent loop')
+                g.trace('can not happen: parent loop')  # type:ignore
         if trace:  # pragma: no cover
             dump_list('delete_list', delete_list)
         return delete_list
     #@+node:ekr.20160318141204.181: *6* st.flatten_stubs
-    def flatten_stubs(self, root) -> List[Stub]:
+    def flatten_stubs(self, root: Stub) -> List[Stub]:
         """Return a flattened list of all stubs in root's tree."""
         aList = [root]
         for child in root.children:
             self.flatten_stubs_helper(child, aList)
         return aList
 
-    def flatten_stubs_helper(self, root, aList) -> None:
+    def flatten_stubs_helper(self, root: Stub, aList: List[Stub]) -> None:
         """Append all stubs in root's tree to aList."""
         aList.append(root)
         for child in root.children:
             self.flatten_stubs_helper(child, aList)
     #@+node:ekr.20160318141204.182: *6* st.find_parent_stub
-    def find_parent_stub(self, stub, root) -> Optional[Stub]:
+    def find_parent_stub(self, stub: Stub, root: Stub) -> Optional[Stub]:
         """Return stub's parent **in root's tree**."""
         return self.find_stub(stub.parent, root) if stub.parent else None
     #@+node:ekr.20160318141204.183: *6* st.find_stub
-    def find_stub(self, stub, root) -> Optional[Stub]:
+    def find_stub(self, stub: Stub, root: Stub) -> Optional[Stub]:
         """Return the stub **in root's tree** that matches stub."""
         if stub == root:  # Must use Stub.__eq__!
             return root  # not stub!
@@ -2365,7 +2363,7 @@ class StubTraverser(ast.NodeVisitor):
             if stub2: return stub2
         return None
     #@+node:ekr.20160318141204.184: *6* st.sort_stubs_by_hierarchy
-    def sort_stubs_by_hierarchy(self, stubs1) -> List[Stub]:
+    def sort_stubs_by_hierarchy(self, stubs1: List[Stub]) -> List[Stub]:
         """
         Sort the list of Stubs so that parents appear before all their
         descendants.
@@ -2381,10 +2379,12 @@ class StubTraverser(ast.NodeVisitor):
             else:
                 return result
         # Abort the merge.
-        g.trace('can not happen: unbounded stub levels.')  # pragma: no cover
+        g.trace('can not happen: unbounded stub levels.')  # type:ignore # pragma: no cover
         return []  # pragma: no cover
     #@+node:ekr.20160318141204.185: *5* st.trace_stubs
-    def trace_stubs(self, stub, aList=None, header=None, level=-1) -> str:  # pragma: no cover
+    def trace_stubs(self,
+        stub: Stub, aList: List[str]=None, header: str=None, level: int=-1,
+    ) -> str:  # pragma: no cover
         """Return a trace of the given stub and all its descendants."""
         indent = ' ' * 4 * max(0, level)
         if level == -1:
@@ -2495,7 +2495,7 @@ class StubTraverser(ast.NodeVisitor):
     #@+node:ekr.20160318141204.189: *5* st.munge_arg
     type_pattern = re.compile(r'.*:.*')
 
-    def munge_arg(self, s) -> str:
+    def munge_arg(self, s: str) -> str:
         """Add an annotation for s if possible."""
         if s == 'self':
             return s
@@ -2536,7 +2536,9 @@ class StubTraverser(ast.NodeVisitor):
         # Step 4: Calculate return types.
         return self.format_return_expressions(node, name, raw, r)
     #@+node:ekr.20160318141204.191: *5* st.format_return_expressions
-    def format_return_expressions(self, node: Node, name, raw_returns, reduced_returns) -> str:
+    def format_return_expressions(self,
+        node: Node, name: str, raw_returns: List[Any], reduced_returns: List[Any]
+    ) -> str:
         """
         aList is a list of maximally reduced return expressions.
         For each expression e in Alist:
@@ -2579,7 +2581,7 @@ class StubTraverser(ast.NodeVisitor):
             name = node.name  ###
         return name
     #@+node:ekr.20160318141204.193: *5* st.remove_recursive_calls
-    def remove_recursive_calls(self, name, raw, reduced) -> Tuple[Any, Any]:
+    def remove_recursive_calls(self, name: str, raw: List[str], reduced: List[str]) -> Tuple[Any, Any]:
         """Remove any recursive calls to name from both lists."""
         # At present, this works *only* if the return is nothing but the recursive call.
         assert len(raw) == len(reduced)
@@ -2604,7 +2606,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
     #@+others
     #@+node:ekr.20210805091045.1: *3* test class ReduceTypes
     #@+node:ekr.20210808033520.1: *4* test_rt_is_known_type
-    def test_rt_is_known_type(self):
+    def test_rt_is_known_type(self) -> None:
         table = (
             ('None', True),
             ('(xxx)', False),
@@ -2616,7 +2618,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             result = ReduceTypes().is_known_type(s)
             self.assertEqual(result, expected, msg=repr(s))
     #@+node:ekr.20210804105256.1: *4* test_rt_reduce_numbers
-    def test_rt_reduce_numbers(self):
+    def test_rt_reduce_numbers(self) -> None:
         a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
         table = (
             ([i,i],     [i]),
@@ -2629,7 +2631,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             got = ReduceTypes().reduce_numbers(aList)
             self.assertEqual(expected, got, msg=repr(aList))
     #@+node:ekr.20210804111613.1: *4* test_rt_reduce_types
-    def test_rt_reduce_types(self):
+    def test_rt_reduce_types(self) -> None:
 
         a, c, f, i, l, n = ('Any', 'complex', 'float', 'int', 'long', 'number')
         none = 'None'
@@ -2660,10 +2662,11 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             (['Tuple[xyz, pdq]'],                           'Tuple[Any, Any]'),
         )
         for aList, expected in table:
-            got = reduce_types(aList)  # Call the global function for better coverage.
+            # Call the global function for better coverage.
+            got = reduce_types(aList)  # type:ignore 
             self.assertEqual(expected, got, msg=repr(aList))
     #@+node:ekr.20210804111803.1: *4* test_rt_split_types
-    def test_rt_split_types(self):
+    def test_rt_split_types(self) -> None:
         table = (
             ('list',                    ['list']),
             ('List[a,b]',               ['List[a,b]']),
@@ -2674,7 +2677,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             self.assertEqual(expected, got, msg=repr(s))
     #@+node:ekr.20210805092921.1: *3* test class StubTraverser
     #@+node:ekr.20210804111915.1: *4* test_st_find
-    def test_st_find(self):
+    def test_st_find(self) -> None:
 
         s = """\
     def is_known_type(s: str) -> Union[Any,bool]: ...
@@ -2706,7 +2709,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             if 0:
                 print('parent %s => %9s %35s ==> %s' % (id(stub), id_found, stub, found))
     #@+node:ekr.20210804112211.1: *4* test_st_flatten_stubs
-    def test_st_flatten_stubs(self):
+    def test_st_flatten_stubs(self) -> None:
         s = """\
         def is_known_type(s: str) -> Union[Any,bool]: ...
         def main() -> None: ...
@@ -2732,7 +2735,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             found = st.find_stub(stub, root)
             self.assertTrue(found, msg=repr(stub))
     #@+node:ekr.20210804112405.1: *4* test_st_merge_stubs
-    def test_st_merge_stubs(self):
+    def test_st_merge_stubs(self) -> None:
         # To do:
         # - Test between-stub lines and leading lines.
         # - Round-trip tests!
@@ -2787,14 +2790,14 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             aList = st.sort_stubs_by_hierarchy(new_root)
             dump_list(aList, 'after sort_stubs_by_hierarcy')
         new_stubs = new_d.values()
-        st.merge_stubs(new_stubs, old_root, new_root, trace=False)
+        st.merge_stubs(new_stubs, old_root, new_root, trace=False)  # type:ignore
         if 0:
             print(st.trace_stubs(old_root, header='trace_stubs(old_root)'))
     #@+node:ekr.20210807193409.1: *4* test_st_format_returns
-    def test_st_format_returns(self):
+    def test_st_format_returns(self) -> None:
         # Create the stubs.
         tag = 'test_st_format_returns'
-        tests = [
+        tests: List[str] = [
         #@+<< test_st_format_returns tests >>
         #@+node:ekr.20210807210106.1: *5* << test_st_format_returns tests >>
         # Test 1:
@@ -2822,17 +2825,17 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
                 for patterns in ([], [Pattern('test_*')]):
                     # Instantiate new StubController, to avoid duplicate entries.
                     st = StubTraverser(controller=controller)
-                    st.def_patterns = patterns
+                    st.def_patterns = patterns  # type:ignore
                     st.verbose = verbose
                     test_name = f"test {i}"
-                    source = textwrap.dedent(s)
+                    source = textwrap.dedent(s)  # type:ignore
                     d, root = st.parse_stub_file(source, root_name=tag)
                     node = ast.parse(source, filename=test_name, mode='exec')
                     st.parent_stub = Stub(kind='root', name=test_name)
                     st.visit(node)
     #@+node:ekr.20210805090544.1: *3* test issues...
     #@+node:ekr.20180901040718.1: *4* test_bug2_empty
-    def test_bug2_empty(self):
+    def test_bug2_empty(self) -> None:
         # https://github.com/edreamleo/make-stub-files/issues/2
         tag = 'test_bug2_empty'
         s = 'class InvalidTag(Exception):\n    pass'
@@ -2850,7 +2853,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         expected = ['class InvalidTag(Exception): ...\n']
         self.assertEqual(lines, expected)
     #@+node:ekr.20180901044640.1: *4* test_bug2_non_empty
-    def test_bug2_non_empty(self):
+    def test_bug2_non_empty(self) -> None:
         # https://github.com/edreamleo/make-stub-files/issues/2
         tag = 'test_bug2_non_empty'
         s = (
@@ -2876,7 +2879,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         lines = g.splitLines(st.output_file.getvalue())
         self.assertEqual(lines, expected)
     #@+node:ekr.20180901051603.1: *4* test_bug3
-    def test_bug3(self):
+    def test_bug3(self) -> None:
         # https://github.com/edreamleo/make-stub-files/issues/3
         tag = 'test_bug3'
         s = (
@@ -2902,14 +2905,14 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         self.assertEqual(lines, expected)
     #@+node:ekr.20210805093004.1: *3* test top-level functions
     #@+node:ekr.20210806153836.1: *4* test_finalize
-    def test_finalize(self):
+    def test_finalize(self) -> None:
         result = finalize(__file__)
         self.assertEqual(result, __file__)
     #@+node:ekr.20210806154007.1: *4* test_is_known_type
-    def test_is_known_type(self):
+    def test_is_known_type(self) -> None:
         self.assertTrue(is_known_type('str'))
     #@+node:ekr.20160207115947.1: *4* test_truncate
-    def test_truncate(self):
+    def test_truncate(self) -> None:
         table = (
             ('abc',     'abc'),
             ('abcd',    'abcd'),
@@ -2921,7 +2924,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             got = truncate(s1, 5)
             self.assertEqual(s2, got, msg=f"s1: {s1!r}")
     #@+node:ekr.20210807133723.1: *3* test_ast_arg_formatter_class
-    def test_ast_arg_formatter_class(self):
+    def test_ast_arg_formatter_class(self) -> None:
         formatter = AstArgFormatter()
         tests = [
             #@+<< define tests >>
@@ -2962,7 +2965,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             expected_lines = g.splitLines(expected_s)
             self.assertEqual(expected_lines, lines, msg=filename)
     #@+node:ekr.20210805090943.1: *3* test_ast_formatter_class
-    def test_ast_formatter_class(self):
+    def test_ast_formatter_class(self) -> None:
         formatter = AstFormatter()
         if 0:  # For debugging.
             tests = ["""\
@@ -3098,7 +3101,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             expected_lines = g.splitLines(expected_s)
             self.assertEqual(expected_lines, lines, msg=filename)
     #@+node:ekr.20210806011736.1: *3* test_ast_formatter_class_on_file
-    def test_ast_formatter_class_on_file(self):
+    def test_ast_formatter_class_on_file(self) -> None:
         # Use the source of *this* file as a single test.
         filename = __file__
         formatter = AstFormatter()
@@ -3108,7 +3111,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         result_s = formatter.format(node)
         assert result_s
     #@+node:ekr.20210808052134.1: *3* test_controller_class
-    def test_controller_class(self):
+    def test_controller_class(self) -> None:
         
         controller = Controller()
         # Test is_section_name.
@@ -3121,7 +3124,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         controller.scan_options()
         self.assertTrue(controller.parser)  # type:ignore
     #@+node:ekr.20210805093615.1: *3* test_file_msb
-    def test_file_msb(self):
+    def test_file_msb(self) -> None:
         """Run make_stub_files on itself."""
         if 1:
             # This test is was only briefly useful.
@@ -3147,7 +3150,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             for fn in controller.files:
                 controller.make_stub_file(fn)
     #@+node:ekr.20210804103146.1: *3* test_pattern_class
-    def test_pattern_class(self):
+    def test_pattern_class(self) -> None:
         table = (
             # s,  Pattern.find_s, Pattern.repl_s, expected
             ('aabbcc', '(a+)(b+)(c+)$', r'\3\2\1', 'ccbbaa'),
@@ -3208,7 +3211,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         for m in reversed(p6.all_matches('list[abc]')):
             pattern.replace(m, 'list(xyz)')
     #@+node:ekr.20210804112556.1: *3* test_stub_class
-    def test_stub_class(self):
+    def test_stub_class(self) -> None:
         # Test equality...
         stub1 = Stub(kind='def', name='foo')
         stub2 = Stub(kind='class', name='foo')
@@ -3237,8 +3240,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         self.assertEqual(stub_2.level(), 1)
         self.assertEqual(stub_3.level(), 2)
     #@+node:ekr.20210807133118.1: *3* test_stub_formatter_class
-    def test_stub_formatter_class(self):
-        
+    def test_stub_formatter_class(self) -> None:
         controller = Controller()
         controller.config_fn = finalize('make_stub_files.cfg')
         traverser = StubTraverser(controller)
@@ -3390,7 +3392,7 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
         for node in ast.walk(root):  # type:ignore
             formatter.match_all(node, 'hash(a)', trace=False)
     #@+node:ekr.20210808063828.1: *3* test_stub_traverser_class
-    def test_stub_traverser_class(self):
+    def test_stub_traverser_class(self) -> None:
         tag = 'test_stub_traverser_class'
         controller = Controller()
         st = StubTraverser(controller)
