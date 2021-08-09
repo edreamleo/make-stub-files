@@ -1326,28 +1326,35 @@ def isUnicode(self, s):
 </t>
 <t tx="ekr.20160330201030.1">Metadata-Version: 1.0
 Name: make_stub_files
-Version: 0.1
+Version: 0.2
 Summary: make stub files for mypy
 Home-page: https://github.com/edreamleo/make-stub-files
 Author: Edward K. Ream
 Author-email: edreamleo@gmail.com
 License: MIT
 Description:
-    Usage: make_stub_files.py [options] file1, file2, ...
+    usage: make_stub_files.py [options] file1, file2, ...
     
-    Options:
-      -h, --help          show this help message and exit
-      -c FN, --config=FN  full path to configuration file
-      -d DIR, --dir=DIR   full path to the output directory
-      -o, --overwrite     overwrite existing stub (.pyi) files
-      -t, --test          run unit tests on startup
-      --trace-matches     trace Pattern.matches
-      --trace-patterns    trace pattern creation
-      --trace-reduce      trace st.reduce_types
-      --trace-visitors    trace visitor methods
-      -u, --update        update stubs in existing stub file
-      -v, --verbose       verbose output in .pyi file
-      -w, --warn          warn about unannotated args
+    Create stub (.pyi) files using patterns, not type inference.
+    
+    positional arguments:
+      FILE                  input files
+    
+    optional arguments:
+      -h, --help            show this help message and exit
+      -c FILE, --config FILE
+                            full path to configuration file
+      -d DIR, --dir DIR     full path to the output directory
+      -f, --force-pyx       force the parsing of .pyx files
+      -o, --overwrite       overwrite existing stub (.pyi) files
+      -s, --silent          run without messages
+      --trace-matches       trace Pattern.matches
+      --trace-patterns      trace pattern creation
+      --trace-reduce        trace st.reduce_types
+      --trace-visitors      trace visitor methods
+      -u, --update          update stubs in existing stub file
+      -v, --verbose         verbose output in .pyi file
+      -w, --warn            warn about unannotated args
 
 Download URL: https://github.com/edreamleo/make-stub-files
 Keywords: mypy, type checking, stub, Python
