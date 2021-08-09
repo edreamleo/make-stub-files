@@ -78,6 +78,7 @@
 <v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
 </v>
 </v>
+<v t="ekr.20210809094659.1"><vh>@@@clean launch_msf.py</vh></v>
 <v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
 </vnodes>
 <tnodes>
@@ -1217,5 +1218,27 @@ command = f"python -m unittest make_stub_files{test}"
 g.execute_shell_commands(command, trace=False)</t>
 <t tx="ekr.20210807151105.1"></t>
 <t tx="ekr.20210807213637.1"></t>
+<t tx="ekr.20210809094659.1">"""
+Use a separate file to launch make_stub_file.py to test the stubs in
+make_stub_files.pyi.
+"""
+import os
+import sys
+# import make_stub_files
+from make_stub_files import main
+print('main', main)
+if 0:
+    fn = __file__
+    directory = os.path.dirname(fn)
+    print('directory', directory)
+    for z in sys.path:
+        print(z)
+    if directory not in sys.path:
+        sys.path.insert(0, directory)
+        print('Add directory', directory)
+sys.argv = ['python', 'make_stub_files.py']
+# print(dir(make_stub_files))
+main()
+</t>
 </tnodes>
 </leo_file>
