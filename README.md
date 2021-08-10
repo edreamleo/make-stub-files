@@ -272,9 +272,17 @@ One could imagine a similar insert_annotations script that would inject function
 Edward K. Ream  
 January 25 to February 15, 2016
 Revised, August 5, 2021.
+
+### Release notes
+
 Version 0.2: August 10, 2021.
 
 - make_stub_files (msf) now requires Python 3.6 or above.
-- msf uses traditional unit tests instead of Leo's deprecated @test nodes.
+- Use traditional unit tests instead of Leo's deprecated @test nodes.
   These tests provide 100% coverage.
-- All reported bugs have been fixed.
+- Add several Leo buttons.
+  - Use the coverage and unittest buttons to run tests.
+  - Use the msf button to run make_stub_files.py on itself.
+- Fix all known bugs.
+- A new unit test that ensures that all required ast visitors exist.
+- Add scripts/wax_off.py.
