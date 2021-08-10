@@ -37,12 +37,15 @@ stub file.
 
 """
 #@-<< docstring >>
+#@+<< imports >>
+#@+node:ekr.20210810171411.1: ** << imports >>
 import argparse
 import difflib
 import glob
 import os
 import re
 import sys
+#@-<< imports >>
 
 # Match class definitions.
 class_pat = re.compile(r'^[ ]*class\s+[\w_]+.*?:', re.MULTILINE)
@@ -50,13 +53,16 @@ class_pat = re.compile(r'^[ ]*class\s+[\w_]+.*?:', re.MULTILINE)
 # Match function/method definitions.
 def_pat = re.compile(r'^([ ]*)def\s+([\w_]+)\s*\((.*?)\)(.*?):', re.MULTILINE + re.DOTALL)
 
-__version__ = 'wax_off.py version 1.0'
+__version__ = 'wax_off.py version 0.1'
 
+#@+others
+#@+node:ekr.20210810165920.1: ** class WaxOff
 class WaxOff:
     diff = True
+    remove = False
     trace = False
     #@+others
-    #@+node:ekr.20210810102041.3: ** wax_off.do_file
+    #@+node:ekr.20210810102041.3: *3* wax_off.do_file
     def do_file(self, input_fn):
         """Handle one file"""
         # Define output files.
@@ -114,7 +120,7 @@ class WaxOff:
             start, old, new = data
             assert new_contents[start:].startswith(old), (start, old, new_contents[start:start+50])
             new_contents = new_contents[:start] + new + new_contents[start+len(old):]
-        # Diff or write the file.
+        # --diff.
         if self.diff:  # Diff the old and new contents.
             lines = list(difflib.unified_diff(
                 contents.splitlines(True), new_contents.splitlines(True),
@@ -122,12 +128,13 @@ class WaxOff:
             print(f"Diff: {new_fn}")
             for line in lines:
                 print(repr(line))
-        else:  # Write the new file.
+        # --remove.
+        if self.remove:  # Write the new file.
             print(f"Writing: {new_fn}")
             with open(new_fn, 'w') as f:
                 f.write(new_contents)
         print(f"{len(replacements)} replacements")
-    #@+node:ekr.20210810102041.4: ** wax_off.get_next_arg
+    #@+node:ekr.20210810102041.4: *3* wax_off.get_next_arg
     name_pat = re.compile(r'\s*([\w_]+)\s*')
 
     def get_next_arg(self, s, i):
@@ -165,7 +172,7 @@ class WaxOff:
         i = self.skip_ws(s, j)
         return f"{name}={initializer}", i
         
-    #@+node:ekr.20210810102041.5: ** wax_off.main
+    #@+node:ekr.20210810102041.5: *3* wax_off.main
     def main(self):
         """The main line of the wax_off script."""
         # Handle command-line options & set ivars.
@@ -174,7 +181,7 @@ class WaxOff:
         for fn in self.files:
             path = os.path.join(self.input_directory, fn)
             self.do_file(path)
-    #@+node:ekr.20210810102041.6: ** wax_off.scan_options
+    #@+node:ekr.20210810102041.6: *3* wax_off.scan_options
     def scan_options(self):
         """Run commands specified by sys.argv."""
         
@@ -191,6 +198,7 @@ class WaxOff:
         add('-d', '--diff', dest='d', action='store_true', help='Show diff without writing files')
         add('-i', '--input-directory', dest='i_dir', metavar="DIR", type=dir_path, help='Input directory')
         add('-o', '--output-directory', dest='o_dir', metavar="DIR", type=dir_path, help='Output directory')
+        add('-r', '--remove', dest='r', action='store_true', help='Remove annotations')
         add('-t', '--trace', dest='t', action='store_true', help='Show debug traces')
         add('-v', '--version', dest='v', action='store_true', help='show version and exit')
         args = parser.parse_args()
@@ -200,6 +208,7 @@ class WaxOff:
             sys.exit(0)
         # Set flags.
         self.diff = bool(args.d)
+        self.remove = bool(args.r)
         self.trace = bool(args.t)
         # Compute directories. They are known to exist.
         self.input_directory = args.i_dir or os.getcwd()
@@ -232,7 +241,7 @@ class WaxOff:
         if not self.files:
             print('No input files')
             sys.exit(1)
-    #@+node:ekr.20210810102041.7: ** wax_off.skip_to_outer_delim & helpers
+    #@+node:ekr.20210810102041.7: *3* wax_off.skip_to_outer_delim & helpers
     def skip_to_outer_delim(self, s, i, delims):
         """
         Skip to next *outer*, ignoring inner delimis contained in strings, etc.
@@ -272,14 +281,14 @@ class WaxOff:
             assert progress < i, (i, repr(s[i:]))
         assert (c_level, p_level, s_level) == (0, 0, 0), (c_level, p_level, s_level)
         return len(s)
-    #@+node:ekr.20210810102041.8: *3* wax_off.skip_comment
+    #@+node:ekr.20210810102041.8: *4* wax_off.skip_comment
     def skip_comment(self, s, i):
         """Scan forward to the end of a comment."""
         assert s[i] == '#'
         while i < len(s) and s[i] != '\n':
             i += 1
         return i
-    #@+node:ekr.20210810102041.9: *3* wax_off.skip_string
+    #@+node:ekr.20210810102041.9: *4* wax_off.skip_string
     def skip_string(self, s, i):
         """Scan forward to the end of a string."""
         delim = s[i]
@@ -294,12 +303,12 @@ class WaxOff:
         assert i < len(s) and s[i] == delim, (i, delim)
         i += 1
         return i
-    #@+node:ekr.20210810102041.10: *3* wax_off.skip_ws
+    #@+node:ekr.20210810102041.10: *4* wax_off.skip_ws
     def skip_ws(self, s, i):
         while i < len(s) and s[i] in ' \t':
             i += 1
         return i
-    #@+node:ekr.20210810102041.11: ** wax_off.stripped_args
+    #@+node:ekr.20210810102041.11: *3* wax_off.stripped_args
     def stripped_args(self, s):
         """
         s is the argument list, without parens, possibly containing annotations.
@@ -317,6 +326,7 @@ class WaxOff:
             assert progress < i, (i, repr(s[i:]))
         return ', '.join(args)
     #@-others
+#@-others
     
 if __name__ == '__main__':
     WaxOff().main()
