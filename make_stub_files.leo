@@ -18,23 +18,46 @@
 <v t="ekr.20210804021331.1"><vh>@button msf</vh></v>
 </v>
 </v>
-<v t="ekr.20210805061856.1"><vh>Notes</vh>
-<v t="ekr.20210805061902.1"><vh>No longer used</vh>
+<v t="ekr.20210810052527.1"><vh>Notes</vh>
+<v t="ekr.20210810052454.1"><vh>No longer used</vh>
+<v t="ekr.20210810052805.1"><vh> Unused python 2 visitors</vh>
 <v t="ekr.20160318141204.65"><vh>f.Exec</vh></v>
 <v t="ekr.20160318141204.41"><vh>f.Index</vh></v>
 <v t="ekr.20160318141204.74"><vh>f.Print</vh></v>
 <v t="ekr.20160318141204.46"><vh>f.Repr</vh></v>
 <v t="ekr.20160318141204.80"><vh>f.TryExcept</vh></v>
 <v t="ekr.20160318141204.81"><vh>f.TryFinally</vh></v>
-<v t="ekr.20180902073131.1"><vh>g.execute_shell_commands</vh></v>
-<v t="ekr.20160318141204.97"><vh>g.isString &amp; isUnicode</vh></v>
-<v t="ekr.20160318141204.93"><vh>g.NullObject</vh></v>
-<v t="ekr.20160318141204.5"><vh>merge_types (not used)</vh></v>
+</v>
+<v t="ekr.20210809094659.1"><vh>launch_msf.py</vh></v>
+<v t="ekr.20160318141204.5"><vh>merge_types</vh></v>
+<v t="ekr.20210804153200.1"><vh>script convert-at-test (no longer necessary)</vh></v>
 <v t="ekr.20160207051429.1"><vh>test_merge_types</vh></v>
 </v>
-<v t="ekr.20210804153200.1"><vh>script convert-at-test</vh></v>
+<v t="ekr.20210805053830.1"><vh>Notes for #18: full coverage</vh>
+<v t="ekr.20210806162349.1"><vh>--- changed &amp; new AstFormatter visitors</vh>
+<v t="ekr.20160318141204.91"><vh>arg_formatter.Constants &amp; Name</vh></v>
+<v t="ekr.20160318141204.59"><vh>f.AnnAssign &amp; Assign</vh></v>
+<v t="ekr.20160318141204.31"><vh>f.arguments</vh></v>
+<v t="ekr.20160318141204.35"><vh>f.Call &amp; f.keyword</vh>
+<v t="ekr.20160318141204.36"><vh>f.keyword</vh></v>
 </v>
-<v t="ekr.20160128104714.1"><vh>Files</vh>
+<v t="ekr.20160318141204.20"><vh>f.ClassDef</vh></v>
+<v t="ekr.20210804214511.1"><vh>f.Constant</vh></v>
+<v t="ekr.20160318141204.75"><vh>f.Raise</vh></v>
+<v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
+<v t="ekr.20160318141204.83"><vh>f.With</vh></v>
+<v t="ekr.20160318141204.84"><vh>f.Yield</vh></v>
+<v t="ekr.20160318141204.85"><vh>f.YieldFrom</vh></v>
+</v>
+<v t="ekr.20210807151105.1"><vh>--- changed StubFormatter visitors</vh>
+<v t="ekr.20160318141204.168"><vh>sf.Return</vh></v>
+<v t="ekr.20160318141204.167"><vh>sf.UnaryOp</vh></v>
+</v>
+<v t="ekr.20210807213637.1"><vh>--- changed StubTraverser methods</vh>
+<v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
+</v>
+</v>
+</v>
 <v t="ekr.20160128225533.1"><vh>@clean .gitignore</vh></v>
 <v t="ekr.20160128102557.1"><vh>@clean example.cfg</vh></v>
 <v t="ekr.20160126153220.1"><vh>@clean make_stub_files.cfg</vh></v>
@@ -51,9 +74,9 @@
 </v>
 <v t="ekr.20160211110810.3"><vh>Why this script is important</vh></v>
 <v t="ekr.20160211110811.1"><vh>Summary</vh></v>
+<v t="ekr.20210810053434.1"><vh>Release notes</vh></v>
 </v>
 <v t="ekr.20160207101607.1"><vh>@clean theory.md</vh></v>
-<v t="ekr.20210809094659.1"><vh>@@@clean launch_msf.py</vh></v>
 <v t="ekr.20210809124558.1"><vh>@clean make_stub_files.pyi</vh>
 <v t="ekr.20210809124613.1"><vh>Declarations</vh></v>
 <v t="ekr.20210809124613.2"><vh>dump</vh></v>
@@ -285,31 +308,7 @@
 <v t="ekr.20210809124613.219"><vh>TestMakeStubFiles(unittest.TestCase).test_stub_traverser_class</vh></v>
 </v>
 </v>
-</v>
-<v t="ekr.20210805053830.1"><vh>=== #18: full coverage</vh>
-<v t="ekr.20210806162349.1"><vh>--- changed &amp; new AstFormatter visitors</vh>
-<v t="ekr.20160318141204.91"><vh>arg_formatter.Constants &amp; Name</vh></v>
-<v t="ekr.20160318141204.59"><vh>f.AnnAssign &amp; Assign</vh></v>
-<v t="ekr.20160318141204.31"><vh>f.arguments</vh></v>
-<v t="ekr.20160318141204.35"><vh>f.Call &amp; f.keyword</vh>
-<v t="ekr.20160318141204.36"><vh>f.keyword</vh></v>
-</v>
-<v t="ekr.20160318141204.20"><vh>f.ClassDef</vh></v>
-<v t="ekr.20210804214511.1"><vh>f.Constant</vh></v>
-<v t="ekr.20160318141204.75"><vh>f.Raise</vh></v>
-<v t="ekr.20160318141204.18"><vh>f.visit</vh></v>
-<v t="ekr.20160318141204.83"><vh>f.With</vh></v>
-<v t="ekr.20160318141204.84"><vh>f.Yield</vh></v>
-<v t="ekr.20160318141204.85"><vh>f.YieldFrom</vh></v>
-</v>
-<v t="ekr.20210807151105.1"><vh>--- changed StubFormatter visitors</vh>
-<v t="ekr.20160318141204.168"><vh>sf.Return</vh></v>
-<v t="ekr.20160318141204.167"><vh>sf.UnaryOp</vh></v>
-</v>
-<v t="ekr.20210807213637.1"><vh>--- changed StubTraverser methods</vh>
-<v t="ekr.20160318141204.191"><vh>st.format_return_expressions</vh></v>
-</v>
-</v>
+<v t="ekr.20210810102041.1"><vh>@file scripts/wax_off.py</vh></v>
 <v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
 </vnodes>
 <tnodes>
@@ -498,7 +497,6 @@ str%str: str
 
 .*__name__: str
 </t>
-<t tx="ekr.20160128104714.1"></t>
 <t tx="ekr.20160128225533.1">*.pyc
 *.pyi
 test/*.pyc
@@ -688,8 +686,6 @@ Before reading further, please be aware of other tools that create mypy stubs:
 - [MonkeyType](https://monkeytype.readthedocs.io/en/latest/index.html) (Python 3),
 - [PyAnnotate](https://github.com/dropbox/pyannotate),
 - [stubgen](https://mypy.readthedocs.io/en/stable/stubgen.html).
-
-stubgen produces only minimal stubs, but MonkeyType and PyAnnotate are worth serious consideration.
 
 @others</t>
 <t tx="ekr.20160211110807.1">
@@ -1294,36 +1290,6 @@ def do_Str(self, node: Node) -&gt; str:  # pragma: no cover (obsolete)
     """This represents a string constant."""
     return 'str'
 </t>
-<t tx="ekr.20160318141204.93">
-class NullObject:
-    """
-    An object that does nothing, and does it very well.
-    From the Python cookbook, recipe 5.23
-    """
-    def __init__(self, *args, **keys): pass
-    def __call__(self, *args, **keys): return self
-    def __repr__(self): return "NullObject"
-    def __str__(self): return "NullObject"
-    def __bool__(self): return False
-    def __nonzero__(self): return 0
-    def __delattr__(self, attr): return self
-    def __getattr__(self, attr): return self
-    def __setattr__(self, attr, val): return self
-</t>
-<t tx="ekr.20160318141204.97">def isString(self, s):
-    """Return True if s is any string, but not bytes."""
-    # pylint: disable=no-member
-    if isPython3:
-        return isinstance(s, str)
-    return isinstance(s, types.StringTypes)
-
-def isUnicode(self, s):
-    """Return True if s is a unicode string."""
-    # pylint: disable=no-member
-    if isPython3:
-        return isinstance(s, str)
-    return isinstance(s, types.UnicodeType)
-</t>
 <t tx="ekr.20160330201030.1">Metadata-Version: 1.0
 Name: make_stub_files
 Version: 0.2
@@ -1365,25 +1331,10 @@ Categories:
     Operating System :: MacOS
     Operating System :: Microsoft :: Windows
     Operating System :: POSIX :: Linux
-    Programming Language :: Python
+    Programming Language :: Python3
     Topic :: Software Development
 </t>
 <t tx="ekr.20180706073424.1"># pyflakes complains about the TestClass class.</t>
-<t tx="ekr.20180902073131.1" annotate="7d71002e">def execute_shell_commands(self, commands, trace=False):
-    """
-    Execute each shell command in a separate process.
-    Wait for each command to complete, except those starting with '&amp;'
-    """
-    if g.isString(commands):
-        commands = [commands]
-    for command in commands:
-        wait = not command.startswith('&amp;')
-        if command.startswith('&amp;'):
-            command = command[1:].strip()
-        proc = subprocess.Popen(command, shell=True)
-        if wait:
-            proc.communicate()
-</t>
 <t tx="ekr.20210804020706.1">g.cls()
 command = r"python -m pytest --cov-report html --cov-report term-missing --cov make_stub_files make_stub_files.py"
 g.execute_shell_commands(command, trace=False)
@@ -1433,16 +1384,15 @@ c.redraw()
 
 https://github.com/edreamleo/make-stub-files/issues/18
 
-^(def .*)(:\s*?)$
-\1 -&gt; XXX:
+Regex to add return annotations:
 
+find: ^(def .*)(:\s*?)$
+repl: \1 -&gt; XXX:
 
 @language python
 @nosearch
 </t>
 <t tx="ekr.20210805061637.1"></t>
-<t tx="ekr.20210805061856.1"></t>
-<t tx="ekr.20210805061902.1"></t>
 <t tx="ekr.20210806162349.1"></t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.
@@ -1462,6 +1412,7 @@ g.execute_shell_commands(command, trace=False)</t>
 Use a separate file to launch make_stub_file.py to test the stubs in
 make_stub_files.pyi.
 """
+# This doesn't work: mypy complains that make_stub_file has not "main" member!
 import os
 import sys
 # import make_stub_files
@@ -2025,5 +1976,14 @@ Node = Any
 </t>
 <t tx="ekr.20210809124613.99">def scan_patterns(self, section_name: str) -&gt; List[Any]: ...
 </t>
+<t tx="ekr.20210810052454.1"></t>
+<t tx="ekr.20210810052527.1"></t>
+<t tx="ekr.20210810052805.1"></t>
+<t tx="ekr.20210810053434.1">Version 0.2: August 10, 2021.
+
+- make_stub_files (msf) now requires Python 3.6 or above.
+- msf uses traditional unit tests instead of Leo's deprecated @test nodes.
+  These tests provide 100% coverage.
+- All reported bugs have been fixed.</t>
 </tnodes>
 </leo_file>

@@ -7,8 +7,6 @@ Before reading further, please be aware of other tools that create mypy stubs:
 - [PyAnnotate](https://github.com/dropbox/pyannotate),
 - [stubgen](https://mypy.readthedocs.io/en/stable/stubgen.html).
 
-stubgen produces only minimal stubs, but MonkeyType and PyAnnotate are worth serious consideration.
-
 
 ### Overview
 
@@ -274,3 +272,9 @@ One could imagine a similar insert_annotations script that would inject function
 Edward K. Ream  
 January 25 to February 15, 2016
 Revised, August 5, 2021.
+Version 0.2: August 10, 2021.
+
+- make_stub_files (msf) now requires Python 3.6 or above.
+- msf uses traditional unit tests instead of Leo's deprecated @test nodes.
+  These tests provide 100% coverage.
+- All reported bugs have been fixed.

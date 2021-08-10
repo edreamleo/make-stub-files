@@ -39,5 +39,5 @@ Categories:
     Operating System :: MacOS
     Operating System :: Microsoft :: Windows
     Operating System :: POSIX :: Linux
-    Programming Language :: Python
+    Programming Language :: Python3
     Topic :: Software Development
