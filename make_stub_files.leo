@@ -310,6 +310,19 @@
 </v>
 <v t="ekr.20210810102041.1"><vh>@file scripts/wax_off.py</vh></v>
 <v t="ekr.20160318141204.1"><vh>@file make_stub_files.py</vh></v>
+<v t="ekr.20210810105216.1"><vh>--- New visitors</vh>
+<v t="ekr.20210810110025.1"><vh>f.Await</vh></v>
+<v t="ekr.20210810111631.1"><vh>f.AsyncFor</vh></v>
+<v t="ekr.20210810105319.1"><vh>f.AsyncFunctionDef</vh></v>
+<v t="ekr.20210810105806.1"><vh>f.AsyncWith</vh></v>
+<v t="ekr.20210810110338.1"><vh>f.DictComp</vh></v>
+<v t="ekr.20210810111203.1"><vh>f.Set</vh></v>
+<v t="ekr.20210810111230.1"><vh>f.SetComp</vh></v>
+</v>
+<v t="ekr.20210810104304.1"><vh>test_visitors_exist</vh></v>
+<v t="ekr.20210805090943.1"><vh>test_ast_formatter_class</vh>
+<v t="ekr.20210805144859.1"><vh>&lt;&lt; define tests &gt;&gt; (test_ast_formatter_class)</vh></v>
+</v>
 </vnodes>
 <tnodes>
 <t tx="ekr.20160126153220.1">@language config
@@ -1393,6 +1406,170 @@ repl: \1 -&gt; XXX:
 @nosearch
 </t>
 <t tx="ekr.20210805061637.1"></t>
+<t tx="ekr.20210805090943.1">def test_ast_formatter_class(self) -&gt; None:
+    formatter = AstFormatter()
+    if 0:  # For debugging.
+        tests = ["""\
+            def yield_test():
+                yield 1
+            """
+        ]
+    else:
+        tests = [
+        &lt;&lt; define tests &gt;&gt;
+        ]
+    for i, source_data in enumerate(tests):
+        filename = f"test {i+1}"
+        if isinstance(source_data, str):
+            source = textwrap.dedent(source_data)
+            expected_s = textwrap.dedent(source)
+        else:
+            source, expected = source_data
+            source = textwrap.dedent(source)
+            expected_s = textwrap.dedent(expected)
+        node = ast.parse(source, filename=filename, mode='exec')
+        try:
+            result_s = formatter.format(node)
+        except Exception:
+            self.fail(filename)
+        lines = g.splitLines(result_s)
+        expected_lines = g.splitLines(expected_s)
+        self.assertEqual(expected_lines, lines, msg=filename)
+</t>
+<t tx="ekr.20210805144859.1"># Tests are either a single string, or a tuple: (source, expected).
+
+# Test 1. Class.
+"""\
+class AstFormatter:
+    def format(self, node: Node) -&gt; Union[Any, str]:
+        pass
+""",
+# Test 2: Constant.
+"""\
+a = 1
+b = 2.5
+c = False
+d = None
+""",
+# Test 3: ClassDef
+(
+"""\
+@class_decorator
+class TestClass(str, base2=int):
+    pass
+""",
+"""\
+@class_decorator
+class TestClass(str, base2=int): ...
+    pass
+""",
+),
+# Test 4: FunctionDef
+"""\
+@function_decorator
+def f():
+    pass
+""",
+# Test 5: Position-only arg.
+"""\
+def pos_only_arg(arg, /):
+    pass
+""",
+# Test 6: Keyword-only arg.
+"""\
+def kwd_only_arg(*, arg, arg2=None):
+    pass
+""",
+# Test 7: Position-only and keyword-only args.
+"""\
+def combined_example(pos_only, /, standard, *, kwd_only):
+    pass
+""",
+# Test 8: Call.
+"print(*args, **kwargs)\n",
+# Test 9: Slices: Python 3.9 does not use ExtSlice.
+"print(s[0:1:2])\n",
+# Test 10: Continue.
+"""\
+while 1:
+    continue
+""",
+# Test 11: Delete.
+"del a\n",
+# Test 12: ExceptHandler.
+"""\
+try:
+    pass
+except Exception as e:
+    print('oops')
+else:
+    print('else')
+finally:
+    print('finally')
+""",
+# Test 13: ImportFrom.
+"from a import b as c\n",
+# Test 14: Nonlocal.
+"""\
+def nonlocal_test():
+    nonlocal a
+""",
+# Test 15: Raise.
+"""\
+raise Exception('spam', 'eggs')
+raise
+""",
+# Test 16: While.
+"""\
+while True:
+    print(True)
+else:
+    print('else')
+""",
+# Test 17: With.
+"""\
+with open(f, 'r') as f:
+    f.read()
+""",
+# Test 18: Yield and YieldFrom.
+"""\
+def yield_test():
+    yield 1
+    yield from z
+    yield
+""",
+# Test 19: ImportFrom.
+"import a.b as c\n",
+# Test 20: Await.
+"await abc\n",
+# Test 21: AsyncFor.
+"""\
+async for a in b:
+    print('body')
+else:
+    print('else')
+""",
+# Test 22: AsyncFunctiondef.
+"""\
+@function_decorator
+async def f1() -&gt; None:
+    pass
+async def f2():
+    pass
+""",
+# Test 23: AsyncWith.
+"""\
+async with open(f, 'r') as f:
+    f.read()
+""",
+# Test 24: DictComp.
+"a = {a: b for a in c}\n",
+# Test 25: ListComp..
+"a2 = [z for z in set(e1, e2)]\n",
+# Test 26: Set.
+"a2 = {a,b}\n",
+# Test 27: SetComp.
+"a3 = {s for s in [1, 2, 1, 0]}\n",</t>
 <t tx="ekr.20210806162349.1"></t>
 <t tx="ekr.20210807133351.1">g.cls()
 # Run one test.
@@ -1985,5 +2162,137 @@ Node = Any
 - msf uses traditional unit tests instead of Leo's deprecated @test nodes.
   These tests provide 100% coverage.
 - All reported bugs have been fixed.</t>
+<t tx="ekr.20210810104304.1">def test_visitors_exist(self):
+    """Ensure that visitors for all ast nodes exist."""
+    import _ast
+    # Compute all fields to BaseTest.
+    aList = sorted(dir(_ast))
+    remove = [
+        'Interactive', 'Suite',  # Not necessary.
+        'AST',  # The base class,
+        # Constants...
+        'PyCF_ALLOW_TOP_LEVEL_AWAIT',
+        'PyCF_ONLY_AST',
+        'PyCF_TYPE_COMMENTS',
+        # New ast nodes for Python 3.8.
+        # We can ignore these nodes because:
+        # 1. ast.parse does not generate them by default.
+        # 2. The type comments are ordinary comments.
+        #    They do not need to be specially synced.
+        # 3. Tools such as black, orange, and fstringify will
+        #    only ever handle comments as comments.
+        'FunctionType', 'NamedExpr', 'TypeIgnore',
+    ]
+    aList = [z for z in aList if not z[0].islower()]
+        # Remove base classes.
+    aList = [z for z in aList
+        if not z.startswith('_') and not z in remove]
+    # Now test them.
+    traverser = AstFormatter()
+    traverser_name = traverser.__class__.__name__
+    errors, nodes, ops = 0, 0, 0
+    for z in aList:
+        if hasattr(traverser, 'do_' + z):
+            nodes += 1
+        elif _op_names.get(z):
+            ops += 1
+        else:  # pragma: no cover
+            errors += 1
+            print(f"Missing visitor: {traverser_name}.{z}")
+    msg = f"{nodes} node types, {ops} op types, {errors} errors"
+    assert not errors, msg
+</t>
+<t tx="ekr.20210810105216.1"></t>
+<t tx="ekr.20210810105319.1"># AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns, string? type_comment)
+
+def do_AsyncFunctionDef(self, node: Node) -&gt; str:
+    """Format a FunctionDef node."""
+    result = []
+    if node.decorator_list:
+        for z in node.decorator_list:
+            result.append('@%s\n' % self.visit(z))
+    name = node.name  # a string.
+    args = self.visit(node.args) if node.args else ''
+    if getattr(node, 'returns', None):
+        returns = self.visit(node.returns)
+        result.append(self.indent('async def %s(%s) -&gt; %s:\n' % (name, args, returns)))
+    else:
+        result.append(self.indent('async def %s(%s):\n' % (name, args)))
+    for z in node.body:
+        self.level += 1
+        result.append(self.visit(z))
+        self.level -= 1
+    return ''.join(result)
+
+</t>
+<t tx="ekr.20210810105806.1"># AsyncWith(withitem* items, stmt* body, string?)
+
+def do_AsyncWith(self, node: Node) -&gt; str:
+    result = []
+    result.append(self.indent('async with '))
+    vars_list = []
+    if getattr(node, 'items', None):
+        for item in node.items:
+            result.append(self.visit(item.context_expr))
+            result.append(' as ')
+            if getattr(item, 'optional_vars', None):
+                try:
+                    for z in item.optional_vars: # pragma: no cover (expect TypeError)
+                        vars_list.append(self.visit(z))
+                except TypeError:
+                    vars_list.append(self.visit(item.optional_vars))
+                
+    result.append(','.join(vars_list))
+    result.append(':\n')
+    for z in node.body:
+        self.level += 1
+        result.append(self.visit(z))
+        self.level -= 1
+    return ''.join(result)
+</t>
+<t tx="ekr.20210810110025.1"># Await(expr value)
+
+def do_Await(self, node):
+    return 'await %s' % self.visit(node.value)
+</t>
+<t tx="ekr.20210810110338.1"># DictComp(expr key, expr value, comprehension* generators)
+
+# d2 = {val: key for key, val in d.iteritems()}
+
+def do_DictComp(self, node):
+    return '{%s: %s for %s}' % (
+        self.visit(node.key),
+        self.visit(node.value),
+        ' '.join(self.visit(z) for z in node.generators or []))
+</t>
+<t tx="ekr.20210810111203.1"># Set(expr* elts)
+
+def do_Set(self, node):
+    return '{%s}' % ''.join(self.visit(node.elts))
+</t>
+<t tx="ekr.20210810111230.1"># SetComp(expr elt, comprehension* generators)
+
+def do_SetComp(self, node):
+    return '{%s for %s}' % (
+        self.visit(node.elt),
+        ' '.join(self.visit(z) for z in node.generators or []))
+</t>
+<t tx="ekr.20210810111631.1">def do_AsyncFor(self, node):
+    
+    result = []
+    result.append(self.indent('async for %s in %s:\n' % (
+        self.visit(node.target),
+        self.visit(node.iter))))
+    for z in node.body:
+        self.level += 1
+        result.append(self.visit(z))
+        self.level -= 1
+    if node.orelse:
+        result.append(self.indent('else:\n'))
+        for z in node.orelse:
+            self.level += 1
+            result.append(self.visit(z))
+            self.level -= 1
+    return ''.join(result)</t>
 </tnodes>
 </leo_file>

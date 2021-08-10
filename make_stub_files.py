@@ -84,6 +84,59 @@ def reduce_types(aList: List[str], name: str=None, trace: bool=False) -> str:
     """
     return ReduceTypes(aList, name, trace).reduce_types()
 
+#@+node:ekr.20210810104827.1: *3* function: op_name
+#@@nobeautify
+
+# https://docs.python.org/3/library/ast.html
+
+_op_names = {
+            # Binary operators.
+    'Add': '+',
+    'BitAnd': '&',
+    'BitOr': '|',
+    'BitXor': '^',
+    'Div': '/',
+    'FloorDiv': '//',
+    'LShift': '<<',
+    'MatMult': '@',  # Python 3.5.
+    'Mod': '%',
+    'Mult': '*',
+    'Pow': '**',
+    'RShift': '>>',
+    'Sub': '-',
+            # Boolean operators.
+    'And': ' and ',
+    'Or': ' or ',
+            # Comparison operators
+    'Eq': '==',
+    'Gt': '>',
+    'GtE': '>=',
+    'In': ' in ',
+    'Is': ' is ',
+    'IsNot': ' is not ',
+    'Lt': '<',
+    'LtE': '<=',
+    'NotEq': '!=',
+    'NotIn': ' not in ',
+            # Context operators.
+    'AugLoad': '<AugLoad>',
+    'AugStore': '<AugStore>',
+    'Del': '<Del>',
+    'Load': '<Load>',
+    'Param': '<Param>',
+    'Store': '<Store>',
+            # Unary operators.
+    'Invert': '~',
+    'Not': ' not ',
+    'UAdd': '+',
+    'USub': '-',
+}
+
+def op_name(node):  # pragma: no cover
+    """Return the print name of an operator node."""
+    class_name = node.__class__.__name__
+    assert class_name in _op_names, repr(class_name)
+    return _op_names[class_name].strip()
 #@+node:ekr.20160318141204.13: *3* function: truncate
 def truncate(s: str, n: int) -> str:
     """Return s truncated to n characters."""
@@ -131,6 +184,28 @@ class AstFormatter:
     #@+node:ekr.20160318141204.19: *3* f.Contexts
 
     # Contexts...
+    #@+node:ekr.20210810105319.1: *4* f.AsyncFunctionDef
+    # AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns, string? type_comment)
+
+    def do_AsyncFunctionDef(self, node: Node) -> str:
+        """Format a FunctionDef node."""
+        result = []
+        if node.decorator_list:
+            for z in node.decorator_list:
+                result.append('@%s\n' % self.visit(z))
+        name = node.name  # a string.
+        args = self.visit(node.args) if node.args else ''
+        if getattr(node, 'returns', None):
+            returns = self.visit(node.returns)
+            result.append(self.indent('async def %s(%s) -> %s:\n' % (name, args, returns)))
+        else:
+            result.append(self.indent('async def %s(%s):\n' % (name, args)))
+        for z in node.body:
+            self.level += 1
+            result.append(self.visit(z))
+            self.level -= 1
+        return ''.join(result)
+
     #@+node:ekr.20160318141204.20: *4* f.ClassDef
     # ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
 
@@ -236,6 +311,13 @@ class AstFormatter:
 
     # Operands...
 
+    #@+node:ekr.20160318141204.32: *4* f.arg
+    # 3: arg = (identifier arg, expr? annotation)
+
+    def do_arg(self, node: Node) -> str:
+        if getattr(node, 'annotation', None):
+            return '%s: %s' % (node.arg, self.visit(node.annotation))
+        return node.arg
     #@+node:ekr.20160318141204.31: *4* f.arguments
     # arguments = (
     #       arg* posonlyargs, arg* args, arg? vararg, arg* kwonlyargs,
@@ -280,13 +362,6 @@ class AstFormatter:
         if kwarg:
             args2.append('**' + self.visit(kwarg))
         return ', '.join(args2)
-    #@+node:ekr.20160318141204.32: *4* f.arg
-    # 3: arg = (identifier arg, expr? annotation)
-
-    def do_arg(self, node: Node) -> str:
-        if getattr(node, 'annotation', None):
-            return '%s: %s' % (node.arg, self.visit(node.annotation))
-        return node.arg
     #@+node:ekr.20160318141204.33: *4* f.Attribute
     # Attribute(expr value, identifier attr, expr_context ctx)
 
@@ -318,9 +393,6 @@ class AstFormatter:
         value = self.visit(node.value)
         return '%s=%s' % (node.arg, value) if node.arg else '**%s' % value
 
-    #@+node:ekr.20210804214511.1: *4* f.Constant
-    def do_Constant(self, node: Node) -> str:  # #13
-        return repr(node.value)
     #@+node:ekr.20160318141204.37: *4* f.comprehension
     def do_comprehension(self, node: Node) -> str:
         result = []
@@ -332,6 +404,9 @@ class AstFormatter:
             result.append(' if %s' % (''.join(ifs)))
         return ''.join(result)
 
+    #@+node:ekr.20210804214511.1: *4* f.Constant
+    def do_Constant(self, node: Node) -> str:  # #13
+        return repr(node.value)
     #@+node:ekr.20160318141204.38: *4* f.Dict
     def do_Dict(self, node: Node) -> str:
         result = []
@@ -348,6 +423,16 @@ class AstFormatter:
             print('Error: f.Dict: len(keys) != len(values)\nkeys: %s\nvals: %s' % (
                 repr(keys), repr(values)))
         return ''.join(result)
+    #@+node:ekr.20210810110338.1: *4* f.DictComp
+    # DictComp(expr key, expr value, comprehension* generators)
+
+    # d2 = {val: key for key, val in d.iteritems()}
+
+    def do_DictComp(self, node):
+        return '{%s: %s for %s}' % (
+            self.visit(node.key),
+            self.visit(node.value),
+            ' '.join(self.visit(z) for z in node.generators or []))
     #@+node:ekr.20160318141204.39: *4* f.Ellipsis
     def do_Ellipsis(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return '...'
@@ -370,14 +455,14 @@ class AstFormatter:
         # self.visit(node.ctx)
         elts = [self.visit(z) for z in node.elts]
         elts = [z for z in elts if z]  # Defensive.
-        return '[%s]' % ','.join(elts)
+        return '[%s]' % ', '.join(elts)
 
     #@+node:ekr.20160318141204.43: *4* f.ListComp
     def do_ListComp(self, node: Node) -> str:
         elt = self.visit(node.elt)
         gens = [self.visit(z) for z in node.generators]
         gens = [z if z else '<**None**>' for z in gens]  # Kludge: probable bug.
-        return '%s for %s' % (elt, ''.join(gens))
+        return '[%s for %s]' % (elt, ''.join(gens))
 
     #@+node:ekr.20160318141204.44: *4* f.Name & NameConstant
     def do_Name(self, node: Node) -> str:
@@ -391,6 +476,18 @@ class AstFormatter:
     def do_Num(self, node: Node) -> str:  # pragma: no cover (obsolete)
         return repr(node.n)
 
+    #@+node:ekr.20210810111203.1: *4* f.Set
+    # Set(expr* elts)
+
+    def do_Set(self, node):
+        return '{%s}' % ''.join(self.visit(node.elts))
+    #@+node:ekr.20210810111230.1: *4* f.SetComp
+    # SetComp(expr elt, comprehension* generators)
+
+    def do_SetComp(self, node):
+        return '{%s for %s}' % (
+            self.visit(node.elt),
+            ' '.join(self.visit(z) for z in node.generators or []))
     #@+node:ekr.20160318141204.47: *4* f.Slice
     def do_Slice(self, node: Node) -> str:
         lower, upper, step = '', '', ''
@@ -475,14 +572,6 @@ class AstFormatter:
 
     # Statements...
 
-    #@+node:ekr.20160318141204.58: *4* f.Assert
-    def do_Assert(self, node: Node) -> str:
-        test = self.visit(node.test)
-        if getattr(node, 'msg', None):
-            message = self.visit(node.msg)
-            return self.indent('assert %s, %s' % (test, message))
-        return self.indent('assert %s' % test)
-
     #@+node:ekr.20160318141204.59: *4* f.AnnAssign & Assign
     # AnnAssign(expr target, expr annotation, expr? value, int simple)
 
@@ -496,6 +585,57 @@ class AstFormatter:
         return self.indent('%s = %s\n' % (
             '='.join([self.visit(z) for z in node.targets]),
             self.visit(node.value)))
+    #@+node:ekr.20160318141204.58: *4* f.Assert
+    def do_Assert(self, node: Node) -> str:
+        test = self.visit(node.test)
+        if getattr(node, 'msg', None):
+            message = self.visit(node.msg)
+            return self.indent('assert %s, %s' % (test, message))
+        return self.indent('assert %s' % test)
+
+    #@+node:ekr.20210810111631.1: *4* f.AsyncFor
+    def do_AsyncFor(self, node):
+        
+        result = []
+        result.append(self.indent('async for %s in %s:\n' % (
+            self.visit(node.target),
+            self.visit(node.iter))))
+        for z in node.body:
+            self.level += 1
+            result.append(self.visit(z))
+            self.level -= 1
+        if node.orelse:
+            result.append(self.indent('else:\n'))
+            for z in node.orelse:
+                self.level += 1
+                result.append(self.visit(z))
+                self.level -= 1
+        return ''.join(result)
+    #@+node:ekr.20210810105806.1: *4* f.AsyncWith
+    # AsyncWith(withitem* items, stmt* body, string?)
+
+    def do_AsyncWith(self, node: Node) -> str:
+        result = []
+        result.append(self.indent('async with '))
+        vars_list = []
+        if getattr(node, 'items', None):
+            for item in node.items:
+                result.append(self.visit(item.context_expr))
+                result.append(' as ')
+                if getattr(item, 'optional_vars', None):
+                    try:
+                        for z in item.optional_vars: # pragma: no cover (expect TypeError)
+                            vars_list.append(self.visit(z))
+                    except TypeError:
+                        vars_list.append(self.visit(item.optional_vars))
+                    
+        result.append(','.join(vars_list))
+        result.append(':\n')
+        for z in node.body:
+            self.level += 1
+            result.append(self.visit(z))
+            self.level -= 1
+        return ''.join(result)
     #@+node:ekr.20160318141204.60: *4* f.AugAssign
     def do_AugAssign(self, node: Node) -> str:
         return self.indent('%s%s=%s\n' % (
@@ -503,6 +643,11 @@ class AstFormatter:
             self.op_name(node.op),  # Bug fix: 2013/03/08.
             self.visit(node.value)))
 
+    #@+node:ekr.20210810110025.1: *4* f.Await
+    # Await(expr value)
+
+    def do_Await(self, node):
+        return 'await %s' % self.visit(node.value)
     #@+node:ekr.20160318141204.61: *4* f.Break
     def do_Break(self, node: Node) -> str:
         return self.indent('break\n')
@@ -3079,8 +3224,38 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
                 yield from z
                 yield
             """,
-            # Test 19: ImportFrom
+            # Test 19: ImportFrom.
             "import a.b as c\n",
+            # Test 20: Await.
+            "await abc\n",
+            # Test 21: AsyncFor.
+            """\
+            async for a in b:
+                print('body')
+            else:
+                print('else')
+            """,
+            # Test 22: AsyncFunctiondef.
+            """\
+            @function_decorator
+            async def f1() -> None:
+                pass
+            async def f2():
+                pass
+            """,
+            # Test 23: AsyncWith.
+            """\
+            async with open(f, 'r') as f:
+                f.read()
+            """,
+            # Test 24: DictComp.
+            "a = {a: b for a in c}\n",
+            # Test 25: ListComp..
+            "a2 = [z for z in set(e1, e2)]\n",
+            # Test 26: Set.
+            "a2 = {a,b}\n",
+            # Test 27: SetComp.
+            "a3 = {s for s in [1, 2, 1, 0]}\n",
             #@-<< define tests >>
             ]
         for i, source_data in enumerate(tests):
@@ -3438,6 +3613,46 @@ class TestMakeStubFiles(unittest.TestCase):  # pragma: no cover
             contents=expected_output, silent=True)
         st.output_stubs(parent_stub)
         output = st.output_file.getvalue()
+    #@+node:ekr.20210810104304.1: *3* test_visitors_exist
+    def test_visitors_exist(self):
+        """Ensure that visitors for all ast nodes exist."""
+        import _ast
+        # Compute all fields to BaseTest.
+        aList = sorted(dir(_ast))
+        remove = [
+            'Interactive', 'Suite',  # Not necessary.
+            'AST',  # The base class,
+            # Constants...
+            'PyCF_ALLOW_TOP_LEVEL_AWAIT',
+            'PyCF_ONLY_AST',
+            'PyCF_TYPE_COMMENTS',
+            # New ast nodes for Python 3.8.
+            # We can ignore these nodes because:
+            # 1. ast.parse does not generate them by default.
+            # 2. The type comments are ordinary comments.
+            #    They do not need to be specially synced.
+            # 3. Tools such as black, orange, and fstringify will
+            #    only ever handle comments as comments.
+            'FunctionType', 'NamedExpr', 'TypeIgnore',
+        ]
+        aList = [z for z in aList if not z[0].islower()]
+            # Remove base classes.
+        aList = [z for z in aList
+            if not z.startswith('_') and not z in remove]
+        # Now test them.
+        traverser = AstFormatter()
+        traverser_name = traverser.__class__.__name__
+        errors, nodes, ops = 0, 0, 0
+        for z in aList:
+            if hasattr(traverser, 'do_' + z):
+                nodes += 1
+            elif _op_names.get(z):
+                ops += 1
+            else:  # pragma: no cover
+                errors += 1
+                print(f"Missing visitor: {traverser_name}.{z}")
+        msg = f"{nodes} node types, {ops} op types, {errors} errors"
+        assert not errors, msg
     #@-others
 #@-others
 g = LeoGlobals()
