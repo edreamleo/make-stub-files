@@ -1,7 +1,13 @@
 
-This is the readme file for `make_stub_files.py`. This file explains what the script does, how it works and why it is important. After a brief overview, a step-by-step section will get you started. Full source code for make_stub_files.py is in its [github repository](https://github.com/edreamleo/make-stub-files). Everything is in the public domain.
+This is the readme file for `make_stub_files.py (msf)`. This file explains what msf does and how it works. After a brief overview, a step-by-step section will get you started. Full source code for make_stub_files.py is in its [github repository](https://github.com/edreamleo/make-stub-files). Everything is in the public domain.
 
-Before reading further, please be aware of other tools that create mypy stubs:
+**Important**: msf may have outgrown its usefulness. Indeed, the wax_off script is likely a better alternative. The preferred workflow would be:
+
+1. Include annotations directly in the sources.
+2. Use mypy to check those sources.
+3. Use wax_off to create stub files and/or remove annotations.
+
+Also, several other tools create mypy stubs:
 
 - [MonkeyType](https://monkeytype.readthedocs.io/en/latest/index.html) (Python 3),
 - [PyAnnotate](https://github.com/dropbox/pyannotate),
@@ -286,3 +292,11 @@ Version 0.2: August 10, 2021.
 - Fix all known bugs.
 - A new unit test that ensures that all required ast visitors exist.
 - Add scripts/wax_off.py.
+
+**Important**: As noted earlier, msf may have outgrown its usefulness.
+Indeed, the wax_off script is likely a better alternative. The preferred
+workflow would be:
+
+1. Include annotations directly in the sources.
+2. Use mypy to check those sources.
+3. Use wax_off to create stub files and/or remove annotations.
