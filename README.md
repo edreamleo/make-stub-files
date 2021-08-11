@@ -281,7 +281,7 @@ Revised, August 5, 2021.
 
 ### Release notes
 
-Version 0.2: August 10, 2021.
+Version 1.0: August 10, 2021.
 
 - make_stub_files (msf) now requires Python 3.6 or above.
 - Use traditional unit tests instead of Leo's deprecated @test nodes.

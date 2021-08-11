@@ -508,6 +508,8 @@ __pycache__/
 .cache/
 .coverage
 htmlcov/
+*.egg-info/
+dist/
 </t>
 <t tx="ekr.20160207051429.1">def test_merge_types(self):
 
@@ -1991,7 +1993,7 @@ Node = Any
 <t tx="ekr.20210810053434.1">
 ### Release notes
 
-Version 0.2: August 10, 2021.
+Version 1.0: August 10, 2021.
 
 - make_stub_files (msf) now requires Python 3.6 or above.
 - Use traditional unit tests instead of Leo's deprecated @test nodes.
