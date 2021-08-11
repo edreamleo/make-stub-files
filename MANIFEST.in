@@ -1,0 +1,2 @@
+include make_stub_files.*
+include scripts/*.py
