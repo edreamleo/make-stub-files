@@ -684,19 +684,17 @@ edreamleo@gmail.com</t>
 <t tx="ekr.20160211110739.1">@language rest
 @wrap
 
-This is the readme file for `make_stub_files.py (msf)`. This file explains what msf does and how it works. After a brief overview, a step-by-step section will get you started. Full source code for make_stub_files.py is in its [github repository](https://github.com/edreamleo/make-stub-files). Everything is in the public domain.
+This is the readme file for `make_stub_files.py (msf)`. This file explains what msf does and how it works.
 
-**Important**: msf may have outgrown its usefulness. Indeed, the wax_off script is likely a better alternative. The preferred workflow would be:
-
-1. Include annotations directly in the sources.
-2. Use mypy to check those sources.
-3. Use wax_off to create stub files and/or remove annotations.
+Are you sure you want to use this program? For python 3 programs, including mypy annotations directly in your sources is a better alternative. Leo's new add-mypy-annotations command handles most of the tedious details of inserting annotations.
 
 Also, several other tools create mypy stubs:
 
 - [MonkeyType](https://monkeytype.readthedocs.io/en/latest/index.html) (Python 3),
 - [PyAnnotate](https://github.com/dropbox/pyannotate),
 - [stubgen](https://mypy.readthedocs.io/en/stable/stubgen.html).
+
+After a brief overview, a step-by-step section will get you started. Full source code for make_stub_files.py is in its [github repository](https://github.com/edreamleo/make-stub-files). Everything is in the public domain.
 
 @others</t>
 <t tx="ekr.20160211110807.1">
@@ -1993,6 +1991,11 @@ Node = Any
 <t tx="ekr.20210810053434.1">
 ### Release notes
 
+Are you sure you want to use this program? For python 3 programs, including
+mypy annotations directly in your sources is a better alternative. Leo's
+new add-mypy-annotations command handles most of the tedious details of
+inserting annotations.
+
 Version 1.0: August 10, 2021.
 
 - make_stub_files (msf) now requires Python 3.6 or above.
@@ -2004,14 +2007,7 @@ Version 1.0: August 10, 2021.
 - Fix all known bugs.
 - A new unit test that ensures that all required ast visitors exist.
 - Add scripts/wax_off.py.
-
-**Important**: As noted earlier, msf may have outgrown its usefulness.
-Indeed, the wax_off script is likely a better alternative. The preferred
-workflow would be:
-
-1. Include annotations directly in the sources.
-2. Use mypy to check those sources.
-3. Use wax_off to create stub files and/or remove annotations.</t>
+</t>
 <t tx="ekr.20210810115607.1"></t>
 </tnodes>
 </leo_file>
